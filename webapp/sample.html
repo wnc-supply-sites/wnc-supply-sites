@@ -50,23 +50,40 @@
       }
 
       function updateData() {
-        var sampleData = JSON.parse(`{
-          "result-count": 30,
+        var data = JSON.parse(`{
+          "resultCount": 30,
           "results": [
-            {"site": "site1", "county": "Ashe", items: [
+            {"site": "site1", "county": "Ashe", "items": [
                 {"name": "water", "status": "oversupply"},
                 {"name": "bread", "status": "requested"},
                 {"name": "heater", "status": "urgent"}
               ]},
-            {"site": "site2", "county": "Watauga", items: [
+            {"site": "site2", "county": "Watauga", "items": [
                 {"name": "water", "status": "requested"},
-                {"name": "bread", "status": "requested"},
+                {"name": "bread", "status": "requested"}
               ]}
           ]
         }`);
 
         var tbody = document.getElementById('results-table').querySelector("tbody");
-        tbody.innerHTML = "<tr></tr>"
+        tbody.innerHTML =
+          data.results.map(r => `
+              <tr>
+                  <td>${r.site}</td>
+                  <td>${r.county}</td>
+                  <td>${formatItems(r.items)}</td>
+              </tr>`)
+                  .join("\n");
+        document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
+
+      }
+
+      function formatItems(items) {
+        return "<ul>\n" +
+                items.map(i =>
+                        `<li><div class="${i.status}">${i.name}</div></li>\n`
+                ).join("\n")
+                + "\n</ul>";
       }
 
 
@@ -85,15 +102,58 @@
 
       .box {
         width: 100px;
-        height: 25px;
+        height: 20px;
         border: 1px solid black;
         padding: 3px;
         margin: 3px;
       }
 
       .selection-list {
-        height: 400px;
+        height: 125px;
         overflow-y: scroll;
+      }
+
+
+      table.results-table {
+        padding: 10px;
+        position: sticky;
+        left: 0;
+        width: 500px;
+      }
+
+      td {
+        padding: 5px;
+      }
+
+      table.results-table thead th {
+        background-color: #777;
+        color: #EEE;
+        padding: 8px;
+        /*border: 1px solid lightgrey;*/
+        /*padding: 2px;*/
+      }
+
+      table.results-table tbody tr:nth-child(odd) {
+        background-color: #EEE;
+        color: #222;
+      }
+
+      table.results-table tbody tr:nth-child(even) {
+        background-color: #DDD;
+        color: #222;
+      }
+
+      .urgent {
+        font-weight: bold;
+        color: #b60808;
+      }
+
+      .oversupply {
+        font-weight: bold;
+      }
+
+      .requested {
+
       }
 
     </style>
@@ -143,17 +203,17 @@
               <legend>Item Availability</legend>
               <div>
                 <input type="checkbox" id="urgent-items" name="scales" checked />
-                <label for="urgent-items">Urgently Needed</label>
-              </div>
-
-              <div>
-                <input type="checkbox" id="requested-items" name="scales" checked />
-                <label for="requested-items">Requested & Available</label>
+                <label for="urgent-items" class="urgent">Urgently Needed</label>
               </div>
 
               <div>
                 <input type="checkbox" id="oversupply-items" name="scales" checked />
-                <label for="oversupply-items">Oversupply (too many)</label>
+                <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="requested-items" name="scales" checked />
+                <label for="requested-items" class="requested">Requested & Available</label>
               </div>
             </fieldset>
           </td>
@@ -194,10 +254,13 @@
         </tr>
       </table>
       <hr>
-      <button type="button" onclick="updateData()">Update</button>
+      <div class="horizontal">
+        <button type="button" onclick="updateData()">Update</button>
+        <div id="result-count" style="margin-left: 10px"></div>
+      </div>
     </form>
     <hr>
-    <table id="results-table">
+    <table id="results-table" class="results-table">
       <thead>
         <tr>
           <th>Site</th>
@@ -206,6 +269,15 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
+        </tr>
+        <tr>
+          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
+        </tr>
+        <tr>
+          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
+        </tr>
         <tr>
           <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
         </tr>
