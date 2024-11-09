@@ -2,14 +2,19 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 public class SuppliesController {
+
+  private final Jdbi jdbi;
 
   @CrossOrigin
   @PostMapping(value = "/supplies")
