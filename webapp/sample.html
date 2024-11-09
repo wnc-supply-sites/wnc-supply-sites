@@ -50,6 +50,51 @@
       }
 
       async function updateData() {
+
+
+        try {
+          document.getElementById("error-div").innerHTML = "";
+
+          const data = await fetchSupplyData();
+          // write data to the results table
+          document.getElementById('results-table').querySelector("tbody").innerHTML =
+                  data.results.map(r => `
+              <tr>
+                  <td>${r.site}</td>
+                  <td>${r.county}</td>
+                  <td>${formatItems(r.items)}</td>
+              </tr>`)
+                          .join("\n");
+          document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
+        } catch (error) {
+          console.error(error, error.stack);
+          document.getElementById("error-div").innerHTML =
+                  `Error fetching data. Server is not available. Error: ${error.message}`;
+        }
+      }
+
+      async function fetchSupplyData() {
+        const url = "http://localhost:8080/supplies";
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sites: ["site1"],
+            items: [],
+            counties: ["Ashe", "Buncombe"],
+            itemStatus: ["Urgent", "Requested" ]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}, ${response}`);
+        }
+        return await response.json();
+
+        //    Example response JSON
         // var data = JSON.parse(`{
         //   "resultCount": 30,
         //   "results": [
@@ -64,29 +109,6 @@
         //       ]}
         //   ]
         // }`);
-
-        const url = "http://localhost:8080/supplies";
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Response status: ${response.status}, ${response}`);
-          }
-
-          const data = await response.json();
-
-          var tbody = document.getElementById('results-table').querySelector("tbody");
-          tbody.innerHTML =
-                  data.results.map(r => `
-              <tr>
-                  <td>${r.site}</td>
-                  <td>${r.county}</td>
-                  <td>${formatItems(r.items)}</td>
-              </tr>`)
-                          .join("\n");
-          document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
-        } catch (error) {
-          console.error(error.message);
-        }
       }
 
       function formatItems(items) {
@@ -167,9 +189,19 @@
 
       }
 
+      .error-div {
+        width: 100%;
+        font-weight: bold;
+        color: #b60808;
+
+      }
+
     </style>
   </head>
   <body>
+
+    <div id="error-div" class="error-div"></div>
+
     <form>
       <table>
         <tr>

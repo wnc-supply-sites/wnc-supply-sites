@@ -2,18 +2,19 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class SuppliesController {
 
   @CrossOrigin
-  @GetMapping(value = "/supplies")
-  public SiteSupplyResponse getTestData() {
+  @PostMapping(value = "/supplies")
+  public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
+    log.info("Request received: {}", request);
     return SiteSupplyResponse.builder()
         .resultCount(3)
         .results(
