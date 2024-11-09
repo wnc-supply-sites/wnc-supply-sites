@@ -78,6 +78,7 @@
         const sites = fetchSelections('site');
         const counties = fetchSelections('county');
         const items = fetchSelections('item');
+        const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c=>c.value);
 
         const response = await fetch(url, {
           method: 'POST',
@@ -90,7 +91,7 @@
             items: items,
             counties: counties,
             // TODO: read checked item status
-            itemStatus: ["Urgent", "Requested" ]
+            itemStatus: itemStatus
           })
         });
 
@@ -188,6 +189,7 @@
 
       .oversupply {
         font-weight: bold;
+        color: #0808b6
       }
 
       .requested {
@@ -246,20 +248,20 @@
             </div>
           </td>
           <td rowspan="3">
-            <fieldset class="vertical">
+            <fieldset class="vertical" id="item-status">
               <legend>Item Availability</legend>
               <div>
-                <input type="checkbox" id="urgent-items" name="scales" checked />
+                <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need"/>
                 <label for="urgent-items" class="urgent">Urgently Needed</label>
               </div>
 
               <div>
-                <input type="checkbox" id="oversupply-items" name="scales" checked />
+                <input type="checkbox" id="oversupply-items" name="item-availability" checked value="Oversupply"/>
                 <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
               </div>
 
               <div>
-                <input type="checkbox" id="requested-items" name="scales" checked />
+                <input type="checkbox" id="requested-items" name="scales" checked value="Requested"/>
                 <label for="requested-items" class="requested">Requested</label>
               </div>
             </fieldset>

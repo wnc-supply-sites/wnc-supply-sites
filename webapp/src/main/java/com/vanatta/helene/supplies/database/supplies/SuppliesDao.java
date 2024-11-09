@@ -47,7 +47,7 @@ public class SuppliesDao {
     if (!request.getItems().isEmpty()) {
       query.append("and i.name in (<items>)");
     }
-    query.append("order by c.name, s.name, i.name");
+    query.append("order by c.name, s.name, i.sort_order, i.name");
 
     return jdbi.withHandle(
         handle -> {

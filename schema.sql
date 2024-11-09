@@ -44,12 +44,13 @@ create table item
 create table item_status
 (
     id serial primary key,
-    name varchar(32) not null unique
+    name varchar(32) not null unique,
+    sort_order integer not null unique,
 );
 
-insert into item_status(name) values ('Requested');
-insert into item_status(name) values ('Oversupply');
-insert into item_status(name) values ('Urgent Need');
+insert into item_status(name) values ('Urgent Need', 1);
+insert into item_status(name) values ('Oversupply', 2);
+insert into item_status(name) values ('Requested', 3);
 
 
 create table site_item

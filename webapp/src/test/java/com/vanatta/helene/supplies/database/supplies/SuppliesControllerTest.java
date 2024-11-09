@@ -7,6 +7,8 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SuppliesControllerTest {
 
@@ -152,6 +154,18 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Watauga", "Buncombe")).build());
     assertThat(result.getResultCount()).isEqualTo(2);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"Urgent Need", "Oversupply", "Requested"})
+  void requestByItemStatus(String itemStatus) {
+    var result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder().itemStatus(List.of(itemStatus)).build());
+    result.getResults().stream()
+        .map(SiteSupplyResponse.SiteSupplyData::getItems)
+        .flatMap(List::stream)
+        .forEach(item -> assertThat(item.getStatus()).isEqualTo(itemStatus));
   }
 
   @Test
