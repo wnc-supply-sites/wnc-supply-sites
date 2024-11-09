@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.supplies;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Value
@@ -16,7 +17,8 @@ public class SiteSupplyResponse {
   static class SiteSupplyData {
     String site;
     String county;
-    List<SiteItem> items;
+    @Builder.Default
+    List<SiteItem> items = new ArrayList<>();
   }
 
   @Value

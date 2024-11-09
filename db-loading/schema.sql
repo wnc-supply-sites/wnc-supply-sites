@@ -57,7 +57,7 @@ create table site_item
     id      serial primary key,
     site_id integer references site (id) not null,
     item_id integer references item (id) not null,
-    item_status integer references item_status(id) not null
+    item_status_id integer references item_status(id) not null
 );
 
 alter table site_item

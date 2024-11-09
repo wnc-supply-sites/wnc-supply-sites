@@ -1,19 +1,18 @@
 package com.vanatta.helene.supplies.database.supplies;
 
-import org.assertj.core.api.Assertions;
-import org.jdbi.v3.core.Jdbi;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class SuppliesControllerTest {
 
   static final Jdbi jdbiTest =
-      Jdbi.create("jdbc:postgresql://localhost:5432/wnc_helene_test", "wnc_helene", "wnc_helene");
+      Jdbi.create("jdbc:postgresql://localhost:5432/wnc_helene_test", "wnc_helene", "wnc_helene")
+          .installPlugin(new SqlObjectPlugin());
 
   private final SuppliesController suppliesController = new SuppliesController(jdbiTest);
 
@@ -39,28 +38,28 @@ class SuppliesControllerTest {
             "insert into item(name) values('new clothes')",
             "insert into item(name) values('random stuff')",
             """
-               insert into site_item(site_id, item_id, item_status) values(
+               insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site1'),
                 (select id from item where name = 'water'),
                 (select id from item_status where name = 'Requested')
                )
             """,
             """
-               insert into site_item(site_id, item_id, item_status) values(
+               insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site1'),
                 (select id from item where name = 'new clothes'),
                 (select id from item_status where name = 'Urgent Need')
                )
             """,
             """
-               insert into site_item(site_id, item_id, item_status) values(
+               insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site2'),
                 (select id from item where name = 'used clothes'),
                 (select id from item_status where name = 'Oversupply')
                )
             """,
             """
-               insert into site_item(site_id, item_id, item_status) values(
+               insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site2'),
                 (select id from item where name = 'water'),
                 (select id from item_status where name = 'Oversupply')
@@ -140,13 +139,18 @@ class SuppliesControllerTest {
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Ashe")).build());
+            SiteSupplyRequest.builder().counties(List.of("Watauga")).build());
     assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getCounty()).isEqualTo("Ashe");
+    assertThat(result.getResults().getFirst().getCounty()).isEqualTo("Watauga");
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Ashe", "Buncombe")).build());
+    assertThat(result.getResultCount()).isEqualTo(1);
+
+    result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder().counties(List.of("Watauga", "Buncombe")).build());
     assertThat(result.getResultCount()).isEqualTo(2);
   }
 
@@ -161,11 +165,11 @@ class SuppliesControllerTest {
                 .build());
     assertThat(result.getResultCount()).isEqualTo(0);
 
-    // there exists a site with 'Ashe' county, but no items
+    // there exists a site with 'Watauga' county, but no items
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
-                .counties(List.of("Ashe"))
+                .counties(List.of("Watauga"))
                 .items(List.of("Random stuff"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(0);
@@ -197,5 +201,14 @@ class SuppliesControllerTest {
                 .counties(List.of("Watauga"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(1);
+  }
+
+  @Test
+  void multipleItemsAreAggregated() {
+    var result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder().sites(List.of("site1")).build());
+    assertThat(result.getResultCount()).isEqualTo(1);
+    assertThat(result.getResults().getFirst().getItems()).hasSize(2);
   }
 }

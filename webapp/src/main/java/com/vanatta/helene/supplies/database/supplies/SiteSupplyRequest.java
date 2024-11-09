@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -12,9 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SiteSupplyRequest {
-  List<String> sites;
-  List<String> items;
-  List<String> counties;
-  List<String> itemStatus;
-
+  @Builder.Default List<String> sites = new ArrayList<>();
+  @Builder.Default List<String> items = new ArrayList<>();
+  @Builder.Default List<String> counties = new ArrayList<>();
+  @Builder.Default List<String> itemStatus = new ArrayList<>();
 }
