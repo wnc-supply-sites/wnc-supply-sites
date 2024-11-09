@@ -10,8 +10,7 @@ class DbNeedsLoaderTest {
 
   @BeforeAll
   static void clearDatabase() {
-    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_need").execute());
-    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_supply").execute());
+    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_item").execute());
     DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site").execute());
     DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from item").execute());
   }
@@ -36,7 +35,7 @@ class DbNeedsLoaderTest {
 
     String countItems =
         """
-      select count(*) from site_need where
+      select count(*) from site_item where
          site_id = (select id from site where name = 'org name')
       """;
     int count =
@@ -44,8 +43,5 @@ class DbNeedsLoaderTest {
             handle -> handle.createQuery(countItems).mapTo(Integer.class).one());
 
     Assertions.assertThat(count).isEqualTo(5);
-
-    // should not contain any new lines after insert
-    // do some spot checking for counts
   }
 }

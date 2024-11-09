@@ -36,18 +36,41 @@ public class DbSupplyLoader {
                         handle
                             .createUpdate(
                                 """
-                              insert into site_supply(site_id, item_id)
-                              values (:siteId, :itemId)
+                              insert into site_item(site_id, item_id, item_status_id)
+                              values (:siteId, :itemId, (select id from item_status where name = 'Oversupply'))
                           """)
                             .bind("siteId", siteId)
                             .bind("itemId", itemId)
                             .execute());
               } catch (Exception e) {
-                throw new RuntimeException(
-                    String.format(
-                        "Error inserting site supply item: %s, for site: %s",
-                        item, supplyData.getSiteName()),
-                    e);
+                if (e.getMessage().contains("duplicate key value violates")) {
+                  try {
+                    jdbi.withHandle(
+                        handle ->
+                            handle
+                                .createUpdate(
+                                    """
+                                update site_item
+                                set item_status_id = (select id from item_status where name = 'Oversupply')
+                                where site_id = :siteId and item_id = :itemId
+                            """)
+                                .bind("siteId", siteId)
+                                .bind("itemId", itemId)
+                                .execute());
+                  } catch (Exception ex) {
+                    throw new RuntimeException(
+                        String.format(
+                            "Failed updating site supply item: %s, for site: %s",
+                            item, supplyData.getSiteName()),
+                        ex);
+                  }
+                } else {
+                  throw new RuntimeException(
+                      String.format(
+                          "Error inserting site supply item: %s, for site: %s",
+                          item, supplyData.getSiteName()),
+                      e);
+                }
               }
             });
   }

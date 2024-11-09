@@ -124,10 +124,11 @@ public class DbNeedsLoader {
     // next, load up the item needs for the specific location
     String insertSiteNeedsSql =
         """
-           insert into site_need (site_id, item_id)
+           insert into site_item (site_id, item_id, item_status_id)
              values(
                 (select id from site where name = :siteName),
-                (select id from item where name = :itemName)
+                (select id from item where name = :itemName),
+                (select id from item_status where name = 'Requested')
              )
         """;
     allItems.forEach(

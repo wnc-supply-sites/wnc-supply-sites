@@ -11,8 +11,8 @@ class DbSuppyLoaderTest {
 
   @BeforeAll
   static void setup() {
-    DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_need").execute());
-    DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_supply").execute());
+    DbSupplyLoader.jdbiTest.withHandle(
+        handle -> handle.createUpdate("delete from site_item").execute());
     DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site").execute());
     DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from item").execute());
 
@@ -32,6 +32,14 @@ class DbSuppyLoaderTest {
         handle -> handle.createUpdate("insert into item(name) values ('n95 mask')").execute());
     DbSupplyLoader.jdbiTest.withHandle(
         handle -> handle.createUpdate("insert into item(name) values ('canned tomato')").execute());
+    DbSupplyLoader.jdbiTest.withHandle(
+        handle -> handle.createUpdate("""
+                insert into site_item(site_id, item_id, item_status_id)  values (
+                       (select id from site where name = 'site-name'),
+                       (select id from item where name = 'diaper'),
+                       (select id from item_status where name = 'Requested')
+                    );
+            """).execute());
   }
 
   @Test
@@ -43,7 +51,12 @@ class DbSuppyLoaderTest {
     int count =
         DbSupplyLoader.jdbiTest.withHandle(
             handle ->
-                handle.createQuery("select count(*) from site_supply").mapTo(Integer.class).one());
+                handle
+                    .createQuery(
+                        "select count(*) from site_item where item_status_id = " +
+                            "(select id from item_status where name = 'Oversupply')")
+                    .mapTo(Integer.class)
+                    .one());
 
     assertThat(count).isEqualTo(2);
   }

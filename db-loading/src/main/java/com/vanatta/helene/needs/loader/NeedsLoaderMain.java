@@ -9,8 +9,7 @@ public class NeedsLoaderMain {
   }
 
   static void loadData(Jdbi jdbi, String fileName) {
-    jdbi.withHandle(handle -> handle.createUpdate("delete from site_need").execute());
-    jdbi.withHandle(handle -> handle.createUpdate("delete from site_supply").execute());
+    jdbi.withHandle(handle -> handle.createUpdate("delete from site_item").execute());
     jdbi.withHandle(handle -> handle.createUpdate("delete from site").execute());
 
     var csvData = NeedsCsvLoader.readFile(fileName);

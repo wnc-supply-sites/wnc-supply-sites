@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.vanatta.helene.supply.loader.SupplyLoaderMainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-03T02:16:45" hostname="Alissas-MBP.search.charter.net" time="0.368">
+<testsuite name="com.vanatta.helene.supply.loader.SupplyLoaderMainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-09T21:13:54" hostname="Alissas-MBP.search.charter.net" time="0.925">
   <properties/>
-  <testcase name="sampleLoad()" classname="com.vanatta.helene.supply.loader.SupplyLoaderMainTest" time="0.368"/>
+  <testcase name="sampleLoad()" classname="com.vanatta.helene.supply.loader.SupplyLoaderMainTest" time="0.925"/>
   <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
+  <system-err><![CDATA[SLF4J(I): Connected with provider of type [ch.qos.logback.classic.spi.LogbackServiceProvider]
+]]></system-err>
 </testsuite>

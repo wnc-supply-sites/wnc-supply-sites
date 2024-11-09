@@ -10,9 +10,8 @@ class SupplyLoaderMainTest {
 
   @BeforeAll
   static void setup() {
-    DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_need").execute());
     DbSupplyLoader.jdbiTest.withHandle(
-        handle -> handle.createUpdate("delete from site_supply").execute());
+        handle -> handle.createUpdate("delete from site_item").execute());
     DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site").execute());
     DbSupplyLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from item").execute());
 
@@ -65,7 +64,7 @@ class SupplyLoaderMainTest {
     int rowCount =
         DbSupplyLoader.jdbiTest.withHandle(
             handle ->
-                handle.createQuery("select count(*) from site_supply").mapTo(Integer.class).one());
+                handle.createQuery("select count(*) from site_item").mapTo(Integer.class).one());
     Assertions.assertThat(rowCount).isNotZero();
   }
 }

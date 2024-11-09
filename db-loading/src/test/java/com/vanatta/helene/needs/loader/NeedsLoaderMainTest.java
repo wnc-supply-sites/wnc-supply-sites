@@ -7,8 +7,7 @@ class NeedsLoaderMainTest {
 
   @BeforeAll
   static void clearDatabase() {
-    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_need").execute());
-    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_supply").execute());
+    DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site_item").execute());
     DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from site").execute());
     DbNeedsLoader.jdbiTest.withHandle(handle -> handle.createUpdate("delete from item").execute());
   }
