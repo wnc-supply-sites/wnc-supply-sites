@@ -49,33 +49,44 @@
         document.getElementById(selectionElement + "-selections").innerHTML = "";
       }
 
-      function updateData() {
-        var data = JSON.parse(`{
-          "resultCount": 30,
-          "results": [
-            {"site": "site1", "county": "Ashe", "items": [
-                {"name": "water", "status": "oversupply"},
-                {"name": "bread", "status": "requested"},
-                {"name": "heater", "status": "urgent"}
-              ]},
-            {"site": "site2", "county": "Watauga", "items": [
-                {"name": "water", "status": "requested"},
-                {"name": "bread", "status": "requested"}
-              ]}
-          ]
-        }`);
+      async function updateData() {
+        // var data = JSON.parse(`{
+        //   "resultCount": 30,
+        //   "results": [
+        //     {"site": "site1", "county": "Ashe", "items": [
+        //         {"name": "water", "status": "oversupply"},
+        //         {"name": "bread", "status": "requested"},
+        //         {"name": "heater", "status": "urgent"}
+        //       ]},
+        //     {"site": "site2", "county": "Watauga", "items": [
+        //         {"name": "water", "status": "requested"},
+        //         {"name": "bread", "status": "requested"}
+        //       ]}
+        //   ]
+        // }`);
 
-        var tbody = document.getElementById('results-table').querySelector("tbody");
-        tbody.innerHTML =
-          data.results.map(r => `
+        const url = "http://localhost:8080/supplies";
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Response status: ${response.status}, ${response}`);
+          }
+
+          const data = await response.json();
+
+          var tbody = document.getElementById('results-table').querySelector("tbody");
+          tbody.innerHTML =
+                  data.results.map(r => `
               <tr>
                   <td>${r.site}</td>
                   <td>${r.county}</td>
                   <td>${formatItems(r.items)}</td>
               </tr>`)
-                  .join("\n");
-        document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
-
+                          .join("\n");
+          document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
+        } catch (error) {
+          console.error(error.message);
+        }
       }
 
       function formatItems(items) {
@@ -213,7 +224,7 @@
 
               <div>
                 <input type="checkbox" id="requested-items" name="scales" checked />
-                <label for="requested-items" class="requested">Requested & Available</label>
+                <label for="requested-items" class="requested">Requested</label>
               </div>
             </fieldset>
           </td>

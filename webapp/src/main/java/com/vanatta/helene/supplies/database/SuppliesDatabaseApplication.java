@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SuppliesDatabaseApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SuppliesDatabaseApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(SuppliesDatabaseApplication.class, args);
+  }
 }
