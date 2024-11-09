@@ -37,22 +37,36 @@
 
       function fetchSelections(selectionElement) {
         var selectionsDiv = document.getElementById(selectionElement + "-selections");
-        var selections = [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
-        // var selections = document.querySelectorAll("#" + selectionElement + "-selections #selected-value");
-        //.map(v => v.innerHTML);
-        //.join(',');
-        return selections;
+        return [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
       }
 
       function selectAll(selectionElement) {
         let selectElement = document.querySelector('[id=' + selectionElement + '-select]');
         [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
-
-
       }
 
       function clearSelections(selectionElement) {
         document.getElementById(selectionElement + "-selections").innerHTML = "";
+      }
+
+      function updateData() {
+        var sampleData = JSON.parse(`{
+          "result-count": 30,
+          "results": [
+            {"site": "site1", "county": "Ashe", items: [
+                {"name": "water", "status": "oversupply"},
+                {"name": "bread", "status": "requested"},
+                {"name": "heater", "status": "urgent"}
+              ]},
+            {"site": "site2", "county": "Watauga", items: [
+                {"name": "water", "status": "requested"},
+                {"name": "bread", "status": "requested"},
+              ]}
+          ]
+        }`);
+
+        var tbody = document.getElementById('results-table').querySelector("tbody");
+        tbody.innerHTML = "<tr></tr>"
       }
 
 
@@ -77,6 +91,11 @@
         margin: 3px;
       }
 
+      .selection-list {
+        height: 400px;
+        overflow-y: scroll;
+      }
+
     </style>
   </head>
   <body>
@@ -90,6 +109,11 @@
                 <option value=""></option>
                 <option value="site1">site1</option>
                 <option value="site2">site2</option>
+                <option value="site3">site3</option>
+                <option value="site4">site4</option>
+                <option value="site5">site5</option>
+                <option value="site6">site6</option>
+                <option value="site7">site7</option>
               </select>
             </div>
           </td>
@@ -114,6 +138,25 @@
               </select>
             </div>
           </td>
+          <td rowspan="3">
+            <fieldset class="vertical">
+              <legend>Item Availability</legend>
+              <div>
+                <input type="checkbox" id="urgent-items" name="scales" checked />
+                <label for="urgent-items">Urgently Needed</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="requested-items" name="scales" checked />
+                <label for="requested-items">Requested & Available</label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="oversupply-items" name="scales" checked />
+                <label for="oversupply-items">Oversupply (too many)</label>
+              </div>
+            </fieldset>
+          </td>
         </tr>
         <tr>
           <td>
@@ -137,21 +180,23 @@
         </tr>
         <tr>
           <td>
-            <div id="site-selections">
+            <div id="site-selections" class="selection-list">
             </div>
           </td>
           <td>
-            <div id="county-selections">
+            <div id="county-selections" class="selection-list">
             </div>
           </td>
           <td>
-            <div id="item-selections">
+            <div id="item-selections" class="selection-list">
             </div>
           </td>
         </tr>
       </table>
-      <button type="button" onclick="handleClick()">Update</button>
+      <hr>
+      <button type="button" onclick="updateData()">Update</button>
     </form>
+    <hr>
     <table id="results-table">
       <thead>
         <tr>
