@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.vanatta.helene.needs.loader.DbNeedsLoaderTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-09T21:13:55" hostname="Alissas-MBP.search.charter.net" time="0.297">
-  <properties/>
-  <testcase name="populateData()" classname="com.vanatta.helene.needs.loader.DbNeedsLoaderTest" time="0.297"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

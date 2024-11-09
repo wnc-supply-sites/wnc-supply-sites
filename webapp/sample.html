@@ -75,6 +75,10 @@
 
       async function fetchSupplyData() {
         const url = "http://localhost:8080/supplies";
+        const sites = fetchSelections('site');
+        const counties = fetchSelections('county');
+        const items = fetchSelections('item');
+
         const response = await fetch(url, {
           method: 'POST',
           headers: {
@@ -82,9 +86,10 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            sites: ["site1"],
-            items: [],
-            counties: ["Ashe", "Buncombe"],
+            sites: sites,
+            items: items,
+            counties: counties,
+            // TODO: read checked item status
             itemStatus: ["Urgent", "Requested" ]
           })
         });

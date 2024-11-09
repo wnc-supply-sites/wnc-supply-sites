@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.vanatta.helene.needs.loader.NeedsLoaderMainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-09T21:13:55" hostname="Alissas-MBP.search.charter.net" time="7.111">
-  <properties/>
-  <testcase name="integTest()" classname="com.vanatta.helene.needs.loader.NeedsLoaderMainTest" time="7.111"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
