@@ -54,7 +54,7 @@
 
         try {
           document.getElementById("error-div").innerHTML = "";
-
+          startLoaderAnimation();
           const data = await fetchSupplyData();
           // write data to the results table
           document.getElementById('results-table').querySelector("tbody").innerHTML =
@@ -66,11 +66,26 @@
               </tr>`)
                           .join("\n");
           document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
+          stopLoaderAnimation();
         } catch (error) {
+          stopLoaderAnimation();
           console.error(error, error.stack);
           document.getElementById("error-div").innerHTML =
                   `Error fetching data. Server is not available. Error: ${error.message}`;
         }
+      }
+
+      function startLoaderAnimation() {
+        document.getElementById('popup-div').style.animationPlayState = 'running';
+        document.getElementById('popup-div').style.display = 'block';
+        document.getElementById('update-button').innerText = '';
+      }
+
+      function stopLoaderAnimation() {
+        document.getElementById('popup-div').style.animationPlayState = 'paused';
+        document.getElementById('popup-div').style.display = 'none';
+        document.getElementById('update-button').innerText = 'Update';
+
       }
 
       async function fetchSupplyData() {
@@ -168,8 +183,6 @@
         background-color: #777;
         color: #EEE;
         padding: 8px;
-        /*border: 1px solid lightgrey;*/
-        /*padding: 2px;*/
       }
 
       table.results-table tbody tr:nth-child(odd) {
@@ -203,6 +216,44 @@
         color: #b60808;
       }
 
+      /*
+         Holder container for the update button and a loading indicator popup div.
+       */
+      #parent-div {
+        position: relative;
+      }
+
+      #update-button {
+        width: 100px;
+        height: 30px;
+      }
+
+      /*
+         Shows a loading indicator that is placed on top of the 'update' button.
+         Shown after 'update' button is clicked. The loading indicator is a 'div'
+         with background image, we place it on top of the 'update' button exactly
+         to make it look like we changed the background of the update button.
+      */
+      #popup-div {
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+        background-image: url(loading-spinner.png);
+        position: absolute;
+        top: 0px;
+        left: 40px;
+        z-index: 10;
+        background-repeat: no-repeat;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        display: none;
+        animation-play-state: paused;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
@@ -305,7 +356,11 @@
       </table>
       <hr>
       <div class="horizontal">
-        <button type="button" onclick="updateData()">Update</button>
+        <div id="parent-div">
+          <div id="popup-div"></div>
+          <button type="button" onclick="updateData()" id="update-button">Update</button>
+        </div>
+
         <div id="result-count" style="margin-left: 10px"></div>
       </div>
     </form>
