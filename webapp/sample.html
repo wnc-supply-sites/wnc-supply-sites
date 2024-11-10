@@ -18,7 +18,7 @@
         if(value === "") {
           return;
         }
-        var currentSelections = fetchSelections(elementSelected);
+        var currentSelections = readSelections(elementSelected);
         if(currentSelections.includes(value)) {
           return;
         }
@@ -35,7 +35,7 @@
         div.parentNode.removeChild(div);
       }
 
-      function fetchSelections(selectionElement) {
+      function readSelections(selectionElement) {
         var selectionsDiv = document.getElementById(selectionElement + "-selections");
         return [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
       }
@@ -90,9 +90,9 @@
 
       async function fetchSupplyData() {
         const url = "http://localhost:8080/supplies";
-        const sites = fetchSelections('site');
-        const counties = fetchSelections('county');
-        const items = fetchSelections('item');
+        const sites = readSelections('site');
+        const counties = readSelections('county');
+        const items = readSelections('item');
         const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c=>c.value);
 
         const response = await fetch(url, {
