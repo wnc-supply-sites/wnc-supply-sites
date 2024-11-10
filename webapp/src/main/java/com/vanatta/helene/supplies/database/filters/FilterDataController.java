@@ -9,15 +9,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * FilterData are the controls which allow for filtering by site/item/county. These are relatively
+ * dynamic data that come from database.
+ */
 @Slf4j
 @RestController
 public class FilterDataController {
+  /**
+   * Counties are not expected to change for the next couple years, can be cached in memory without
+   * going stale.
+   */
   private static List<String> cachedCountiesList;
+
   private final Jdbi jdbi;
 
   FilterDataController(Jdbi jdbi) {
     this.jdbi = jdbi;
-    if(cachedCountiesList == null) {
+    if (cachedCountiesList == null) {
       cachedCountiesList = FilterDataDao.getAllCounties(jdbi);
     }
   }
@@ -31,6 +40,4 @@ public class FilterDataController {
         .items(FilterDataDao.getAllItems(jdbi))
         .build();
   }
-
-
 }
