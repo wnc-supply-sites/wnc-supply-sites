@@ -5,8 +5,8 @@
     <script type="text/javascript">
       function handleSelection(elementSelected)
       {
-        var selectionBox = document.getElementById(elementSelected + "-select");
-        var selection = selectionBox.value;
+        const selectionBox = document.getElementById(elementSelected + "-select");
+        const selection = selectionBox.value;
 
         if(selection === "") {
           return;
@@ -18,12 +18,12 @@
         if(value === "") {
           return;
         }
-        var currentSelections = readSelections(elementSelected);
+        const currentSelections = readSelections(elementSelected);
         if(currentSelections.includes(value)) {
           return;
         }
 
-        var selectionDiv = document.getElementById(elementSelected + "-selections");
+        const selectionDiv = document.getElementById(elementSelected + "-selections");
         selectionDiv.innerHTML +=
                 `<div class='box horizontal' onclick="removeDiv(this)">
                     <div style="margin-right: 5px"><button type="button">X</button></div>
@@ -36,12 +36,12 @@
       }
 
       function readSelections(selectionElement) {
-        var selectionsDiv = document.getElementById(selectionElement + "-selections");
+        const selectionsDiv = document.getElementById(selectionElement + "-selections");
         return [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
       }
 
       function selectAll(selectionElement) {
-        let selectElement = document.querySelector('[id=' + selectionElement + '-select]');
+        const selectElement = document.querySelector('[id=' + selectionElement + '-select]');
         [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
       }
 
@@ -50,8 +50,6 @@
       }
 
       async function updateData() {
-
-
         try {
           document.getElementById("error-div").innerHTML = "";
           startLoaderAnimation();
@@ -139,8 +137,6 @@
                 ).join("\n")
                 + "\n</ul>";
       }
-
-
     </script>
 
     <style>
