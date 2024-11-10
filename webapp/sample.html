@@ -54,7 +54,7 @@
           document.getElementById("error-div").innerHTML = "";
           startLoaderAnimation();
           const data = await fetchSupplyData();
-          const notAcceptingDonationsHtml = "<br><div class="not-accepting-donations">Closed to Donations</div>";
+          const notAcceptingDonationsHtml = "<br><div class='not-accepting-donations'>(Closed to Donations)</div>";
           // write data to the results table
           document.getElementById('results-table').querySelector("tbody").innerHTML =
                   data.results.map(r => `
@@ -151,6 +151,7 @@
       .not-accepting-donations {
         font-size: 0.9em;
         font-style: italic;
+        color: #960808;
       }
 
       .vertical {
@@ -416,23 +417,28 @@
         <tr>
           <th>Site</th>
           <th>County</th>
-          <th>Items</th>
+          <th>Supplies Available & Requested</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
-        </tr>
-        <tr>
-          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
-        </tr>
-        <tr>
-          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
-        </tr>
-        <tr>
-          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>
-        </tr>
+<!--        <tr>-->
+<!--          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td>Example</td><td>Ashe</td><td>Soap<br>Shampoo</td>-->
+<!--        </tr>-->
       </tbody>
     </table>
+
+    <script>
+
+      updateData();
+    </script>
   </body>
 </html>
