@@ -169,6 +169,17 @@ class SuppliesControllerTest {
   }
 
   @Test
+  void multipleItemStatus() {
+    var result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder().itemStatus(List.of("Oversupply", "Urgent Need")).build());
+    result.getResults().stream()
+        .map(SiteSupplyResponse.SiteSupplyData::getItems)
+        .flatMap(List::stream)
+        .forEach(item -> assertThat(item.getStatus()).isIn("Oversupply", "Urgent Need"));
+  }
+
+  @Test
   void mixedRequest() {
     // no sites with the requested county, or requested item
     var result =

@@ -28,28 +28,27 @@ public class SuppliesController {
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
 
-    results.stream()
-        .forEach(
-            result ->
-                aggregatedResults
-                    .computeIfAbsent(
-                        result.getSiteId(),
-                        r ->
-                            SiteSupplyData.builder()
-                                .site(result.getSite())
-                                .county(result.getCounty())
-                                .build())
-                    .getItems()
-                    .add(
-                        SiteItem.builder()
-                            .name(result.getItem())
-                            .status(result.getItemStatus())
-                            .build()));
+    results.forEach(
+        result ->
+            aggregatedResults
+                .computeIfAbsent(
+                    result.getSiteId(),
+                    r ->
+                        SiteSupplyData.builder()
+                            .site(result.getSite())
+                            .county(result.getCounty())
+                            .build())
+                .getItems()
+                .add(
+                    SiteItem.builder()
+                        .name(result.getItem())
+                        .status(result.getItemStatus())
+                        .build()));
     List<SiteSupplyData> resultData =
         aggregatedResults.values().stream() //
-            .sorted(Comparator
-                .comparing(SiteSupplyData::getCounty)
-                .thenComparing(SiteSupplyData::getSite))
+            .sorted(
+                Comparator.comparing(SiteSupplyData::getCounty)
+                    .thenComparing(SiteSupplyData::getSite))
             .toList();
 
     return SiteSupplyResponse.builder() //

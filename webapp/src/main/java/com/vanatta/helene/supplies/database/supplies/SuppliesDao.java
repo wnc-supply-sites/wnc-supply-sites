@@ -47,7 +47,11 @@ public class SuppliesDao {
     if (!request.getItems().isEmpty()) {
       query.append("and i.name in (<items>)");
     }
-    query.append("order by c.name, s.name, i.sort_order, i.name");
+
+    if(!request.getItemStatus().isEmpty()) {
+      query.append("and ist.name in (<item_status>)");
+    }
+    query.append("order by c.name, s.name, ist.sort_order, i.name");
 
     return jdbi.withHandle(
         handle -> {
@@ -60,6 +64,9 @@ public class SuppliesDao {
           }
           if (!request.getItems().isEmpty()) {
             queryBuilder.bindList("items", request.getItems());
+          }
+          if(!request.getItemStatus().isEmpty()) {
+            queryBuilder.bindList("item_status", request.getItemStatus());
           }
 
           return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
