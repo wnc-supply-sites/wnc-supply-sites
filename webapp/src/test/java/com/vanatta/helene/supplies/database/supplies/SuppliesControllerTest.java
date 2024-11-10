@@ -24,16 +24,19 @@ class SuppliesControllerTest {
             "delete from site_item",
             "delete from item",
             "delete from site",
+            // site1, in Watauga county
             """
                 insert into site(name, address, city, county_id, state) values(
                    'site1', 'address1', 'city1', (select id from county where name = 'Watauga'), 'NC'
                 );
                 """,
+            // site2, in Buncombe county, not accepting donations
             """
-                insert into site(name, address, city, county_id, state) values(
-                   'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), 'NC'
+                insert into site(name, address, city, county_id, state, accepting_donations) values(
+                   'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), 'NC', false
                 );
                 """,
+            // site3, in Buncombe county, not active
             """
                 insert into site(name, address, city, county_id, state, active) values(
                    'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', false
@@ -79,8 +82,7 @@ class SuppliesControllerTest {
                 (select id from item where name = 'water'),
                 (select id from item_status where name = 'Requested')
                )
-            """
-        )
+            """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));
   }
 
@@ -242,6 +244,7 @@ class SuppliesControllerTest {
     assertThat(result.getResultCount()).isEqualTo(1);
   }
 
+  /** Validate that we aggregate the item list together by site. */
   @Test
   void multipleItemsAreAggregated() {
     var result =
@@ -249,5 +252,50 @@ class SuppliesControllerTest {
             SiteSupplyRequest.builder().sites(List.of("site1")).build());
     assertThat(result.getResultCount()).isEqualTo(1);
     assertThat(result.getResults().getFirst().getItems()).hasSize(2);
+  }
+
+  /**
+   * We have one site that is accepting donations and active, we should only get one site back when
+   * querying for sites that are accepting donations.
+   */
+  @Test
+  void queryForAcceptingDonationsOnly() {
+    // show exactly the sites accepting donations
+    var result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder()
+                .acceptingDonations(true)
+                .notAcceptingDonations(false)
+                .build());
+    assertThat(result.getResultCount()).isEqualTo(1);
+    assertThat(result.getResults().getFirst().isAcceptingDonations()).isTrue();
+
+    // show exactly the sites not accepting donations
+    result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder()
+                .acceptingDonations(false)
+                .notAcceptingDonations(true)
+                .build());
+    assertThat(result.getResultCount()).isEqualTo(1);
+    assertThat(result.getResults().getFirst().isAcceptingDonations()).isFalse();
+
+    // show all sites (false to both would always return no results, instead we just ignore the flag
+    result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder()
+                .acceptingDonations(false)
+                .notAcceptingDonations(false)
+                .build());
+    assertThat(result.getResultCount()).isEqualTo(2);
+
+    // show all sites
+    result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder()
+                .acceptingDonations(true)
+                .notAcceptingDonations(true)
+                .build());
+    assertThat(result.getResultCount()).isEqualTo(2);
   }
 }

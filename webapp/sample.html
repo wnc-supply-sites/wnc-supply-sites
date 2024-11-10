@@ -54,11 +54,12 @@
           document.getElementById("error-div").innerHTML = "";
           startLoaderAnimation();
           const data = await fetchSupplyData();
+          const notAcceptingDonationsHtml = "<br><div class="not-accepting-donations">Closed to Donations</div>";
           // write data to the results table
           document.getElementById('results-table').querySelector("tbody").innerHTML =
                   data.results.map(r => `
               <tr>
-                  <td>${r.site}</td>
+                  <td>${r.site}${r.acceptingDonations ? '' : notAcceptingDonationsHtml}</td>
                   <td>${r.county}</td>
                   <td>${formatItems(r.items)}</td>
               </tr>`)
@@ -93,6 +94,7 @@
         const items = readSelections('item');
         const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c=>c.value);
         const acceptingDonations = document.getElementById('accepting-donations').checked;
+        const notAcceptingDonations = document.getElementById('not-accepting-donations').checked;
 
         const response = await fetch(url, {
           method: 'POST',
@@ -105,7 +107,8 @@
             items: items,
             counties: counties,
             itemStatus: itemStatus,
-            acceptingDonations: acceptingDonations
+            acceptingDonations: acceptingDonations,
+            notAcceptingDonations: notAcceptingDonations
           })
         });
 
@@ -141,6 +144,15 @@
     </script>
 
     <style>
+      html, table {
+        font-size: 1.1em;
+      }
+
+      .not-accepting-donations {
+        font-size: 0.9em;
+        font-style: italic;
+      }
+
       .vertical {
         display: flex;
         flex-direction: column;
@@ -371,13 +383,19 @@
               </div>
             </td>
             <td>
-              <fieldset class="vertical" id="site-status">
-                <legend>Site Status</legend>
-                <div>
-                  <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"/>
-                  <label for="accepting-donations">Accepting Donations</label>
-                </div>
-              </fieldset>
+              <div class="vertical">
+                <fieldset class="vertical" id="site-status">
+                  <legend>Site Status</legend>
+                  <div>
+                    <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"/>
+                    <label for="accepting-donations">Accepting Donations</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="not-accepting-donations" checked value="Not Accepting Donations"/>
+                    <label for="not-accepting-donations">Closed to Donations</label>
+                  </div>
+                </fieldset>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -19,6 +19,7 @@ public class SiteSupplyResponse {
     String county;
     @Builder.Default
     List<SiteItem> items = new ArrayList<>();
+    boolean acceptingDonations;
   }
 
   @Value

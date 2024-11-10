@@ -14,6 +14,7 @@ public class SuppliesDao {
   public static class SuppliesQueryResult {
 
     Long siteId;
+    boolean acceptingDonations;
     String site;
     String county;
     String item;
@@ -26,6 +27,7 @@ public class SuppliesDao {
             """
       select
         s.id siteId,
+        s.accepting_donations acceptingDonations,
         s.name site,
         c.name county,
         i.name item,
@@ -39,18 +41,23 @@ public class SuppliesDao {
       """);
 
     if (!request.getSites().isEmpty()) {
-      query.append("and s.name in (<sites>)");
+      query.append("and s.name in (<sites>)\n");
     }
     if (!request.getCounties().isEmpty()) {
-      query.append("and c.name in (<counties>)");
+      query.append("and c.name in (<counties>)\n");
     }
     if (!request.getItems().isEmpty()) {
-      query.append("and i.name in (<items>)");
+      query.append("and i.name in (<items>)\n");
     }
 
-    if(!request.getItemStatus().isEmpty()) {
-      query.append("and ist.name in (<item_status>)");
+    if (!request.getItemStatus().isEmpty()) {
+      query.append("and ist.name in (<item_status>)\n");
     }
+
+    if (request.getAcceptingDonations() != request.getNotAcceptingDonations()) {
+      query.append("and accepting_donations = ").append(request.getAcceptingDonations()).append("\n");
+    }
+
     query.append("order by c.name, s.name, ist.sort_order, i.name");
 
     return jdbi.withHandle(
@@ -65,7 +72,7 @@ public class SuppliesDao {
           if (!request.getItems().isEmpty()) {
             queryBuilder.bindList("items", request.getItems());
           }
-          if(!request.getItemStatus().isEmpty()) {
+          if (!request.getItemStatus().isEmpty()) {
             queryBuilder.bindList("item_status", request.getItemStatus());
           }
 

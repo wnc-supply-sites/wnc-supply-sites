@@ -37,6 +37,7 @@ public class SuppliesController {
                         SiteSupplyData.builder()
                             .site(result.getSite())
                             .county(result.getCounty())
+                            .acceptingDonations(result.isAcceptingDonations())
                             .build())
                 .getItems()
                 .add(

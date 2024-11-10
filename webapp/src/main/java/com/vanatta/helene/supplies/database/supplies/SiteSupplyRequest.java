@@ -18,4 +18,5 @@ public class SiteSupplyRequest {
   @Builder.Default List<String> counties = new ArrayList<>();
   @Builder.Default List<String> itemStatus = new ArrayList<>();
   @Builder.Default Boolean acceptingDonations = true;
+  @Builder.Default Boolean notAcceptingDonations = true;
 }
