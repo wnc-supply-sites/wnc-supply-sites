@@ -92,6 +92,7 @@
         const counties = readSelections('county');
         const items = readSelections('item');
         const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c=>c.value);
+        const acceptingDonations = document.getElementById('accepting-donations').checked;
 
         const response = await fetch(url, {
           method: 'POST',
@@ -103,8 +104,8 @@
             sites: sites,
             items: items,
             counties: counties,
-            // TODO: read checked item status
-            itemStatus: itemStatus
+            itemStatus: itemStatus,
+            acceptingDonations: acceptingDonations
           })
         });
 

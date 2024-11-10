@@ -34,6 +34,11 @@ class SuppliesControllerTest {
                    'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), 'NC'
                 );
                 """,
+            """
+                insert into site(name, address, city, county_id, state, active) values(
+                   'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', false
+                );
+                """,
             "insert into item(name) values('water')",
             "insert into item(name) values('gloves')",
             "insert into item(name) values('used clothes')",
@@ -66,7 +71,16 @@ class SuppliesControllerTest {
                 (select id from item where name = 'water'),
                 (select id from item_status where name = 'Oversupply')
                )
-            """)
+            """,
+            // insert item for inactive 'site3'
+            """
+               insert into site_item(site_id, item_id, item_status_id) values(
+                (select id from site where name = 'site3'),
+                (select id from item where name = 'water'),
+                (select id from item_status where name = 'Requested')
+               )
+            """
+        )
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));
   }
 

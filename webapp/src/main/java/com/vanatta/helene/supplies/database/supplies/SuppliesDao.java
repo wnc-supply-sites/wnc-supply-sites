@@ -35,7 +35,7 @@ public class SuppliesDao {
       join site_item si on si.site_id = s.id
       join item i on i.id = si.item_id
       join item_status ist on ist.id = si.item_status_id
-      where 1=1
+      where active = true
       """);
 
     if (!request.getSites().isEmpty()) {
