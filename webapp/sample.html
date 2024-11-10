@@ -68,10 +68,14 @@
           stopLoaderAnimation();
         } catch (error) {
           stopLoaderAnimation();
-          console.error(error, error.stack);
-          document.getElementById("error-div").innerHTML =
-                  `Error fetching data. Server is not available. Error: ${error.message}`;
+          showError(error);
         }
+      }
+
+      function showError(error) {
+        console.error(error, error.stack);
+        document.getElementById("error-div").innerHTML =
+                `Error fetching data. Server is not available. Error: ${error.message}`;
       }
 
       function startLoaderAnimation() {
@@ -437,8 +441,41 @@
     </table>
 
     <script>
+      const url = "http://localhost:8080/filter-data";
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+              .then(response => {
+                        if (!response.ok) {
+                          throw new Error(`Server ${response.status} error: ${response.statusText}`);
+                        }
+                        return response.json()
 
-      updateData();
+                      }
+              )
+              .then(filterData => {
+                const emptyOption = "<option value=''></option>\n";
+                document.getElementById('site-select').innerHTML =
+                        emptyOption +
+                        filterData.sites.map(v =>
+                                `<option value="${v}">${v}</option>`).join("\n");
+                document.getElementById('county-select').innerHTML =
+                        emptyOption +
+                        filterData.counties.map(v =>
+                                `<option value="${v}">${v}</option>`).join("\n");
+                document.getElementById('item-select').innerHTML =
+                        emptyOption +
+                        filterData.items.map(v =>
+                                `<option value="${v}">${v}</option>`).join("\n");
+                updateData();
+
+              }).catch(error => {
+        showError(error);
+      });
     </script>
   </body>
 </html>
