@@ -30,7 +30,7 @@ jobs:
       - name: build docker container
         if: ${{ env.IS_MASTER_BUILD }}
         run: |
-          cd webapp; 
+          cd webapp;
           ./gradlew clean bootJar
-          docker build . --tag ghcr.io/helene-supplies-webapp:latest
-          docker push ghcr.io/helene-supplies-webapp:latest
+          docker build . --tag ghcr.io/DanVanAtta/helene-supplies-webapp:latest
+          docker push ghcr.io/DanVanAtta/helene-supplies-webapp:latest
