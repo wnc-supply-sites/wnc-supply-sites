@@ -43,10 +43,12 @@
       function selectAll(selectionElement) {
         const selectElement = document.querySelector('[id=' + selectionElement + '-select]');
         [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
+        document.getElementById(selectionElement + "-select").selectedIndex = 0;
       }
 
       function clearSelections(selectionElement) {
         document.getElementById(selectionElement + "-selections").innerHTML = "";
+        document.getElementById(selectionElement + "-select").selectedIndex = 0;
       }
 
       async function updateData() {
@@ -314,14 +316,6 @@
               <div class="vertical">
                 <label for="site-select">Donation Site:</label>
                 <select id="site-select" onchange="handleSelection('site')">
-                  <option value=""></option>
-                  <option value="site1">site1</option>
-                  <option value="site2">site2</option>
-                  <option value="site3">site3</option>
-                  <option value="site4">site4</option>
-                  <option value="site5">site5</option>
-                  <option value="site6">site6</option>
-                  <option value="site7">site7</option>
                 </select>
               </div>
             </td>
@@ -329,10 +323,6 @@
               <div class="vertical">
                 <label for="county-select">County:</label>
                 <select id="county-select" onchange="handleSelection('county')">
-                  <option value=""></option>
-                  <option value="Ashe">Ashe</option>
-                  <option value="Buncombe">Buncombe</option>
-                  <option value="Watauga">Watauga</option>
                 </select>
               </div>
             </td>
@@ -340,9 +330,6 @@
               <div class="vertical">
                 <label for="item-select">Items:</label>
                 <select id="item-select" onchange="handleSelection('item')">
-                  <option value=""></option>
-                  <option value="shampoo">Shampoo</option>
-                  <option value="gloves">Gloves</option>
                 </select>
               </div>
             </td>
