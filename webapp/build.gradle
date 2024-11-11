@@ -26,6 +26,7 @@ dependencies {
 
 	implementation 'org.jdbi:jdbi3-core:3.47.0'
 	implementation 'org.jdbi:jdbi3-sqlobject:3.47.0'
+	implementation 'com.zaxxer:HikariCP:6.1.0'
 
 	runtimeOnly 'org.postgresql:postgresql:42.7.4'
 
