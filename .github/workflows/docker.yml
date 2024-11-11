@@ -32,5 +32,5 @@ jobs:
         run: |
           cd webapp;
           ./gradlew clean bootJar
-          docker build . --tag ghcr.io/DanVanAtta/helene-supplies-webapp:latest
-          docker push ghcr.io/DanVanAtta/helene-supplies-webapp:latest
+          docker build . --tag ghcr.io/wnc-helene-supplies-database/webapp:latest
+          docker push ghcr.io/wnc-helene-supplies-database/webapp:latest
