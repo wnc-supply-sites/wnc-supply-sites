@@ -1,13 +1,11 @@
 package com.vanatta.helene.supplies.database.filters;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * FilterData are the controls which allow for filtering by site/item/county. These are relatively

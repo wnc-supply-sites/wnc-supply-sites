@@ -10,5 +10,4 @@ public class HtmlController {
   public String home() {
     return "supplies";
   }
-
 }

@@ -1,11 +1,9 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.List;
 
 public class SuppliesDao {
 

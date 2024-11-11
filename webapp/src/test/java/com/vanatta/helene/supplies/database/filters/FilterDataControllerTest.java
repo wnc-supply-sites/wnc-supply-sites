@@ -1,13 +1,11 @@
 package com.vanatta.helene.supplies.database.filters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import org.assertj.core.api.Assertions;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 
 class FilterDataControllerTest {
 

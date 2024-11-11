@@ -16,12 +16,12 @@ public class FilterDataDao {
   }
 
   public static List<String> getAllSites(Jdbi jdbi) {
-    String query = """
+    String query =
+        """
         select name
         from site
         where active = true order by lower(name)
         """;
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
-
 }

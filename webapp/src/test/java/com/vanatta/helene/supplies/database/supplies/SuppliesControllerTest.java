@@ -2,9 +2,8 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

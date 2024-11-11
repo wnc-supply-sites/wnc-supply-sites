@@ -75,6 +75,5 @@ public class TestConfiguration {
                )
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));
-
   }
 }

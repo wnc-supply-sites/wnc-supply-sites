@@ -1,173 +1,173 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
-    <title>WNC Supplies Database</title>
-    <script type="text/javascript" src="supplies.js"></script>
-    <link rel="stylesheet" href="supplies.css">
-  </head>
-  <body>
-    <div id="error-div" class="error-div"></div>
+  <title>WNC Supplies Database</title>
+  <script type="text/javascript" src="supplies.js"></script>
+  <link rel="stylesheet" href="supplies.css">
+</head>
+<body>
+<div id="error-div" class="error-div"></div>
 
-    <form>
-      <table class="filters-table">
-        <colgroup>
-          <col style="width:150px">
-          <col style="width:125px">
-          <col style="width:125px">
-        </colgroup>
+<form>
+  <table class="filters-table">
+    <colgroup>
+      <col style="width:150px">
+      <col style="width:125px">
+      <col style="width:125px">
+    </colgroup>
 
-        <tbody>
-          <tr>
-            <td>
-              <div class="vertical">
-                <label for="site-select">Donation Site:</label>
-                <select id="site-select" onchange="handleSelection('site')">
-                </select>
-              </div>
-            </td>
-            <td>
-              <div class="vertical">
-                <label for="county-select">County:</label>
-                <select id="county-select" onchange="handleSelection('county')">
-                </select>
-              </div>
-            </td>
-            <td>
-              <div class="vertical">
-                <label for="item-select">Items:</label>
-                <select id="item-select" onchange="handleSelection('item')">
-                </select>
-              </div>
-            </td>
-            <td rowspan="2">
-              <fieldset class="vertical" id="item-status">
-                <legend>Item Availability</legend>
-                <div>
-                  <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need"/>
-                  <label for="urgent-items" class="urgent">Urgently Needed</label>
-                </div>
-
-                <div>
-                  <input type="checkbox" id="oversupply-items" name="item-availability" checked value="Oversupply"/>
-                  <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
-                </div>
-
-                <div>
-                  <input type="checkbox" id="requested-items" name="scales" checked value="Requested"/>
-                  <label for="requested-items" class="requested">Requested</label>
-                </div>
-              </fieldset>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="vertical">
-                <button type="button" onclick="selectAll('site')">Select all</button>
-                <button type="button" onclick="clearSelections('site')">Clear all</button>
-              </div>
-            </td>
-            <td>
-              <div class="vertical">
-                <button type="button" onclick="selectAll('county')">Select all</button>
-                <button type="button" onclick="clearSelections('county')">Clear all</button>
-              </div>
-            </td>
-            <td>
-              <div class="vertical">
-                <button type="button" onclick="selectAll('item')">Select all</button>
-                <button type="button" onclick="clearSelections('item')">Clear all</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div id="site-selections" class="selection-list">
-              </div>
-            </td>
-            <td>
-              <div id="county-selections" class="selection-list">
-              </div>
-            </td>
-            <td>
-              <div id="item-selections" class="selection-list">
-              </div>
-            </td>
-            <td>
-              <div class="vertical">
-                <fieldset class="vertical" id="site-status">
-                  <legend>Site Status</legend>
-                  <div>
-                    <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"/>
-                    <label for="accepting-donations">Accepting Donations</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="not-accepting-donations" checked value="Not Accepting Donations"/>
-                    <label for="not-accepting-donations">Closed to Donations</label>
-                  </div>
-                </fieldset>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <hr>
-      <div class="horizontal">
-        <div id="parent-div">
-          <div id="popup-div"></div>
-          <button type="button" onclick="updateData()" id="update-button">Update</button>
+    <tbody>
+    <tr>
+      <td>
+        <div class="vertical">
+          <label for="site-select">Donation Site:</label>
+          <select id="site-select" onchange="handleSelection('site')">
+          </select>
         </div>
+      </td>
+      <td>
+        <div class="vertical">
+          <label for="county-select">County:</label>
+          <select id="county-select" onchange="handleSelection('county')">
+          </select>
+        </div>
+      </td>
+      <td>
+        <div class="vertical">
+          <label for="item-select">Items:</label>
+          <select id="item-select" onchange="handleSelection('item')">
+          </select>
+        </div>
+      </td>
+      <td rowspan="2">
+        <fieldset class="vertical" id="item-status">
+          <legend>Item Availability</legend>
+          <div>
+            <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need"/>
+            <label for="urgent-items" class="urgent">Urgently Needed</label>
+          </div>
 
-        <div id="result-count" style="margin-left: 10px"></div>
-      </div>
-    </form>
-    <hr>
-    <table id="results-table" class="results-table">
-      <thead>
-        <tr>
-          <th>Site</th>
-          <th>County</th>
-          <th>Supplies Available & Requested</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
+          <div>
+            <input type="checkbox" id="oversupply-items" name="item-availability" checked value="Oversupply"/>
+            <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
+          </div>
 
-    <script>
-      const url = "filter-data";
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          <div>
+            <input type="checkbox" id="requested-items" name="scales" checked value="Requested"/>
+            <label for="requested-items" class="requested">Requested</label>
+          </div>
+        </fieldset>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="vertical">
+          <button type="button" onclick="selectAll('site')">Select all</button>
+          <button type="button" onclick="clearSelections('site')">Clear all</button>
+        </div>
+      </td>
+      <td>
+        <div class="vertical">
+          <button type="button" onclick="selectAll('county')">Select all</button>
+          <button type="button" onclick="clearSelections('county')">Clear all</button>
+        </div>
+      </td>
+      <td>
+        <div class="vertical">
+          <button type="button" onclick="selectAll('item')">Select all</button>
+          <button type="button" onclick="clearSelections('item')">Clear all</button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="site-selections" class="selection-list">
+        </div>
+      </td>
+      <td>
+        <div id="county-selections" class="selection-list">
+        </div>
+      </td>
+      <td>
+        <div id="item-selections" class="selection-list">
+        </div>
+      </td>
+      <td>
+        <div class="vertical">
+          <fieldset class="vertical" id="site-status">
+            <legend>Site Status</legend>
+            <div>
+              <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"/>
+              <label for="accepting-donations">Accepting Donations</label>
+            </div>
+            <div>
+              <input type="checkbox" id="not-accepting-donations" checked value="Not Accepting Donations"/>
+              <label for="not-accepting-donations">Closed to Donations</label>
+            </div>
+          </fieldset>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <hr>
+  <div class="horizontal">
+    <div id="parent-div">
+      <div id="popup-div"></div>
+      <button type="button" onclick="updateData()" id="update-button">Update</button>
+    </div>
+
+    <div id="result-count" style="margin-left: 10px"></div>
+  </div>
+</form>
+<hr>
+<table id="results-table" class="results-table">
+  <thead>
+  <tr>
+    <th>Site</th>
+    <th>County</th>
+    <th>Supplies Available & Requested</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+  const url = "filter-data";
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+        if (!response.ok) {
+          throw new Error(`Server ${response.status} error: ${response.statusText}`);
         }
-      })
-              .then(response => {
-                        if (!response.ok) {
-                          throw new Error(`Server ${response.status} error: ${response.statusText}`);
-                        }
-                        return response.json()
+        return response.json()
 
-                      }
-              )
-              .then(filterData => {
-                const emptyOption = "<option value=''></option>\n";
-                document.getElementById('site-select').innerHTML =
-                        emptyOption +
-                        filterData.sites.map(v =>
-                                `<option value="${v}">${v}</option>`).join("\n");
-                document.getElementById('county-select').innerHTML =
-                        emptyOption +
-                        filterData.counties.map(v =>
-                                `<option value="${v}">${v}</option>`).join("\n");
-                document.getElementById('item-select').innerHTML =
-                        emptyOption +
-                        filterData.items.map(v =>
-                                `<option value="${v}">${v}</option>`).join("\n");
-                updateData();
+      }
+  )
+  .then(filterData => {
+    const emptyOption = "<option value=''></option>\n";
+    document.getElementById('site-select').innerHTML =
+        emptyOption +
+        filterData.sites.map(v =>
+            `<option value="${v}">${v}</option>`).join("\n");
+    document.getElementById('county-select').innerHTML =
+        emptyOption +
+        filterData.counties.map(v =>
+            `<option value="${v}">${v}</option>`).join("\n");
+    document.getElementById('item-select').innerHTML =
+        emptyOption +
+        filterData.items.map(v =>
+            `<option value="${v}">${v}</option>`).join("\n");
+    updateData();
 
-              }).catch(error => {
-        showError(error);
-      });
-    </script>
-  </body>
+  }).catch(error => {
+    showError(error);
+  });
+</script>
+</body>
 </html>

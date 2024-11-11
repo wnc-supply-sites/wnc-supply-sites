@@ -1,6 +1,7 @@
 html, table {
     font-size: 1.1em;
 }
+
 select {
     max-width: 150px;
 }
@@ -37,7 +38,7 @@ table.filters-table {
 
 }
 
-table.filters-table tbody{
+table.filters-table tbody {
     vertical-align: top;
 }
 
@@ -129,8 +130,12 @@ table.results-table tbody tr:nth-child(even) {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 ::-webkit-scrollbar {
