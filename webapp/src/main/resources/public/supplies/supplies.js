@@ -53,13 +53,18 @@ async function updateData() {
     document.getElementById("error-div").innerHTML = "";
     startLoaderAnimation();
     const data = await fetchSupplyData();
-    const notAcceptingDonationsHtml = "<br><div class='not-accepting-donations'>(Not Accepting Donations)</div>";
+    const notAcceptingDonationsHtml = "<br><span class='not-accepting-donations'>(Not Accepting Donations)</span>";
     // write data to the results table
     document.getElementById('results-table').querySelector("tbody").innerHTML =
         data.results.map(r => `
               <tr>
-                  <td>${r.site}${r.acceptingDonations ? '' : notAcceptingDonationsHtml}</td>
-                  <td>${r.county}</td>
+                  <td>
+                    <a href='site-detail?id=${r.id}'><span class="site-name">${r.site}</span></a>
+                    ${r.acceptingDonations ? '' : notAcceptingDonationsHtml}
+                  </td>
+                  <td>
+                    ${r.county}
+                  </td>
                   <td>${formatItems(r.items)}</td>
               </tr>`)
         .join("\n");

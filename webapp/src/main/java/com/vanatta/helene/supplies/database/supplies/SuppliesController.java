@@ -45,8 +45,9 @@ public class SuppliesController {
             aggregatedResults
                 .computeIfAbsent(
                     result.getSiteId(),
-                    r ->
+                    _ ->
                         SiteSupplyData.builder()
+                            .id(result.getSiteId())
                             .site(result.getSite())
                             .county(result.getCounty())
                             .acceptingDonations(result.isAcceptingDonations())
