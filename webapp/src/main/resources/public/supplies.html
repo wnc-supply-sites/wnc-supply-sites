@@ -1,17 +1,17 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
-  <title>WNC Supplies Database</title>
+  <title>WNC Supplies</title>
   <script type="text/javascript" src="supplies/supplies.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="supplies/supplies.css">
 </head>
 <body>
 
-<h1><a href="../" class="link-home">WNC Supplies Database</a></h1>
+<h1><a href="../" class="link-home">WNC Supplies</a></h1>
 
 <div id="error-div" class="error-div"></div>
 
-<form>
+<div class="horizontal">
   <table class="filters-table">
     <colgroup>
       <col style="width:150px">
@@ -41,25 +41,6 @@
           <select id="item-select" onchange="handleSelection('item')">
           </select>
         </div>
-      </td>
-      <td rowspan="2">
-        <fieldset class="vertical" id="item-status">
-          <legend>Item Status</legend>
-          <div>
-            <input type="checkbox" id="urgent-items" checked value="Urgent Need" onchange="updateData()"/>
-            <label for="urgent-items" class="urgent">Urgently Needed</label>
-          </div>
-
-          <div>
-            <input type="checkbox" id="oversupply-items" {{! checked }} {{ overSupplyValue }} value="Oversupply"  onchange="updateData()"/>
-            <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
-          </div>
-
-          <div>
-            <input type="checkbox" id="requested-items" checked value="Requested" onchange="updateData()"/>
-            <label for="requested-items" class="requested">Requested</label>
-          </div>
-        </fieldset>
       </td>
     </tr>
     <tr>
@@ -95,33 +76,59 @@
         <div id="item-selections" class="selection-list">
         </div>
       </td>
-      <td>
-        <div class="vertical">
-          <fieldset class="vertical" id="site-status">
-            <legend>Site Status</legend>
-            <div>
-              <input type="checkbox" id="accepting-donations" checked value="Accepting Donations" onchange="updateData()"/>
-              <label for="accepting-donations">Accepting Donations</label>
-            </div>
-            <div>
-              <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }} value="Not Accepting Donations" onchange="updateData()"/>
-              <label for="not-accepting-donations">Not Accepting Donations</label>
-            </div>
-          </fieldset>
-        </div>
-      </td>
     </tr>
     </tbody>
   </table>
-  <hr>
-  <div class="horizontal">
-    <div id="parent-div">
-      <div id="loader-div"></div>
+
+  <div class="vertical">
+
+    <div>
+      <fieldset class="vertical" id="item-status">
+        <legend>Item Status</legend>
+        <div>
+          <input type="checkbox" id="urgent-items" checked value="Urgent Need" onchange="updateData()"/>
+          <label for="urgent-items" class="urgent">Urgently Needed</label>
+        </div>
+
+        <div>
+          <input type="checkbox" id="oversupply-items" {{! checked }} {{ overSupplyValue }} value="Oversupply"
+                 onchange="updateData()"/>
+          <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
+        </div>
+
+        <div>
+          <input type="checkbox" id="requested-items" checked value="Requested" onchange="updateData()"/>
+          <label for="requested-items" class="requested">Requested</label>
+        </div>
+      </fieldset>
     </div>
 
-    <div id="result-count" style="margin-left: 10px"></div>
+    <div class="vertical">
+      <fieldset class="vertical" id="site-status">
+        <legend>Site Status</legend>
+        <div>
+          <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"
+                 onchange="updateData()"/>
+          <label for="accepting-donations">Accepting Donations</label>
+        </div>
+        <div>
+          <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }}
+                 value="Not Accepting Donations" onchange="updateData()"/>
+          <label for="not-accepting-donations">Not Accepting Donations</label>
+        </div>
+      </fieldset>
+    </div>
   </div>
-</form>
+</div>
+
+<hr>
+<div class="horizontal">
+  <div id="parent-div">
+    <div id="loader-div"></div>
+  </div>
+  <div id="result-count" style="margin-left: 10px"></div>
+</div>
+
 <hr>
 <table id="results-table" class="results-table">
   <thead>

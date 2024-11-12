@@ -1,0 +1,47 @@
+html {
+    padding: 15px;
+}
+
+/*.content-container {*/
+/*    width: 600px;*/
+/*}*/
+
+dl {
+    display: grid;
+    grid-template-columns: max-content auto;
+}
+
+dt {
+    grid-column-start: 1;
+    margin: 5px;
+}
+
+dd {
+    grid-column-start: 2;
+    margin: 5px;
+}
+
+.back-link {
+    margin-top: 15px;
+    margin-left: 10px;
+    font-size: 0.9em;
+}
+
+.mapouter {
+    position: relative;
+    text-align: right;
+    width: 600px;
+    height: 600px;
+}
+
+.gmap_canvas {
+    overflow: hidden;
+    background: none !important;
+    width: 600px;
+    height: 600px;
+}
+
+.gmap_iframe {
+    width: 600px !important;
+    height: 600px !important;
+}
