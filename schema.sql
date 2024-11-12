@@ -1,7 +1,5 @@
 -- wnc_helene   DDL
 
-
-
 create table county
 (
     id   serial primary key,
@@ -67,64 +65,33 @@ alter table site_item
 
 -------
 
-insert into county (name)
-values ('Ashe');
-insert into county (name)
-values ('Avery');
-insert into county (name)
-values ('Buncombe');
-insert into county (name)
-values ('Burke');
-insert into county (name)
-values ('Caldwell');
-insert into county (name)
-values ('Catawba');
-insert into county (name)
-values ('Cocke');
-insert into county (name)
-values ('Hamblen');
-insert into county (name)
-values ('Hamblen county (name) values ');
-insert into county (name)
-values ('Hancock');
-insert into county (name)
-values ('Haywood');
-insert into county (name)
-values ('Henderson');
-insert into county (name)
-values ('Iredell');
-insert into county (name)
-values ('Jackson');
-insert into county (name)
-values ('Jefferson');
-insert into county (name)
-values ('Knox');
-insert into county (name)
-values ('Macon');
-insert into county (name)
-values ('Madison');
-insert into county (name)
-values ('McDowell');
-insert into county (name)
-values ('Mecklenburg');
-insert into county (name)
-values ('Mitchell');
-insert into county (name)
-values ('Other');
-insert into county (name)
-values ('Rutherford');
-insert into county (name)
-values ('Sevier');
-insert into county (name)
-values ('Sullivan');
-insert into county (name)
-values ('Swain');
-insert into county (name)
-values ('Washington');
-insert into county (name)
-values ('Watauga');
-insert into county (name)
-values ('Wilkes');
-insert into county (name)
-values ('Yancey');
+insert into county (name) values ('Ashe');
+insert into county (name) values ('Avery');
+insert into county (name) values ('Buncombe');
+insert into county (name) values ('Burke');
+insert into county (name) values ('Caldwell');
+insert into county (name) values ('Catawba');
+insert into county (name) values ('Cocke');
+insert into county (name) values ('Hamblen');
+insert into county (name) values ('Hancock');
+insert into county (name) values ('Haywood');
+insert into county (name) values ('Henderson');
+insert into county (name) values ('Iredell');
+insert into county (name) values ('Jackson');
+insert into county (name) values ('Jefferson');
+insert into county (name) values ('Knox');
+insert into county (name) values ('Macon');
+insert into county (name) values ('Madison');
+insert into county (name) values ('McDowell');
+insert into county (name) values ('Mecklenburg');
+insert into county (name) values ('Mitchell');
+insert into county (name) values ('Other');
+insert into county (name) values ('Rutherford');
+insert into county (name) values ('Sevier');
+insert into county (name) values ('Sullivan');
+insert into county (name) values ('Swain');
+insert into county (name) values ('Washington');
+insert into county (name) values ('Watauga');
+insert into county (name) values ('Wilkes');
+insert into county (name) values ('Yancey');
 
