@@ -46,17 +46,17 @@
         <fieldset class="vertical" id="item-status">
           <legend>Item Availability</legend>
           <div>
-            <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need"/>
+            <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need"  onchange="updateData()"/>
             <label for="urgent-items" class="urgent">Urgently Needed</label>
           </div>
 
           <div>
-            <input type="checkbox" id="oversupply-items" name="item-availability" {{! checked }} {{ overSupplyValue }} value="Oversupply"/>
+            <input type="checkbox" id="oversupply-items" name="item-availability" {{! checked }} {{ overSupplyValue }} value="Oversupply"  onchange="updateData()"/>
             <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
           </div>
 
           <div>
-            <input type="checkbox" id="requested-items" name="scales" checked value="Requested"/>
+            <input type="checkbox" id="requested-items" name="scales" checked value="Requested"  onchange="updateData()"/>
             <label for="requested-items" class="requested">Requested</label>
           </div>
         </fieldset>
@@ -100,11 +100,11 @@
           <fieldset class="vertical" id="site-status">
             <legend>Site Status</legend>
             <div>
-              <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"/>
+              <input type="checkbox" id="accepting-donations" checked value="Accepting Donations" onchange="updateData()"/>
               <label for="accepting-donations">Accepting Donations</label>
             </div>
             <div>
-              <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }} value="Not Accepting Donations"/>
+              <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }} value="Not Accepting Donations"  onchange="updateData()"/>
               <label for="not-accepting-donations">Not Accepting Donations</label>
             </div>
           </fieldset>
@@ -115,11 +115,6 @@
   </table>
   <hr>
   <div class="horizontal">
-    <div id="parent-div">
-      <div id="popup-div"></div>
-      <button type="button" onclick="updateData()" id="update-button">Update</button>
-    </div>
-
     <div id="result-count" style="margin-left: 10px"></div>
   </div>
 </form>

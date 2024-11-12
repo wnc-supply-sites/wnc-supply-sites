@@ -1,4 +1,4 @@
-function handleSelection(elementSelected) {
+async function handleSelection(elementSelected) {
   const selectionBox = document.getElementById(elementSelected + "-select");
   const selection = selectionBox.value;
 
@@ -6,6 +6,7 @@ function handleSelection(elementSelected) {
     return;
   }
   addSelection(elementSelected, selection);
+  await updateData();
 }
 
 function addSelection(elementSelected, value) {
@@ -18,14 +19,15 @@ function addSelection(elementSelected, value) {
   }
   const selectionDiv = document.getElementById(elementSelected + "-selections");
   selectionDiv.innerHTML +=
-      `<div class='box horizontal' onclick="removeDiv(this)">
+      `<div class='box horizontal' onclick="removeSelection(this)">
                     <div style="margin-right: 5px"><button type="button">X</button></div>
                     <div class="selected-value">${value}</div>\
                 </div>`
 }
 
-function removeDiv(div) {
+function removeSelection(div) {
   div.parentNode.removeChild(div);
+  updateData();
 }
 
 function readSelections(selectionElement) {
@@ -33,21 +35,22 @@ function readSelections(selectionElement) {
   return [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
 }
 
-function selectAll(selectionElement) {
+async function selectAll(selectionElement) {
   const selectElement = document.querySelector('[id=' + selectionElement + '-select]');
   [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
+  await updateData();
 }
 
-function clearSelections(selectionElement) {
+async function clearSelections(selectionElement) {
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
+  await updateData();
 }
 
 async function updateData() {
   try {
     document.getElementById("error-div").innerHTML = "";
-    startLoaderAnimation();
     const data = await fetchSupplyData();
     const notAcceptingDonationsHtml = "<br><div class='not-accepting-donations'>(Not Accepting Donations)</div>";
     // write data to the results table
@@ -59,10 +62,8 @@ async function updateData() {
                   <td>${formatItems(r.items)}</td>
               </tr>`)
         .join("\n");
-    document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
-    stopLoaderAnimation();
+    document.getElementById('result-count').innerHTML = `${data.resultCount} donation sites`;
   } catch (error) {
-    stopLoaderAnimation();
     showError(error);
   }
 }
@@ -71,19 +72,6 @@ function showError(error) {
   console.error(error, error.stack);
   document.getElementById("error-div").innerHTML =
       `Error fetching data. Server is not available. Error: ${error.message}`;
-}
-
-function startLoaderAnimation() {
-  document.getElementById('popup-div').style.animationPlayState = 'running';
-  document.getElementById('popup-div').style.display = 'block';
-  document.getElementById('update-button').innerText = '';
-}
-
-function stopLoaderAnimation() {
-  document.getElementById('popup-div').style.animationPlayState = 'paused';
-  document.getElementById('popup-div').style.display = 'none';
-  document.getElementById('update-button').innerText = 'Update';
-
 }
 
 async function fetchSupplyData() {

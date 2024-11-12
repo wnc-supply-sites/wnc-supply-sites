@@ -1,4 +1,3 @@
-
 select {
     max-width: 150px;
 }
@@ -9,8 +8,7 @@ select {
     color: #960808;
 }
 
-
-
+/* The 'box' is rendered around selected values. */
 .box {
     border: 1px solid black;
     padding: 3px;
@@ -30,7 +28,6 @@ table.filters-table {
 table.filters-table tbody {
     vertical-align: top;
 }
-
 
 table.results-table {
     padding: 10px;
@@ -84,56 +81,3 @@ table.results-table tbody tr:nth-child(even) {
     color: #b60808;
 }
 
-/*
-   Holder container for the update button and a loading indicator popup div.
- */
-#parent-div {
-    position: relative;
-}
-
-#update-button {
-    width: 100px;
-    height: 30px;
-}
-
-/*
-   Shows a loading indicator that is placed on top of the 'update' button.
-   Shown after 'update' button is clicked. The loading indicator is a 'div'
-   with background image, we place it on top of the 'update' button exactly
-   to make it look like we changed the background of the update button.
-*/
-#popup-div {
-    width: 30px;
-    height: 30px;
-    background-size: contain;
-    background-image: url(../../../../loading-spinner.png);
-    position: absolute;
-    top: 0px;
-    left: 40px;
-    z-index: 10;
-    background-repeat: no-repeat;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
-    display: none;
-    animation-play-state: paused;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, .5);
-    box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-}
