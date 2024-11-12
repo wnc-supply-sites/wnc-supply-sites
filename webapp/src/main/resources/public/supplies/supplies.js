@@ -49,7 +49,7 @@ async function updateData() {
     document.getElementById("error-div").innerHTML = "";
     startLoaderAnimation();
     const data = await fetchSupplyData();
-    const notAcceptingDonationsHtml = "<br><div class='not-accepting-donations'>(Closed to Donations)</div>";
+    const notAcceptingDonationsHtml = "<br><div class='not-accepting-donations'>(Not Accepting Donations)</div>";
     // write data to the results table
     document.getElementById('results-table').querySelector("tbody").innerHTML =
         data.results.map(r => `
