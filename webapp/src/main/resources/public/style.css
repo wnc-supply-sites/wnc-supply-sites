@@ -1,0 +1,21 @@
+html, table {
+    font-size: 1.1em;
+    background-color: #F5F5F5;
+    color: #333;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.link-home {
+    color: inherit;
+    text-decoration: inherit;
+    font-weight: inherit;
+}
