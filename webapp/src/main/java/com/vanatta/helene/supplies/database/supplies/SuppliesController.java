@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @RestController
@@ -18,7 +19,18 @@ public class SuppliesController {
 
   private final Jdbi jdbi;
 
+  /** GET requests should be coming from the home page. */
+  @GetMapping("/supplies")
+  public ModelAndView supplies(@RequestParam String mode) {
+    Map<String, String> templateValues = new HashMap<>();
+    templateValues.put(
+        "notAcceptingDonationsValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
+    templateValues.put("overSupplyValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
 
+    return new ModelAndView("supplies", templateValues);
+  }
+
+  /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
   @PostMapping(value = "/supplies")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {

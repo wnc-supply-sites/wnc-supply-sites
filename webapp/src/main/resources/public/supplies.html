@@ -51,7 +51,7 @@
           </div>
 
           <div>
-            <input type="checkbox" id="oversupply-items" name="item-availability" checked value="Oversupply"/>
+            <input type="checkbox" id="oversupply-items" name="item-availability" {{! checked }} {{ overSupplyValue }} value="Oversupply"/>
             <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
           </div>
 
@@ -104,7 +104,7 @@
               <label for="accepting-donations">Accepting Donations</label>
             </div>
             <div>
-              <input type="checkbox" id="not-accepting-donations" checked value="Not Accepting Donations"/>
+              <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }} value="Not Accepting Donations"/>
               <label for="not-accepting-donations">Not Accepting Donations</label>
             </div>
           </fieldset>

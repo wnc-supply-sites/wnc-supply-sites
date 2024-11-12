@@ -8,11 +8,6 @@ public class HtmlController {
 
   @GetMapping("/")
   public String home() {
-    return "home.html";
-  }
-
-  @GetMapping("/supplies")
-  public String supplies() {
-    return "supplies";
+    return "home";
   }
 }
