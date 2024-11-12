@@ -2,10 +2,6 @@ html {
     padding: 15px;
 }
 
-/*.content-container {*/
-/*    width: 600px;*/
-/*}*/
-
 dl {
     display: grid;
     grid-template-columns: max-content auto;
@@ -31,17 +27,17 @@ dd {
     position: relative;
     text-align: right;
     width: 600px;
-    height: 600px;
+    height: 500px;
 }
 
 .gmap_canvas {
     overflow: hidden;
     background: none !important;
     width: 600px;
-    height: 600px;
+    height: 500px;
 }
 
 .gmap_iframe {
     width: 600px !important;
-    height: 600px !important;
+    height: 500px !important;
 }

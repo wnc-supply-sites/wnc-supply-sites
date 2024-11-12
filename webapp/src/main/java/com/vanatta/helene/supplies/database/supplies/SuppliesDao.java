@@ -10,7 +10,6 @@ public class SuppliesDao {
   @NoArgsConstructor
   @Data
   public static class SuppliesQueryResult {
-
     Long siteId;
     boolean acceptingDonations;
     String site;
