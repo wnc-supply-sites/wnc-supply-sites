@@ -46,12 +46,12 @@
         <fieldset class="vertical" id="item-status">
           <legend>Item Status</legend>
           <div>
-            <input type="checkbox" id="urgent-items" name="item-availability" checked value="Urgent Need" onchange="updateData()"/>
+            <input type="checkbox" id="urgent-items" name="item-status" checked value="Urgent Need" onchange="updateData()"/>
             <label for="urgent-items" class="urgent">Urgently Needed</label>
           </div>
 
           <div>
-            <input type="checkbox" id="oversupply-items" name="item-availability" {{! checked }} {{ overSupplyValue }} value="Oversupply"  onchange="updateData()"/>
+            <input type="checkbox" id="oversupply-items" name="item-status" {{! checked }} {{ overSupplyValue }} value="Oversupply"  onchange="updateData()"/>
             <label for="oversupply-items" class="oversupply">Oversupply (too many)</label>
           </div>
 
