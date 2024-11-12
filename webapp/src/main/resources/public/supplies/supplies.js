@@ -6,6 +6,7 @@ function handleSelection(elementSelected) {
     return;
   }
   addSelection(elementSelected, selection);
+  updateData();
 }
 
 function addSelection(elementSelected, value) {
@@ -18,14 +19,15 @@ function addSelection(elementSelected, value) {
   }
   const selectionDiv = document.getElementById(elementSelected + "-selections");
   selectionDiv.innerHTML +=
-      `<div class='box horizontal' onclick="removeDiv(this)">
+      `<div class='box horizontal' onclick="removeSelection(this)">
                     <div style="margin-right: 5px"><button type="button">X</button></div>
                     <div class="selected-value">${value}</div>\
                 </div>`
 }
 
-function removeDiv(div) {
+function removeSelection(div) {
   div.parentNode.removeChild(div);
+  updateData();
 }
 
 function readSelections(selectionElement) {
@@ -37,11 +39,13 @@ function selectAll(selectionElement) {
   const selectElement = document.querySelector('[id=' + selectionElement + '-select]');
   [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
+  updateData();
 }
 
 function clearSelections(selectionElement) {
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
+  updateData();
 }
 
 async function updateData() {
@@ -62,6 +66,7 @@ async function updateData() {
     document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
     stopLoaderAnimation();
   } catch (error) {
+    document.getElementById('result-count').innerHTML = "";
     stopLoaderAnimation();
     showError(error);
   }
@@ -74,16 +79,14 @@ function showError(error) {
 }
 
 function startLoaderAnimation() {
-  document.getElementById('popup-div').style.animationPlayState = 'running';
-  document.getElementById('popup-div').style.display = 'block';
-  document.getElementById('update-button').innerText = '';
+  document.getElementById('result-count').innerHTML = "";
+  document.getElementById('loader-div').style.animationPlayState = 'running';
+  document.getElementById('loader-div').style.display = 'block';
 }
 
 function stopLoaderAnimation() {
-  document.getElementById('popup-div').style.animationPlayState = 'paused';
-  document.getElementById('popup-div').style.display = 'none';
-  document.getElementById('update-button').innerText = 'Update';
-
+  document.getElementById('loader-div').style.animationPlayState = 'paused';
+  document.getElementById('loader-div').style.display = 'none';
 }
 
 async function fetchSupplyData() {

@@ -102,12 +102,12 @@ table.results-table tbody tr:nth-child(even) {
    with background image, we place it on top of the 'update' button exactly
    to make it look like we changed the background of the update button.
 */
-#popup-div {
-    width: 30px;
-    height: 30px;
+#loader-div {
+    width: 25px;
+    height: 25px;
     background-size: contain;
-    background-image: url(../../../../loading-spinner.png);
-    position: absolute;
+    background-image: url(loading-spinner.png);
+    position: relative;
     top: 0px;
     left: 40px;
     z-index: 10;
