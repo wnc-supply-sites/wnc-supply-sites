@@ -1,0 +1,91 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supplies - Inventory Management</title>
+  <script type="text/javascript" src="site-detail/site-detail.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="manage/manage.css"/>
+</head>
+
+<body>
+<h1>WNC Supplies - Supply Site Management</h1>
+
+
+<div id="site-select-div">
+
+  Select supply site:
+  <select>
+
+  </select>
+</div>
+
+
+<h2>Site Info</h2>
+<div class="data-entry-div vertical">
+  <div class="data-field vertical">
+    <label for="siteName">Site Name: </label>
+    <input id="siteName" type="text" size="35"/>
+  </div>
+
+  <div class="data-field vertical">
+    <label for="address">Street Address: </label>
+    <input id="address" type="text"/>
+  </div>
+
+  <div class="data-field vertical">
+    <label for="city">City: </label>
+    <input id="city" type="text"/>
+  </div>
+
+  <div class="data-field vertical">
+    <label for="contactNumber">Contact Number: </label>
+    <input id="contactNumber" type="text"/>
+  </div>
+</div>
+
+<h2>Site Status</h2>
+<div class="data-entry-div vertical">
+  <fieldset>
+    <legend>Accepting Donations:</legend>
+    <input type="radio" id="acceptingYes" name="acceptingDonations" checked/><label for="acceptingYes">Yes</label>
+    <input type="radio" id="acceptingNo" name="acceptingDonations"/><label for="acceptingNo">No</label>
+
+    <span class="statusCaption">A site not accepting donations is still listed.</span>
+  </fieldset>
+
+  <fieldset class="danger-fields">
+    <legend>Site is Active:</legend>
+    <input type="radio" id="activeYes" name="activeSite" checked/><label for="activeYes">Yes</label>
+    <input type="radio" id="activeNo" name="activeSite"/><label for="activeNo">No</label>
+
+    <span class="statusCaption">An inacive site is no longer listed.</span>
+  </fieldset>
+
+
+  <!--  <button>Deactivate Donation Site</button>-->
+  <!--  <button>Activate Donation Site</button>-->
+</div>
+
+<!--<button>Manage Site Inventory</button>-->
+
+<h2>Inventory</h2>
+<div id="inventory">
+  <table>
+    <thead>
+    <tr>
+      <th>Available or Requested</th>
+      <th>Item</th>
+      <th>Item Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+html {
+    width: 700px;
+}
+
+h2 {
+    padding-left: 20px;
+    margin-bottom: 5px;
+}
+
+.data-entry-div {
+    width: 600px;
+    padding-left: 50px;
+}
+
+.data-field {
+    margin: 5px;
+}
+
+div.data-field label {
+    font-weight: bold;
+}
+
+.statusCaption {
+    padding-left: 30px;
+}
+
+.danger-fields {
+    border: 1px solid red;
+}
