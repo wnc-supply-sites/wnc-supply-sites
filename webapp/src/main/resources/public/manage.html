@@ -7,11 +7,9 @@
 </head>
 
 <body>
-<h1>WNC Supplies - Supply Site Management</h1>
-
+<h1><a href="../" class="link-home">WNC Supplies - Supply Site Management</a></h1>
 
 <div id="site-select-div">
-
   Select supply site:
   <select>
 
@@ -19,72 +17,79 @@
 </div>
 
 
-<h2>Site Info</h2>
 <div class="data-entry-div vertical">
-  <div class="data-field vertical">
-    <label for="siteName">Site Name: </label>
-    <input id="siteName" type="text" size="35"/>
-  </div>
+  <h2>Site Info</h2>
+  <div class="data-entry-body">
+    <div class="data-field vertical">
+      <label for="siteName">Site Name: </label>
+      <input id="siteName" type="text" size="35"/>
+    </div>
 
-  <div class="data-field vertical">
-    <label for="address">Street Address: </label>
-    <input id="address" type="text"/>
-  </div>
+    <div class="data-field vertical">
+      <label for="address">Street Address: </label>
+      <input id="address" type="text"/>
+    </div>
 
-  <div class="data-field vertical">
-    <label for="city">City: </label>
-    <input id="city" type="text"/>
-  </div>
+    <div class="data-field vertical">
+      <label for="city">City: </label>
+      <input id="city" type="text"/>
+    </div>
 
-  <div class="data-field vertical">
-    <label for="contactNumber">Contact Number: </label>
-    <input id="contactNumber" type="text"/>
+    <div class="data-field vertical">
+      <label for="contactNumber">Contact Number: </label>
+      <input id="contactNumber" type="text"/>
+    </div>
   </div>
 </div>
 
-<h2>Site Status</h2>
 <div class="data-entry-div vertical">
-  <fieldset>
-    <legend>Accepting Donations:</legend>
-    <input type="radio" id="acceptingYes" name="acceptingDonations" checked/><label for="acceptingYes">Yes</label>
-    <input type="radio" id="acceptingNo" name="acceptingDonations"/><label for="acceptingNo">No</label>
+  <h2>Site Status</h2>
+  <div class="data-entry-body">
+    <fieldset>
+      <legend>Accepting Donations:</legend>
+      <input type="radio" id="acceptingYes" name="acceptingDonations" checked/><label for="acceptingYes">Yes</label>
+      <input type="radio" id="acceptingNo" name="acceptingDonations"/><label for="acceptingNo">No</label>
 
-    <span class="statusCaption">A site not accepting donations is still listed.</span>
-  </fieldset>
+      <span class="statusCaption">A site not accepting donations is still listed.</span>
+    </fieldset>
 
-  <fieldset class="danger-fields">
-    <legend>Site is Active:</legend>
-    <input type="radio" id="activeYes" name="activeSite" checked/><label for="activeYes">Yes</label>
-    <input type="radio" id="activeNo" name="activeSite"/><label for="activeNo">No</label>
+    <fieldset class="danger-fields">
+      <legend>Site is Active:</legend>
+      <input type="radio" id="activeYes" name="activeSite" checked/><label for="activeYes">Yes</label>
+      <input type="radio" id="activeNo" name="activeSite"/><label for="activeNo">No</label>
 
-    <span class="statusCaption">An inacive site is no longer listed.</span>
-  </fieldset>
-
-
-  <!--  <button>Deactivate Donation Site</button>-->
-  <!--  <button>Activate Donation Site</button>-->
+      <span class="statusCaption">An inacive site is no longer listed.</span>
+    </fieldset>
+  </div>
 </div>
 
-<!--<button>Manage Site Inventory</button>-->
 
-<h2>Inventory</h2>
-<div id="inventory">
-  <table>
-    <thead>
-    <tr>
-      <th>Available or Requested</th>
-      <th>Item</th>
-      <th>Item Status</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    </tbody>
-  </table>
+<div class="data-entry-div vertical">
+  <h2>Inventory</h2>
+  <div class="data-entry-body">
+    <table>
+      <thead>
+      <tr>
+        <th>Available or Requested</th>
+        <th>Item</th>
+        <th>Item Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>
+          <select>
+            <option>Requested</option>
+            <option>Urgent</option>
+          </select>
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 </body>
