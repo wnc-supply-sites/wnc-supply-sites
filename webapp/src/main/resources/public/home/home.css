@@ -48,3 +48,13 @@
     box-shadow: #D6D6E7 0 3px 7px inset;
     transform: translateY(2px);
 }
+
+.mission-statement {
+    padding: 10px;
+    margin: 30px;
+    background-color: #F0F0F0;
+    border: solid #111;
+    border-radius: 20px;
+    width: 500px
+
+}
