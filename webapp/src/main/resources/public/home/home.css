@@ -30,9 +30,10 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    white-space: nowrap;
+    white-space: normal;
     will-change: box-shadow, transform;
     font-size: 18px;
+    width: 300px;
 }
 
 .button-30:focus {
@@ -55,6 +56,6 @@
     background-color: #F0F0F0;
     border: solid #111;
     border-radius: 20px;
-    width: 500px
-
+    width: 500px;
+    font-size: 1.1em;
 }
