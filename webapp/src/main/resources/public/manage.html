@@ -7,88 +7,36 @@
 </head>
 
 <body>
-<h1><a href="../" class="link-home">WNC Supplies - Supply Site Management</a></h1>
+
+<h1><a href="../" class="link-home">WNC Supplies - Site Management</a></h1>
 
 <div id="site-select-div">
   Select supply site:
   <select>
-
+    <option></option>
+    <option>Jimmy & Jeans</option>
   </select>
 </div>
 
+<div id="site-manage-select-div">
 
-<div class="data-entry-div vertical">
-  <h2>Site Info</h2>
-  <div class="data-entry-body">
-    <div class="data-field vertical">
-      <label for="siteName">Site Name: </label>
-      <input id="siteName" type="text" size="35"/>
-    </div>
-
-    <div class="data-field vertical">
-      <label for="address">Street Address: </label>
-      <input id="address" type="text"/>
-    </div>
-
-    <div class="data-field vertical">
-      <label for="city">City: </label>
-      <input id="city" type="text"/>
-    </div>
-
-    <div class="data-field vertical">
-      <label for="contactNumber">Contact Number: </label>
-      <input id="contactNumber" type="text"/>
-    </div>
+  <h2 id="site-name-header">[Site Header]</h2>
+  <div class="nav-button-container">
+    <a href="manage-inventory.html">
+      <button type="button" class="nav-button">Manage Site Inventory</button>
+    </a>
   </div>
-</div>
 
-<div class="data-entry-div vertical">
-  <h2>Site Status</h2>
-  <div class="data-entry-body">
-    <fieldset>
-      <legend>Accepting Donations:</legend>
-      <input type="radio" id="acceptingYes" name="acceptingDonations" checked/><label for="acceptingYes">Yes</label>
-      <input type="radio" id="acceptingNo" name="acceptingDonations"/><label for="acceptingNo">No</label>
-
-      <span class="statusCaption">A site not accepting donations is still listed.</span>
-    </fieldset>
-
-    <fieldset class="danger-fields">
-      <legend>Site is Active:</legend>
-      <input type="radio" id="activeYes" name="activeSite" checked/><label for="activeYes">Yes</label>
-      <input type="radio" id="activeNo" name="activeSite"/><label for="activeNo">No</label>
-
-      <span class="statusCaption">An inacive site is no longer listed.</span>
-    </fieldset>
+  <div class="nav-button-container">
+    <a href="manage-contact.html">
+      <button type="button" class="nav-button">Manage Site Contact</button>
+    </a>
   </div>
-</div>
 
-
-<div class="data-entry-div vertical">
-  <h2>Inventory</h2>
-  <div class="data-entry-body">
-    <table>
-      <thead>
-      <tr>
-        <th>Available or Requested</th>
-        <th>Item</th>
-        <th>Item Status</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td>
-          <select>
-            <option>Requested</option>
-            <option>Urgent</option>
-          </select>
-
-        </td>
-      </tr>
-      </tbody>
-    </table>
+  <div class="nav-button-container">
+    <a href="manage-status.html">
+      <button type="button" class="nav-button">Manage Site Status</button>
+    </a>
   </div>
 </div>
 

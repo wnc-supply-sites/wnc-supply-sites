@@ -26,9 +26,29 @@ div.data-field label {
 }
 
 .statusCaption {
-    padding-left: 30px;
+    padding-left: 150px;
 }
 
 .danger-fields {
     border: 1px solid red;
+}
+
+table.inventoryTable td {
+    padding: 5px;
+}
+
+.countySelect {
+    width: 150px;
+}
+
+.shortTextField {
+    width: 150px;
+}
+
+.siteStatusUpdateButton {
+    margin-left: 10px;
+}
+
+.statusControls {
+    width: 300px;
 }
