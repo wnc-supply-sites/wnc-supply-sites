@@ -68,7 +68,7 @@ function addItem() {
 
   const newItemRowHtml = `
           <tr>
-          <td><input type="checkbox" name="requestedItem" id="${itemNameEncoded}Checkbox"
+          <td><input type="checkbox" id="${itemNameEncoded}Checkbox"
                      onclick="toggleInventory('${itemNameEncoded}')" checked></input></td>
           <td><label for="${itemNameEncoded}Checkbox" class="larger">${itemNameEncoded}</label></td>
           <td>

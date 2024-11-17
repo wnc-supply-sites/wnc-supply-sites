@@ -30,46 +30,42 @@
         </thead>
         <tbody id="inventoryTableBody">
 
-
+        {{#inventoryList}}
         <tr>
-          <td><input type="checkbox" name="requestedItem" id="shampooCheckbox"
-                     onclick="toggleInventory('shampoo')"></input></td>
-          <td><label for="shampooCheckbox" class="larger" id="shampooLabel">Shampoo</label></td>
+          <td><input type="checkbox" id="{{itemName}}Checkbox"
+                     onclick="toggleInventory('{{itemName}}')" {{itemChecked}} /></td>
+          <td><label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}}" id="{{itemName}}Label">{{itemName}}</label></td>
           <td>
             <div class="horizontal">
               <fieldset class="vertical">
                 <div class="horizontal">
-                  <input type="radio" id="shampooRequested" name="itemStatus" disabled
-                         onclick="changeItemStatus('shampoo')" checked/>
-                  <label for="shampooRequested" class="requested disabledInventory" id="shampooRequestedLabel">Requested
-                    or
-                    Available</label>
+                  <input type="radio" id="{{itemName}}Requested" name="{{itemName}}Status" {{itemStatusDisabled}}
+                         onclick="changeItemStatus('{{itemName}}')" {{requestedChecked}}/>
+                  <label for="{{itemName}}Requested" class="requested {{itemStatusClassDisabled}}"
+                         id="{{itemName}}RequestedLabel">
+                    Requested or Available</label>
                 </div>
                 <div class="horizontal">
-                  <input type="radio" id="shampooUrgent" name="itemStatus" disabled
-                         onclick="changeItemStatus('shampoo')"/>
-                  <label for="shampooUrgent" class="urgent disabledInventory" id="shampooUrgentLabel">Urgently
-                    Needed</label>
+                  <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status"  {{itemStatusDisabled}}
+                         onclick="changeItemStatus('{{itemName}}')" {{urgentChecked}}/>
+                  <label for="{{itemName}}Urgent" class="urgent {{itemStatusClassDisabled}}" id="{{itemName}}UrgentLabel">
+                    Urgently Needed</label>
                 </div>
                 <div class="horizontal">
-                  <input type="radio" id="shampooOversupply" name="itemStatus" disabled
-                         onclick="changeItemStatus('shampoo')"/>
-                  <label for="shampooOversupply" class="oversupply disabledInventory" id="shampooOversupplyLabel">Oversupply
-                    (too
-                    much)</label>
+                  <input type="radio" id="{{itemName}}Oversupply" name="{{itemName}}Status" {{itemStatusDisabled}}
+                         onclick="changeItemStatus('{{itemName}}')" {{oversupplyChecked}}/>
+                  <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusClassDisabled}}" id="{{itemName}}OversupplyLabel">
+                    Oversupply (too much)</label>
                 </div>
               </fieldset>
-              <div class="horizontal update-confirm-div" id="shampooUpdateConfirm">
+              <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
                 <div class="green-check" id="update-confirm">&#10003;</div>
                 <span>Updated</span>
               </div>
             </div>
           </td>
         </tr>
-
-
-
-
+        {{/inventoryList}}
         </tbody>
       </table>
 

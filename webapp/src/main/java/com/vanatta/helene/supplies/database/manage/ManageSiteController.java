@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -131,7 +132,8 @@ public class ManageSiteController {
     pageParams.put("siteName", siteName);
     pageParams.put("siteId", siteId);
 
-    ManageSiteDao.SiteStatus siteStatus = ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
+    ManageSiteDao.SiteStatus siteStatus =
+        ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "checked" : "");
     pageParams.put("siteNotActive", siteStatus.isActive() ? "" : "checked");
 
@@ -141,7 +143,6 @@ public class ManageSiteController {
     return new ModelAndView("/manage/status", pageParams);
   }
 
-
   @PostMapping("/manage/update-status")
   @ResponseBody
   ResponseEntity<?> updateStatus(@RequestBody Map<String, String> params) {
@@ -150,27 +151,30 @@ public class ManageSiteController {
     String newValue = params.get("newValue");
 
     String siteName = fetchSiteName(siteId);
-    if(siteName == null) {
-      throw new IllegalArgumentException("Invalid site id: "+ siteId);
+    if (siteName == null) {
+      throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
-    if(statusFlag == null || !(statusFlag.equals("active") || statusFlag.equals("acceptingDonations"))) {
-      throw new IllegalArgumentException("Invalid status flag: "+ statusFlag);
-    }
-
-    if(newValue == null || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
-      throw new IllegalArgumentException("Invalid new value: "+ newValue);
+    if (statusFlag == null
+        || !(statusFlag.equals("active") || statusFlag.equals("acceptingDonations"))) {
+      throw new IllegalArgumentException("Invalid status flag: " + statusFlag);
     }
 
-    if(statusFlag.equalsIgnoreCase("active")) {
-      ManageSiteDao.updateSiteActiveFlag(jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+    if (newValue == null
+        || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
+      throw new IllegalArgumentException("Invalid new value: " + newValue);
+    }
+
+    if (statusFlag.equalsIgnoreCase("active")) {
+      ManageSiteDao.updateSiteActiveFlag(
+          jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
       log.info("Updating site: {}, active = {}", siteName, newValue);
     } else {
-      ManageSiteDao.updateSiteAcceptingDonationsFlag(jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+      ManageSiteDao.updateSiteAcceptingDonationsFlag(
+          jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
       log.info("Updating site: {}, accepting donations = {}", siteName, newValue);
     }
     return ResponseEntity.ok().body("Updated");
   }
-
 
   @GetMapping("/manage/inventory")
   ModelAndView manageInventory(
@@ -182,18 +186,80 @@ public class ManageSiteController {
       return selectSite();
     }
 
-
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("siteName", siteName);
     pageParams.put("siteId", siteId);
 
-    List<String> inventoryList = new ArrayList<>();
-    
+    List<ItemInventoryDisplay> inventoryList = new ArrayList<>();
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("shampoo")
+            .itemChecked("checked")
+            .itemLabelClass("requested")
+            .requestedChecked("checked")
+            .build());
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("mask")
+            .itemChecked("checked")
+            .itemLabelClass("urgent")
+            .urgentChecked("checked")
+            .build());
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("water")
+            .itemChecked("checked")
+            .itemLabelClass("oversupply")
+            .oversupplyChecked("checked")
+            .build());
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("gloves")
+            .itemChecked("")
+            .itemLabelClass("requested disabledInventory")
+            .itemStatusDisabled("disabled")
+            .itemStatusClassDisabled("disabledInventory")
+            .requestedChecked("checked")
+            .build());
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("soap")
+            .itemChecked("")
+            .itemLabelClass("urgent disabledInventory")
+            .itemStatusDisabled("disabled")
+            .itemStatusClassDisabled("disabledInventory")
+            .urgentChecked("checked")
+            .build());
+    inventoryList.add(
+        ItemInventoryDisplay.builder()
+            .itemName("diapers")
+            .itemChecked("")
+            .itemLabelClass("oversupply disabledInventory")
+            .itemStatusDisabled("disabled")
+            .itemStatusClassDisabled("disabledInventory")
+            .oversupplyChecked("checked")
+            .build());
 
     pageParams.put("inventoryList", inventoryList);
-
 
     return new ModelAndView("/manage/inventory", pageParams);
   }
 
+  @Value
+  @Builder
+  @AllArgsConstructor
+  static class ItemInventoryDisplay {
+    String itemName;
+    @Builder.Default String itemChecked = "";
+    String itemLabelClass;
+
+    @Builder.Default String requestedChecked = "";
+    @Builder.Default String urgentChecked = "";
+    @Builder.Default String oversupplyChecked = "";
+
+    @Builder.Default
+    String itemStatusClassDisabled = "";
+    @Builder.Default
+    String itemStatusDisabled = "";
+  }
 }
