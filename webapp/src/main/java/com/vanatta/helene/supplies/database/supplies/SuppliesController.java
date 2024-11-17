@@ -20,19 +20,19 @@ public class SuppliesController {
   private final Jdbi jdbi;
 
   /** GET requests should be coming from the home page. */
-  @GetMapping("/supplies")
+  @GetMapping("/supplies/site-list")
   public ModelAndView supplies(@RequestParam String mode) {
     Map<String, String> templateValues = new HashMap<>();
     templateValues.put(
         "notAcceptingDonationsValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("overSupplyValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
 
-    return new ModelAndView("supplies", templateValues);
+    return new ModelAndView("supplies/supplies", templateValues);
   }
 
   /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
-  @PostMapping(value = "/supplies")
+  @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
     var results = SuppliesDao.getSupplyResults(jdbi, request);
 

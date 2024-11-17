@@ -95,7 +95,7 @@ function stopLoaderAnimation() {
 }
 
 async function fetchSupplyData() {
-  const url = "supplies";
+  const url = "/supplies/site-data";
   const sites = readSelections('site');
   const counties = readSelections('county');
   const items = readSelections('item');

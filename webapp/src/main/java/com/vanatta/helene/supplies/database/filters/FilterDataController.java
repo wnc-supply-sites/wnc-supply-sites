@@ -30,7 +30,7 @@ public class FilterDataController {
   }
 
   @CrossOrigin
-  @GetMapping(value = "/filter-data")
+  @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData() {
     return FilterDataResponse.builder()
         .sites(FilterDataDao.getAllSites(jdbi))
