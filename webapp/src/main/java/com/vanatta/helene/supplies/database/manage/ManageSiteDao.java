@@ -105,4 +105,15 @@ public class ManageSiteDao {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
+
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class SiteInventory {
+    long itemId;
+    String itemName;
+    String itemStatus;
+    boolean activeRequest;
+  }
 }

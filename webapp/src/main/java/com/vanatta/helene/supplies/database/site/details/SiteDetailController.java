@@ -41,7 +41,7 @@ public class SiteDetailController {
             encode(siteDetailData.getCity()),
             encode(siteDetailData.getState())));
 
-    return new ModelAndView("site-detail", siteDetails);
+    return new ModelAndView("site-detail/site-detail", siteDetails);
   }
 
   private static String encode(String toEncode) {

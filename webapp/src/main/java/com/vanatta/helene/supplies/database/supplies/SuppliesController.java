@@ -34,8 +34,6 @@ public class SuppliesController {
   @CrossOrigin
   @PostMapping(value = "/supplies")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
-    log.info("Request received: {}", request);
-
     var results = SuppliesDao.getSupplyResults(jdbi, request);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();

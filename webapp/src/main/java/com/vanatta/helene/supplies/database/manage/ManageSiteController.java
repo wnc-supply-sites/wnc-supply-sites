@@ -1,6 +1,8 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -174,10 +176,24 @@ public class ManageSiteController {
   ModelAndView manageInventory(
       //      @CookieValue(value = "auth") String auth,
       String siteId) {
-    Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("siteName", "site-name");
-    pageParams.put("siteId", "site-id");
+
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      return selectSite();
+    }
+
+
+    Map<String, Object> pageParams = new HashMap<>();
+    pageParams.put("siteName", siteName);
+    pageParams.put("siteId", siteId);
+
+    List<String> inventoryList = new ArrayList<>();
+    
+
+    pageParams.put("inventoryList", inventoryList);
+
 
     return new ModelAndView("/manage/inventory", pageParams);
   }
+
 }
