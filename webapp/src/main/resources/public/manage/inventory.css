@@ -1,0 +1,14 @@
+.disabledInventory {
+  font-style: italic;
+  color: gray;
+}
+
+.update-confirm-div {
+  display: none;
+  font-style: italic;
+  font-size: 0.95em;
+}
+
+.table-title {
+  text-align: left;
+}

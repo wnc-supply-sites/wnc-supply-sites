@@ -1,9 +1,10 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
   <title>WNC Supplies - Inventory Management</title>
-  <script type="text/javascript" src="../site-detail/site-detail.js"></script>
+  <script type="text/javascript" src="inventory.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="manage.css"/>
+  <link rel="stylesheet" href="inventory.css"/>
 </head>
 
 <body>
@@ -23,60 +24,81 @@
         <thead>
         <tr>
           <th></th>
-          <th>Item</th>
-          <th>Item Status</th>
+          <th class="table-title">Item</th>
+          <th class="table-title">Item Status</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="inventoryTableBody">
         <tr>
-          <td><input type="checkbox" name="requestedItem" id="shampooCheckbox"></input></td>
-          <td><label for="shampooCheckbox" class="larger">Shampoo</label></td>
+          <td><input type="checkbox" name="requestedItem" id="shampooCheckbox"
+                     onclick="toggleInventory('shampoo')"></input></td>
+          <td><label for="shampooCheckbox" class="larger" id="shampooLabel">Shampoo</label></td>
           <td>
-            <fieldset class="vertical">
-              <div class="horizontal">
-                <input type="radio" id="requestedRadio" name="itemStatus"/>
-                <label for="requestedRadio" class="requested">Requested or Available</label>
+            <div class="horizontal">
+              <fieldset class="vertical">
+                <div class="horizontal">
+                  <input type="radio" id="shampooRequested" name="itemStatus" disabled
+                         onclick="changeItemStatus('shampoo')" checked/>
+                  <label for="shampooRequested" class="requested disabledInventory" id="shampooRequestedLabel">Requested
+                    or
+                    Available</label>
+                </div>
+                <div class="horizontal">
+                  <input type="radio" id="shampooUrgent" name="itemStatus" disabled
+                         onclick="changeItemStatus('shampoo')"/>
+                  <label for="shampooUrgent" class="urgent disabledInventory" id="shampooUrgentLabel">Urgently
+                    Needed</label>
+                </div>
+                <div class="horizontal">
+                  <input type="radio" id="shampooOversupply" name="itemStatus" disabled
+                         onclick="changeItemStatus('shampoo')"/>
+                  <label for="shampooOversupply" class="oversupply disabledInventory" id="shampooOversupplyLabel">Oversupply
+                    (too
+                    much)</label>
+                </div>
+              </fieldset>
+              <div class="horizontal update-confirm-div" id="shampooUpdateConfirm">
+                <div class="green-check" id="update-confirm">&#10003;</div>
+                <span>Updated</span>
               </div>
-              <div class="horizontal">
-                <input type="radio" id="urgentlyNeededRadio" name="itemStatus"/>
-                <label for="urgentlyNeededRadio" class="urgent">Urgently Needed</label>
-              </div>
-              <div class="horizontal">
-                <input type="radio" id="oversupplyRadio" name="itemStatus"/>
-                <label for="oversupplyRadio" class="oversupply">Oversupply (too much)</label>
-              </div>
-            </fieldset>
+            </div>
+
           </td>
         </tr>
         </tbody>
       </table>
 
+      <hr>
+
       <table>
         <tr>
           <td>
-            <button>+ Add Item</button>
+            <button onclick="addItem()">+ Add Item</button>
           </td>
           <td>
-            <input type="text"/>
+            <input type="text" id="newItemText"/>
           </td>
           <td>
             <fieldset class="vertical">
               <div class="horizontal">
-                <input type="radio" id="requestedRadioNew" name="itemStatus"/>
+                <input type="radio" id="requestedRadioNew" name="newItemStatus" checked/>
                 <label for="requestedRadioNew" class="requested">Requested or Available</label>
               </div>
               <div class="horizontal">
-                <input type="radio" id="urgentlyNeededRadioNew" name="itemStatus"/>
+                <input type="radio" id="urgentlyNeededRadioNew" name="newItemStatus"/>
                 <label for="urgentlyNeededRadioNew" class="urgent">Urgently Needed</label>
               </div>
               <div class="horizontal">
-                <input type="radio" id="oversupplyRadioNew" name="itemStatus"/>
+                <input type="radio" id="oversupplyRadioNew" name="newItemStatus"/>
                 <label for="oversupplyRadioNew" class="oversupply">Oversupply (too much)</label>
               </div>
             </fieldset>
           </td>
         </tr>
       </table>
+
+      <div id="addItemResult" class="update-confirm-div">
+      </div>
     </div>
   </div>
 </div>
