@@ -8,7 +8,26 @@ function toggleInventory(itemName) {
   document.getElementById(`${itemName}Urgent`).disabled = !checked;
   document.getElementById(`${itemName}Oversupply`).disabled = !checked;
 
+  const requestedChecked = document.getElementById(`${itemName}Requested`)
+      .checked;
+  const urgentChecked = document.getElementById(`${itemName}Urgent`)
+      .checked;
+  const oversupplyChecked = document.getElementById(`${itemName}Oversupply`)
+      .checked;
+
   if (checked) {
+    let labelClass;
+    if(requestedChecked) {
+      labelClass = "requested";
+    } else if(urgentChecked) {
+      labelClass = "urgent";
+    } else {
+      labelClass = "oversupply";
+    }
+
+    document.getElementById(`${itemName}Label`)
+    .classList = "larger " + labelClass;
+
     document.getElementById(`${itemName}RequestedLabel`)
     .classList.remove("disabledInventory");
     document.getElementById(`${itemName}UrgentLabel`)
@@ -16,6 +35,9 @@ function toggleInventory(itemName) {
     document.getElementById(`${itemName}OversupplyLabel`)
     .classList.remove("disabledInventory");
   } else {
+    document.getElementById(`${itemName}Label`)
+        .classList = "larger disabledInventory";
+
     document.getElementById(`${itemName}RequestedLabel`)
     .classList.add("disabledInventory");
     document.getElementById(`${itemName}UrgentLabel`)
