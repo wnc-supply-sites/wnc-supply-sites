@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supplies - Inventory Management</title>
+  <script type="text/javascript" src="contact.js"></script>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="manage.css"/>
+  <link rel="stylesheet" href="contact.css"/>
+</head>
+
+<body>
+<h1><a href="../.." class="link-home">WNC Supplies - Site Management</a></h1>
+
+<div class="back-link">
+  <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
+</div>
+
+<h2>{{siteName}}</h2>
+
+<div id="data-entry">
+  <div class="data-entry-div vertical">
+    <div class="data-entry-body">
+      <div class="data-field vertical">
+        <label for="contactNumber">Contact Number: </label>
+        <div class="horizontal">
+          <input id="contactNumber" type="text" class="shortTextField" value="{{siteContact}}"/>
+          <button onclick="showUpdateConfirmation()" id="update-button">Update</button>
+          <div class="green-check" id="update-confirm">&#10003;</div>
+        </div>
+
+        <div id="contactUpdateConfirm" class="confirm-text">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

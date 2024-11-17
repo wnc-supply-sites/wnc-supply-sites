@@ -31,6 +31,8 @@ create table site
     active              boolean default true           not null
 );
 
+alter table site add column contact_number varchar(32);
+
 
 create table item
 (

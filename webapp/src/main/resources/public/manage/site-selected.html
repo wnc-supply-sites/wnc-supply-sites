@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
   <title>WNC Supplies - Inventory Management</title>
-  <script type="text/javascript" src="../site-detail/site-detail.js"></script>
+  <script type="text/javascript" src="manage.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="manage.css"/>
 </head>
@@ -9,32 +9,27 @@
 <body>
 
 <h1><a href="../.." class="link-home">WNC Supplies - Site Management</a></h1>
-
-<div id="site-select-div">
-  Select supply site:
-  <select>
-    <option></option>
-    <option>Jimmy & Jeans</option>
-  </select>
+<div class="back-link">
+  <a href="/manage/select-site">[&larr; Go Back]</a>
 </div>
 
 <div id="site-manage-select-div">
+  <h2 id="site-name-header">{{siteName}}</h2>
 
-  <h2 id="site-name-header">[Site Header]</h2>
   <div class="nav-button-container">
-    <a href="manage-inventory.html">
+    <a href="/manage/inventory?siteId={{siteId}}" id="manage-site-inventory-href">
       <button type="button" class="nav-button">Manage Site Inventory</button>
     </a>
   </div>
 
   <div class="nav-button-container">
-    <a href="manage-contact.html">
+    <a href="/manage/contact?siteId={{siteId}}" id="manage-site-contact-href">
       <button type="button" class="nav-button">Manage Site Contact</button>
     </a>
   </div>
 
   <div class="nav-button-container">
-    <a href="manage-status.html">
+    <a href="/manage/status?siteId={{siteId}}" id="manage-site-status-href">
       <button type="button" class="nav-button">Manage Site Status</button>
     </a>
   </div>

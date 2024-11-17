@@ -1,0 +1,12 @@
+#update-button {
+    width: 90px;
+}
+
+#update-confirm {
+    display: none;
+}
+
+.confirm-text {
+    font-style: italic;
+    font-size: 0.95em;
+}

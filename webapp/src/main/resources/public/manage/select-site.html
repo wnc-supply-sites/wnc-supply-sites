@@ -1,0 +1,27 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supplies - Inventory Management</title>
+  <script type="text/javascript" src="manage.js"></script>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="manage.css"/>
+</head>
+
+<body>
+
+<h1><a href="../.." class="link-home">WNC Supplies - Site Management</a></h1>
+
+<div id="site-select-div">
+  <form action="/manage/site-selected" method="get">
+    <label for="siteId">Select supply site:</label>
+    <select id="siteId" name="siteId">
+      <option value=""></option>
+      {{#sites}}
+      <option value="{{id}}">{{name}}</option>
+      {{/sites}}
+    </select>
+
+    <button type="submit">Select</button>
+  </form>
+</div>
+</body>
+</html>
