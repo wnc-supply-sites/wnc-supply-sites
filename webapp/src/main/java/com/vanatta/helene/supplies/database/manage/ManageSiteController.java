@@ -7,17 +7,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class ManageSiteController {
 
   private final Jdbi jdbi;
@@ -95,8 +98,19 @@ public class ManageSiteController {
 
   @PostMapping("/manage/update-contact")
   @ResponseBody
-  ResponseEntity<?> updateContact(@RequestParam String siteId, @RequestParam String contactNumber) {
+  ResponseEntity<?> updateContact(@RequestBody Map<String, String> params) {
 
+    String siteId = params.get("siteId");
+    String contactNumber = params.get("contactNumber");
+
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      log.warn(
+          "Unable to contact info, bad site id: {}, contact number: {}", siteId, contactNumber);
+      return ResponseEntity.badRequest().body("Invalid site id");
+    }
+
+    ManageSiteDao.updateSiteContact(jdbi, Long.parseLong(siteId), contactNumber);
     return ResponseEntity.ok().body("Updated");
   }
 

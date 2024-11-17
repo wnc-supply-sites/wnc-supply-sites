@@ -3,7 +3,7 @@ async function showUpdateConfirmation(siteId) {
       document.getElementById("contactNumber").value;
 
 
-  try {
+  // try {
     await sendContactUpdate(siteId, newNumber)
 
     document.getElementById("update-confirm").style.display = 'block';
@@ -22,11 +22,10 @@ async function showUpdateConfirmation(siteId) {
       document.getElementById("contactUpdateConfirm").innerHTML =
           `Contact number updated to: ${newNumber}`;
     }
-
-  } catch (error) {
-    document.getElementById("contactUpdateConfirm").innerHTML =
-        `An error occurred, contact number was not updated`;
-  }
+  // } catch (error) {
+  //   document.getElementById("contactUpdateConfirm").innerHTML =
+  //       `An error occurred, contact number was not updated`;
+  // }
 }
 
 async function sendContactUpdate(siteId, contactNumber) {
@@ -47,5 +46,5 @@ async function sendContactUpdate(siteId, contactNumber) {
   if (!response.ok) {
     throw new Error(`Response status: ${response.status}, ${response}`);
   }
-  return await response.json();
+  return await response.text();
 }

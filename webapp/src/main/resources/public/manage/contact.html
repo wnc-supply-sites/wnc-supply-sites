@@ -23,7 +23,7 @@
         <label for="contactNumber">Contact Number: </label>
         <div class="horizontal">
           <input id="contactNumber" type="text" class="shortTextField" value="{{siteContact}}"/>
-          <button onclick="showUpdateConfirmation()" id="update-button">Update</button>
+          <button onclick="showUpdateConfirmation({{siteId}})" id="update-button">Update</button>
           <div class="green-check" id="update-confirm">&#10003;</div>
         </div>
 
