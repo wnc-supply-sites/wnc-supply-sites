@@ -17,9 +17,9 @@ function toggleInventory(itemName) {
 
   if (checked) {
     let labelClass;
-    if(requestedChecked) {
+    if (requestedChecked) {
       labelClass = "requested";
-    } else if(urgentChecked) {
+    } else if (urgentChecked) {
       labelClass = "urgent";
     } else {
       labelClass = "oversupply";
@@ -170,13 +170,19 @@ function addItem() {
 
 const timeouts = [];
 
+
+/**
+ * Shows 'update confirm' checkmark. If the indicator is already visible, then we hide it briefly
+ * before showing it again. If there was a previous timer that was going to hide it, we cancel
+ * that so we can renew the hide timer.
+ */
 function showUpdateConfirmation(itemName) {
 
   // remove any preceding timeouts which have yet to fire.
   clearTimeout(timeouts[itemName]);
 
   // if update confirmation is visible, hide it very briefly and then show it again.
-  if(document.getElementById(`${itemName}UpdateConfirm`).style.display === "block") {
+  if (document.getElementById(`${itemName}UpdateConfirm`).style.display === "block") {
     // hide the element for 200ms
     document.getElementById(`${itemName}UpdateConfirm`).style.display = "none";
     timeouts[itemName] = setTimeout(function () {
