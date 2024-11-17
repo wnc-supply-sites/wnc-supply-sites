@@ -171,14 +171,28 @@ function addItem() {
 const timeouts = [];
 
 function showUpdateConfirmation(itemName) {
-  document.getElementById(`${itemName}UpdateConfirm`).style.display = "block";
+
+  // remove any preceding timeouts which have yet to fire.
   clearTimeout(timeouts[itemName]);
+
+  // if update confirmation is visible, hide it very briefly and then show it again.
+  if(document.getElementById(`${itemName}UpdateConfirm`).style.display === "block") {
+    // hide the element for 200ms
+    document.getElementById(`${itemName}UpdateConfirm`).style.display = "none";
+    timeouts[itemName] = setTimeout(function () {
+          document.getElementById(`${itemName}UpdateConfirm`).style.display = 'block';
+        },
+        100);
+
+  } else {
+    // if update confirm is not visible, then make it visible.
+    document.getElementById(`${itemName}UpdateConfirm`).style.display = "block";
+  }
+  // document.getElementById(`${itemName}UpdateConfirm`).style.display = "block";
   timeouts[itemName] = setTimeout(function () {
         document.getElementById(`${itemName}UpdateConfirm`).style.display = 'none';
       },
       1500);
-
-
 }
 
 function htmlEncode(input) {
