@@ -26,9 +26,6 @@ function toggleInventory(itemName) {
     }
 
     document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
-    // .classList.add("larger");
-    // document.getElementById(`${itemName}Label`)
-    // .classList.add(labelClass);
 
     document.getElementById(`${itemName}RequestedLabel`)
     .classList.remove("disabledInventory");
@@ -39,11 +36,6 @@ function toggleInventory(itemName) {
   } else {
     document.getElementById(`${itemName}Label`).classList.value = "larger disabledInventory";
 
-    // document.getElementById(`${itemName}Label`)
-    // .classList.add("larger");
-    // document.getElementById(`${itemName}Label`)
-    // .classList.add("disabledInventory");
-
     document.getElementById(`${itemName}RequestedLabel`)
     .classList.add("disabledInventory");
     document.getElementById(`${itemName}UrgentLabel`)
@@ -51,8 +43,12 @@ function toggleInventory(itemName) {
     document.getElementById(`${itemName}OversupplyLabel`)
     .classList.add("disabledInventory");
   }
+  showUpdateConfirmation(itemName);
 }
 
+/**
+ * Fires when the item status radio buttons are toggled.
+ */
 function changeItemStatus(itemName) {
   const requestedChecked = document.getElementById(`${itemName}Requested`)
       .checked ? "checked" : "";
@@ -74,8 +70,7 @@ function changeItemStatus(itemName) {
     document.getElementById(`${itemName}Label`)
     .classList.add("oversupply");
   }
-
-
+  showUpdateConfirmation(itemName);
 }
 
 function addItem() {
@@ -170,13 +165,21 @@ function addItem() {
 
   document.getElementById("newItemText").value = "";
 
-  document.getElementById(`${itemNameEncoded}UpdateConfirm`).style.display = "block";
-  setTimeout(function () {
-        document.getElementById(`${itemNameEncoded}UpdateConfirm`).style.display = 'none';
-      },
-      1500);
+  showUpdateConfirmation(itemNameEncoded);
 }
 
+const timeouts = [];
+
+function showUpdateConfirmation(itemName) {
+  document.getElementById(`${itemName}UpdateConfirm`).style.display = "block";
+  clearTimeout(timeouts[itemName]);
+  timeouts[itemName] = setTimeout(function () {
+        document.getElementById(`${itemName}UpdateConfirm`).style.display = 'none';
+      },
+      1500);
+
+
+}
 
 function htmlEncode(input) {
   input = input.replace(/&/g, '&amp;');
@@ -184,4 +187,3 @@ function htmlEncode(input) {
   input = input.replace(/>/g, '&gt;');
   return input;
 }
-
