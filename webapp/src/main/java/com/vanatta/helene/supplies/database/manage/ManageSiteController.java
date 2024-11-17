@@ -111,6 +111,7 @@ public class ManageSiteController {
     }
 
     ManageSiteDao.updateSiteContact(jdbi, Long.parseLong(siteId), contactNumber);
+    log.info("Site '{}' contact number updated to: {}", siteName, contactNumber);
     return ResponseEntity.ok().body("Updated");
   }
 
@@ -118,12 +119,56 @@ public class ManageSiteController {
   ModelAndView manageStatus(
       //      @CookieValue(value = "auth") String auth,
       String siteId) {
+
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      return selectSite();
+    }
+
     Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("siteName", "site-name");
-    pageParams.put("siteId", "site-id");
+    pageParams.put("siteName", siteName);
+    pageParams.put("siteId", siteId);
+
+    ManageSiteDao.SiteStatus siteStatus = ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
+    pageParams.put("siteActive", siteStatus.isActive() ? "checked" : "");
+    pageParams.put("siteNotActive", siteStatus.isActive() ? "" : "checked");
+
+    pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "checked" : "");
+    pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
     return new ModelAndView("/manage/status", pageParams);
   }
+
+
+  @PostMapping("/manage/update-status")
+  @ResponseBody
+  ResponseEntity<?> updateStatus(@RequestBody Map<String, String> params) {
+    String siteId = params.get("siteId");
+    String statusFlag = params.get("statusFlag");
+    String newValue = params.get("newValue");
+
+    String siteName = fetchSiteName(siteId);
+    if(siteName == null) {
+      throw new IllegalArgumentException("Invalid site id: "+ siteId);
+    }
+    if(statusFlag == null || !(statusFlag.equals("active") || statusFlag.equals("acceptingDonations"))) {
+      throw new IllegalArgumentException("Invalid status flag: "+ statusFlag);
+    }
+
+    if(newValue == null || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
+      throw new IllegalArgumentException("Invalid new value: "+ newValue);
+    }
+
+    if(statusFlag.equalsIgnoreCase("active")) {
+      ManageSiteDao.updateSiteActiveFlag(jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+      log.info("Updating site: {}, active = {}", siteName, newValue);
+    } else {
+      ManageSiteDao.updateSiteAcceptingDonationsFlag(jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+      log.info("Updating site: {}, accepting donations = {}", siteName, newValue);
+    }
+    return ResponseEntity.ok().body("Updated");
+  }
+
 
   @GetMapping("/manage/inventory")
   ModelAndView manageInventory(

@@ -42,9 +42,13 @@ class ManageSiteDaoTest {
   }
 
   static long getSiteId() {
+    return getSiteId("site1");
+  }
+
+  static long getSiteId(String siteName) {
     return TestConfiguration.jdbiTest.withHandle(
         handle ->
-            handle.createQuery("select id from site where name = 'site1'").mapTo(Long.class).one());
+            handle.createQuery("select id from site where name = '" + siteName + "'").mapTo(Long.class).one());
   }
 
   @Test
@@ -55,4 +59,53 @@ class ManageSiteDaoTest {
 
     assertThat(result).isEqualTo("site1");
   }
+
+
+  @Test
+  void siteStatusActive() {
+    long siteId = getSiteId("site1");
+    var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isActive()).isTrue();
+
+    ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, false);
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isActive()).isFalse();
+
+    ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, true);
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isActive()).isTrue();
+
+
+    siteId = getSiteId("site2");
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isActive()).isTrue();
+
+    siteId = getSiteId("site3");
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isActive()).isFalse();
+  }
+
+  @Test
+  void setStatusAcceptingDonations() {
+    long siteId = getSiteId("site1");
+    var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isAcceptingDonations()).isTrue();
+
+    ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, false);
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isAcceptingDonations()).isFalse();
+
+    ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isAcceptingDonations()).isTrue();
+
+    siteId = getSiteId("site2");
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isAcceptingDonations()).isFalse();
+
+    siteId = getSiteId("site3");
+    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+    assertThat(result.isAcceptingDonations()).isTrue();
+  }
 }
+

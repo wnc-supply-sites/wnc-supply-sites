@@ -2,16 +2,13 @@ async function showUpdateConfirmation(siteId) {
   let newNumber =
       document.getElementById("contactNumber").value;
 
-
-  // try {
+  try {
     await sendContactUpdate(siteId, newNumber)
 
     document.getElementById("update-confirm").style.display = 'block';
-    document.getElementById("update-button").innerHTML = "Updated";
 
     setTimeout(function () {
           document.getElementById("update-confirm").style.display = 'none';
-          document.getElementById("update-button").innerHTML = "Update";
         },
         1500);
 
@@ -22,11 +19,12 @@ async function showUpdateConfirmation(siteId) {
       document.getElementById("contactUpdateConfirm").innerHTML =
           `Contact number updated to: ${newNumber}`;
     }
-  // } catch (error) {
-  //   document.getElementById("contactUpdateConfirm").innerHTML =
-  //       `An error occurred, contact number was not updated`;
-  // }
+  } catch (error) {
+    document.getElementById("contactUpdateConfirm").innerHTML =
+        `An error occurred, contact number was not updated`;
+  }
 }
+
 
 async function sendContactUpdate(siteId, contactNumber) {
   const url = "/manage/update-contact";
@@ -48,3 +46,4 @@ async function sendContactUpdate(siteId, contactNumber) {
   }
   return await response.text();
 }
+

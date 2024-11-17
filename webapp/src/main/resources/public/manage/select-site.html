@@ -4,6 +4,7 @@
   <script type="text/javascript" src="manage.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="manage.css"/>
+  <link rel="stylesheet" href="select-site.css"/>
 </head>
 
 <body>
@@ -13,7 +14,7 @@
 <div id="site-select-div">
   <form action="/manage/site-selected" method="get">
     <label for="siteId">Select supply site:</label>
-    <select id="siteId" name="siteId">
+    <select id="siteId" name="siteId" class="site-select">
       <option value=""></option>
       {{#sites}}
       <option value="{{id}}">{{name}}</option>

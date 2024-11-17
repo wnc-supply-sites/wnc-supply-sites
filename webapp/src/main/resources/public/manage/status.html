@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
   <title>WNC Supplies - Inventory Management</title>
-  <script type="text/javascript" src="../site-detail/site-detail.js"></script>
+  <script type="text/javascript" src="status.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="manage.css"/>
 </head>
@@ -24,27 +24,34 @@
 
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="acceptingYes" name="acceptingDonations" checked/><label
+            <input type="radio" id="acceptingYes" name="acceptingDonations" {{siteAcceptingDonations}}/><label
               for="acceptingYes">Yes</label>
-            <input type="radio" id="acceptingNo" name="acceptingDonations"/><label for="acceptingNo">No</label>
-            <button class="siteStatusUpdateButton">Update</button>
+            <input type="radio" id="acceptingNo" name="acceptingDonations" {{siteNotAcceptingDonations}}/><label for="acceptingNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
           </div>
           <span class="statusCaption">A site not accepting donations is still listed.</span>
         </div>
       </fieldset>
+      <div id="acceptingDonationsConfirmation"></div>
 
       <fieldset class="danger-fields">
         <legend>Site is Active:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="activeYes" name="activeSite" checked/><label for="activeYes">Yes</label>
-            <input type="radio" id="activeNo" name="activeSite"/><label for="activeNo">No</label>
-            <button class="siteStatusUpdateButton">Update</button>
+            <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
+            <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
           </div>
           <span class="statusCaption">An inactive site is no longer listed.</span>
         </div>
       </fieldset>
+      <div id="updateStatusConfirmation">
+
+
+      </div>
     </div>
+
+    <div id="status-update-confirmation"></div>
   </div>
 </div>
 
