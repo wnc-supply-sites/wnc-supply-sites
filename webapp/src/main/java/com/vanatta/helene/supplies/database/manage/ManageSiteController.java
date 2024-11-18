@@ -117,8 +117,9 @@ public class ManageSiteController {
     return ResponseEntity.ok().body("Updated");
   }
 
+  /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status")
-  ModelAndView manageStatus(
+  ModelAndView showManageStatusPage(
       //      @CookieValue(value = "auth") String auth,
       String siteId) {
 
@@ -142,6 +143,7 @@ public class ManageSiteController {
     return new ModelAndView("/manage/status", pageParams);
   }
 
+  /** REST endpoint to toggle the status of sites (active/accepting donations). */
   @PostMapping("/manage/update-status")
   @ResponseBody
   ResponseEntity<?> updateStatus(@RequestBody Map<String, String> params) {
@@ -151,16 +153,16 @@ public class ManageSiteController {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      throw new IllegalArgumentException("Invalid site id: " + siteId);
+      return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
     if (statusFlag == null
         || !(statusFlag.equals("active") || statusFlag.equals("acceptingDonations"))) {
-      throw new IllegalArgumentException("Invalid status flag: " + statusFlag);
+      return ResponseEntity.badRequest().body("Invalid status flag: " + statusFlag);
     }
 
     if (newValue == null
         || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
-      throw new IllegalArgumentException("Invalid new value: " + newValue);
+      return ResponseEntity.badRequest().body("Invalid new value: " + newValue);
     }
 
     if (statusFlag.equalsIgnoreCase("active")) {
@@ -251,5 +253,59 @@ public class ManageSiteController {
         return "";
       }
     }
+  }
+
+  @PostMapping("/manage/activate-site-item")
+  @ResponseBody
+  ResponseEntity<String> updateSiteItemActive(@RequestBody Map<String, String> params) {
+    String siteId = params.get("siteId");
+    String itemName = params.get("itemName");
+    String itemStatus = params.get("itemStatus");
+    log.info("Activating item: {}, siteId: {}, status: {}", itemName, siteId, itemStatus);
+    if (siteId == null) {
+      return ResponseEntity.badRequest().body("Invalid site id, none specified.");
+    }
+    if (itemName == null) {
+      return ResponseEntity.badRequest().body("Invalid item name, none specified.");
+    }
+    if (itemStatus == null) {
+      return ResponseEntity.badRequest().body("Invalid item status, none specified.");
+    }
+
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      log.warn("Invalid site id: {}", siteId);
+      return ResponseEntity.badRequest().body("Invalid site id");
+    }
+
+    if (!List.of("Requested", "Urgent Need", "Oversupply").contains(itemStatus)) {
+      throw new IllegalArgumentException("Invalid item status: " + itemStatus);
+    }
+
+    ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    return ResponseEntity.ok("Updated");
+  }
+
+  @PostMapping("/manage/deactivate-site-item")
+  @ResponseBody
+  ResponseEntity<String> updateSiteItemInactive(@RequestBody Map<String, String> params) {
+    String siteId = params.get("siteId");
+    String itemName = params.get("itemName");
+    if (siteId == null) {
+      throw new IllegalArgumentException("Invalid site id, none specified.");
+    }
+    if (itemName == null) {
+      throw new IllegalArgumentException("Invalid item name, none specified.");
+    }
+
+    log.info("Deactivating item: {}, siteId: {}", itemName, siteId);
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      log.warn("Invalid site id: {}", siteId);
+      return ResponseEntity.badRequest().body("Invalid site id");
+    }
+
+    ManageSiteDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
+    return ResponseEntity.ok("Updated");
   }
 }

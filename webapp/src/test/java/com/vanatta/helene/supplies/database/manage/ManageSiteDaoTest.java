@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -114,44 +115,58 @@ class ManageSiteDaoTest {
     long siteId = getSiteId("site1");
     var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
 
-    ManageSiteDao.SiteInventory water =
-        result.stream()
-            .filter(r -> r.getItemName().equalsIgnoreCase("water"))
-            .findAny()
-            .orElseThrow();
+    ManageSiteDao.SiteInventory water = findItemByName(result, "water");
     assertThat(water.isActive()).isTrue();
     assertThat(water.getItemStatus()).isEqualTo("Requested");
 
-    ManageSiteDao.SiteInventory clothes =
-        result.stream()
-            .filter(r -> r.getItemName().equalsIgnoreCase("new clothes"))
-            .findAny()
-            .orElseThrow();
+    ManageSiteDao.SiteInventory clothes = findItemByName(result, "new clothes");
     assertThat(clothes.isActive()).isTrue();
     assertThat(clothes.getItemStatus()).isEqualTo("Urgent Need");
 
-    ManageSiteDao.SiteInventory usedClothes =
-        result.stream()
-            .filter(r -> r.getItemName().equalsIgnoreCase("used clothes"))
-            .findAny()
-            .orElseThrow();
+    ManageSiteDao.SiteInventory usedClothes = findItemByName(result, "used clothes");
     assertThat(usedClothes.isActive()).isTrue();
     assertThat(usedClothes.getItemStatus()).isEqualTo("Oversupply");
 
-    ManageSiteDao.SiteInventory gloves =
-        result.stream()
-            .filter(r -> r.getItemName().equalsIgnoreCase("gloves"))
-            .findAny()
-            .orElseThrow();
+    ManageSiteDao.SiteInventory gloves = findItemByName(result, "gloves");
     assertThat(gloves.isActive()).isFalse();
     assertThat(gloves.getItemStatus()).isNull();
 
-    ManageSiteDao.SiteInventory randomStuff =
-        result.stream()
-            .filter(r -> r.getItemName().equalsIgnoreCase("random stuff"))
-            .findAny()
-            .orElseThrow();
+    ManageSiteDao.SiteInventory randomStuff = findItemByName(result, "random stuff");
     assertThat(randomStuff.isActive()).isFalse();
     assertThat(randomStuff.getItemStatus()).isNull();
+  }
+
+  private static ManageSiteDao.SiteInventory findItemByName(
+      List<ManageSiteDao.SiteInventory> items, String itemName) {
+    return items.stream()
+        .filter(r -> r.getItemName().equalsIgnoreCase(itemName))
+        .findAny()
+        .orElseThrow();
+  }
+
+  @Test
+  void updateSiteItemActive() {
+    long siteId = getSiteId("site1");
+
+    // first make sure 'gloves' are not active
+    var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    ManageSiteDao.SiteInventory gloves = findItemByName(result, "gloves");
+    assertThat(gloves.isActive()).isFalse();
+
+    // set gloves to back to 'active'
+    ManageSiteDao.updateSiteItemActive(TestConfiguration.jdbiTest, siteId, "gloves", "Oversupply");
+
+    // verify gloves are active
+    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    gloves = findItemByName(result, "gloves");
+    assertThat(gloves.isActive()).isTrue();
+
+    // set gloves to back to 'inactive'
+    ManageSiteDao.updateSiteItemInactive(TestConfiguration.jdbiTest, siteId, "gloves");
+
+    // verify gloves are inactive
+    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    gloves = findItemByName(result, "gloves");
+    assertThat(gloves.isActive()).isFalse();
   }
 }

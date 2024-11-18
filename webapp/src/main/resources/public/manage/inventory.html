@@ -40,11 +40,14 @@
         <tr>
           <td>
             <input type="checkbox" id="{{itemName}}Checkbox"
-                     onclick="toggleInventory('{{itemName}}')" {{itemChecked}} />
+                   onclick="toggleInventory('{{siteId}}', '{{itemName}}')" {{itemChecked}}/>
           </td>
           <td>
             <div>
-              <label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}" id="{{itemName}}Label">{{itemName}}</label>
+              <label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}"
+                     id="{{itemName}}Label">
+                {{itemName}}
+              </label>
             </div>
             <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
               <span class="green-check" id="update-confirm">&#10003;</span>
@@ -62,16 +65,19 @@
                     Requested or Available</label>
                 </div>
                 <div class="horizontal">
-                  <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status"  {{itemStatusDisabled}}
+                  <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{itemName}}')" {{urgentChecked}}/>
                   <label for="{{itemName}}Urgent" class="urgent {{itemStatusDisabled}}" id="{{itemName}}UrgentLabel">
-                    Urgently Needed</label>
+                    Urgently Needed
+                  </label>
                 </div>
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Oversupply" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{itemName}}')" {{oversupplyChecked}}/>
-                  <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusDisabled}}" id="{{itemName}}OversupplyLabel">
-                    Oversupply (too much)</label>
+                  <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusDisabled}}"
+                         id="{{itemName}}OversupplyLabel">
+                    Oversupply (too much)
+                  </label>
                 </div>
               </fieldset>
             </div>

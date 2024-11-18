@@ -1,7 +1,7 @@
 /**
  * Fires when inventory checkbox is checked or unchecked.
  */
-function toggleInventory(itemName) {
+async function toggleInventory(siteId, itemName) {
   const checked = document.getElementById(`${itemName}Checkbox`).checked;
 
   document.getElementById(`${itemName}Requested`).disabled = !checked;
@@ -16,14 +16,16 @@ function toggleInventory(itemName) {
       .checked;
 
   if (checked) {
-    let labelClass;
-    if (requestedChecked) {
-      labelClass = "requested";
-    } else if (urgentChecked) {
+    let labelClass = "requested";
+    let itemStatus = "Requested";
+    if (urgentChecked) {
       labelClass = "urgent";
-    } else {
+      itemStatus = "Urgent Need";
+    } else if(oversupplyChecked) {
       labelClass = "oversupply";
+      itemStatus = "Oversupply";
     }
+    await sendActivateItem(siteId, itemName, itemStatus);
 
     document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
 
@@ -34,6 +36,8 @@ function toggleInventory(itemName) {
     document.getElementById(`${itemName}OversupplyLabel`)
     .classList.remove("disabled");
   } else {
+    await sendDeactivateItem(siteId, itemName);
+
     document.getElementById(`${itemName}Label`).classList.value = "larger disabled";
 
     document.getElementById(`${itemName}RequestedLabel`)
@@ -45,6 +49,50 @@ function toggleInventory(itemName) {
   }
   showUpdateConfirmation(itemName);
 }
+
+async function sendActivateItem(siteId, itemName, itemStatus) {
+  const url = "/manage/activate-site-item";
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      siteId: siteId,
+      itemName: itemName,
+      itemStatus: itemStatus
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}, ${response.body}`);
+  }
+  return await response.text();
+}
+
+async function sendDeactivateItem(siteId, itemName) {
+  const url = "/manage/deactivate-site-item";
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      siteId: siteId,
+      itemName: itemName
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}, ${response.body}`);
+  }
+  return await response.text();
+}
+
 
 /**
  * Fires when the item status radio buttons are toggled.
@@ -93,7 +141,7 @@ function addItem() {
     labelStyle = "requested";
   } else if (urgentChecked) {
     labelStyle = "urgent";
-  } else {
+  } else if(oversupplyChecked) {
     labelStyle = "oversupply";
   }
 
