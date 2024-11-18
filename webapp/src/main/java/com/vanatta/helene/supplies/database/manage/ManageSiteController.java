@@ -176,8 +176,9 @@ public class ManageSiteController {
     return ResponseEntity.ok().body("Updated");
   }
 
+  /** Display inventory listing for a site. */
   @GetMapping("/manage/inventory")
-  ModelAndView manageInventory(
+  ModelAndView displaySiteInventory(
       //      @CookieValue(value = "auth") String auth,
       String siteId) {
 
@@ -195,48 +196,36 @@ public class ManageSiteController {
         ItemInventoryDisplay.builder()
             .itemName("shampoo")
             .itemChecked("checked")
-            .itemLabelClass("requested")
             .requestedChecked("checked")
             .build());
     inventoryList.add(
         ItemInventoryDisplay.builder()
             .itemName("mask")
             .itemChecked("checked")
-            .itemLabelClass("urgent")
             .urgentChecked("checked")
             .build());
     inventoryList.add(
         ItemInventoryDisplay.builder()
             .itemName("water")
             .itemChecked("checked")
-            .itemLabelClass("oversupply")
             .oversupplyChecked("checked")
             .build());
     inventoryList.add(
         ItemInventoryDisplay.builder()
             .itemName("gloves")
             .itemChecked("")
-            .itemLabelClass("requested disabledInventory")
-            .itemStatusDisabled("disabled")
-            .itemStatusClassDisabled("disabledInventory")
             .requestedChecked("checked")
             .build());
     inventoryList.add(
         ItemInventoryDisplay.builder()
             .itemName("soap")
             .itemChecked("")
-            .itemLabelClass("urgent disabledInventory")
-            .itemStatusDisabled("disabled")
-            .itemStatusClassDisabled("disabledInventory")
             .urgentChecked("checked")
             .build());
     inventoryList.add(
         ItemInventoryDisplay.builder()
             .itemName("diapers")
             .itemChecked("")
-            .itemLabelClass("oversupply disabledInventory")
-            .itemStatusDisabled("disabled")
-            .itemStatusClassDisabled("disabledInventory")
             .oversupplyChecked("checked")
             .build());
 
@@ -250,16 +239,31 @@ public class ManageSiteController {
   @AllArgsConstructor
   static class ItemInventoryDisplay {
     String itemName;
-    @Builder.Default String itemChecked = "";
-    String itemLabelClass;
 
+    /** Should either be blank or "checked" */
+    @Builder.Default String itemChecked = "";
     @Builder.Default String requestedChecked = "";
     @Builder.Default String urgentChecked = "";
     @Builder.Default String oversupplyChecked = "";
 
-    @Builder.Default
-    String itemStatusClassDisabled = "";
-    @Builder.Default
-    String itemStatusDisabled = "";
+    @SuppressWarnings("unused")
+    public String getItemLabelClass() {
+      if(requestedChecked != null && !requestedChecked.isEmpty()) {
+        return "requested";
+      } else if(urgentChecked != null && !urgentChecked.isEmpty()) {
+        return "urgent";
+      } else {
+        return "oversupply";
+      }
+    }
+
+    @SuppressWarnings("unused")
+    public String getItemStatusDisabled() {
+      if(itemChecked == null || itemChecked.isEmpty()) {
+        return "disabled";
+      } else {
+        return "";
+      }
+    }
   }
 }

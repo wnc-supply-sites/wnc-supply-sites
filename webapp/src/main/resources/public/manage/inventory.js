@@ -28,20 +28,20 @@ function toggleInventory(itemName) {
     document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
 
     document.getElementById(`${itemName}RequestedLabel`)
-    .classList.remove("disabledInventory");
+    .classList.remove("disabled");
     document.getElementById(`${itemName}UrgentLabel`)
-    .classList.remove("disabledInventory");
+    .classList.remove("disabled");
     document.getElementById(`${itemName}OversupplyLabel`)
-    .classList.remove("disabledInventory");
+    .classList.remove("disabled");
   } else {
-    document.getElementById(`${itemName}Label`).classList.value = "larger disabledInventory";
+    document.getElementById(`${itemName}Label`).classList.value = "larger disabled";
 
     document.getElementById(`${itemName}RequestedLabel`)
-    .classList.add("disabledInventory");
+    .classList.add("disabled");
     document.getElementById(`${itemName}UrgentLabel`)
-    .classList.add("disabledInventory");
+    .classList.add("disabled");
     document.getElementById(`${itemName}OversupplyLabel`)
-    .classList.add("disabledInventory");
+    .classList.add("disabled");
   }
   showUpdateConfirmation(itemName);
 }

@@ -16,6 +16,12 @@
 
 <h2>{{siteName}} - Site Inventory</h2>
 
+<ul>
+  <li>Checked items below will be listed as available and/or as needed.</li>
+  <li>Unchecked items will be removed from the site inventory listing.</li>
+</ul>
+
+
 <div id="data-entry">
   <div class="data-entry-div vertical">
     <div class="data-entry-body">
@@ -33,27 +39,27 @@
         <tr>
           <td><input type="checkbox" id="{{itemName}}Checkbox"
                      onclick="toggleInventory('{{itemName}}')" {{itemChecked}} /></td>
-          <td><label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}}" id="{{itemName}}Label">{{itemName}}</label></td>
+          <td><label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}" id="{{itemName}}Label">{{itemName}}</label></td>
           <td>
             <div class="horizontal">
               <fieldset class="vertical">
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Requested" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{itemName}}')" {{requestedChecked}}/>
-                  <label for="{{itemName}}Requested" class="requested {{itemStatusClassDisabled}}"
+                  <label for="{{itemName}}Requested" class="requested {{itemStatusDisabled}}"
                          id="{{itemName}}RequestedLabel">
                     Requested or Available</label>
                 </div>
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status"  {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{itemName}}')" {{urgentChecked}}/>
-                  <label for="{{itemName}}Urgent" class="urgent {{itemStatusClassDisabled}}" id="{{itemName}}UrgentLabel">
+                  <label for="{{itemName}}Urgent" class="urgent {{itemStatusDisabled}}" id="{{itemName}}UrgentLabel">
                     Urgently Needed</label>
                 </div>
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Oversupply" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{itemName}}')" {{oversupplyChecked}}/>
-                  <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusClassDisabled}}" id="{{itemName}}OversupplyLabel">
+                  <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusDisabled}}" id="{{itemName}}OversupplyLabel">
                     Oversupply (too much)</label>
                 </div>
               </fieldset>
