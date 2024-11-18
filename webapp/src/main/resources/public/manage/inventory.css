@@ -7,8 +7,18 @@
   display: none;
   font-style: italic;
   font-size: 0.95em;
+  width: 150px;
 }
 
 .table-title {
   text-align: left;
 }
+
+tbody#inventoryTableBody tr {
+  outline: solid black thin;
+}
+
+tbody#inventoryTableBody td {
+  vertical-align: top;
+}
+

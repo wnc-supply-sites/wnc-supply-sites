@@ -1,18 +1,14 @@
 package com.vanatta.helene.supplies.database.manage;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -221,12 +217,17 @@ public class ManageSiteController {
     ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
       itemName = siteInventory.getItemName();
       itemChecked = siteInventory.isActive() ? "checked" : "";
-      requestedChecked = "Requested".equalsIgnoreCase(siteInventory.getItemStatus())
-           ? "checked" : "";
-      urgentChecked = "Urgent Need".equalsIgnoreCase(siteInventory.getItemStatus())
-          ? "checked" : "";
-      oversupplyChecked = "Oversupply".equalsIgnoreCase(siteInventory.getItemStatus())
-          ? "checked" : "";
+
+      urgentChecked =
+          "Urgent Need".equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+      oversupplyChecked =
+          "Oversupply".equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+
+      if (oversupplyChecked.isEmpty() && urgentChecked.isEmpty()) {
+        requestedChecked = "checked";
+      } else {
+        requestedChecked = "";
+      }
     }
 
     @SuppressWarnings("unused")
@@ -235,8 +236,10 @@ public class ManageSiteController {
         return "requested";
       } else if (urgentChecked != null && !urgentChecked.isEmpty()) {
         return "urgent";
-      } else {
+      } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
         return "oversupply";
+      } else {
+        return "";
       }
     }
 

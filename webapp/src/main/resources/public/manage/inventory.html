@@ -38,9 +38,19 @@
 
         {{#inventoryList}}
         <tr>
-          <td><input type="checkbox" id="{{itemName}}Checkbox"
-                     onclick="toggleInventory('{{itemName}}')" {{itemChecked}} /></td>
-          <td><label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}" id="{{itemName}}Label">{{itemName}}</label></td>
+          <td>
+            <input type="checkbox" id="{{itemName}}Checkbox"
+                     onclick="toggleInventory('{{itemName}}')" {{itemChecked}} />
+          </td>
+          <td>
+            <div>
+              <label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}" id="{{itemName}}Label">{{itemName}}</label>
+            </div>
+            <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
+              <span class="green-check" id="update-confirm">&#10003;</span>
+              <span>Updated</span>
+            </div>
+          </td>
           <td>
             <div class="horizontal">
               <fieldset class="vertical">
@@ -64,10 +74,6 @@
                     Oversupply (too much)</label>
                 </div>
               </fieldset>
-              <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
-                <div class="green-check" id="update-confirm">&#10003;</div>
-                <span>Updated</span>
-              </div>
             </div>
           </td>
         </tr>

@@ -102,9 +102,17 @@ function addItem() {
           <!-- Item Checkbox -->
           <td><input type="checkbox" id="${itemNameEncoded}Checkbox"
                      onclick="toggleInventory('${itemNameEncoded}')" checked /></td>
-                     
+
            <!-- Item Label -->
-          <td><label for="${itemNameEncoded}Checkbox" class="larger ${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</label></td>
+          <td>
+            <div>
+              <label for="${itemNameEncoded}Checkbox" class="larger ${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</label>
+            </div>
+            <div class="horizontal update-confirm-div" id="${itemNameEncoded}UpdateConfirm">
+              <span class="green-check" id="update-confirm">&#10003;</span>
+              <span>Updated</span>
+            </div>
+          </td>
           <!-- Item Status Radio buttons -->
           <td>
             <div class="horizontal">
@@ -150,10 +158,6 @@ function addItem() {
                     Oversupply (too much)</label>
                 </div>
               </fieldset>
-              <div class="horizontal update-confirm-div" id="${itemNameEncoded}UpdateConfirm">
-                <div class="green-check" id="update-confirm">&#10003;</div>
-                <span>Updated</span>
-              </div>
             </div>
 
           </td>
