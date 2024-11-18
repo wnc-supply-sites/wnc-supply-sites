@@ -242,15 +242,16 @@ public class ManageSiteController {
 
     /** Should either be blank or "checked" */
     @Builder.Default String itemChecked = "";
+
     @Builder.Default String requestedChecked = "";
     @Builder.Default String urgentChecked = "";
     @Builder.Default String oversupplyChecked = "";
 
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
-      if(requestedChecked != null && !requestedChecked.isEmpty()) {
+      if (requestedChecked != null && !requestedChecked.isEmpty()) {
         return "requested";
-      } else if(urgentChecked != null && !urgentChecked.isEmpty()) {
+      } else if (urgentChecked != null && !urgentChecked.isEmpty()) {
         return "urgent";
       } else {
         return "oversupply";
@@ -259,7 +260,7 @@ public class ManageSiteController {
 
     @SuppressWarnings("unused")
     public String getItemStatusDisabled() {
-      if(itemChecked == null || itemChecked.isEmpty()) {
+      if (itemChecked == null || itemChecked.isEmpty()) {
         return "disabled";
       } else {
         return "";
