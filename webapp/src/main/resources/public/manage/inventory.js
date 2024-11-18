@@ -198,7 +198,7 @@ function showUpdateConfirmation(itemName) {
   timeouts[itemName] = setTimeout(function () {
         document.getElementById(`${itemName}UpdateConfirm`).style.display = 'none';
       },
-      1500);
+      1000);
 }
 
 function htmlEncode(input) {
