@@ -106,6 +106,38 @@ public class ManageSiteDao {
     }
   }
 
+  /** Fetches all items, items requested/needed for a given site are listed as active. */
+  static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
+    String query =
+        """
+        with inventory as (
+          select
+              i.id item_id,
+              s.id site_id,
+              stat.name status_name
+         from site s
+         join site_item si on si.site_id = s.id
+         join item i on i.id = si.item_id
+         join item_status stat on stat.id = si.item_status_id
+         where s.id = :siteId
+        )
+        select
+            i.id item_id,
+            i.name item_name,
+            case when inv.site_id is null then false else true end active,
+            inv.status_name item_status
+        from item i
+        left join inventory inv on inv.item_id = i.id
+    """;
+
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(query)
+                .bind("siteId", siteId) //
+                .mapToBean(SiteInventory.class)
+                .list());
+  }
 
   @Data
   @AllArgsConstructor
@@ -114,6 +146,6 @@ public class ManageSiteDao {
     long itemId;
     String itemName;
     String itemStatus;
-    boolean activeRequest;
+    boolean active;
   }
 }

@@ -48,7 +48,10 @@ class ManageSiteDaoTest {
   static long getSiteId(String siteName) {
     return TestConfiguration.jdbiTest.withHandle(
         handle ->
-            handle.createQuery("select id from site where name = '" + siteName + "'").mapTo(Long.class).one());
+            handle
+                .createQuery("select id from site where name = '" + siteName + "'")
+                .mapTo(Long.class)
+                .one());
   }
 
   @Test
@@ -59,7 +62,6 @@ class ManageSiteDaoTest {
 
     assertThat(result).isEqualTo("site1");
   }
-
 
   @Test
   void siteStatusActive() {
@@ -74,7 +76,6 @@ class ManageSiteDaoTest {
     ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, true);
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isActive()).isTrue();
-
 
     siteId = getSiteId("site2");
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
@@ -107,5 +108,50 @@ class ManageSiteDaoTest {
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isAcceptingDonations()).isTrue();
   }
-}
 
+  @Test
+  void fetchSiteInventory() {
+    long siteId = getSiteId("site1");
+    var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+
+    ManageSiteDao.SiteInventory water =
+        result.stream()
+            .filter(r -> r.getItemName().equalsIgnoreCase("water"))
+            .findAny()
+            .orElseThrow();
+    assertThat(water.isActive()).isTrue();
+    assertThat(water.getItemStatus()).isEqualTo("Requested");
+
+    ManageSiteDao.SiteInventory clothes =
+        result.stream()
+            .filter(r -> r.getItemName().equalsIgnoreCase("new clothes"))
+            .findAny()
+            .orElseThrow();
+    assertThat(clothes.isActive()).isTrue();
+    assertThat(clothes.getItemStatus()).isEqualTo("Urgent Need");
+
+    ManageSiteDao.SiteInventory usedClothes =
+        result.stream()
+            .filter(r -> r.getItemName().equalsIgnoreCase("used clothes"))
+            .findAny()
+            .orElseThrow();
+    assertThat(usedClothes.isActive()).isTrue();
+    assertThat(usedClothes.getItemStatus()).isEqualTo("Oversupply");
+
+    ManageSiteDao.SiteInventory gloves =
+        result.stream()
+            .filter(r -> r.getItemName().equalsIgnoreCase("gloves"))
+            .findAny()
+            .orElseThrow();
+    assertThat(gloves.isActive()).isFalse();
+    assertThat(gloves.getItemStatus()).isNull();
+
+    ManageSiteDao.SiteInventory randomStuff =
+        result.stream()
+            .filter(r -> r.getItemName().equalsIgnoreCase("random stuff"))
+            .findAny()
+            .orElseThrow();
+    assertThat(randomStuff.isActive()).isFalse();
+    assertThat(randomStuff.getItemStatus()).isNull();
+  }
+}

@@ -1,10 +1,13 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -191,50 +194,18 @@ public class ManageSiteController {
     pageParams.put("siteName", siteName);
     pageParams.put("siteId", siteId);
 
-    List<ItemInventoryDisplay> inventoryList = new ArrayList<>();
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("shampoo")
-            .itemChecked("checked")
-            .requestedChecked("checked")
-            .build());
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("mask")
-            .itemChecked("checked")
-            .urgentChecked("checked")
-            .build());
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("water")
-            .itemChecked("checked")
-            .oversupplyChecked("checked")
-            .build());
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("gloves")
-            .itemChecked("")
-            .requestedChecked("checked")
-            .build());
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("soap")
-            .itemChecked("")
-            .urgentChecked("checked")
-            .build());
-    inventoryList.add(
-        ItemInventoryDisplay.builder()
-            .itemName("diapers")
-            .itemChecked("")
-            .oversupplyChecked("checked")
-            .build());
+    List<ItemInventoryDisplay> inventoryList =
+        ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
+            .map(ItemInventoryDisplay::new)
+            .sorted(Comparator.comparing(ItemInventoryDisplay::getItemName))
+            .toList();
 
     pageParams.put("inventoryList", inventoryList);
 
     return new ModelAndView("/manage/inventory", pageParams);
   }
 
-  @Value
+  @Data
   @Builder
   @AllArgsConstructor
   static class ItemInventoryDisplay {
@@ -246,6 +217,17 @@ public class ManageSiteController {
     @Builder.Default String requestedChecked = "";
     @Builder.Default String urgentChecked = "";
     @Builder.Default String oversupplyChecked = "";
+
+    ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
+      itemName = siteInventory.getItemName();
+      itemChecked = siteInventory.isActive() ? "checked" : "";
+      requestedChecked = "Requested".equalsIgnoreCase(siteInventory.getItemStatus())
+           ? "checked" : "";
+      urgentChecked = "Urgent Need".equalsIgnoreCase(siteInventory.getItemStatus())
+          ? "checked" : "";
+      oversupplyChecked = "Oversupply".equalsIgnoreCase(siteInventory.getItemStatus())
+          ? "checked" : "";
+    }
 
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
