@@ -10,6 +10,9 @@
 <body>
 <h1><a href="../.." class="link-home">WNC Supplies - Site Management</a></h1>
 
+<div id="error-div">ERR</div>
+
+
 <div class="back-link">
   <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
 </div>
@@ -42,12 +45,12 @@
             <input type="checkbox" id="{{itemName}}Checkbox"
                    onclick="toggleInventory('{{siteId}}', '{{itemName}}')" {{itemChecked}}/>
           </td>
-          <td>
+          <td onclick="checkAndToggleInventory('{{siteId}}', '{{itemName}}')">
             <div>
-              <label for="{{itemName}}Checkbox" class="larger {{itemLabelClass}} {{itemStatusDisabled}}"
+              <span class="larger {{itemLabelClass}} {{itemStatusDisabled}}"
                      id="{{itemName}}Label">
                 {{itemName}}
-              </label>
+              </span>
             </div>
             <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
               <span class="green-check" id="update-confirm">&#10003;</span>
@@ -59,21 +62,21 @@
               <fieldset class="vertical">
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Requested" name="{{itemName}}Status" {{itemStatusDisabled}}
-                         onclick="changeItemStatus('{{itemName}}')" {{requestedChecked}}/>
+                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{requestedChecked}}/>
                   <label for="{{itemName}}Requested" class="requested {{itemStatusDisabled}}"
                          id="{{itemName}}RequestedLabel">
                     Requested or Available</label>
                 </div>
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status" {{itemStatusDisabled}}
-                         onclick="changeItemStatus('{{itemName}}')" {{urgentChecked}}/>
+                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{urgentChecked}}/>
                   <label for="{{itemName}}Urgent" class="urgent {{itemStatusDisabled}}" id="{{itemName}}UrgentLabel">
                     Urgently Needed
                   </label>
                 </div>
                 <div class="horizontal">
                   <input type="radio" id="{{itemName}}Oversupply" name="{{itemName}}Status" {{itemStatusDisabled}}
-                         onclick="changeItemStatus('{{itemName}}')" {{oversupplyChecked}}/>
+                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{oversupplyChecked}}/>
                   <label for="{{itemName}}Oversupply" class="oversupply {{itemStatusDisabled}}"
                          id="{{itemName}}OversupplyLabel">
                     Oversupply (too much)
@@ -92,7 +95,7 @@
       <table>
         <tr>
           <td>
-            <button onclick="addItem()">+ Add Item</button>
+            <button onclick="addItem('{{siteId}}')">+ Add Item</button>
           </td>
           <td>
             <input type="text" id="newItemText"/>

@@ -308,4 +308,25 @@ public class ManageSiteController {
     ManageSiteDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     return ResponseEntity.ok("Updated");
   }
+
+  @PostMapping("/manage/update-site-item-status")
+  @ResponseBody
+  ResponseEntity<String> updateSiteItemStatus(@RequestBody Map<String, String> params) {
+    String siteId = params.get("siteId");
+    String itemName = params.get("itemName");
+    String newStatus = params.get("newStatus");
+
+    log.info(
+        "Updating item status, site id: {}, item name: {}, status: {}",
+        siteId,
+        itemName,
+        newStatus);
+    if (fetchSiteName(siteId) == null) {
+      log.warn("Invalid site id: {}", siteId);
+      return ResponseEntity.badRequest().body("Invalid site id");
+    }
+
+    ManageSiteDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
+    return ResponseEntity.ok("Updated");
+  }
 }

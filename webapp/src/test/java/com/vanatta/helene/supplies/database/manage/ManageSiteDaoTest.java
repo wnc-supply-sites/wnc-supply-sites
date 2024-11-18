@@ -169,4 +169,38 @@ class ManageSiteDaoTest {
     gloves = findItemByName(result, "gloves");
     assertThat(gloves.isActive()).isFalse();
   }
+
+  @Test
+  void updateSiteItemStatus() {
+    long siteId = getSiteId("site1");
+
+    // validate gloves status is 'Requested'
+    var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    ManageSiteDao.SiteInventory water = findItemByName(result, "water");
+    assertThat(water.getItemStatus()).isEqualTo("Requested");
+
+    // change gloves status to 'Urgent Need'
+    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Urgent Need");
+
+    // validate gloves status is updated 'Urgent Need'
+    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    water = findItemByName(result, "water");
+    assertThat(water.getItemStatus()).isEqualTo("Urgent Need");
+
+    // change gloves status to 'Oversupply'
+    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Oversupply");
+
+    // validate gloves status is updated 'Oversupply'
+    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    water = findItemByName(result, "water");
+    assertThat(water.getItemStatus()).isEqualTo("Oversupply");
+
+    // change gloves status back to 'Requested'
+    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Requested");
+
+    // validate gloves status is updated 'Requested'
+    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    water = findItemByName(result, "water");
+    assertThat(water.getItemStatus()).isEqualTo("Requested");
+  }
 }

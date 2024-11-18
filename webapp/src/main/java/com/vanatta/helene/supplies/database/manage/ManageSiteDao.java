@@ -199,4 +199,28 @@ public class ManageSiteDao {
       }
     }
   }
+
+  static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
+    String update =
+        """
+      update site_item 
+      set item_status_id = (select id from item_status where name = :itemStatus)
+      where site_id = :siteId
+         and item_id = (select id from item where name = :itemName)
+      """;
+    int updateCount =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(update)
+                    .bind("siteId", siteId)
+                    .bind("itemName", itemName)
+                    .bind("itemStatus", itemStatus)
+                    .execute());
+
+    if (updateCount != 1) {
+      throw new IllegalArgumentException(
+          String.format("Invalid site id: %s, item name: %s", siteId, itemName));
+    }
+  }
 }

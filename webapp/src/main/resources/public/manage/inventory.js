@@ -1,12 +1,23 @@
+/** Fires when a user clicks the table cell containing an
+ * inventory checkbox. This is a convenience to make the select
+ * area very large, easy to click, without having to actually
+ * click the checkbox or label precisely.
+ */
+
+async function checkAndToggleInventory(siteId, itemName) {
+  // first toggle the checkbox
+  const checkbox = document.getElementById(`${itemName}Checkbox`);
+  checkbox.checked = !checkbox.checked;
+
+  // now handle the toggle inventory event as normal
+  toggleInventory(siteId, itemName);
+}
+
 /**
  * Fires when inventory checkbox is checked or unchecked.
  */
 async function toggleInventory(siteId, itemName) {
   const checked = document.getElementById(`${itemName}Checkbox`).checked;
-
-  document.getElementById(`${itemName}Requested`).disabled = !checked;
-  document.getElementById(`${itemName}Urgent`).disabled = !checked;
-  document.getElementById(`${itemName}Oversupply`).disabled = !checked;
 
   const requestedChecked = document.getElementById(`${itemName}Requested`)
       .checked;
@@ -16,38 +27,59 @@ async function toggleInventory(siteId, itemName) {
       .checked;
 
   if (checked) {
-    let labelClass = "requested";
-    let itemStatus = "Requested";
-    if (urgentChecked) {
-      labelClass = "urgent";
-      itemStatus = "Urgent Need";
-    } else if(oversupplyChecked) {
-      labelClass = "oversupply";
-      itemStatus = "Oversupply";
+    try {
+      let labelClass = "requested";
+      let itemStatus = "Requested";
+      if (urgentChecked) {
+        labelClass = "urgent";
+        itemStatus = "Urgent Need";
+      } else if (oversupplyChecked) {
+        labelClass = "oversupply";
+        itemStatus = "Oversupply";
+      }
+      await sendActivateItem(siteId, itemName, itemStatus);
+
+      document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
+
+      document.getElementById(`${itemName}RequestedLabel`)
+      .classList.remove("disabled");
+      document.getElementById(`${itemName}UrgentLabel`)
+      .classList.remove("disabled");
+      document.getElementById(`${itemName}OversupplyLabel`)
+      .classList.remove("disabled");
+      showUpdateConfirmation(itemName);
+
+      document.getElementById(`${itemName}Requested`).disabled = !checked;
+      document.getElementById(`${itemName}Urgent`).disabled = !checked;
+      document.getElementById(`${itemName}Oversupply`).disabled = !checked;
+    } catch (error) {
+      showError(error);
+      // revert checkbox update
+      document.getElementById(`${itemName}Checkbox`).checked = false;
     }
-    await sendActivateItem(siteId, itemName, itemStatus);
-
-    document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
-
-    document.getElementById(`${itemName}RequestedLabel`)
-    .classList.remove("disabled");
-    document.getElementById(`${itemName}UrgentLabel`)
-    .classList.remove("disabled");
-    document.getElementById(`${itemName}OversupplyLabel`)
-    .classList.remove("disabled");
   } else {
-    await sendDeactivateItem(siteId, itemName);
+    try {
+      await sendDeactivateItem(siteId, itemName);
 
-    document.getElementById(`${itemName}Label`).classList.value = "larger disabled";
+      document.getElementById(`${itemName}Label`).classList.value = "larger disabled";
 
-    document.getElementById(`${itemName}RequestedLabel`)
-    .classList.add("disabled");
-    document.getElementById(`${itemName}UrgentLabel`)
-    .classList.add("disabled");
-    document.getElementById(`${itemName}OversupplyLabel`)
-    .classList.add("disabled");
+      document.getElementById(`${itemName}RequestedLabel`)
+      .classList.add("disabled");
+      document.getElementById(`${itemName}UrgentLabel`)
+      .classList.add("disabled");
+      document.getElementById(`${itemName}OversupplyLabel`)
+      .classList.add("disabled");
+      showUpdateConfirmation(itemName);
+
+      document.getElementById(`${itemName}Requested`).disabled = !checked;
+      document.getElementById(`${itemName}Urgent`).disabled = !checked;
+      document.getElementById(`${itemName}Oversupply`).disabled = !checked;
+    } catch (error) {
+      showError(error);
+      // revert checkbox update
+      document.getElementById(`${itemName}Checkbox`).checked = true;
+    }
   }
-  showUpdateConfirmation(itemName);
 }
 
 async function sendActivateItem(siteId, itemName, itemStatus) {
@@ -97,7 +129,7 @@ async function sendDeactivateItem(siteId, itemName) {
 /**
  * Fires when the item status radio buttons are toggled.
  */
-function changeItemStatus(itemName) {
+async function changeItemStatus(siteId, itemName) {
   const requestedChecked = document.getElementById(`${itemName}Requested`)
       .checked ? "checked" : "";
   const urgentChecked = document.getElementById(`${itemName}Urgent`)
@@ -108,20 +140,52 @@ function changeItemStatus(itemName) {
   document.getElementById(`${itemName}Label`)
   .classList.remove("requested", "urgent", "oversupply");
 
-  if (requestedChecked) {
-    document.getElementById(`${itemName}Label`)
-    .classList.add("requested");
-  } else if (urgentChecked) {
+  let newStatus = "";
+  if (urgentChecked) {
+    newStatus = "Urgent Need";
     document.getElementById(`${itemName}Label`)
     .classList.add("urgent");
-  } else {
+  } else if(oversupplyChecked) {
+    newStatus = "Oversupply";
     document.getElementById(`${itemName}Label`)
     .classList.add("oversupply");
+  } else {
+    newStatus = "Requested";
+    document.getElementById(`${itemName}Label`)
+    .classList.add("requested");
   }
-  showUpdateConfirmation(itemName);
+
+  try {
+    await sendItemStatusChange(siteId, itemName, newStatus);
+    showUpdateConfirmation(itemName);
+  } catch(error) {
+    showError(error);
+  }
 }
 
-function addItem() {
+async function sendItemStatusChange(siteId, itemName, newStatus) {
+  const url = "/manage/update-site-item-status";
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      siteId: siteId,
+      itemName: itemName,
+      newStatus: newStatus
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}, ${response.body}`);
+  }
+  return await response.text();
+}
+
+function addItem(siteId) {
   const itemName = document.getElementById("newItemText").value;
   const itemNameEncoded = htmlEncode(itemName);
 
@@ -141,15 +205,17 @@ function addItem() {
     labelStyle = "requested";
   } else if (urgentChecked) {
     labelStyle = "urgent";
-  } else if(oversupplyChecked) {
+  } else if (oversupplyChecked) {
     labelStyle = "oversupply";
   }
 
   const newItemRowHtml = `
         <tr>
           <!-- Item Checkbox -->
-          <td><input type="checkbox" id="${itemNameEncoded}Checkbox"
-                     onclick="toggleInventory('${itemNameEncoded}')" checked /></td>
+          <td>
+            <input type="checkbox" id="${itemNameEncoded}Checkbox"
+                   onclick="toggleInventory('${siteId}', '${itemNameEncoded}')" checked />
+          </td>
 
            <!-- Item Label -->
           <td>
@@ -161,6 +227,7 @@ function addItem() {
               <span>Updated</span>
             </div>
           </td>
+
           <!-- Item Status Radio buttons -->
           <td>
             <div class="horizontal">
@@ -171,43 +238,45 @@ function addItem() {
                       type="radio" 
                       id="${itemNameEncoded}Requested" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus('${itemNameEncoded}')"
+                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
                       ${requestedChecked}/>
                   <label 
                       for="${itemNameEncoded}Requested" 
                       class="requested" 
                       id="${itemNameEncoded}RequestedLabel">
-                    Requested or Available</label>
+                    Requested or Available
+                  </label>
                 </div>
                 <div class="horizontal">
                   <input 
                       type="radio" 
                       id="${itemNameEncoded}Urgent" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus('${itemNameEncoded}')"
+                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
                       ${urgentChecked}/>
                   <label 
                       for="${itemNameEncoded}Urgent" 
                       class="urgent" 
                       id="${itemNameEncoded}UrgentLabel">
-                    Urgently Needed</label>
+                    Urgently Needed
+                  </label>
                 </div>
                 <div class="horizontal">
                   <input 
                       type="radio" 
                       id="${itemNameEncoded}Oversupply" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus('${itemNameEncoded}')"
+                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
                       ${oversupplyChecked}/>
                   <label 
                       for="${itemNameEncoded}Oversupply" 
                       class="oversupply" 
                       id="${itemNameEncoded}OversupplyLabel">
-                    Oversupply (too much)</label>
+                    Oversupply (too much)
+                  </label>
                 </div>
               </fieldset>
             </div>
-
           </td>
         </tr>
   `;
@@ -251,6 +320,20 @@ function showUpdateConfirmation(itemName) {
         document.getElementById(`${itemName}UpdateConfirm`).style.display = 'none';
       },
       1000);
+}
+
+function showError(error) {
+  let errorDiv = document.getElementById("error-div");
+  errorDiv.innerHTML = "Update failed. Error contacting server. " + error;
+  errorDiv.style.display = 'block';
+
+  console.log("Error: " + error);
+  clearTimeout(timeouts['error']);
+  timeouts['error'] = setTimeout(function () {
+        errorDiv.style.display = 'none';
+      },
+      3000);
+
 }
 
 function htmlEncode(input) {
