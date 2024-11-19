@@ -83,7 +83,7 @@ public class ManageSiteDao {
             handle ->
                 handle
                     .createUpdate(
-                        "update site set accepting_donations = :newValue where id = :siteId")
+                        "update site set accepting_donations = :newValue, last_updated = now() where id = :siteId")
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
@@ -91,6 +91,7 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
+    updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
   public static void updateSiteActiveFlag(Jdbi jdbi, long siteId, boolean newValue) {
@@ -98,7 +99,7 @@ public class ManageSiteDao {
         jdbi.withHandle(
             handle ->
                 handle
-                    .createUpdate("update site set active = :newValue where id = :siteId")
+                    .createUpdate("update site set active = :newValue, last_updated = now() where id = :siteId")
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
@@ -106,6 +107,7 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
+    updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
   /** Fetches all items, items requested/needed for a given site are listed as active. */
@@ -165,6 +167,7 @@ public class ManageSiteDao {
                 .bind("siteId", siteId)
                 .bind("itemName", itemName)
                 .execute());
+    updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
   static void updateSiteItemActive(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
@@ -198,13 +201,15 @@ public class ManageSiteDao {
         throw e;
       }
     }
+    updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
     String update =
         """
       update site_item
-      set item_status_id = (select id from item_status where name = :itemStatus)
+      set item_status_id = (select id from item_status where name = :itemStatus),
+         last_updated = now()
       where site_id = :siteId
          and item_id = (select id from item where name = :itemName)
       """;
@@ -219,9 +224,15 @@ public class ManageSiteDao {
                     .execute());
 
     if (updateCount != 1) {
-      throw new IllegalArgumentException(
-          String.format("Invalid item name: %s", itemName));
+      throw new IllegalArgumentException(String.format("Invalid item name: %s", itemName));
     }
+    updateSiteLastUpdatedToNow(jdbi, siteId);
+  }
+
+  private static void updateSiteLastUpdatedToNow(Jdbi jdbi, long siteId) {
+    String updateSiteLastUpdated = "update site set last_updated = now() where id = :siteId";
+    jdbi.withHandle(
+        handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
 
   public static boolean addNewItem(Jdbi jdbi, String itemName) {

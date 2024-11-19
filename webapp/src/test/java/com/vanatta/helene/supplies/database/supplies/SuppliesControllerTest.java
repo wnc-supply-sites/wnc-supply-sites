@@ -186,7 +186,7 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().sites(List.of("site1")).build());
     assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getItems()).hasSize(2);
+    assertThat(result.getResults().getFirst().getItems()).hasSize(3);
   }
 
   /**

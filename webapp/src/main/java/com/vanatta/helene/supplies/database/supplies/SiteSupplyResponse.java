@@ -20,6 +20,7 @@ public class SiteSupplyResponse {
     Long id;
     @Builder.Default List<SiteItem> items = new ArrayList<>();
     boolean acceptingDonations;
+    String lastUpdated;
   }
 
   @Value

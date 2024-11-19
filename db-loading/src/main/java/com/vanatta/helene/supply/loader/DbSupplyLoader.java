@@ -51,7 +51,8 @@ public class DbSupplyLoader {
                                 .createUpdate(
                                     """
                                 update site_item
-                                set item_status_id = (select id from item_status where name = 'Oversupply')
+                                set item_status_id = (select id from item_status where name = 'Oversupply'),
+                                   last_updated = now()
                                 where site_id = :siteId and item_id = :itemId
                             """)
                                 .bind("siteId", siteId)

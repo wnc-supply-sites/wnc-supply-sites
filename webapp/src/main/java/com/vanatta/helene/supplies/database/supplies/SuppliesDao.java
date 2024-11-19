@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class SuppliesDao {
     String county;
     String item;
     String itemStatus;
+    LocalDate lastUpdated;
   }
 
   static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
@@ -28,7 +30,8 @@ public class SuppliesDao {
         s.name site,
         c.name county,
         i.name item,
-        ist.name itemStatus
+        ist.name itemStatus,
+        s.last_updated lastUpdated
       from site s
       join county c on c.id = s.county_id
       join site_item si on si.site_id = s.id
@@ -52,10 +55,14 @@ public class SuppliesDao {
     }
 
     if (request.getAcceptingDonations() != request.getNotAcceptingDonations()) {
-      query.append("and accepting_donations = ").append(request.getAcceptingDonations()).append("\n");
+      query
+          .append("and accepting_donations = ")
+          .append(request.getAcceptingDonations())
+          .append("\n");
     }
 
-    query.append("order by c.name, s.name, ist.sort_order, i.name");
+    //    query.append("\ngroup by s.id");
+    query.append("\norder by c.name, s.name, ist.sort_order, i.name");
 
     return jdbi.withHandle(
         handle -> {

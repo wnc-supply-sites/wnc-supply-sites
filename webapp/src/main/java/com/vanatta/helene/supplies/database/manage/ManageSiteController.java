@@ -333,6 +333,7 @@ public class ManageSiteController {
     String itemName = params.get("itemName");
     String itemStatus = params.get("itemStatus");
 
+    log.info("Adding item: {}, to site: {}, status: {}", itemName, siteId, itemStatus);
     if (fetchSiteName(siteId) == null) {
       log.warn("Invalid site id: {}", siteId);
       return ResponseEntity.badRequest().body("Invalid site id");

@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
+
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,9 @@ public class SuppliesController {
     return new ModelAndView("supplies/supplies", templateValues);
   }
 
+  private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-d");
+
+
   /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
@@ -49,6 +54,7 @@ public class SuppliesController {
                             .site(result.getSite())
                             .county(result.getCounty())
                             .acceptingDonations(result.isAcceptingDonations())
+                            .lastUpdated(result.getLastUpdated().format(dateTimeFormatter))
                             .build())
                 .getItems()
                 .add(
