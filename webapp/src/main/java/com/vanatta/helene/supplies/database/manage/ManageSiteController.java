@@ -95,7 +95,7 @@ public class ManageSiteController {
     pageParams.put("siteName", siteName);
     pageParams.put("siteContact", contact);
 
-    return new ModelAndView("/manage/contact", pageParams);
+    return new ModelAndView("/manage/contact-page", pageParams);
   }
 
   @PostMapping("/manage/update-contact")
@@ -140,7 +140,7 @@ public class ManageSiteController {
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "checked" : "");
     pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
-    return new ModelAndView("/manage/status", pageParams);
+    return new ModelAndView("/manage/status-page", pageParams);
   }
 
   /** REST endpoint to toggle the status of sites (active/accepting donations). */
@@ -200,7 +200,7 @@ public class ManageSiteController {
 
     pageParams.put("inventoryList", inventoryList);
 
-    return new ModelAndView("/manage/inventory", pageParams);
+    return new ModelAndView("/manage/inventory-page", pageParams);
   }
 
   @Data
