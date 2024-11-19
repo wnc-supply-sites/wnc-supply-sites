@@ -78,9 +78,7 @@ public class ManageSiteController {
   }
 
   @GetMapping("/manage/contact")
-  ModelAndView manageContact(
-      //      @CookieValue(value = "auth") String auth,
-      String siteId) {
+  ModelAndView manageContact(String siteId) {
     Map<String, String> pageParams = new HashMap<>();
 
     String siteName = fetchSiteName(siteId);
@@ -95,7 +93,7 @@ public class ManageSiteController {
     pageParams.put("siteName", siteName);
     pageParams.put("siteContact", contact);
 
-    return new ModelAndView("/manage/contact-page", pageParams);
+    return new ModelAndView("manage/contact", pageParams);
   }
 
   @PostMapping("/manage/update-contact")
@@ -119,9 +117,7 @@ public class ManageSiteController {
 
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status")
-  ModelAndView showManageStatusPage(
-      //      @CookieValue(value = "auth") String auth,
-      String siteId) {
+  ModelAndView showManageStatusPage(String siteId) {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
@@ -140,7 +136,7 @@ public class ManageSiteController {
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "checked" : "");
     pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
-    return new ModelAndView("/manage/status-page", pageParams);
+    return new ModelAndView("manage/status", pageParams);
   }
 
   /** REST endpoint to toggle the status of sites (active/accepting donations). */
@@ -179,9 +175,7 @@ public class ManageSiteController {
 
   /** Display inventory listing for a site. */
   @GetMapping("/manage/inventory")
-  ModelAndView displaySiteInventory(
-      //      @CookieValue(value = "auth") String auth,
-      String siteId) {
+  ModelAndView displaySiteInventory(String siteId) {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
@@ -195,12 +189,14 @@ public class ManageSiteController {
     List<ItemInventoryDisplay> inventoryList =
         ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
             .map(ItemInventoryDisplay::new)
-            .sorted(Comparator.comparing(d -> d.getItemName().toUpperCase()))//ItemInventoryDisplay::getItemName))
+            .sorted(
+                Comparator.comparing(
+                    d -> d.getItemName().toUpperCase())) // ItemInventoryDisplay::getItemName))
             .toList();
 
     pageParams.put("inventoryList", inventoryList);
 
-    return new ModelAndView("/manage/inventory-page", pageParams);
+    return new ModelAndView("manage/inventory", pageParams);
   }
 
   @Data
@@ -347,7 +343,7 @@ public class ManageSiteController {
     }
 
     boolean itemAdded = ManageSiteDao.addNewItem(jdbi, itemName);
-    if(!itemAdded) {
+    if (!itemAdded) {
       return ResponseEntity.badRequest().body("Item not added, already exists");
     }
 
