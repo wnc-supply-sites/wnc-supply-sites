@@ -23,7 +23,7 @@ public class SiteDetailDao {
                 handle
                     .createQuery(
                         """
-                            select s.name siteName, s.address, s.city, s.state
+                            select s.name siteName, s.contact_number, s.address, s.city, s.state
                             from site s
                             where s.id = :siteId
                             """)

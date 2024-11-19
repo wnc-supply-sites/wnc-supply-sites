@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,9 @@ public class SiteDetailController {
 
     Map<String, String> siteDetails = new HashMap<>();
     siteDetails.put("siteName", siteDetailData.getSiteName());
-    //    siteDetails.put("contactNumber", siteDetailData.getContactNumber());
+    siteDetails.put(
+        "contactNumber",
+        Optional.ofNullable(siteDetailData.getContactNumber()).orElse("none listed"));
     siteDetails.put("addressLine1", siteDetailData.getAddress());
     siteDetails.put(
         "addressLine2",
