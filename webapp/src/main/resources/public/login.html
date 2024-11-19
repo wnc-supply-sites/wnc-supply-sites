@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>Login</title>
+</head>
+
+<body>
+
+<div style="color: red; font-style: italic">{{errorMessage}}</div>
+
+<form action="/doLogin" method="post">
+
+<table>
+  <tr>
+    <td>User</td>
+    <td><input name="user" type="text"></input></td>
+  </tr>
+  <tr>
+    <td>Password</td>
+    <td><input name="password" type="password"></input></td>
+  </tr>
+</table>
+
+  <input type="hidden" name="redirectUri" value="{{redirectUri}}" />
+  <button type="submit">Login</button>
+</form>
+
+
+</body>
+</html>

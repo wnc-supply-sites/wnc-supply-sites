@@ -17,7 +17,7 @@ public class SiteDetailController {
 
   private final Jdbi jdbi;
 
-  @GetMapping("/site-detail")
+  @GetMapping("/supplies/site-detail")
   public ModelAndView siteDetail(@RequestParam Long id) {
     if (id == null) {
       throw new IllegalArgumentException("No site id specified, missing 'id' parameter");

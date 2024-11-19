@@ -195,7 +195,7 @@ public class ManageSiteController {
     List<ItemInventoryDisplay> inventoryList =
         ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
             .map(ItemInventoryDisplay::new)
-            .sorted(Comparator.comparing(ItemInventoryDisplay::getItemName))
+            .sorted(Comparator.comparing(d -> d.getItemName().toUpperCase()))//ItemInventoryDisplay::getItemName))
             .toList();
 
     pageParams.put("inventoryList", inventoryList);
