@@ -227,9 +227,9 @@ async function addItem(siteId) {
           </td>
 
            <!-- Item Label -->
-          <td>
-            <div>
-              <label for="${itemNameEncoded}Checkbox" class="larger ${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</label>
+          <td onclick="checkAndToggleInventory('${siteId}', '${itemNameEncoded}')">
+           <div>
+              <span class="larger ${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</span>
             </div>
             <div class="horizontal update-confirm-div" id="${itemNameEncoded}UpdateConfirm">
               <span class="green-check" id="update-confirm">&#10003;</span>
@@ -247,7 +247,7 @@ async function addItem(siteId) {
                       type="radio" 
                       id="${itemNameEncoded}Requested" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
+                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
                       ${requestedChecked}/>
                   <label 
                       for="${itemNameEncoded}Requested" 
@@ -261,7 +261,7 @@ async function addItem(siteId) {
                       type="radio" 
                       id="${itemNameEncoded}Urgent" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
+                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
                       ${urgentChecked}/>
                   <label 
                       for="${itemNameEncoded}Urgent" 
@@ -275,7 +275,7 @@ async function addItem(siteId) {
                       type="radio" 
                       id="${itemNameEncoded}Oversupply" 
                       name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus(siteId, '${itemNameEncoded}')"
+                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
                       ${oversupplyChecked}/>
                   <label 
                       for="${itemNameEncoded}Oversupply" 
