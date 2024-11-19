@@ -279,7 +279,7 @@ public class ManageSiteController {
     }
 
     if (!List.of("Requested", "Urgent Need", "Oversupply").contains(itemStatus)) {
-      throw new IllegalArgumentException("Invalid item status: " + itemStatus);
+      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
 
     ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
@@ -328,5 +328,30 @@ public class ManageSiteController {
 
     ManageSiteDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
     return ResponseEntity.ok("Updated");
+  }
+
+  @PostMapping("/manage/add-site-item")
+  @ResponseBody
+  ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
+    String siteId = params.get("siteId");
+    String itemName = params.get("itemName");
+    String itemStatus = params.get("itemStatus");
+
+    if (fetchSiteName(siteId) == null) {
+      log.warn("Invalid site id: {}", siteId);
+      return ResponseEntity.badRequest().body("Invalid site id");
+    }
+
+    if (!List.of("Requested", "Urgent Need", "Oversupply").contains(itemStatus)) {
+      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
+    }
+
+    boolean itemAdded = ManageSiteDao.addNewItem(jdbi, itemName);
+    if(!itemAdded) {
+      return ResponseEntity.badRequest().body("Item not added, already exists");
+    }
+
+    ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    return ResponseEntity.ok("Added");
   }
 }

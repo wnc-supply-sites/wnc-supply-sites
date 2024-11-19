@@ -203,4 +203,29 @@ class ManageSiteDaoTest {
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo("Requested");
   }
+
+  @Test
+  void addItem() {
+    int itemCountPreInsert = countItems();
+
+    boolean result = ManageSiteDao.addNewItem(TestConfiguration.jdbiTest, "new item");
+    assertThat(result).isTrue();
+
+    int itemCountPostInsert = countItems();
+    assertThat(itemCountPreInsert + 1).isEqualTo(itemCountPostInsert);
+  }
+
+  private static int countItems() {
+    return TestConfiguration.jdbiTest.withHandle(handle ->
+        handle.createQuery("select count(*) from item")
+            .mapTo(Integer.class)
+            .one());
+  }
+
+  @Test
+  void duplicateItemCannotBeAdded() {
+    ManageSiteDao.addNewItem(TestConfiguration.jdbiTest, "some item");
+    boolean result = ManageSiteDao.addNewItem(TestConfiguration.jdbiTest, "SOME ITEM");
+    assertThat(result).isFalse();
+  }
 }

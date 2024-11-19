@@ -10,7 +10,7 @@ async function checkAndToggleInventory(siteId, itemName) {
   checkbox.checked = !checkbox.checked;
 
   // now handle the toggle inventory event as normal
-  toggleInventory(siteId, itemName);
+  await toggleInventory(siteId, itemName);
 }
 
 /**
@@ -145,7 +145,7 @@ async function changeItemStatus(siteId, itemName) {
     newStatus = "Urgent Need";
     document.getElementById(`${itemName}Label`)
     .classList.add("urgent");
-  } else if(oversupplyChecked) {
+  } else if (oversupplyChecked) {
     newStatus = "Oversupply";
     document.getElementById(`${itemName}Label`)
     .classList.add("oversupply");
@@ -158,7 +158,7 @@ async function changeItemStatus(siteId, itemName) {
   try {
     await sendItemStatusChange(siteId, itemName, newStatus);
     showUpdateConfirmation(itemName);
-  } catch(error) {
+  } catch (error) {
     showError(error);
   }
 }
@@ -185,7 +185,7 @@ async function sendItemStatusChange(siteId, itemName, newStatus) {
   return await response.text();
 }
 
-function addItem(siteId) {
+async function addItem(siteId) {
   const itemName = document.getElementById("newItemText").value;
   const itemNameEncoded = htmlEncode(itemName);
 
@@ -201,12 +201,21 @@ function addItem(siteId) {
       .checked ? "checked" : "";
 
   let labelStyle = "";
+  let status = "Requested";
   if (requestedChecked) {
     labelStyle = "requested";
+    status = "Requested";
   } else if (urgentChecked) {
     labelStyle = "urgent";
+    status = "Urgent Need";
   } else if (oversupplyChecked) {
     labelStyle = "oversupply";
+    status = "Oversupply";
+  }
+
+  let result = await sendAddNewItem(siteId, itemName, status);
+  if (!result) {
+    return;
   }
 
   const newItemRowHtml = `
@@ -287,6 +296,41 @@ function addItem(siteId) {
   document.getElementById("newItemText").value = "";
 
   showUpdateConfirmation(itemNameEncoded);
+}
+
+async function sendAddNewItem(siteId, itemName, itemStatus) {
+  const url = "/manage/add-site-item";
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        siteId: siteId,
+        itemName: itemName,
+        itemStatus: itemStatus
+      })
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        document.getElementById("addItemResult").innerHTML = "Item not added, already exists."
+        document.getElementById("addItemResult").style.display = 'block';
+        return false;
+      } else {
+        showError(new Error(`Response status: ${response.status}, ${response.text}`));
+        return false;
+      }
+    }
+    document.getElementById("addItemResult").style.display = 'none';
+    return true;
+  } catch (error) {
+    showError(error);
+    return false;
+  }
 }
 
 const timeouts = [];

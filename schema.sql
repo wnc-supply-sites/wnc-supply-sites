@@ -31,15 +31,11 @@ create table site
     active              boolean default true           not null
 );
 
-alter table site add column contact_number varchar(32);
-
-
 create table item
 (
     id   serial primary key,
     name varchar(128) not null unique
 );
-
 
 create table item_status
 (

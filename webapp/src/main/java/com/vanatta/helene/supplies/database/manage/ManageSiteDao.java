@@ -16,7 +16,7 @@ public class ManageSiteDao {
     return jdbi.withHandle(
         handle ->
             handle
-                .createQuery("select id, name from site order by name")
+                .createQuery("select id, name from site order by lower(name)")
                 .mapToBean(SiteSelection.class)
                 .list());
   }
@@ -203,7 +203,7 @@ public class ManageSiteDao {
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
     String update =
         """
-      update site_item 
+      update site_item
       set item_status_id = (select id from item_status where name = :itemStatus)
       where site_id = :siteId
          and item_id = (select id from item where name = :itemName)
@@ -220,7 +220,22 @@ public class ManageSiteDao {
 
     if (updateCount != 1) {
       throw new IllegalArgumentException(
-          String.format("Invalid site id: %s, item name: %s", siteId, itemName));
+          String.format("Invalid item name: %s", itemName));
     }
+  }
+
+  public static boolean addNewItem(Jdbi jdbi, String itemName) {
+    String insert = "insert into item(name) values(:itemName)";
+
+    try {
+      jdbi.withHandle(handle -> handle.createUpdate(insert).bind("itemName", itemName).execute());
+    } catch (Exception e) {
+      if (e.getMessage().contains("duplicate key")) {
+        return false;
+      } else {
+        throw e;
+      }
+    }
+    return true;
   }
 }
