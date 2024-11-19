@@ -130,6 +130,8 @@
 </div>
 
 <hr>
+
+<!-- Results table, populated by JS -->
 <table id="results-table" class="results-table">
   <thead>
   <tr>
@@ -142,6 +144,7 @@
   </tbody>
 </table>
 
+<!-- Script to populate filter controls (select site, inventory, etc..), executed after page is loaded -->
 <script>
   const url = "/supplies/filter-data";
   fetch(url, {
