@@ -41,7 +41,7 @@ public class LoginController {
     String password = params.get("password").getFirst();
     String redirectUri = params.get("redirectUri").getFirst();
 
-    if(validUser.equals(user) && validPass.equals(password)) {
+    if(validUser.equalsIgnoreCase(user) && validPass.equalsIgnoreCase(password)) {
       Cookie cookie = new Cookie("auth", AuthKey.AUTH_KEY);
       response.addCookie(cookie);
       cookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
