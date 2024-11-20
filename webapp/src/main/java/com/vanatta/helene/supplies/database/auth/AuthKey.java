@@ -1,5 +1,8 @@
 package com.vanatta.helene.supplies.database.auth;
 
+import lombok.Getter;
+import org.jdbi.v3.core.Jdbi;
+
 import java.util.UUID;
 
 /**
@@ -8,6 +11,15 @@ import java.util.UUID;
  * to validate user is logged in.
  */
 public class AuthKey {
-  public static final String AUTH_KEY = UUID.randomUUID().toString();
+
+  /**
+   * AuthKey value is cached.
+   */
+  @Getter
+  private final String authKey;
+
+  public AuthKey(Jdbi jdbi) {
+    authKey = LoginDao.getAuthKeyOrGenerateIt(jdbi);
+  }
 }
 
