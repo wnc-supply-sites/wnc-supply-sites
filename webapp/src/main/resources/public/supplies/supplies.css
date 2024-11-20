@@ -138,3 +138,8 @@ table.results-table tbody tr:nth-child(even) {
     margin-top: 10px;
     height: 25px;
 }
+
+#site-detail-instruction-text {
+    font-size: 0.9em;
+    font-style: italic;
+}
