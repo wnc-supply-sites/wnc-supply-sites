@@ -6,6 +6,7 @@ function handleSelection(elementSelected) {
     return;
   }
   addSelection(elementSelected, selection);
+  selectionBox.selectedIndex = 0;
   updateData();
 }
 

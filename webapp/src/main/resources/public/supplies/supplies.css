@@ -25,18 +25,16 @@ select {
 }
 
 .selected-value {
-    font-size: 0.8em;
+    font-weight: bold;
 }
 
 table.filters-table {
     min-width: 600px;
-
 }
 
 table.filters-table tbody {
     vertical-align: top;
 }
-
 
 table.results-table {
     padding: 10px;
