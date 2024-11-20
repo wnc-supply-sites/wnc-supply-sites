@@ -39,7 +39,7 @@ async function toggleInventory(siteId, itemName) {
       }
       await sendActivateItem(siteId, itemName, itemStatus);
 
-      document.getElementById(`${itemName}Label`).classList.value = "larger " + labelClass;
+      document.getElementById(`${itemName}Label`).classList.value = "inventoryLabel " + labelClass;
 
       document.getElementById(`${itemName}RequestedLabel`)
       .classList.remove("disabled");
@@ -61,7 +61,7 @@ async function toggleInventory(siteId, itemName) {
     try {
       await sendDeactivateItem(siteId, itemName);
 
-      document.getElementById(`${itemName}Label`).classList.value = "larger disabled";
+      document.getElementById(`${itemName}Label`).classList.value = "inventoryLabel disabled";
 
       document.getElementById(`${itemName}RequestedLabel`)
       .classList.add("disabled");
@@ -228,8 +228,8 @@ async function addItem(siteId) {
 
            <!-- Item Label -->
           <td onclick="checkAndToggleInventory('${siteId}', '${itemNameEncoded}')">
-           <div>
-              <span class="larger ${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</span>
+           <div class="inventoryLabel">
+              <span class="${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</span>
             </div>
             <div class="horizontal update-confirm-div" id="${itemNameEncoded}UpdateConfirm">
               <span class="green-check" id="update-confirm">&#10003;</span>
@@ -242,7 +242,7 @@ async function addItem(siteId) {
             <div class="horizontal">
             
               <fieldset class="vertical">
-                <div class="horizontal">
+                <div class="horizontal item-status-div">
                   <input 
                       type="radio" 
                       id="${itemNameEncoded}Requested" 
@@ -256,7 +256,7 @@ async function addItem(siteId) {
                     Requested or Available
                   </label>
                 </div>
-                <div class="horizontal">
+                <div class="horizontal item-status-div">
                   <input 
                       type="radio" 
                       id="${itemNameEncoded}Urgent" 
@@ -270,7 +270,7 @@ async function addItem(siteId) {
                     Urgently Needed
                   </label>
                 </div>
-                <div class="horizontal">
+                <div class="horizontal item-status-div">
                   <input 
                       type="radio" 
                       id="${itemNameEncoded}Oversupply" 

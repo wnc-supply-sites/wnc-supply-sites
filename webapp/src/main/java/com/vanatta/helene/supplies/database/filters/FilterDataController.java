@@ -33,7 +33,7 @@ public class FilterDataController {
   @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData() {
     return FilterDataResponse.builder()
-        .sites(FilterDataDao.getAllSites(jdbi))
+        .sites(FilterDataDao.getAllActiveSitesThatHaveItems(jdbi))
         .counties(cachedCountiesList)
         .items(FilterDataDao.getAllItems(jdbi))
         .build();

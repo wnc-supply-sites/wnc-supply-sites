@@ -17,7 +17,7 @@
 
 <div id="site-select-div">
   <form action="/manage/site-selected" method="get">
-    <label for="siteId">Select supply site:</label>
+    <label for="siteId" id="select-label">Select supply site:</label>
     <select id="siteId" name="siteId" class="site-select">
       <option value=""></option>
       {{#sites}}
@@ -25,7 +25,7 @@
       {{/sites}}
     </select>
 
-    <button type="submit">Select</button>
+    <button type="submit" id="select-site-button">Select</button>
   </form>
 </div>
 </body>

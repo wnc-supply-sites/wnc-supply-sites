@@ -33,6 +33,12 @@ public class TestConfiguration {
                    'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', false
                 );
                 """,
+            // site4, in Buncombe county, no items (but active)
+            """
+                insert into site(name, address, city, county_id, state, active) values(
+                   'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', true
+                );
+                """,
             "insert into item(name) values('water')",
             "insert into item(name) values('gloves')",
             "insert into item(name) values('used clothes')",

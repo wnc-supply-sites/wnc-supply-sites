@@ -1,8 +1,39 @@
+@media only screen and (max-width: 769px) {
+    label {
+        font-size: 5em;
+    }
+}
+
+
+/*@media only screen and (max-width: 767px) {*/
+/*    h1, h2 {*/
+/*        font-size: 30px;*/
+/*    }*/
+/*}*/
+
 .site-select {
-  width: 200px;
+    width: 200px;
+    font-size: 1.25em;
+    margin-left: 25px;
+    height: 30px;
+    position: relative;
+    top: 2px;
 }
 
 #site-select-div {
-  padding-top: 20px;
-  padding-left: 30px;
+    padding-top: 20px;
+    padding-left: 30px;
 }
+
+
+#select-site-button {
+    margin-left: 40px;
+    width: 120px;
+    height: 30px;
+    font-size: 1.1em;
+}
+
+#select-label {
+    font-size: 1.4em;
+}
+

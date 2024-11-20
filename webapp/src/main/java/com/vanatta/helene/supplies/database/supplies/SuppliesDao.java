@@ -61,14 +61,16 @@ public class SuppliesDao {
           .append("\n");
     }
 
-    //    query.append("\ngroup by s.id");
     query.append("\norder by c.name, s.name, ist.sort_order, i.name");
+
+    List<String> decodedSites =
+        request.getSites().stream().map(s -> s.replace("&amp;", "&")).toList();
 
     return jdbi.withHandle(
         handle -> {
           var queryBuilder = handle.createQuery(query.toString());
           if (!request.getSites().isEmpty()) {
-            queryBuilder.bindList("sites", request.getSites());
+            queryBuilder.bindList("sites", decodedSites);
           }
           if (!request.getCounties().isEmpty()) {
             queryBuilder.bindList("counties", request.getCounties());

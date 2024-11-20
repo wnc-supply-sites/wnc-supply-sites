@@ -130,3 +130,9 @@ table.results-table tbody tr:nth-child(even) {
 .date-column {
     width: 120px;
 }
+
+.toggle-all-button {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 25px;
+}

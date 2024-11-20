@@ -19,7 +19,7 @@ class FilterDataControllerTest {
 
   @Test
   void counties() {
-    var response  = filterDataController.getFilterData();
+    var response = filterDataController.getFilterData();
 
     // spot check we return a few expected values
     assertThat(response.getCounties()).contains("Ashe", "Watauga");
@@ -27,7 +27,7 @@ class FilterDataControllerTest {
 
   @Test
   void items() {
-    var response  = filterDataController.getFilterData();
+    var response = filterDataController.getFilterData();
 
     // spot check we return a few expected values
     assertThat(response.getItems()).contains("water", "new clothes", "gloves");
@@ -35,13 +35,11 @@ class FilterDataControllerTest {
 
   @Test
   void sites() {
-    var response  = filterDataController.getFilterData();
+    var response = filterDataController.getFilterData();
 
-    // all active sites should be returned, there are 2 of them in the test data
+    // site3 is not active, site4 has no items
+    assertThat(response.getSites()).doesNotContain("site3", "site4");
+    // all active sites with items should be returned, there are 2 of them in the test data
     assertThat(response.getSites()).hasSize(2);
   }
-
-
-
-
 }
