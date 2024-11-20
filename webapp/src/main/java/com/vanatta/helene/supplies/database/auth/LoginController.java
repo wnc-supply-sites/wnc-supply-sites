@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +37,9 @@ public class LoginController {
   }
 
   @GetMapping("/login")
-  public ModelAndView login(@RequestParam String redirectUri) {
+  public ModelAndView login(@RequestParam(required = false) String redirectUri) {
     Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("redirectUri", redirectUri);
+    pageParams.put("redirectUri", Optional.ofNullable(redirectUri).orElse("/manage/select-site"));
     pageParams.put("errorMessage", "");
     return new ModelAndView("login", pageParams);
   }
