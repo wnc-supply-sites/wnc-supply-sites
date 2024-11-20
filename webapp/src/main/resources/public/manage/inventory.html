@@ -95,13 +95,14 @@
       <div id="addItemResult" class="update-confirm-div">
       </div>
 
+      <!-- Add new item table -->
       <table id="newItemTable">
         <tr>
           <td>
             <button onclick="addItem('{{siteId}}')" id="add-item-button">+ Add Item</button>
           </td>
           <td>
-            <input type="text" id="newItemText"/>
+            <input type="text" id="newItemText" maxlength="128"/>
           </td>
           <td>
             <fieldset class="vertical new-item-status-div">
