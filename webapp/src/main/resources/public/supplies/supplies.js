@@ -20,7 +20,7 @@ function addSelection(elementSelected, value) {
   }
   const selectionDiv = document.getElementById(elementSelected + "-selections");
   selectionDiv.innerHTML +=
-      `<div class='box horizontal' onclick="removeSelection(this)">
+      `<div class='box horizontal selection-box' onclick="removeSelection(this)">
                     <div style="margin-right: 5px"><button type="button">X</button></div>
                     <div class="selected-value">${value}</div>\
                 </div>`

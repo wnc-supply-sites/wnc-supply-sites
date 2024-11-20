@@ -24,6 +24,11 @@ select {
     overflow-y: scroll;
 }
 
+/** When items are selected, they show up in a box underneath the selection list. */
+.selection-box {
+    margin-bottom: 7px;
+
+}
 .selected-value {
     font-weight: bold;
 }
@@ -131,6 +136,5 @@ table.results-table tbody tr:nth-child(even) {
 
 .toggle-all-button {
     margin-top: 10px;
-    margin-bottom: 5px;
     height: 25px;
 }
