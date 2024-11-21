@@ -132,16 +132,17 @@ async function fetchSupplyData() {
 
   //    Example response JSON
   // var data = JSON.parse(`{
-  //   "resultCount": 30,
+  //   "resultCount": 2,
   //   "results": [
   //     {"site": "site1", "county": "Ashe", "items": [
-  //         {"name": "water", "status": "oversupply"},
-  //         {"name": "bread", "status": "requested"},
   //         {"name": "heater", "status": "urgent"}
+  //         {"name": "bread", "status": "need"},
+  //         {"name": "butter", "status": "available"},
+  //         {"name": "water", "status": "oversupply"},
   //       ]},
   //     {"site": "site2", "county": "Watauga", "items": [
-  //         {"name": "water", "status": "requested"},
-  //         {"name": "bread", "status": "requested"}
+  //         {"name": "water", "status": "need"},
+  //         {"name": "bread", "status": "available"}
   //       ]}
   //   ]
   // }`);

@@ -37,7 +37,7 @@ class SuppliesControllerTest {
     var result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
-                .itemStatus(List.of("Requested", "Urgent Need", "Oversupply"))
+                .itemStatus(SiteSupplyRequest.ItemStatus.allItemStatus())
                 .sites(List.of("site5"))
                 .build());
 
@@ -98,25 +98,30 @@ class SuppliesControllerTest {
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Buncombe")).build());
-    assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getCounty()).isEqualTo("Buncombe");
+            SiteSupplyRequest.builder()
+                .counties(List.of("Buncombe")).build());
+    result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Buncombe"));
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+        .contains("site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Watauga")).build());
-    assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getCounty()).isEqualTo("Watauga");
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+        .contains("site1");
+    result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Watauga"));
+
+    result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder().counties(List.of("Ashe", "Watauga", "Buncombe")).build());
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+        .contains("site1", "site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Ashe", "Buncombe")).build());
-    assertThat(result.getResultCount()).isEqualTo(1);
-
-    result =
-        suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Watauga", "Buncombe")).build());
-    assertThat(result.getResultCount()).isEqualTo(2);
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+        .contains("site2", "site4");
   }
 
   @ParameterizedTest
@@ -214,7 +219,15 @@ class SuppliesControllerTest {
                 .acceptingDonations(true)
                 .notAcceptingDonations(false)
                 .build());
-    assertThat(result.getResultCount()).isEqualTo(1);
+    // must contain sites that are active & accepting donations
+    // (we exclude site5 because its name can change
+    assertThat(result.getResults().stream().map(r ->r.getSite()))
+        .contains("site1", "site4");
+    // site2 is definitely excluded because active and not accepting donations
+    // site3 is excluded because it is not active
+    assertThat(result.getResults().stream().map(r ->r.getSite()))
+        .doesNotContain("site2", "site3");
+
     assertThat(result.getResults().getFirst().isAcceptingDonations()).isTrue();
 
     // show exactly the sites not accepting donations
@@ -228,22 +241,23 @@ class SuppliesControllerTest {
     assertThat(result.getResults().getFirst().isAcceptingDonations()).isFalse();
 
     // show all sites (false to both would always return no results, instead we just ignore the flag
-    result =
+    int resultCount =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
                 .acceptingDonations(false)
                 .notAcceptingDonations(false)
-                .build());
-    assertThat(result.getResultCount()).isEqualTo(2);
+                .build())
+                .getResultCount();
 
     // show all sites
-    result =
+    int allSiteResultCount =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
                 .acceptingDonations(true)
                 .notAcceptingDonations(true)
-                .build());
-    assertThat(result.getResultCount()).isEqualTo(2);
+                .build()).getResultCount();
+
+    assertThat(resultCount).isEqualTo(allSiteResultCount);
   }
 
   @Nested
@@ -269,7 +283,7 @@ class SuppliesControllerTest {
       var allSiteTypes =
           suppliesController.getSuppliesData(
               SiteSupplyRequest.builder()
-                  .siteType(List.of("Supply Hub", "Distribution Center"))
+                  .siteType(SiteSupplyRequest.SiteType.allSiteTypes())
                   .build());
       assertThat(noSiteTypes.getResultCount()).isGreaterThan(0);
       assertThat(noSiteTypes.getResultCount()).isEqualTo(allSiteTypes.getResultCount());

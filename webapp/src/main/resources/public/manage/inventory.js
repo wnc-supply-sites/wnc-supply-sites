@@ -193,21 +193,28 @@ async function addItem(siteId) {
     return;
   }
 
-  const requestedChecked = document.getElementById("requestedRadioNew")
+  const urgentChecked = document.getElementById("urgentNeedRadioNew")
       .checked ? "checked" : "";
-  const urgentChecked = document.getElementById("urgentlyNeededRadioNew")
+  const needChecked = document.getElementById("needRadioNew")
+      .checked ? "checked" : "";
+  const availableChecked = document.getElementById("availableRadioNew")
       .checked ? "checked" : "";
   const oversupplyChecked = document.getElementById("oversupplyRadioNew")
       .checked ? "checked" : "";
 
-  let labelStyle = "";
-  let status = "Requested";
-  if (requestedChecked) {
-    labelStyle = "requested";
-    status = "Requested";
-  } else if (urgentChecked) {
-    labelStyle = "urgent";
-    status = "Urgent Need";
+  let labelStyle = "available";
+  let status = "Available";
+
+
+if (urgentChecked) {
+  labelStyle = "urgent";
+  status = "Urgent Need";
+} else if (needChecked) {
+  labelStyle = "need";
+  status = "Need";
+} else if (requestedChecked) {
+    labelStyle = "available";
+    status = "Available";
   } else if (oversupplyChecked) {
     labelStyle = "oversupply";
     status = "Oversupply";
@@ -240,22 +247,9 @@ async function addItem(siteId) {
           <!-- Item Status Radio buttons -->
           <td>
             <div class="horizontal">
-            
+
+              <!-- Urgent Need -->
               <fieldset class="vertical">
-                <div class="horizontal item-status-div">
-                  <input 
-                      type="radio" 
-                      id="${itemNameEncoded}Requested" 
-                      name="${itemNameEncoded}Status" 
-                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
-                      ${requestedChecked}/>
-                  <label 
-                      for="${itemNameEncoded}Requested" 
-                      class="requested" 
-                      id="${itemNameEncoded}RequestedLabel">
-                    Requested or Available
-                  </label>
-                </div>
                 <div class="horizontal item-status-div">
                   <input 
                       type="radio" 
@@ -267,9 +261,44 @@ async function addItem(siteId) {
                       for="${itemNameEncoded}Urgent" 
                       class="urgent" 
                       id="${itemNameEncoded}UrgentLabel">
-                    Urgently Needed
+                    Urgent Need
                   </label>
                 </div>
+
+
+                <!-- Need -->
+                <div class="horizontal item-status-div">
+                  <input 
+                      type="radio" 
+                      id="${itemNameEncoded}Need" 
+                      name="${itemNameEncoded}Status" 
+                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
+                      ${neededChecked}/>
+                  <label 
+                      for="${itemNameEncoded}Need" 
+                      class="need" 
+                      id="${itemNameEncoded}RequestedLabel">
+                    Need
+                  </label>
+                </div>
+                
+                <!-- Available -->
+                <div class="horizontal item-status-div">
+                  <input 
+                      type="radio" 
+                      id="${itemNameEncoded}Available" 
+                      name="${itemNameEncoded}Status" 
+                      onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
+                      ${availableChecked}/>
+                  <label 
+                      for="${itemNameEncoded}Available" 
+                      class="available" 
+                      id="${itemNameEncoded}RequestedLabel">
+                    Available
+                  </label>
+                </div>
+                
+                <!-- Oversupply -->
                 <div class="horizontal item-status-div">
                   <input 
                       type="radio" 

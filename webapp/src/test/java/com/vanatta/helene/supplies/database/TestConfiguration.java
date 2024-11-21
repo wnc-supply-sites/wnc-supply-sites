@@ -38,15 +38,15 @@ public class TestConfiguration {
                 """,
             // site4, in Buncombe county, no items (but active), supply hub
             """
-                insert into site(name, address, city, county_id, state, active, site_type_id) values(
-                   'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', true,
+                insert into site(name, address, city, county_id, state, site_type_id) values(
+                   'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC',
                    (select id from site_type where name = 'Supply Hub')
                 );
                 """,
             // site5, (no items & not active), name, address & details may be modified by tests, data will not be stable.
             """
-                insert into site(name, address, city, county_id, state, active, site_type_id) values(
-                   'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'), 'NC', true,
+                insert into site(name, address, city, county_id, state, site_type_id) values(
+                   'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'), 'NC',
                    (select id from site_type where name = 'Distribution Center')
                 );
                 """,
@@ -59,7 +59,7 @@ public class TestConfiguration {
                insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site1'),
                 (select id from item where name = 'water'),
-                (select id from item_status where name = 'Requested')
+                (select id from item_status where name = 'Available')
                )
             """,
             """
@@ -95,7 +95,7 @@ public class TestConfiguration {
                insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site3'),
                 (select id from item where name = 'water'),
-                (select id from item_status where name = 'Requested')
+                (select id from item_status where name = 'Need')
                )
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));

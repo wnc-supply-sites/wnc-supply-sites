@@ -80,25 +80,35 @@
     </tbody>
   </table>
 
+  <!-- Item Status Filters -->
   <div class="vertical">
-
     <div>
       <fieldset class="vertical" id="item-status">
         <legend>Item Status</legend>
+
+        <!-- Filter: Urgent Need -->
         <div>
           <input type="checkbox" id="urgent-items" checked value="Urgent Need" onchange="updateData()"/>
-          <label for="urgent-items" class="urgent">Urgently Needed</label>
+          <label for="urgent-items" class="urgent">Urgent Need</label>
         </div>
 
+        <!-- Filter: Urgent Need -->
+        <div>
+          <input type="checkbox" id="need-items" checked value="Need" onchange="updateData()"/>
+          <label for="need-items" class="requested">Need</label>
+        </div>
+
+        <!-- Filter: Available -->
+        <div>
+          <input type="checkbox" id="available-items" checked value="Available" onchange="updateData()"/>
+          <label for="available-items" class="available">Available</label>
+        </div>
+
+        <!-- Filter: Oversupply -->
         <div>
           <input type="checkbox" id="oversupply-items" {{ overSupplyValue }} value="Oversupply"
                  onchange="updateData()"/>
           <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
-        </div>
-
-        <div>
-          <input type="checkbox" id="requested-items" checked value="Requested" onchange="updateData()"/>
-          <label for="requested-items" class="requested">Requested</label>
         </div>
       </fieldset>
     </div>

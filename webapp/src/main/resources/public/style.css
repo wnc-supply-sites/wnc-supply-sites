@@ -21,19 +21,23 @@ html, table {
     font-weight: inherit;
 }
 
-
 .urgent {
     font-weight: bold;
     color: #b60808;
+}
+
+.need {
+    color: lightcoral;
+}
+
+.available {
+    color: darkgreen;
 }
 
 .oversupply {
     font-weight: bold;
     font-style: italic;
     color: #0808b6;
-}
-
-.requested {
 }
 
 .larger {

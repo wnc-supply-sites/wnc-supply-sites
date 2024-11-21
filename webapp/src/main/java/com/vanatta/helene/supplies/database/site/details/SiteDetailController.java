@@ -54,7 +54,9 @@ public class SiteDetailController {
     private final String title;
 
     WebsiteLink(String link) {
-
+      if(link.endsWith("/")) {
+        link = link.substring(0, link.length() - 1);
+      }
 
       if (link.startsWith("http://")) {
         href = link;

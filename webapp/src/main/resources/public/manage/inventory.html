@@ -20,7 +20,6 @@
 <h2>{{siteName}} - Site Inventory</h2>
 
 <ul>
-  <li>Checked items below will be listed as available and/or needed.</li>
   <li>Unchecked items will be removed from the site inventory listing.</li>
   <li>Scroll to the bottom to add an item not otherwise listed.</li>
   <li>Favor using generic terms for items (eg: 'Food' instead of 'canned goods', 'First Aid' instead of 'Band Aids')
@@ -60,20 +59,35 @@
           <td>
             <div class="horizontal">
               <fieldset class="vertical">
-                <div class="horizontal item-status-div">
-                  <input type="radio" id="{{itemName}}Requested" name="{{itemName}}Status" {{itemStatusDisabled}}
-                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{requestedChecked}}/>
-                  <label for="{{itemName}}Requested" class="requested {{itemStatusDisabled}}"
-                         id="{{itemName}}RequestedLabel">
-                    Requested or Available</label>
-                </div>
+
+                <!-- Urgent Need (existing item) -->
                 <div class="horizontal item-status-div">
                   <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{urgentChecked}}/>
                   <label for="{{itemName}}Urgent" class="urgent {{itemStatusDisabled}}" id="{{itemName}}UrgentLabel">
-                    Urgently Needed
+                    Urgent Need
                   </label>
                 </div>
+
+                <!-- Need (existing item) -->
+                <div class="horizontal item-status-div">
+                  <input type="radio" id="{{itemName}}Need" name="{{itemName}}Status" {{itemStatusDisabled}}
+                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{neededChecked}}/>
+                  <label for="{{itemName}}Need" class="need {{itemStatusDisabled}}"
+                         id="{{itemName}}NeedLabel">
+                    Need</label>
+                </div>
+
+                <!-- Available (existing item) -->
+                <div class="horizontal item-status-div">
+                  <input type="radio" id="{{itemName}}Available" name="{{itemName}}Status" {{itemStatusDisabled}}
+                         onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{availableChecked}}/>
+                  <label for="{{itemName}}Available" class="available {{itemStatusDisabled}}"
+                         id="{{itemName}}AvailableLabel">
+                    Available</label>
+                </div>
+
+                <!-- Oversupply (existing item) -->
                 <div class="horizontal item-status-div">
                   <input type="radio" id="{{itemName}}Oversupply" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{oversupplyChecked}}/>
@@ -106,14 +120,25 @@
           </td>
           <td>
             <fieldset class="vertical new-item-status-div">
-              <div class="horizontal">
-                <input type="radio" id="requestedRadioNew" name="newItemStatus" checked/>
-                <label for="requestedRadioNew" class="requested">Requested or Available</label>
-              </div>
+              <!-- Urgently Needed (new item) -->
               <div class="horizontal new-item-status-div">
                 <input type="radio" id="urgentlyNeededRadioNew" name="newItemStatus"/>
                 <label for="urgentlyNeededRadioNew" class="urgent">Urgently Needed</label>
               </div>
+
+              <!-- Needed (new item) -->
+              <div class="horizontal">
+                <input type="radio" id="neededRadioNew" name="newItemStatus"/>
+                <label for="neededRadioNew" class="requested">Needed</label>
+              </div>
+
+              <!--Available (new item) -->
+              <div class="horizontal">
+                <input type="radio" id="availableRadioNew" name="newItemStatus" checked/>
+                <label for="availableRadioNew" class="available">Available</label>
+              </div>
+
+              <!-- Oversupply (new item) -->
               <div class="horizontal new-item-status-div">
                 <input type="radio" id="oversupplyRadioNew" name="newItemStatus"/>
                 <label for="oversupplyRadioNew" class="oversupply">Oversupply (too much)</label>

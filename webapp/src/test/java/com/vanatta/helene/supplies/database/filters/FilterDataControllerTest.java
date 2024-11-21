@@ -37,9 +37,9 @@ class FilterDataControllerTest {
   void sites() {
     var response = filterDataController.getFilterData();
 
-    // site3 is not active, site4 has no items
-    assertThat(response.getSites()).doesNotContain("site3", "site4");
-    // all active sites with items should be returned, there are 2 of them in the test data
-    assertThat(response.getSites()).hasSize(2);
+    // site3 is not active
+    assertThat(response.getSites()).doesNotContain("site3");
+    // all active sites should be returned
+    assertThat(response.getSites()).hasSize(4);
   }
 }
