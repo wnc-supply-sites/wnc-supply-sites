@@ -2,7 +2,6 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
-
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ public class SuppliesController {
 
   private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-d");
 
-
   /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
@@ -44,24 +42,28 @@ public class SuppliesController {
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
 
     results.forEach(
-        result ->
-            aggregatedResults
-                .computeIfAbsent(
-                    result.getSiteId(),
-                    _ ->
-                        SiteSupplyData.builder()
-                            .id(result.getSiteId())
-                            .site(result.getSite())
-                            .county(result.getCounty())
-                            .acceptingDonations(result.isAcceptingDonations())
-                            .lastUpdated(result.getLastUpdated().format(dateTimeFormatter))
-                            .build())
+        result -> {
+          var siteSupplyData =
+              aggregatedResults.computeIfAbsent(
+                  result.getSiteId(),
+                  _ ->
+                      SiteSupplyData.builder()
+                          .id(result.getSiteId())
+                          .site(result.getSite())
+                          .county(result.getCounty())
+                          .acceptingDonations(result.isAcceptingDonations())
+                          .lastUpdated(result.getLastUpdated().format(dateTimeFormatter))
+                          .build());
+          if (result.getItem() != null) {
+            siteSupplyData
                 .getItems()
                 .add(
                     SiteItem.builder()
                         .name(result.getItem())
                         .status(result.getItemStatus())
-                        .build()));
+                        .build());
+          }
+        });
     List<SiteSupplyData> resultData =
         aggregatedResults.values().stream() //
             .sorted(

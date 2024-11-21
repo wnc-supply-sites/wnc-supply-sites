@@ -34,10 +34,10 @@ public class SuppliesDao {
         s.last_updated lastUpdated
       from site s
       join county c on c.id = s.county_id
-      join site_item si on si.site_id = s.id
-      join item i on i.id = si.item_id
-      join item_status ist on ist.id = si.item_status_id
-      where active = true
+      left join site_item si on si.site_id = s.id
+      left join item i on i.id = si.item_id
+      left join item_status ist on ist.id = si.item_status_id
+      where s.active = true
       """);
 
     if (!request.getSites().isEmpty()) {
@@ -50,7 +50,11 @@ public class SuppliesDao {
       query.append("and i.name in (<items>)\n");
     }
 
-    if (!request.getItemStatus().isEmpty()) {
+    // if item status length is 3, then we are asking for all item status
+    // but, if we do that, we filter out sites with no item status.
+    // If all item statuses are requested, then we treat it as if none are requested.
+    if (!request.getItemStatus().isEmpty()
+        && request.getItemStatus().size() < SiteSupplyRequest.ITEM_STATUS_COUNT) {
       query.append("and ist.name in (<item_status>)\n");
     }
 
@@ -78,7 +82,8 @@ public class SuppliesDao {
           if (!request.getItems().isEmpty()) {
             queryBuilder.bindList("items", request.getItems());
           }
-          if (!request.getItemStatus().isEmpty()) {
+          if (!request.getItemStatus().isEmpty()
+              && request.getItemStatus().size() < SiteSupplyRequest.ITEM_STATUS_COUNT) {
             queryBuilder.bindList("item_status", request.getItemStatus());
           }
 

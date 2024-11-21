@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SiteSupplyRequest {
+  // how many different item statuses are there in total.
+  public static final int ITEM_STATUS_COUNT = 3;
   @Builder.Default List<String> sites = new ArrayList<>();
   @Builder.Default List<String> items = new ArrayList<>();
   @Builder.Default List<String> counties = new ArrayList<>();

@@ -21,7 +21,7 @@ public class FilterDataController {
   @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData() {
     return FilterDataResponse.builder()
-        .sites(FilterDataDao.getAllActiveSitesThatHaveItems(jdbi))
+        .sites(FilterDataDao.getAllActiveSites(jdbi))
         .counties(FilterDataDao.getAllCounties(jdbi))
         .items(FilterDataDao.getAllItems(jdbi))
         .build();

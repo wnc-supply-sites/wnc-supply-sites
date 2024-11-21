@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.Slf4JSqlLogger;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,8 @@ public class JdbiConfiguration {
     // https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
     config.addDataSourceProperty("maximumPoolSize", "4");
     HikariDataSource ds = new HikariDataSource(config);
-    return Jdbi.create(ds).installPlugin(new SqlObjectPlugin());
+    var jdbi = Jdbi.create(ds).installPlugin(new SqlObjectPlugin());
+    jdbi.setSqlLogger(new Slf4JSqlLogger());
+    return jdbi;
   }
 }

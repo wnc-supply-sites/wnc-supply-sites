@@ -25,17 +25,28 @@ class SuppliesControllerTest {
   void emptyRequestReturnsData() {
     var result = suppliesController.getSuppliesData(SiteSupplyRequest.builder().build());
 
-    // 2 sites, should be two results
-    assertThat(result.getResultCount()).isEqualTo(2);
+    // All active sites should be returned
+    assertThat(result.getResultCount()).isEqualTo(4);
+  }
+
+  @Test
+  void requestSiteWithNoItems() {
+    // because we list all item statuses, we will effectively ignore that list and return sites
+    // that have no items.
+    var result =
+        suppliesController.getSuppliesData(
+            SiteSupplyRequest.builder()
+                .itemStatus(List.of("Requested", "Urgent Need", "Oversupply"))
+                .sites(List.of("site5"))
+                .build());
+
+    assertThat(result.getResultCount()).isEqualTo(1);
+    assertThat(result.getResults().getFirst().getItems()).isEmpty();
   }
 
   @Test
   void requestBySite() {
     var result =
-        suppliesController.getSuppliesData(SiteSupplyRequest.builder().sites(List.of()).build());
-    assertThat(result.getResultCount()).isEqualTo(2);
-
-    result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().sites(List.of("site1")).build());
 
@@ -131,7 +142,7 @@ class SuppliesControllerTest {
   }
 
   @Test
-  void mixedRequest() {
+  void mixedRequestWithDifferentFilters() {
     // no sites with the requested county, or requested item
     var result =
         suppliesController.getSuppliesData(
