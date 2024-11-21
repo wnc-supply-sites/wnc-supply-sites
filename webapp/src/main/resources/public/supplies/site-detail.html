@@ -16,6 +16,10 @@
 <h2>{{siteName}}</h2>
 
 <dl>
+  {{#website}}
+  <dt>Website:</dt>
+  <dd><a href="{{href}}">{{title}}</a></dd>
+  {{/website}}
   <dt>Address:</dt>
   <dd>{{addressLine1}}<br>{{addressLine2}}</dd>
   <dt>Contact:</dt>

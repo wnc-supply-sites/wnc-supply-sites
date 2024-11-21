@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,11 @@ public class SiteDetailController {
     }
     SiteDetailDao.SiteDetailData siteDetailData = SiteDetailDao.lookupSiteById(jdbi, id);
 
-    Map<String, String> siteDetails = new HashMap<>();
+    Map<String, Object> siteDetails = new HashMap<>();
     siteDetails.put("siteName", siteDetailData.getSiteName());
+    siteDetails.put(
+        "website",
+        Optional.ofNullable(siteDetailData.getWebsite()).map(WebsiteLink::new).orElse(null));
     siteDetails.put(
         "contactNumber",
         Optional.ofNullable(siteDetailData.getContactNumber()).orElse("none listed"));
@@ -44,6 +48,25 @@ public class SiteDetailController {
             encode(siteDetailData.getState())));
 
     return new ModelAndView("supplies/site-detail", siteDetails);
+  }
+
+  @Getter
+  public static class WebsiteLink {
+    private final String href;
+    private final String title;
+
+    WebsiteLink(String link) {
+      if (link.startsWith("http://")) {
+        href = link;
+        title = link.substring("http://".length());
+      } else if (link.startsWith("https://")) {
+        href = link;
+        title = link.substring("https://".length());
+      } else {
+        href = "http://" + link;
+        title = link;
+      }
+    }
   }
 
   private static String encode(String toEncode) {
