@@ -17,8 +17,8 @@ public class TestConfiguration {
             "delete from site",
             // site1, in Watauga county
             """
-                insert into site(name, address, city, county_id, state) values(
-                   'site1', 'address1', 'city1', (select id from county where name = 'Watauga'), 'NC'
+                insert into site(name, address, city, county_id, state, website) values(
+                   'site1', 'address1', 'city1', (select id from county where name = 'Watauga'), 'NC', 'site1website'
                 );
                 """,
             // site2, in Buncombe county, not accepting donations
@@ -37,6 +37,11 @@ public class TestConfiguration {
             """
                 insert into site(name, address, city, county_id, state, active) values(
                    'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'), 'NC', true
+                );
+                """,
+            """
+                insert into site(name, address, city, county_id, state, active) values(
+                   'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'), 'NC', false
                 );
                 """,
             "insert into item(name) values('water')",

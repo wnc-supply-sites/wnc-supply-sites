@@ -83,7 +83,7 @@ table.results-table tbody tr:nth-child(even) {
     position: relative;
 }
 
-#update-button {
+.update-button {
     width: 100px;
     height: 30px;
 }

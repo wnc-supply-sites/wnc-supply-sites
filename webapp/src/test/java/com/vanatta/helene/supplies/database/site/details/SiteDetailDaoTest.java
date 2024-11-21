@@ -26,15 +26,12 @@ class SiteDetailDaoTest {
 
     var result = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, idToLookup);
 
-    // Check results against this insert statement (copied from testConfiguration setup)
-    //  insert into site(name, address, city, county_id, state) values(
-    //      'site1', 'address1', 'city1', (select id from county where name = 'Watauga'), 'NC'
-    //      );
     assertThat(result.getSiteName()).isEqualTo("site1");
-    //    assertThat(result.getContactNumber()).isEqualTo("site1");
     assertThat(result.getAddress()).isEqualTo("address1");
     assertThat(result.getCity()).isEqualTo("city1");
     assertThat(result.getState()).isEqualTo("NC");
+    assertThat(result.getWebsite()).isEqualTo("site1website");
+    assertThat(result.getCounty()).isEqualTo("Watauga");
   }
 
   @Test

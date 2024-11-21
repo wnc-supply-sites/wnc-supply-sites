@@ -3,12 +3,29 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class ManageSiteDaoTest {
+
+  static class Helper {
+    static long getSiteId() {
+      return getSiteId("site1");
+    }
+
+    static long getSiteId(String siteName) {
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle
+                  .createQuery("select id from site where name = :siteName")
+                  .bind("siteName", siteName)
+                  .mapTo(Long.class)
+                  .one());
+    }
+  }
 
   @BeforeAll
   static void setUp() {
@@ -29,35 +46,66 @@ class ManageSiteDaoTest {
     names.forEach(name -> assertThat(name).isNotNull());
   }
 
+  /**
+   * Update site5 to have different site field values. Validate that those fields change value. Use
+   * site5 to not interfere with any other tests (no other tests use 'site5')
+   */
   @Test
-  void updateContact() {
-    long siteId = getSiteId();
+  void updateSite() {
+    long siteId = Helper.getSiteId("site5");
 
     // confirm contact number is null before we update it.
-    assertThat(ManageSiteDao.fetchSiteContact(TestConfiguration.jdbiTest, siteId)).isNull();
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getContactNumber())
+        .isNull();
 
-    ManageSiteDao.updateSiteContact(TestConfiguration.jdbiTest, siteId, "999-596-111");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.SITE_NAME, "new site name");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "999-596-111");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CITY, "new city");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "new county");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.STREET_ADDRESS, "new address");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.WEBSITE, "new website");
 
-    assertThat(ManageSiteDao.fetchSiteContact(TestConfiguration.jdbiTest, siteId))
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getSiteName())
+        .isEqualTo("new site name");
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getContactNumber())
         .isEqualTo("999-596-111");
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCity())
+        .isEqualTo("new city");
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCounty())
+        .isEqualTo("new county");
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getAddress())
+        .isEqualTo("new address");
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getWebsite())
+        .isEqualTo("new website");
   }
 
-  static long getSiteId() {
-    return getSiteId("site1");
-  }
+  @Test
+  void validateSomeSiteFieldsCannotBeDeleted() {
+    long siteId = Helper.getSiteId("site1");
 
-  static long getSiteId(String siteName) {
-    return TestConfiguration.jdbiTest.withHandle(
-        handle ->
-            handle
-                .createQuery("select id from site where name = '" + siteName + "'")
-                .mapTo(Long.class)
-                .one());
+    List.of(
+            ManageSiteDao.SiteField.SITE_NAME,
+            ManageSiteDao.SiteField.CITY,
+            ManageSiteDao.SiteField.COUNTY,
+            ManageSiteDao.SiteField.STREET_ADDRESS)
+        .forEach(
+            field ->
+                org.junit.jupiter.api.Assertions.assertThrows(
+                    ManageSiteDao.RequiredFieldException.class,
+                    () ->
+                        ManageSiteDao.updateSiteField(
+                            TestConfiguration.jdbiTest, siteId, field, "")));
   }
 
   @Test
   void fetchSiteName() {
-    long siteId = getSiteId();
+    long siteId = Helper.getSiteId();
 
     String result = ManageSiteDao.fetchSiteName(TestConfiguration.jdbiTest, siteId);
 
@@ -66,7 +114,7 @@ class ManageSiteDaoTest {
 
   @Test
   void siteStatusActive() {
-    long siteId = getSiteId("site1");
+    long siteId = Helper.getSiteId("site1");
     var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isActive()).isTrue();
 
@@ -78,18 +126,18 @@ class ManageSiteDaoTest {
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isActive()).isTrue();
 
-    siteId = getSiteId("site2");
+    siteId = Helper.getSiteId("site2");
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isActive()).isTrue();
 
-    siteId = getSiteId("site3");
+    siteId = Helper.getSiteId("site3");
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isActive()).isFalse();
   }
 
   @Test
   void setStatusAcceptingDonations() {
-    long siteId = getSiteId("site1");
+    long siteId = Helper.getSiteId("site1");
     var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isAcceptingDonations()).isTrue();
 
@@ -101,18 +149,18 @@ class ManageSiteDaoTest {
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isAcceptingDonations()).isTrue();
 
-    siteId = getSiteId("site2");
+    siteId = Helper.getSiteId("site2");
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isAcceptingDonations()).isFalse();
 
-    siteId = getSiteId("site3");
+    siteId = Helper.getSiteId("site3");
     result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
     assertThat(result.isAcceptingDonations()).isTrue();
   }
 
   @Test
   void fetchSiteInventory() {
-    long siteId = getSiteId("site1");
+    long siteId = Helper.getSiteId("site1");
     var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
 
     ManageSiteDao.SiteInventory water = findItemByName(result, "water");
@@ -146,7 +194,7 @@ class ManageSiteDaoTest {
 
   @Test
   void updateSiteItemActive() {
-    long siteId = getSiteId("site1");
+    long siteId = Helper.getSiteId("site1");
 
     // first make sure 'gloves' are not active
     var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
@@ -172,7 +220,7 @@ class ManageSiteDaoTest {
 
   @Test
   void updateSiteItemStatus() {
-    long siteId = getSiteId("site1");
+    long siteId = Helper.getSiteId("site1");
 
     // validate gloves status is 'Requested'
     var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
@@ -216,10 +264,8 @@ class ManageSiteDaoTest {
   }
 
   private static int countItems() {
-    return TestConfiguration.jdbiTest.withHandle(handle ->
-        handle.createQuery("select count(*) from item")
-            .mapTo(Integer.class)
-            .one());
+    return TestConfiguration.jdbiTest.withHandle(
+        handle -> handle.createQuery("select count(*) from item").mapTo(Integer.class).one());
   }
 
   @Test

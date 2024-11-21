@@ -2,9 +2,14 @@ package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
 import jakarta.annotation.Nullable;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -21,25 +26,98 @@ public class ManageSiteDao {
                 .list());
   }
 
-  public static void updateSiteContact(Jdbi jdbi, long siteId, String newContact) {
+  @AllArgsConstructor
+  @Getter
+  public enum SiteField {
+    SITE_NAME("name", "Site Name", true),
+    CONTACT_NUMBER("contact_number", "Contact Number", false),
+    WEBSITE("website", "Website", false),
+    STREET_ADDRESS("address", "Street Address", true),
+    CITY("city", "City", true),
+    COUNTY("county", "County", true),
+    ;
+
+    private final String columnName;
+    private final String frontEndName;
+    private final boolean required;
+
+    static SiteField lookupField(String name) {
+      return Arrays.stream(SiteField.values())
+          .filter(f -> f.frontEndName.equals(name))
+          .findAny()
+          .orElseThrow(() -> new IllegalArgumentException("Invalid field name: " + name));
+    }
+  }
+
+  static class RequiredFieldException extends IllegalArgumentException {
+    RequiredFieldException(String fieldName) {
+      super("Required field " + fieldName + " cannot be deleted");
+    }
+  }
+
+  public static void updateSiteField(Jdbi jdbi, long siteId, SiteField field, String newValue) {
+    log.info("Updating site: {}, field: {}, value: {}", siteId, field, newValue);
+
+    if(field.isRequired() && (newValue == null || newValue.isEmpty()) ){
+      throw new RequiredFieldException(field.frontEndName);
+    }
+
+    if (field == SiteField.COUNTY) {
+      updateCounty(jdbi, siteId, Optional.ofNullable(newValue).orElse(""));
+    } else {
+      updateSiteColumn(jdbi, siteId, field.getColumnName(), newValue);
+    }
+  }
+
+  /** Updating a county potentially requires us to create the county first, before updating it. */
+  private static void updateCounty(Jdbi jdbi, long siteId, String newValue) {
+    String selectCounty =
+        """
+          select id from county where name = :name
+        """;
+    String insertCounty =
+        """
+          insert into county(name) values(:name)
+        """;
+    String updateCounty =
+        """
+          update site set county_id = :countyId where id = :id
+        """;
+    Long countyId =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(selectCounty)
+                    .bind("name", newValue)
+                    .mapTo(Long.class)
+                    .findOne()
+                    .orElse(null));
+    if (countyId == null) {
+      jdbi.withHandle(handle -> handle.createUpdate(insertCounty).bind("name", newValue).execute());
+
+      countyId =
+          jdbi.withHandle(
+              handle ->
+                  handle.createQuery(selectCounty).bind("name", newValue).mapTo(Long.class).one());
+    }
+    final long countyIdToUse = countyId;
     jdbi.withHandle(
         handle ->
             handle
-                .createUpdate("update site set contact_number = :contactNumber where id = :siteId")
-                .bind("contactNumber", newContact)
-                .bind("siteId", siteId)
+                .createUpdate(updateCounty)
+                .bind("countyId", countyIdToUse)
+                .bind("id", siteId)
                 .execute());
   }
 
-  @Nullable
-  public static String fetchSiteContact(Jdbi jdbi, long siteId) {
-    return jdbi.withHandle(
+  private static void updateSiteColumn(Jdbi jdbi, long siteId, String column, String newValue) {
+    jdbi.withHandle(
         handle ->
             handle
-                .createQuery("select contact_number from site where id = :siteId")
+                .createUpdate("update site set " + column + " = :newValue where id = :siteId")
+                .bind("newValue", newValue)
                 .bind("siteId", siteId)
-                .mapTo(String.class)
-                .one());
+                .execute());
   }
 
   @Nullable
@@ -99,7 +177,8 @@ public class ManageSiteDao {
         jdbi.withHandle(
             handle ->
                 handle
-                    .createUpdate("update site set active = :newValue, last_updated = now() where id = :siteId")
+                    .createUpdate(
+                        "update site set active = :newValue, last_updated = now() where id = :siteId")
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());

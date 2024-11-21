@@ -1,33 +1,32 @@
-async function showUpdateConfirmation(siteId) {
-  let newNumber =
-      document.getElementById("contactNumber").value;
+async function showUpdateConfirmation(siteId, field) {
+  let newValue =
+      document.getElementById(field).value;
 
   try {
-    await sendContactUpdate(siteId, newNumber)
+    await sendSiteUpdate(siteId, field, newValue)
 
-    document.getElementById("update-confirm").style.display = 'block';
+    document.getElementById(field + "-update-confirm-checkmark").style.display = 'block';
 
     setTimeout(function () {
-          document.getElementById("update-confirm").style.display = 'none';
+          document.getElementById(field + "-update-confirm-checkmark").style.display = 'none';
         },
         1500);
 
-    if (newNumber === "") {
-      document.getElementById("contactUpdateConfirm").innerHTML =
-          `Contact number was deleted`;
+    if (newValue === "") {
+      document.getElementById(field + "-update-confirm").innerHTML =
+          `${field} was deleted`;
     } else {
-      document.getElementById("contactUpdateConfirm").innerHTML =
-          `Contact number updated to: ${newNumber}`;
+      document.getElementById(field + "-update-confirm").innerHTML =
+          `${field} updated to: ${newValue}`;
     }
   } catch (error) {
-    document.getElementById("contactUpdateConfirm").innerHTML =
-        `An error occurred, contact number was not updated`;
+    document.getElementById(field + "-update-confirm").innerHTML =
+        `An error occurred, ${field} was not updated`;
   }
 }
 
-
-async function sendContactUpdate(siteId, contactNumber) {
-  const url = "/manage/update-contact";
+async function sendSiteUpdate(siteId, field, newValue) {
+  const url = "/manage/update-site";
 
   const response = await fetch(url, {
     method: 'POST',
@@ -37,7 +36,8 @@ async function sendContactUpdate(siteId, contactNumber) {
     },
     body: JSON.stringify({
       siteId: siteId,
-      contactNumber: contactNumber
+      field: field,
+      newValue: newValue
     })
   });
 

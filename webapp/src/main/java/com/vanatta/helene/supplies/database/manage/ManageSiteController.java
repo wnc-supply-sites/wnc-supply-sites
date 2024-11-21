@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -86,32 +88,35 @@ public class ManageSiteController {
       return selectSite();
     }
 
-    String contact =
-        Optional.ofNullable(ManageSiteDao.fetchSiteContact(jdbi, Long.parseLong(siteId)))
-            .orElse("");
+    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
     pageParams.put("siteId", siteId);
-    pageParams.put("siteName", siteName);
-    pageParams.put("siteContact", contact);
+    pageParams.put("siteName", data.getSiteName());
+    pageParams.put("address", data.getAddress());
+    pageParams.put("siteContact", Optional.ofNullable(data.getContactNumber()).orElse(""));
+    pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
+    pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
+    pageParams.put("county", Optional.ofNullable(data.getCounty()).orElse(""));
 
     return new ModelAndView("manage/contact", pageParams);
   }
 
-  @PostMapping("/manage/update-contact")
+  @PostMapping("/manage/update-site")
   @ResponseBody
-  ResponseEntity<?> updateContact(@RequestBody Map<String, String> params) {
+  ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
 
     String siteId = params.get("siteId");
-    String contactNumber = params.get("contactNumber");
+    String field = params.get("field");
+    String newValue = params.get("newValue");
 
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn(
-          "Unable to contact info, bad site id: {}, contact number: {}", siteId, contactNumber);
+    if (fetchSiteName(siteId) == null) {
+      log.warn("invalid site id: {}, request: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    ManageSiteDao.updateSiteContact(jdbi, Long.parseLong(siteId), contactNumber);
-    log.info("Site '{}' contact number updated to: {}", siteName, contactNumber);
+    // TODO: CATCH ERROR OF BAD FIELD (?)
+    var siteField = ManageSiteDao.SiteField.lookupField(field);
+    ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
+    log.info("Site updated: {}", params);
     return ResponseEntity.ok().body("Updated");
   }
 

@@ -20,17 +20,65 @@
   <div class="data-entry-div vertical">
     <div class="data-entry-body">
       <div class="data-field vertical">
-        <label for="contactNumber">Contact Number: </label>
+        <label for="Contact Number">Contact Number: </label>
         <div class="horizontal">
-          <input id="contactNumber" type="text" class="shortTextField" value="{{siteContact}}" maxlength="32"/>
-          <button onclick="showUpdateConfirmation({{siteId}})" id="update-button">Update</button>
-          <div class="green-check" id="update-confirm">&#10003;</div>
+          <input id="Contact Number" type="text" class="shortTextField" value="{{siteContact}}" maxlength="32" placeholder="555-555-5555"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Number')" class="update-button">Update</button>
+          <div class="green-check hidden" id="Contact Number-update-confirm-checkmark">&#10003;</div>
         </div>
-
-        <div id="contactUpdateConfirm" class="confirm-text">
-
-        </div>
+        <div id="Contact Number-update-confirm" class="confirm-text"></div>
       </div>
+
+      <div class="data-field vertical">
+        <label for="website">Website: </label>
+        <div class="horizontal">
+          <input id="Website" type="text" class="shortTextField" value="{{website}}" maxlength="128" placeholder="http://your-website.com"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'Website')" class="update-button">Update</button>
+          <div class="green-check hidden" id="Website-update-confirm-checkmark">&#10003;</div>
+        </div>
+        <div id="Website-update-confirm" class="confirm-text"></div>
+      </div>
+
+      <div class="data-field vertical">
+        <label for="Site Name">Site Name: </label>
+        <div class="horizontal">
+          <input id="Site Name" type="text" class="shortTextField" value="{{siteName}}" maxlength="32"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'Site Name')" class="update-button">Update</button>
+          <div class="green-check hidden" id="Site Name-update-confirm-checkmark">&#10003;</div>
+        </div>
+        <div id="Site Name-update-confirm" class="confirm-text"></div>
+      </div>
+
+      <div class="data-field vertical">
+        <label for="Street Address">Street Address: </label>
+        <div class="horizontal">
+          <input id="Street Address" type="text" class="shortTextField" value="{{address}}" maxlength="32"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'Street Address')" class="update-button">Update</button>
+          <div class="green-check hidden" id="Street Address-update-confirm-checkmark">&#10003;</div>
+        </div>
+        <div id="Street Address-update-confirm" class="confirm-text"></div>
+      </div>
+
+      <div class="data-field vertical">
+        <label for="City">City: </label>
+        <div class="horizontal">
+          <input id="City" type="text" class="shortTextField" value="{{city}}" maxlength="32"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'City')" class="update-button">Update</button>
+          <div class="green-check hidden" id="City-update-confirm-checkmark">&#10003;</div>
+        </div>
+        <div id="City-update-confirm" class="confirm-text"></div>
+      </div>
+
+      <div class="data-field vertical">
+        <label for="County">County: </label>
+        <div class="horizontal">
+          <input id="County" type="text" class="shortTextField" value="{{county}}" maxlength="32"/>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'County')" class="update-button">Update</button>
+          <div class="green-check hidden" id="County-update-confirm-checkmark">&#10003;</div>
+        </div>
+        <div id="County-update-confirm" class="confirm-text"></div>
+      </div>
+
     </div>
   </div>
 </div>

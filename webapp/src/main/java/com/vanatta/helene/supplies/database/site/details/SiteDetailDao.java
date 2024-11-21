@@ -14,6 +14,8 @@ public class SiteDetailDao {
     String address;
     String city;
     String state;
+    String county;
+    String website;
   }
 
   public static SiteDetailData lookupSiteById(Jdbi jdbi, long idToLookup) {
@@ -23,13 +25,23 @@ public class SiteDetailDao {
                 handle
                     .createQuery(
                         """
-                            select s.name siteName, s.contact_number, s.address, s.city, s.state
+                            select
+                              s.name siteName,
+                              s.contact_number,
+                              s.address,
+                              s.city,
+                              s.state,
+                              s.website,
+                              c.name county
                             from site s
+                            join county c on c.id = s.county_id
                             where s.id = :siteId
                             """)
                     .bind("siteId", idToLookup)
                     .mapToBean(SiteDetailData.class)
-                    .one());
+                    .findOne()
+                    .orElseThrow(
+                        () -> new IllegalArgumentException("Invalid site id: " + idToLookup)));
     if (data == null) {
       throw new IllegalArgumentException("Site does not exist, id: " + idToLookup);
     }

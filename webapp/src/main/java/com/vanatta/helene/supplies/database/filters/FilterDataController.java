@@ -1,6 +1,6 @@
 package com.vanatta.helene.supplies.database.filters;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,28 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
+@AllArgsConstructor
 public class FilterDataController {
-  /**
-   * Counties are not expected to change for the next couple years, can be cached in memory without
-   * going stale.
-   */
-  private static List<String> cachedCountiesList;
-
   private final Jdbi jdbi;
-
-  FilterDataController(Jdbi jdbi) {
-    this.jdbi = jdbi;
-    if (cachedCountiesList == null) {
-      cachedCountiesList = FilterDataDao.getAllCounties(jdbi);
-    }
-  }
 
   @CrossOrigin
   @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData() {
     return FilterDataResponse.builder()
         .sites(FilterDataDao.getAllActiveSitesThatHaveItems(jdbi))
-        .counties(cachedCountiesList)
+        .counties(FilterDataDao.getAllCounties(jdbi))
         .items(FilterDataDao.getAllItems(jdbi))
         .build();
   }
