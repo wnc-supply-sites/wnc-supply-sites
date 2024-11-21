@@ -14,6 +14,7 @@ ufw enable
 
 apt install nginx -y
 apt install postgresql -y
+apt install fail2ban -y
 
 curl -fsSL https://get.docker.com/ | sh
 useradd webapp
