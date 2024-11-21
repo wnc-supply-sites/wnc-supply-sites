@@ -15,9 +15,10 @@ public class SiteSupplyResponse {
   @Value
   @Builder
   static class SiteSupplyData {
-    String site;
-    String county;
     Long id;
+    String site;
+    String siteType;
+    String county;
     @Builder.Default List<SiteItem> items = new ArrayList<>();
     boolean acceptingDonations;
     String lastUpdated;

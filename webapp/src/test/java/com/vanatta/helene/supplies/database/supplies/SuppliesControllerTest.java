@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -243,5 +244,35 @@ class SuppliesControllerTest {
                 .notAcceptingDonations(true)
                 .build());
     assertThat(result.getResultCount()).isEqualTo(2);
+  }
+
+  @Nested
+  class SiteType {
+    /** Specify a specific site type, all results should come back with that site type */
+    @ParameterizedTest
+    @ValueSource(strings = {"Supply Hub", "Distribution Center"})
+    void siteType(String siteType) {
+      var result =
+          suppliesController.getSuppliesData(
+              SiteSupplyRequest.builder().siteType(List.of(siteType)).build());
+
+      assertThat(result.getResultCount()).isGreaterThan(0);
+      result.getResults().forEach(r -> assertThat(r.getSiteType()).isEqualTo(siteType));
+    }
+
+    /** Querying for neither site type, or all site types should return the same results */
+    @Test
+    void noSiteTypeOrAllSiteTypes() {
+      var noSiteTypes =
+          suppliesController.getSuppliesData(
+              SiteSupplyRequest.builder().siteType(List.of()).build());
+      var allSiteTypes =
+          suppliesController.getSuppliesData(
+              SiteSupplyRequest.builder()
+                  .siteType(List.of("Supply Hub", "Distribution Center"))
+                  .build());
+      assertThat(noSiteTypes.getResultCount()).isGreaterThan(0);
+      assertThat(noSiteTypes.getResultCount()).isEqualTo(allSiteTypes.getResultCount());
+    }
   }
 }

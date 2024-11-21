@@ -34,7 +34,7 @@ public class SuppliesController {
     return new ModelAndView("supplies/supplies", templateValues);
   }
 
-  private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-d");
+  private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-d");
 
   /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
@@ -53,6 +53,7 @@ public class SuppliesController {
                       SiteSupplyData.builder()
                           .id(result.getSiteId())
                           .site(result.getSite())
+                          .siteType(result.getSiteType())
                           .county(result.getCounty())
                           .acceptingDonations(result.isAcceptingDonations())
                           .lastUpdated(result.getLastUpdated().format(dateTimeFormatter))

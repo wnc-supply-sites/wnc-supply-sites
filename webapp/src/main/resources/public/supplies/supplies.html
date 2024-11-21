@@ -91,7 +91,7 @@
         </div>
 
         <div>
-          <input type="checkbox" id="oversupply-items" {{! checked }} {{ overSupplyValue }} value="Oversupply"
+          <input type="checkbox" id="oversupply-items" {{ overSupplyValue }} value="Oversupply"
                  onchange="updateData()"/>
           <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
         </div>
@@ -112,12 +112,38 @@
           <label for="accepting-donations">Accepting Donations</label>
         </div>
         <div>
-          <input type="checkbox" id="not-accepting-donations" {{! checked }} {{ notAcceptingDonationsValue }}
+          <input type="checkbox" id="not-accepting-donations" {{ notAcceptingDonationsValue }}
                  value="Not Accepting Donations" onchange="updateData()"/>
           <label for="not-accepting-donations">Not Accepting Donations</label>
         </div>
       </fieldset>
     </div>
+
+    <div class="vertical">
+      <fieldset class="vertical" id="site-type">
+        <legend>Site Type</legend>
+        <div>
+          <input
+              type="checkbox"
+              id="distribution-center"
+              checked
+              value="Distribution Center"
+              onchange="updateData()"/>
+          <label for="distribution-center">Distribution Center</label>
+        </div>
+        <div>
+          <input
+              type="checkbox"
+              id="supply-hub"
+              checked
+              value="Supply Hub"
+              onchange="updateData()"/>
+          <label for="supply-hub">Supply Hub (Warehouse)</label>
+        </div>
+      </fieldset>
+    </div>
+
+
   </div>
 </div>
 

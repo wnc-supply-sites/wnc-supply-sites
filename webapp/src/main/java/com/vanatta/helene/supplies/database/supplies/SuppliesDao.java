@@ -14,6 +14,7 @@ public class SuppliesDao {
     Long siteId;
     boolean acceptingDonations;
     String site;
+    String siteType;
     String county;
     String item;
     String itemStatus;
@@ -28,11 +29,13 @@ public class SuppliesDao {
         s.id siteId,
         s.accepting_donations acceptingDonations,
         s.name site,
+        st.name siteType,
         c.name county,
         i.name item,
         ist.name itemStatus,
         s.last_updated lastUpdated
       from site s
+      join site_type st on st.id = s.site_type_id
       join county c on c.id = s.county_id
       left join site_item si on si.site_id = s.id
       left join item i on i.id = si.item_id
@@ -56,6 +59,11 @@ public class SuppliesDao {
     if (!request.getItemStatus().isEmpty()
         && request.getItemStatus().size() < SiteSupplyRequest.ITEM_STATUS_COUNT) {
       query.append("and ist.name in (<item_status>)\n");
+    }
+
+    if (!request.getSiteType().isEmpty()
+        && request.getSiteType().size() < SiteSupplyRequest.SITE_TYPE_COUNT) {
+      query.append("and st.name in (<site_type>)\n");
     }
 
     if (request.getAcceptingDonations() != request.getNotAcceptingDonations()) {
@@ -85,6 +93,11 @@ public class SuppliesDao {
           if (!request.getItemStatus().isEmpty()
               && request.getItemStatus().size() < SiteSupplyRequest.ITEM_STATUS_COUNT) {
             queryBuilder.bindList("item_status", request.getItemStatus());
+          }
+
+          if (!request.getSiteType().isEmpty()
+              && request.getSiteType().size() < SiteSupplyRequest.SITE_TYPE_COUNT) {
+            queryBuilder.bindList("site_type", request.getSiteType());
           }
 
           return queryBuilder.mapToBean(SuppliesQueryResult.class).list();

@@ -54,6 +54,7 @@ async function updateData() {
     document.getElementById("error-div").innerHTML = "";
     startLoaderAnimation();
     const data = await fetchSupplyData();
+    const supplyHubHtml = "<br><span class='supply-hub'>(Supply Hub)</span>";
     const notAcceptingDonationsHtml = "<br><span class='not-accepting-donations'>(Not Accepting Donations)</span>";
     // write data to the results table
     document.getElementById('results-table').querySelector("tbody").innerHTML =
@@ -61,6 +62,7 @@ async function updateData() {
               <tr>
                   <td>
                     <a href='site-detail?id=${r.id}'><span class="site-name">${r.site}</span></a>
+                    ${r.siteType === "Supply Hub" ? supplyHubHtml : ''}
                     ${r.acceptingDonations ? '' : notAcceptingDonationsHtml}
                   </td>
                   <td>
@@ -102,6 +104,7 @@ async function fetchSupplyData() {
   const counties = readSelections('county');
   const items = readSelections('item');
   const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c => c.value);
+  const siteType = [...document.getElementById('site-type').querySelectorAll("input:checked")].map(c => c.value);
   const acceptingDonations = document.getElementById('accepting-donations').checked;
   const notAcceptingDonations = document.getElementById('not-accepting-donations').checked;
 
@@ -116,6 +119,7 @@ async function fetchSupplyData() {
       items: items,
       counties: counties,
       itemStatus: itemStatus,
+      siteType: siteType,
       acceptingDonations: acceptingDonations,
       notAcceptingDonations: notAcceptingDonations
     })
