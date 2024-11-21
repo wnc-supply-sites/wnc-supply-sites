@@ -45,6 +45,14 @@ public class SiteDetailTest {
       assertThat(output.getHref()).isEqualTo("https://www.link.com");
       assertThat(output.getTitle()).isEqualTo("www.link.com");
     }
+
+    @Test
+    void stripsTrailingSlash() {
+      String input = "www.link.com/";
+      var output = new SiteDetailController.WebsiteLink(input);
+      assertThat(output.getHref()).isEqualTo("https://www.link.com");
+      assertThat(output.getTitle()).isEqualTo("www.link.com");
+    }
   }
 
   @Nested

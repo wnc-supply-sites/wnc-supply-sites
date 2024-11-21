@@ -33,9 +33,9 @@ alter database wnc_helene owner to wnc_helene;
 ### DB dump
 
 pg_dump -U postgres wnc_helene > db-dump.sql
-scp db-dump.sql root@wnc-supplies-database.org
+scp db-dump.sql root@wnc-supply-sites.com
 
-ssh root@wnc-supplies-database.org
+ssh root@wnc-supply-sites.com
 sudo -u postgres psql wnc_helene < db-dump.sql
 
 
@@ -48,8 +48,7 @@ sudo -u postgres psql wnc_helene < db-dump.sql
 apt-get remove certbot
 snap install --classic certbot
 ln -s /snap/bin/certbot /usr/bin/certbot
-certbot --nginx
-certbot --expand -d wnc-supplies.com -d www.wnc-supplies.com
+certbot --nginx -d wnc-supply-sites.com www.wnc-supply-sites.com
 ufw allow 443
 
 
