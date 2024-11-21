@@ -22,7 +22,10 @@ public class SuppliesController {
 
   /** GET requests should be coming from the home page. */
   @GetMapping("/supplies/site-list")
-  public ModelAndView supplies(@RequestParam String mode) {
+  public ModelAndView supplies(@RequestParam(required = false) String mode) {
+    if(mode == null) {
+      mode = "view";
+    }
     Map<String, String> templateValues = new HashMap<>();
     templateValues.put(
         "notAcceptingDonationsValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
