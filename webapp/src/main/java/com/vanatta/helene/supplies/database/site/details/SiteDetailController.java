@@ -38,8 +38,7 @@ public class SiteDetailController {
     siteDetails.put(
         "googleMapsAddress",
         String.format(
-            "%s, %s, %s, %s",
-            encode(siteDetailData.getSiteName()),
+            "%s, %s, %s",
             encode(siteDetailData.getAddress()),
             encode(siteDetailData.getCity()),
             encode(siteDetailData.getState())));
