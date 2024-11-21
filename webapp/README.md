@@ -61,7 +61,7 @@ root@localhost:/etc/nginx# cat /etc/cron.d/certbot
 
 
 export DB_PASS=“.....”
-docker run -d --restart always --name webapp --network host -e DB_PASS="$DB_PASS" ghcr.io/danvanatta/wnc-helene-supplies-database/webapp
+docker run -d --restart always --name webapp --network host -e DB_PASS="$DB_PASS" ghcr.io/danvanatta/wnc-supply-sites/webapp
 
 ### Redeploy
 
