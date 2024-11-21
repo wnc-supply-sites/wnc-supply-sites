@@ -46,4 +46,23 @@ public class SiteDetailTest {
       assertThat(output.getTitle()).isEqualTo("www.link.com");
     }
   }
+
+  @Nested
+  class ContactNumber {
+    @Test
+    void nullContactNumber() {
+      String input = null;
+      var output = new SiteDetailController.ContactNumber(input);
+      assertThat(output.getHref()).isNull();
+      assertThat(output.getTitle()).isEqualTo("None listed");
+    }
+
+    @Test
+    void nonNullContactNumber() {
+      String input = "555-555-5555";
+      var output = new SiteDetailController.ContactNumber(input);
+      assertThat(output.getHref()).isEqualTo("tel:" + input);
+      assertThat(output.getTitle()).isEqualTo(input);
+    }
+  }
 }

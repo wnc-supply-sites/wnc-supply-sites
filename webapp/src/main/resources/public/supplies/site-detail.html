@@ -22,8 +22,19 @@
   {{/website}}
   <dt>Address:</dt>
   <dd>{{addressLine1}}<br>{{addressLine2}}</dd>
+
+  {{#contactNumber}}
   <dt>Contact:</dt>
-  <dd>{{contactNumber}}</dd>
+  <dd>
+    {{#href}}
+    <a href="{{.}}">
+    {{/href}}
+      {{title}}
+    {{#href}}
+    </a>
+    {{/href}}
+  </dd>
+  {{/contactNumber}}
 </dl>
 
 <div class="mapouter">

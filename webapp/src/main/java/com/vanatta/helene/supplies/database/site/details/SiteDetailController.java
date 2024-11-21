@@ -31,9 +31,7 @@ public class SiteDetailController {
     siteDetails.put(
         "website",
         Optional.ofNullable(siteDetailData.getWebsite()).map(WebsiteLink::new).orElse(null));
-    siteDetails.put(
-        "contactNumber",
-        Optional.ofNullable(siteDetailData.getContactNumber()).orElse("none listed"));
+    siteDetails.put("contactNumber", new ContactNumber(siteDetailData.getContactNumber()));
     siteDetails.put("addressLine1", siteDetailData.getAddress());
     siteDetails.put(
         "addressLine2",
@@ -43,15 +41,15 @@ public class SiteDetailController {
         "googleMapsAddress",
         String.format(
             "%s, %s, %s",
-            encode(siteDetailData.getAddress()),
-            encode(siteDetailData.getCity()),
-            encode(siteDetailData.getState())));
+            urlEncode(siteDetailData.getAddress()),
+            urlEncode(siteDetailData.getCity()),
+            urlEncode(siteDetailData.getState())));
 
     return new ModelAndView("supplies/site-detail", siteDetails);
   }
 
   @Getter
-  public static class WebsiteLink {
+  static class WebsiteLink {
     private final String href;
     private final String title;
 
@@ -69,7 +67,24 @@ public class SiteDetailController {
     }
   }
 
-  private static String encode(String toEncode) {
+  @Getter
+  static class ContactNumber {
+    private final String href;
+    private final String title;
+
+    ContactNumber(String number) {
+      if (number == null) {
+        href = null;
+        title = "None listed";
+      } else {
+        href = "tel:" + number;
+        title = number;
+      }
+    }
+  }
+
+  /** Does a quick URL encoding of a given value. */
+  private static String urlEncode(String toEncode) {
     return URLEncoder.encode(toEncode, StandardCharsets.UTF_8);
   }
 }
