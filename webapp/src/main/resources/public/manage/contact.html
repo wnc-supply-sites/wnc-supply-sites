@@ -22,7 +22,7 @@
       <div class="data-field vertical">
         <label for="Contact Number">Contact Number: </label>
         <div class="horizontal">
-          <input id="Contact Number" type="text" class="shortTextField" value="{{siteContact}}" maxlength="32" placeholder="555-555-5555"/>
+          <input id="Contact Number" type="text" class="shortTextField" value="{{siteContact}}" maxlength="24" placeholder="555-555-5555"/>
           <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Number')" class="update-button">Update</button>
           <div class="green-check hidden" id="Contact Number-update-confirm-checkmark">&#10003;</div>
         </div>
@@ -42,7 +42,7 @@
       <div class="data-field vertical">
         <label for="Site Name">Site Name: </label>
         <div class="horizontal">
-          <input id="Site Name" type="text" class="shortTextField" value="{{siteName}}" maxlength="32"/>
+          <input id="Site Name" type="text" class="shortTextField" value="{{siteName}}" maxlength="128"/>
           <button onclick="showUpdateConfirmation({{siteId}}, 'Site Name')" class="update-button">Update</button>
           <div class="green-check hidden" id="Site Name-update-confirm-checkmark">&#10003;</div>
         </div>
@@ -52,7 +52,7 @@
       <div class="data-field vertical">
         <label for="Street Address">Street Address: </label>
         <div class="horizontal">
-          <input id="Street Address" type="text" class="shortTextField" value="{{address}}" maxlength="32"/>
+          <input id="Street Address" type="text" class="shortTextField" value="{{address}}" maxlength="64"/>
           <button onclick="showUpdateConfirmation({{siteId}}, 'Street Address')" class="update-button">Update</button>
           <div class="green-check hidden" id="Street Address-update-confirm-checkmark">&#10003;</div>
         </div>
