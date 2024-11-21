@@ -52,3 +52,7 @@ table.inventoryTable td {
 .statusControls {
     width: 300px;
 }
+
+.very-wide-button {
+    width: 350px;
+}

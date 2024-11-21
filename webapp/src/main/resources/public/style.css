@@ -46,6 +46,10 @@ html, table {
     margin-bottom: 25px;
 }
 
+.wide-button {
+    width: 300px;
+}
+
 .nav-button {
     align-items: center;
     appearance: none;
@@ -75,7 +79,6 @@ html, table {
     white-space: normal;
     will-change: box-shadow, transform;
     font-size: 18px;
-    width: 300px;
 }
 
 .green-check {
