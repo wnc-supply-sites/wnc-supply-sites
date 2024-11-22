@@ -27,12 +27,13 @@ html, table {
 }
 
 .needed {
+    font-weight: bold;
     /*color: #edbd41;*/
-    color: #A90;
+    /*color: #A90;*/
 }
 
 .available {
-    /*color: darkgreen;*/
+    color: darkgreen;
 }
 
 .oversupply {
