@@ -21,6 +21,7 @@
 
     <tbody>
     <tr>
+      <!-- Filter: Select Site DropDown -->
       <td>
         <div class="vertical">
           <label for="site-select">Donation Site:</label>
@@ -28,6 +29,7 @@
           </select>
         </div>
       </td>
+      <!-- Filter: Select County DropDown -->
       <td>
         <div class="vertical">
           <label for="county-select">County:</label>
@@ -35,6 +37,8 @@
           </select>
         </div>
       </td>
+
+      <!-- Filter: Select Item DropDown -->
       <td>
         <div class="vertical">
           <label for="item-select">Items:</label>
@@ -86,16 +90,16 @@
       <fieldset class="vertical" id="item-status">
         <legend>Item Status</legend>
 
-        <!-- Filter: Urgent Need -->
+        <!-- Filter: Urgently Needed -->
         <div>
-          <input type="checkbox" id="urgent-items" checked value="Urgent Need" onchange="updateData()"/>
-          <label for="urgent-items" class="urgent">Urgent Need</label>
+          <input type="checkbox" id="urgent-items" checked value="Urgently Needed" onchange="updateData()"/>
+          <label for="urgent-items" class="urgent">Urgently Needed</label>
         </div>
 
-        <!-- Filter: Urgent Need -->
+        <!-- Filter: Needed -->
         <div>
-          <input type="checkbox" id="need-items" checked value="Need" onchange="updateData()"/>
-          <label for="need-items" class="requested">Need</label>
+          <input type="checkbox" id="needed-items" checked value="Needed" onchange="updateData()"/>
+          <label for="needed-items" class="needed">Needed</label>
         </div>
 
         <!-- Filter: Available -->
@@ -106,7 +110,8 @@
 
         <!-- Filter: Oversupply -->
         <div>
-          <input type="checkbox" id="oversupply-items" {{ overSupplyValue }} value="Oversupply"
+          {{! OversupplyValue is a variable so we can pre-toggle the value }}
+          <input type="checkbox" id="oversupply-items" {{overSupplyValue}} value="Oversupply"
                  onchange="updateData()"/>
           <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
         </div>

@@ -151,7 +151,7 @@ async function fetchSupplyData() {
 function formatItems(items) {
   return "<ul>\n" +
       items.map(i =>
-          `<li><div class="${i.status}">${i.name}</div></li>\n`
+          `<li><div class="${i.displayClass}">${i.name}</div></li>\n`
       ).join("\n")
       + "\n</ul>";
 }

@@ -64,7 +64,9 @@ public class SuppliesController {
                 .add(
                     SiteItem.builder()
                         .name(result.getItem())
-                        .status(result.getItemStatus())
+                        .displayClass(
+                            SiteSupplyRequest.ItemStatus.convertToDisplayClass(
+                                result.getItemStatus()))
                         .build());
           }
         });

@@ -1,10 +1,9 @@
 package com.vanatta.helene.supplies.database.supplies;
 
-import lombok.Builder;
-import lombok.Value;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
+import lombok.Value;
 
 @Value
 @Builder
@@ -28,6 +27,15 @@ public class SiteSupplyResponse {
   @Builder
   static class SiteItem {
     String name;
-    String status;
+    String displayClass;
+
+    public String getDisplayClass() {
+      if (List.of("urgent", "needed", "available", "oversupply").contains(displayClass)) {
+        return displayClass;
+      } else {
+        new Exception().printStackTrace();
+        throw new IllegalStateException("Illegal display class: " + displayClass);
+      }
+    }
   }
 }

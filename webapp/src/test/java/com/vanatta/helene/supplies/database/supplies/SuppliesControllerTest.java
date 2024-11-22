@@ -85,7 +85,7 @@ class SuppliesControllerTest {
     assertThat(result.getResultCount()).isEqualTo(1);
     assertThat(result.getResults().getFirst().getItems().getFirst().getName())
         .isEqualTo("new clothes");
-    assertThat(result.getResults().getFirst().getItems().getFirst().getStatus())
+    assertThat(result.getResults().getFirst().getItems().getFirst().getDisplayClass())
         .isEqualTo(SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getText());
   }
 
@@ -133,7 +133,7 @@ class SuppliesControllerTest {
     result.getResults().stream()
         .map(SiteSupplyResponse.SiteSupplyData::getItems)
         .flatMap(List::stream)
-        .forEach(item -> assertThat(item.getStatus()).isEqualTo(itemStatus));
+        .forEach(item -> assertThat(item.getDisplayClass()).isEqualTo(itemStatus));
   }
 
   @Test
@@ -144,7 +144,7 @@ class SuppliesControllerTest {
     result.getResults().stream()
         .map(SiteSupplyResponse.SiteSupplyData::getItems)
         .flatMap(List::stream)
-        .forEach(item -> assertThat(item.getStatus()).isIn("Oversupply", "Urgent Need"));
+        .forEach(item -> assertThat(item.getDisplayClass()).isIn("Oversupply", "Urgent Need"));
   }
 
   @Test

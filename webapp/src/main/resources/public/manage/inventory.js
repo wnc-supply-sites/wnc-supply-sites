@@ -130,29 +130,36 @@ async function sendDeactivateItem(siteId, itemName) {
  * Fires when the item status radio buttons are toggled.
  */
 async function changeItemStatus(siteId, itemName) {
-  const requestedChecked = document.getElementById(`${itemName}Requested`)
-      .checked ? "checked" : "";
   const urgentChecked = document.getElementById(`${itemName}Urgent`)
+      .checked ? "checked" : "";
+  const neededChecked = document.getElementById(`${itemName}Needed`)
+      .checked ? "checked" : "";
+  const availableChecked = document.getElementById(`${itemName}Available`)
       .checked ? "checked" : "";
   const oversupplyChecked = document.getElementById(`${itemName}Oversupply`)
       .checked ? "checked" : "";
 
   document.getElementById(`${itemName}Label`)
-  .classList.remove("requested", "urgent", "oversupply");
+  .classList.remove("urgent", "needed", "available", "oversupply");
 
   let newStatus = "";
+
   if (urgentChecked) {
-    newStatus = "Urgent Need";
+    newStatus = "Urgently Needed";
     document.getElementById(`${itemName}Label`)
     .classList.add("urgent");
-  } else if (oversupplyChecked) {
+  } else if (neededChecked) {
+    newStatus = "Needed";
+    document.getElementById(`${itemName}Label`)
+    .classList.add("needed");
+  } else if (availableChecked) {
+    newStatus = "Available";
+    document.getElementById(`${itemName}Label`)
+    .classList.add("available");
+  } else {
     newStatus = "Oversupply";
     document.getElementById(`${itemName}Label`)
     .classList.add("oversupply");
-  } else {
-    newStatus = "Requested";
-    document.getElementById(`${itemName}Label`)
-    .classList.add("requested");
   }
 
   try {
@@ -193,9 +200,9 @@ async function addItem(siteId) {
     return;
   }
 
-  const urgentChecked = document.getElementById("urgentNeedRadioNew")
+  const urgentChecked = document.getElementById("urgentlyNeededRadioNew")
       .checked ? "checked" : "";
-  const needChecked = document.getElementById("needRadioNew")
+  const neededChecked = document.getElementById("neededRadioNew")
       .checked ? "checked" : "";
   const availableChecked = document.getElementById("availableRadioNew")
       .checked ? "checked" : "";
@@ -206,13 +213,13 @@ async function addItem(siteId) {
   let status = "Available";
 
 
-if (urgentChecked) {
-  labelStyle = "urgent";
-  status = "Urgent Need";
-} else if (needChecked) {
-  labelStyle = "need";
-  status = "Need";
-} else if (requestedChecked) {
+  if (urgentChecked) {
+    labelStyle = "urgent";
+    status = "Urgently Needed";
+  } else if (neededChecked) {
+    labelStyle = "needed";
+    status = "Needed";
+  } else if (availableChecked) {
     labelStyle = "available";
     status = "Available";
   } else if (oversupplyChecked) {
@@ -248,7 +255,7 @@ if (urgentChecked) {
           <td>
             <div class="horizontal">
 
-              <!-- Urgent Need -->
+              <!-- Urgently Needed -->
               <fieldset class="vertical">
                 <div class="horizontal item-status-div">
                   <input 
@@ -266,17 +273,17 @@ if (urgentChecked) {
                 </div>
 
 
-                <!-- Need -->
+                <!-- Needed -->
                 <div class="horizontal item-status-div">
                   <input 
                       type="radio" 
-                      id="${itemNameEncoded}Need" 
+                      id="${itemNameEncoded}Needed" 
                       name="${itemNameEncoded}Status" 
                       onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
                       ${neededChecked}/>
                   <label 
                       for="${itemNameEncoded}Need" 
-                      class="need" 
+                      class="needed" 
                       id="${itemNameEncoded}RequestedLabel">
                     Need
                   </label>
