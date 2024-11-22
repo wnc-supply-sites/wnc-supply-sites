@@ -19,4 +19,5 @@
     border: solid #111;
     border-radius: 20px;
     font-size: 1.1em;
+    max-width: 500px;
 }
