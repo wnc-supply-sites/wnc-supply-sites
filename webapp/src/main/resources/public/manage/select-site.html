@@ -17,18 +17,25 @@
   <a href="/">[&larr; Go Back]</a>
 </div>
 
-<div id="site-select-div">
-  <form action="/manage/site-selected" method="get">
+<form action="/manage/site-selected" method="get">
+<div id="site-select-div" class="vertical">
+
+  <div>
     <label for="siteId" id="select-label">Select supply site:</label>
+  </div>
+
+  <div>
+
     <select id="siteId" name="siteId" class="site-select">
       <option value=""></option>
       {{#sites}}
       <option value="{{id}}">{{name}}</option>
       {{/sites}}
     </select>
+  </div>
 
     <button type="submit" id="select-site-button">Select</button>
-  </form>
 </div>
+</form>
 </body>
 </html>

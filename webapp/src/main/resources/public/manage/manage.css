@@ -1,19 +1,15 @@
-html {
-    width: 700px;
-}
-
 h2 {
     padding-left: 20px;
     margin-bottom: 5px;
 }
 
 .data-entry-div {
-    width: 600px;
+    /*width: 600px;*/
     padding-left: 20px;
 }
 
 .data-entry-body {
-    padding-left: 50px;
+    /*padding-left: 50px;*/
 }
 
 .very-wide-button {

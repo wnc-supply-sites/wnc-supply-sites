@@ -1,20 +1,7 @@
-@media only screen and (max-width: 769px) {
-    label {
-        font-size: 5em;
-    }
-}
-
-
-/*@media only screen and (max-width: 767px) {*/
-/*    h1, h2 {*/
-/*        font-size: 30px;*/
-/*    }*/
-/*}*/
-
 .site-select {
     width: 200px;
     font-size: 1.25em;
-    margin-left: 25px;
+    margin-top: 10px;
     height: 30px;
     position: relative;
     top: 2px;
@@ -25,9 +12,8 @@
     padding-left: 30px;
 }
 
-
 #select-site-button {
-    margin-left: 40px;
+    margin-top: 40px;
     width: 120px;
     height: 30px;
     font-size: 1.1em;

@@ -15,7 +15,7 @@
 }
 
 .inventoryTable {
-  width: 600px;
+  /*width: 600px;*/
 }
 
 tbody#inventoryTableBody tr {
@@ -44,16 +44,16 @@ tbody#inventoryTableBody td {
 }
 
 .inventoryLabel {
-  font-size: 1.7em;
+  font-size: 1.4em;
 }
 
 .item-status-div {
   margin-bottom: 5px;
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 
 #newItemTable {
-  width: 600px;
+  /*width: 600px;*/
 }
 
 #add-item-button {
