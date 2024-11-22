@@ -4,11 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest.ItemStatus;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
-import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest.ItemStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -172,7 +170,7 @@ class ManageSiteDaoTest {
 
     ManageSiteDao.SiteInventory clothes = findItemByName(result, "new clothes");
     assertThat(clothes.isActive()).isTrue();
-    assertThat(clothes.getItemStatus()).isEqualTo(ItemStatus.URGENT.getText());
+    assertThat(clothes.getItemStatus()).isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
 
     ManageSiteDao.SiteInventory usedClothes = findItemByName(result, "used clothes");
     assertThat(usedClothes.isActive()).isTrue();
@@ -231,37 +229,40 @@ class ManageSiteDaoTest {
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.AVAILABLE.getText());
 
     // change gloves status to 'Urgent Need'
-    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Urgent Need");
+    ManageSiteDao.updateItemStatus(
+        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
 
     // validate gloves status is updated 'Urgent Need'
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
-    assertThat(water.getItemStatus()).isEqualTo(ItemStatus.URGENT.getText());
+    assertThat(water.getItemStatus()).isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
 
     // change gloves status to 'Oversupply'
-    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Oversupply");
+    ManageSiteDao.updateItemStatus(
+        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.OVERSUPPLY.getText());
 
     // validate gloves status is updated 'Oversupply'
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
-    assertThat(water.getItemStatus()).isEqualTo("Oversupply");
+    assertThat(water.getItemStatus()).isEqualTo(ItemStatus.OVERSUPPLY.getText());
 
     // change gloves status to 'Need'
-    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Need");
+    ManageSiteDao.updateItemStatus(
+        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.NEEDED.getText());
 
     // validate gloves status is updated 'Need'
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
-    assertThat(water.getItemStatus()).isEqualTo("Need");
-
+    assertThat(water.getItemStatus()).isEqualTo(ItemStatus.NEEDED.getText());
 
     // change gloves status back to 'Available'
-    ManageSiteDao.updateItemStatus(TestConfiguration.jdbiTest, siteId, "water", "Available");
+    ManageSiteDao.updateItemStatus(
+        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.AVAILABLE.getText());
 
     // validate gloves status is updated 'Need'
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
-    assertThat(water.getItemStatus()).isEqualTo("Available");
+    assertThat(water.getItemStatus()).isEqualTo(ItemStatus.AVAILABLE.getText());
   }
 
   @Test

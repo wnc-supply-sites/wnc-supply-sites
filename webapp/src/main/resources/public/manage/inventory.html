@@ -60,22 +60,22 @@
             <div class="horizontal">
               <fieldset class="vertical">
 
-                <!-- Urgent Need (existing item) -->
+                <!-- Urgently Needed (existing item) -->
                 <div class="horizontal item-status-div">
                   <input type="radio" id="{{itemName}}Urgent" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{urgentChecked}}/>
                   <label for="{{itemName}}Urgent" class="urgent {{itemStatusDisabled}}" id="{{itemName}}UrgentLabel">
-                    Urgent Need
+                    Urgently Needed
                   </label>
                 </div>
 
-                <!-- Need (existing item) -->
+                <!-- Needed (existing item) -->
                 <div class="horizontal item-status-div">
-                  <input type="radio" id="{{itemName}}Need" name="{{itemName}}Status" {{itemStatusDisabled}}
+                  <input type="radio" id="{{itemName}}Needed" name="{{itemName}}Status" {{itemStatusDisabled}}
                          onclick="changeItemStatus('{{siteId}}', '{{itemName}}')" {{neededChecked}}/>
-                  <label for="{{itemName}}Need" class="need {{itemStatusDisabled}}"
-                         id="{{itemName}}NeedLabel">
-                    Need</label>
+                  <label for="{{itemName}}Needed" class="need {{itemStatusDisabled}}"
+                         id="{{itemName}}NeededLabel">
+                    Needed</label>
                 </div>
 
                 <!-- Available (existing item) -->

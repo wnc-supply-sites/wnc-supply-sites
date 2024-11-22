@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
+import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import jakarta.annotation.Nullable;
 
 import java.util.Arrays;
@@ -284,6 +285,10 @@ public class ManageSiteDao {
   }
 
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
+    if(!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+      throw new IllegalArgumentException("Invalid item status: " + itemStatus);
+    }
+
     String update =
         """
       update site_item

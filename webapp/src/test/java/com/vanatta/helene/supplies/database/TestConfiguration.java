@@ -66,7 +66,7 @@ public class TestConfiguration {
                insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site1'),
                 (select id from item where name = 'new clothes'),
-                (select id from item_status where name = 'Urgent Need')
+                (select id from item_status where name = 'Urgently Needed')
                )
             """,
             """
@@ -95,7 +95,7 @@ public class TestConfiguration {
                insert into site_item(site_id, item_id, item_status_id) values(
                 (select id from site where name = 'site3'),
                 (select id from item where name = 'water'),
-                (select id from item_status where name = 'Need')
+                (select id from item_status where name = 'Needed')
                )
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));

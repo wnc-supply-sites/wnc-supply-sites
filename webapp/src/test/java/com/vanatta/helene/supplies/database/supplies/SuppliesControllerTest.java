@@ -86,7 +86,7 @@ class SuppliesControllerTest {
     assertThat(result.getResults().getFirst().getItems().getFirst().getName())
         .isEqualTo("new clothes");
     assertThat(result.getResults().getFirst().getItems().getFirst().getStatus())
-        .isEqualTo("Urgent Need");
+        .isEqualTo(SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getText());
   }
 
   @Test

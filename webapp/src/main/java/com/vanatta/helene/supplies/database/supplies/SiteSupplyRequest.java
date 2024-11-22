@@ -3,6 +3,8 @@ package com.vanatta.helene.supplies.database.supplies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,14 +22,14 @@ public class SiteSupplyRequest {
   @Getter
   @AllArgsConstructor
   public enum ItemStatus {
-    URGENT("Urgent Need"),
-    NEED("Need"),
+    URGENTLY_NEEDED("Urgently Needed"),
+    NEEDED("Needed"),
     AVAILABLE("Available"),
     OVERSUPPLY("Oversupply"),
     ;
     private final String text;
 
-    static List<String> allItemStatus() {
+    public static List<String> allItemStatus() {
       return Arrays.stream(values()).map(s -> s.text).toList();
     }
   }

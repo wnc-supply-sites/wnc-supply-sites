@@ -1,12 +1,12 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -213,8 +213,9 @@ public class ManageSiteController {
     /** Should either be blank or "checked" */
     @Builder.Default String itemChecked = "";
 
-    @Builder.Default String requestedChecked = "";
     @Builder.Default String urgentChecked = "";
+    @Builder.Default String neededChecked = "";
+    @Builder.Default String availableChecked = "";
     @Builder.Default String oversupplyChecked = "";
 
     ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
@@ -222,23 +223,23 @@ public class ManageSiteController {
       itemChecked = siteInventory.isActive() ? "checked" : "";
 
       urgentChecked =
-          "Urgent Need".equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+          SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+      neededChecked =
+          SiteSupplyRequest.ItemStatus.NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+      availableChecked =
+          SiteSupplyRequest.ItemStatus.AVAILABLE.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
       oversupplyChecked =
-          "Oversupply".equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
-
-      if (oversupplyChecked.isEmpty() && urgentChecked.isEmpty()) {
-        requestedChecked = "checked";
-      } else {
-        requestedChecked = "";
-      }
+          SiteSupplyRequest.ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
     }
 
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
-      if (requestedChecked != null && !requestedChecked.isEmpty()) {
-        return "requested";
-      } else if (urgentChecked != null && !urgentChecked.isEmpty()) {
+      if (urgentChecked != null && !urgentChecked.isEmpty()) {
         return "urgent";
+      } else if (neededChecked != null && !neededChecked.isEmpty()) {
+        return "needed";
+      } else if (availableChecked != null && !availableChecked.isEmpty()) {
+        return "available";
       } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
         return "oversupply";
       } else {
