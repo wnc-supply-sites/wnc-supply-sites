@@ -41,3 +41,15 @@ dd {
     width: 600px !important;
     height: 500px !important;
 }
+
+@media only screen and (max-width:632px) {
+    .gmap_canvas {
+        width: 400px;
+        height: 400px;
+    }
+
+    .gmap_iframe {
+        width: 400px !important;
+        height: 400px !important;
+    }
+}
