@@ -8,6 +8,7 @@ import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest.ItemStatu
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class ManageSiteDaoTest {
@@ -113,50 +114,86 @@ class ManageSiteDaoTest {
     assertThat(result).isEqualTo("site1");
   }
 
-  @Test
-  void siteStatusActive() {
-    long siteId = Helper.getSiteId("site1");
-    var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isActive()).isTrue();
+  @Nested
+  class SiteStatus {
 
-    ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, false);
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isActive()).isFalse();
+    @Test
+    void siteStatusActive() {
+      long siteId = Helper.getSiteId("site1");
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isActive()).isTrue();
 
-    ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, true);
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isActive()).isTrue();
+      ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, false);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isActive()).isFalse();
 
-    siteId = Helper.getSiteId("site2");
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isActive()).isTrue();
+      ManageSiteDao.updateSiteActiveFlag(TestConfiguration.jdbiTest, siteId, true);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isActive()).isTrue();
 
-    siteId = Helper.getSiteId("site3");
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isActive()).isFalse();
-  }
+      siteId = Helper.getSiteId("site2");
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isActive()).isTrue();
 
-  @Test
-  void setStatusAcceptingDonations() {
-    long siteId = Helper.getSiteId("site1");
-    var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isAcceptingDonations()).isTrue();
+      siteId = Helper.getSiteId("site3");
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isActive()).isFalse();
+    }
 
-    ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, false);
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isAcceptingDonations()).isFalse();
+    @Test
+    void setStatusAcceptingDonations() {
+      long siteId = Helper.getSiteId("site1");
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isAcceptingDonations()).isTrue();
 
-    ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isAcceptingDonations()).isTrue();
+      ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, false);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isAcceptingDonations()).isFalse();
 
-    siteId = Helper.getSiteId("site2");
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isAcceptingDonations()).isFalse();
+      ManageSiteDao.updateSiteAcceptingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isAcceptingDonations()).isTrue();
 
-    siteId = Helper.getSiteId("site3");
-    result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-    assertThat(result.isAcceptingDonations()).isTrue();
+      siteId = Helper.getSiteId("site2");
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isAcceptingDonations()).isFalse();
+
+      siteId = Helper.getSiteId("site3");
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isAcceptingDonations()).isTrue();
+    }
+
+    @Test
+    void fetchSiteStatus_SiteType() {
+      long siteId = Helper.getSiteId("site1");
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.getSiteTypeEnum()).isNotNull();
+    }
+
+    @Test
+    void lookupSiteDetailReturnsSiteType() {
+      long siteId = Helper.getSiteId("site1");
+      var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+      assertThat(details.getSiteType()).isNotNull();
+    }
+
+    @Test
+    void updateSiteType() {
+      long siteId = Helper.getSiteId("site1");
+
+      ManageSiteDao.updateSiteType(
+          TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteType.DISTRIBUTION_SITE);
+
+      var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+      assertThat(details.getSiteType())
+          .isEqualTo(ManageSiteDao.SiteType.DISTRIBUTION_SITE.siteTypeName);
+
+      ManageSiteDao.updateSiteType(
+          TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteType.SUPPLY_HUB);
+
+      details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+      assertThat(details.getSiteType()).isEqualTo(ManageSiteDao.SiteType.SUPPLY_HUB.siteTypeName);
+    }
   }
 
   @Test

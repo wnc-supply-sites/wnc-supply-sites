@@ -64,3 +64,8 @@ tbody#inventoryTableBody td {
 .new-item-status-div {
   font-size: 1.1em;
 }
+
+table.inventoryTable td {
+  padding: 5px;
+}
+

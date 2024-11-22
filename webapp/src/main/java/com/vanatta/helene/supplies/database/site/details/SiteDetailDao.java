@@ -10,6 +10,7 @@ public class SiteDetailDao {
   @NoArgsConstructor
   public static class SiteDetailData {
     String siteName;
+    String siteType;
     String contactNumber;
     String address;
     String city;
@@ -27,6 +28,7 @@ public class SiteDetailDao {
                         """
                             select
                               s.name siteName,
+                              st.name siteType,
                               s.contact_number,
                               s.address,
                               s.city,
@@ -35,6 +37,7 @@ public class SiteDetailDao {
                               c.name county
                             from site s
                             join county c on c.id = s.county_id
+                            join site_type st on st.id = s.site_type_id
                             where s.id = :siteId
                             """)
                     .bind("siteId", idToLookup)

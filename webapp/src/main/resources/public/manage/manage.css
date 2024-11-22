@@ -12,45 +12,8 @@ h2 {
     padding-left: 20px;
 }
 
-
 .data-entry-body {
     padding-left: 50px;
-}
-
-.data-field {
-    margin: 5px;
-}
-
-div.data-field label {
-    font-weight: bold;
-}
-
-.statusCaption {
-    padding-left: 150px;
-}
-
-.danger-fields {
-    border: 1px solid red;
-}
-
-table.inventoryTable td {
-    padding: 5px;
-}
-
-.countySelect {
-    width: 150px;
-}
-
-.shortTextField {
-    width: 150px;
-}
-
-.siteStatusUpdateButton {
-    margin-left: 10px;
-}
-
-.statusControls {
-    width: 300px;
 }
 
 .very-wide-button {

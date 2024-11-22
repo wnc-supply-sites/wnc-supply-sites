@@ -3,11 +3,9 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import jakarta.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -59,7 +57,7 @@ public class ManageSiteDao {
   public static void updateSiteField(Jdbi jdbi, long siteId, SiteField field, String newValue) {
     log.info("Updating site: {}, field: {}, value: {}", siteId, field, newValue);
 
-    if(field.isRequired() && (newValue == null || newValue.isEmpty()) ){
+    if (field.isRequired() && (newValue == null || newValue.isEmpty())) {
       throw new RequiredFieldException(field.frontEndName);
     }
 
@@ -138,14 +136,30 @@ public class ManageSiteDao {
   public static class SiteStatus {
     boolean active;
     boolean acceptingDonations;
+    String siteType;
+
+    public SiteType getSiteTypeEnum() {
+      return Arrays.stream(SiteType.values())
+          .filter(s -> s.siteTypeName.equals(siteType))
+          .findAny()
+          .orElseThrow(() -> new IllegalArgumentException("Unknown site type: " + siteType));
+    }
   }
 
   public static SiteStatus fetchSiteStatus(Jdbi jdbi, long siteId) {
+    String query =
+        """
+        select s.active, s.accepting_donations, st.name siteType
+        from site s
+        join site_type st on st.id = s.site_type_id
+        where s.id = :siteId
+        """;
+
     SiteStatus siteStatus =
         jdbi.withHandle(
             handle ->
                 handle
-                    .createQuery("select active, accepting_donations from site where id = :siteId")
+                    .createQuery(query)
                     .bind("siteId", siteId)
                     .mapToBean(SiteStatus.class)
                     .one());
@@ -285,7 +299,7 @@ public class ManageSiteDao {
   }
 
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
-    if(!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
       throw new IllegalArgumentException("Invalid item status: " + itemStatus);
     }
 
@@ -332,5 +346,28 @@ public class ManageSiteDao {
       }
     }
     return true;
+  }
+
+  @AllArgsConstructor
+  enum SiteType {
+    DISTRIBUTION_SITE("Distribution Center"),
+    SUPPLY_HUB("Supply Hub"),
+    ;
+    String siteTypeName;
+  }
+
+  static void updateSiteType(Jdbi jdbi, long siteId, SiteType siteType) {
+    String update =
+        """
+        update site set site_type_id = (select id from site_type where name = :siteTypeName)
+           where id = :siteId;
+        """;
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(update)
+                .bind("siteId", siteId)
+                .bind("siteTypeName", siteType.siteTypeName)
+                .execute());
   }
 }

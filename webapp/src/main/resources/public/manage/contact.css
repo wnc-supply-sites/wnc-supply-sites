@@ -14,3 +14,15 @@
 .hidden {
     display: none;
 }
+
+.shortTextField {
+    width: 150px;
+}
+
+.data-field {
+    margin: 5px;
+}
+
+div.data-field label {
+    font-weight: bold;
+}

@@ -1,0 +1,23 @@
+.radioButtonControl {
+    margin-bottom: 15px;
+}
+
+.statusArea {
+    width: 700px;
+}
+
+.statusControls {
+    /*width: 300px;*/
+}
+
+.siteStatusUpdateButton {
+    margin-left: 10px;
+}
+
+.statusCaption {
+    padding-left: 150px;
+}
+
+.danger-fields {
+    border: 1px solid red;
+}

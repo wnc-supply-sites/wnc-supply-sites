@@ -4,6 +4,7 @@
   <script type="text/javascript" src="status.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="manage.css"/>
+  <link rel="stylesheet" href="status.css"/>
 </head>
 
 <body>
@@ -17,40 +18,73 @@
 
 <div id="data-entry">
   <div class="data-entry-div vertical">
+
     <div class="data-entry-body">
-      <fieldset>
-        <legend>Accepting Donations:</legend>
 
-        <div class="horizontal">
-          <div class="statusControls">
-            <input type="radio" id="acceptingYes" name="acceptingDonations" {{siteAcceptingDonations}}/><label
-              for="acceptingYes">Yes</label>
-            <input type="radio" id="acceptingNo" name="acceptingDonations" {{siteNotAcceptingDonations}}/><label for="acceptingNo">No</label>
-            <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
+
+      <!-- ACCEPTING DONATIONS -->
+      <div class="statusArea">
+        <fieldset>
+          <legend>Accepting Donations:</legend>
+          <div class="horizontal">
+            <div class="statusControls">
+              <input type="radio" id="acceptingYes" name="acceptingDonations" {{siteAcceptingDonations}}/><label
+                for="acceptingYes">Yes</label>
+              <input type="radio" id="acceptingNo" name="acceptingDonations" {{siteNotAcceptingDonations}}/><label
+                for="acceptingNo">No</label>
+              <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
+            </div>
+            <span class="statusCaption">A site not accepting donations is still listed.</span>
           </div>
-          <span class="statusCaption">A site not accepting donations is still listed.</span>
-        </div>
-      </fieldset>
-      <div id="acceptingDonationsConfirmation"></div>
+        </fieldset>
+      </div>
 
-      <fieldset class="danger-fields">
-        <legend>Site is Active:</legend>
-        <div class="horizontal">
-          <div class="statusControls">
-            <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
-            <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
-            <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
+      <!-- SUPPLY HUB -->
+      <div class="statusArea">
+        <fieldset>
+          <legend>Site Type:</legend>
+          <div class="horizontal">
+
+            <div class="statusControls vertical">
+              <div class="horizontal radioButtonControl">
+                <input type="radio" id="distributionSite" name="siteType" {{distributionSiteChecked}}/>
+                <label for="distributionSite">Distribution Site</label>
+              </div>
+
+              <div class="horizontal radioButtonControl">
+                <input type="radio" id="supplyHub" name="siteType" {{supplyHubChecked}}/>
+                <label for="supplyHub">Supply Hub</label>
+              </div>
+            </div>
+            <div>
+              <button class="siteStatusUpdateButton" onclick="updateSiteSiteType({{siteId}})">Update</button>
+            </div>
+            <span class="statusCaption">
+              Distribution sites supply items primarily to the community.<br>
+              Supply hubs are large warehouses.
+            </span>
           </div>
-          <span class="statusCaption">An inactive site is no longer listed.</span>
-        </div>
-      </fieldset>
-      <div id="updateStatusConfirmation">
+        </fieldset>
+      </div>
 
+      <!-- SITE ACTIVE -->
+      <div class="statusArea">
 
+        <fieldset class="danger-fields">
+          <legend>Site is Active:</legend>
+          <div class="horizontal">
+            <div class="statusControls">
+              <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
+              <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
+              <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
+            </div>
+            <span class="statusCaption">An inactive site is no longer listed.</span>
+          </div>
+        </fieldset>
       </div>
     </div>
-
-    <div id="status-update-confirmation"></div>
+    <div id="updateStatusConfirmation"></div>
+    <div id="status-update-error"></div>
   </div>
 </div>
 

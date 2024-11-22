@@ -1,17 +1,16 @@
 async function updateSiteActive(siteId) {
   const active = document.getElementById("activeYes").checked;
-  // try {
+  try {
     await sendStatusUpdate(siteId, "active", active);
     document.getElementById("updateStatusConfirmation")
         .innerHTML =
         `<span class="green-check" id="update-active-confirm">&#10003;</span>` +
         "Site status set to " + (active ? "active" : "inactive");
-  // } catch (error) {
-  //   console.log(error);
-  //   document.getElementById("status-update-confirmation")
-  //       .innerHTML = "An error occurred, site status was not updated.";
-  // }
-
+  } catch (error) {
+    console.log(error);
+    document.getElementById("status-update-error")
+        .innerHTML = "An error occurred, site status was not updated.";
+  }
 }
 
 async function updateSiteAcceptingDonations(siteId) {
@@ -24,11 +23,19 @@ async function updateSiteAcceptingDonations(siteId) {
         "Site status set to " + (accepting ? "" : "NOT ") + "accepting donations";
   } catch (error) {
     console.log(error);
-    document.getElementById("status-update-confirmation")
+    document.getElementById("status-update-error")
         .innerHTML = "An error occurred, site status was not updated.";
   }
 }
 
+async function updateSiteSiteType(siteId) {
+  const isDistSite = document.getElementById("distributionSite").checked;
+  await sendStatusUpdate(siteId, "distSite", isDistSite);
+  document.getElementById("updateStatusConfirmation")
+      .innerHTML =
+      `<span class="green-check" id="update-active-confirm">&#10003;</span>` +
+      "Site type set to " + (isDistSite ? "distribution site" : "supply hub");
+}
 
 async function sendStatusUpdate(siteId, statusFlag, newValue) {
   const url = "/manage/update-status";

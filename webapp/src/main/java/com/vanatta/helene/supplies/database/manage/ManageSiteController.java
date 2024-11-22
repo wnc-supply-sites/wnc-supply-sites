@@ -141,6 +141,13 @@ public class ManageSiteController {
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "checked" : "");
     pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
+    pageParams.put(
+        "distributionSiteChecked",
+        siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.DISTRIBUTION_SITE ? "checked" : "");
+    pageParams.put(
+        "supplyHubChecked",
+        siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.SUPPLY_HUB ? "checked" : "");
+
     return new ModelAndView("manage/status", pageParams);
   }
 
@@ -157,7 +164,9 @@ public class ManageSiteController {
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
     if (statusFlag == null
-        || !(statusFlag.equals("active") || statusFlag.equals("acceptingDonations"))) {
+        || !(statusFlag.equals("active")
+            || statusFlag.equals("acceptingDonations")
+            || statusFlag.equals("distSite"))) {
       return ResponseEntity.badRequest().body("Invalid status flag: " + statusFlag);
     }
 
@@ -167,13 +176,20 @@ public class ManageSiteController {
     }
 
     if (statusFlag.equalsIgnoreCase("active")) {
+      log.info("Updating site: {}, active = {}", siteName, newValue);
       ManageSiteDao.updateSiteActiveFlag(
           jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-      log.info("Updating site: {}, active = {}", siteName, newValue);
-    } else {
+    } else if (statusFlag.equalsIgnoreCase("acceptingDonations")) {
+      log.info("Updating site: {}, accepting donations = {}", siteName, newValue);
       ManageSiteDao.updateSiteAcceptingDonationsFlag(
           jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-      log.info("Updating site: {}, accepting donations = {}", siteName, newValue);
+    } else {
+      var siteType =
+          Boolean.parseBoolean(newValue)
+              ? ManageSiteDao.SiteType.DISTRIBUTION_SITE
+              : ManageSiteDao.SiteType.SUPPLY_HUB;
+      log.info("Updating site: {}, site type: {}", siteName, siteType);
+      ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
     }
     return ResponseEntity.ok().body("Updated");
   }
