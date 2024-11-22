@@ -25,7 +25,7 @@
     <tbody>
     <tr>
       <!-- Filter: Select Site DropDown -->
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <label for="site-select">Donation Site:</label>
           <select id="site-select" onchange="handleSelection('site')">
@@ -33,7 +33,7 @@
         </div>
       </td>
       <!-- Filter: Select County DropDown -->
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <label for="county-select">County:</label>
           <select id="county-select" onchange="handleSelection('county')">
@@ -42,7 +42,7 @@
       </td>
 
       <!-- Filter: Select Item DropDown -->
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <label for="item-select">Items:</label>
           <select id="item-select" onchange="handleSelection('item')">
@@ -51,19 +51,19 @@
       </td>
     </tr>
     <tr>
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="selectAll('site')" class="toggle-all-button">Select all</button>
           <button type="button" onclick="clearSelections('site')" class="toggle-all-button">Clear all</button>
         </div>
       </td>
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="selectAll('county')" class="toggle-all-button">Select all</button>
           <button type="button" onclick="clearSelections('county')" class="toggle-all-button">Clear all</button>
         </div>
       </td>
-      <td>
+      <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="selectAll('item')" class="toggle-all-button">Select all</button>
           <button type="button" onclick="clearSelections('item')" class="toggle-all-button">Clear all</button>

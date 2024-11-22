@@ -34,7 +34,7 @@ select {
 }
 
 table.filters-table {
-    min-width: 600px;
+    /*min-width: 600px;*/
 }
 
 table.filters-table tbody {
@@ -130,8 +130,8 @@ table.results-table tbody tr:nth-child(even) {
     box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 
-.date-column {
-    width: 120px;
+.selection-td {
+    height: 50px;
 }
 
 .toggle-all-button {
