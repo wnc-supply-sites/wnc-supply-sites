@@ -19,38 +19,48 @@ async function checkAndToggleInventory(siteId, itemName) {
 async function toggleInventory(siteId, itemName) {
   const checked = document.getElementById(`${itemName}Checkbox`).checked;
 
-  const requestedChecked = document.getElementById(`${itemName}Requested`)
+  const oversupplyChecked = document.getElementById(`${itemName}Oversupply`)
+      .checked;
+  const neededChecked = document.getElementById(`${itemName}Needed`)
+      .checked;
+  const availableChecked = document.getElementById(`${itemName}Available`)
       .checked;
   const urgentChecked = document.getElementById(`${itemName}Urgent`)
-      .checked;
-  const oversupplyChecked = document.getElementById(`${itemName}Oversupply`)
       .checked;
 
   if (checked) {
     try {
-      let labelClass = "requested";
-      let itemStatus = "Requested";
+      let labelClass = "available";
+      let itemStatus = "Available";
+
       if (urgentChecked) {
         labelClass = "urgent";
-        itemStatus = "Urgent Need";
+        itemStatus = "Urgently Needed";
+      } else if (neededChecked) {
+        labelClass = "needed";
+        itemStatus = "Needed";
       } else if (oversupplyChecked) {
         labelClass = "oversupply";
         itemStatus = "Oversupply";
       }
+
       await sendActivateItem(siteId, itemName, itemStatus);
 
       document.getElementById(`${itemName}Label`).classList.value = "inventoryLabel " + labelClass;
 
-      document.getElementById(`${itemName}RequestedLabel`)
-      .classList.remove("disabled");
       document.getElementById(`${itemName}UrgentLabel`)
+      .classList.remove("disabled");
+      document.getElementById(`${itemName}NeededLabel`)
+      .classList.remove("disabled");
+      document.getElementById(`${itemName}AvailableLabel`)
       .classList.remove("disabled");
       document.getElementById(`${itemName}OversupplyLabel`)
       .classList.remove("disabled");
       showUpdateConfirmation(itemName);
 
-      document.getElementById(`${itemName}Requested`).disabled = !checked;
       document.getElementById(`${itemName}Urgent`).disabled = !checked;
+      document.getElementById(`${itemName}Needed`).disabled = !checked;
+      document.getElementById(`${itemName}Available`).disabled = !checked;
       document.getElementById(`${itemName}Oversupply`).disabled = !checked;
     } catch (error) {
       showError(error);
@@ -63,16 +73,19 @@ async function toggleInventory(siteId, itemName) {
 
       document.getElementById(`${itemName}Label`).classList.value = "inventoryLabel disabled";
 
-      document.getElementById(`${itemName}RequestedLabel`)
-      .classList.add("disabled");
       document.getElementById(`${itemName}UrgentLabel`)
+      .classList.add("disabled");
+      document.getElementById(`${itemName}NeededLabel`)
+      .classList.add("disabled");
+      document.getElementById(`${itemName}AvailableLabel`)
       .classList.add("disabled");
       document.getElementById(`${itemName}OversupplyLabel`)
       .classList.add("disabled");
       showUpdateConfirmation(itemName);
 
-      document.getElementById(`${itemName}Requested`).disabled = !checked;
       document.getElementById(`${itemName}Urgent`).disabled = !checked;
+      document.getElementById(`${itemName}Needed`).disabled = !checked;
+      document.getElementById(`${itemName}Available`).disabled = !checked;
       document.getElementById(`${itemName}Oversupply`).disabled = !checked;
     } catch (error) {
       showError(error);
@@ -268,7 +281,7 @@ async function addItem(siteId) {
                       for="${itemNameEncoded}Urgent" 
                       class="urgent" 
                       id="${itemNameEncoded}UrgentLabel">
-                    Urgent Need
+                    Urgently Needed
                   </label>
                 </div>
 
@@ -282,10 +295,10 @@ async function addItem(siteId) {
                       onclick="changeItemStatus(${siteId}, '${itemNameEncoded}')"
                       ${neededChecked}/>
                   <label 
-                      for="${itemNameEncoded}Need" 
+                      for="${itemNameEncoded}Needed" 
                       class="needed" 
-                      id="${itemNameEncoded}RequestedLabel">
-                    Need
+                      id="${itemNameEncoded}NeededLabel">
+                    Needed
                   </label>
                 </div>
                 
@@ -300,7 +313,7 @@ async function addItem(siteId) {
                   <label 
                       for="${itemNameEncoded}Available" 
                       class="available" 
-                      id="${itemNameEncoded}RequestedLabel">
+                      id="${itemNameEncoded}AvailableLabel">
                     Available
                   </label>
                 </div>
@@ -403,6 +416,7 @@ function showUpdateConfirmation(itemName) {
 }
 
 function showError(error) {
+  console.log(error);
   let errorDiv = document.getElementById("error-div");
   errorDiv.innerHTML = "Update failed. Error contacting server. " + error;
   errorDiv.style.display = 'block';

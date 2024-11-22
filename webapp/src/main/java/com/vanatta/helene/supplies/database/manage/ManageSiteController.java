@@ -223,27 +223,43 @@ public class ManageSiteController {
       itemChecked = siteInventory.isActive() ? "checked" : "";
 
       urgentChecked =
-          SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+          SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED
+                  .getText()
+                  .equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
       neededChecked =
-          SiteSupplyRequest.ItemStatus.NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
-      availableChecked =
-          SiteSupplyRequest.ItemStatus.AVAILABLE.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+          SiteSupplyRequest.ItemStatus.NEEDED
+                  .getText()
+                  .equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
       oversupplyChecked =
-          SiteSupplyRequest.ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus()) ? "checked" : "";
+          SiteSupplyRequest.ItemStatus.OVERSUPPLY
+                  .getText()
+                  .equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
+
+      // if none of the statuses are checked, then check 'available' by default.
+      availableChecked =
+          (urgentChecked.isEmpty() && neededChecked.isEmpty() && oversupplyChecked.isEmpty())
+              ? "checked"
+              : "";
     }
 
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
       if (urgentChecked != null && !urgentChecked.isEmpty()) {
-        return "urgent";
+        return SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getCssClass();
       } else if (neededChecked != null && !neededChecked.isEmpty()) {
-        return "needed";
+        return SiteSupplyRequest.ItemStatus.NEEDED.getCssClass();
       } else if (availableChecked != null && !availableChecked.isEmpty()) {
-        return "available";
+        return SiteSupplyRequest.ItemStatus.AVAILABLE.getCssClass();
       } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
-        return "oversupply";
+        return SiteSupplyRequest.ItemStatus.OVERSUPPLY.getCssClass();
       } else {
-        return "";
+        return SiteSupplyRequest.ItemStatus.AVAILABLE.getCssClass();
       }
     }
 
@@ -265,22 +281,26 @@ public class ManageSiteController {
     String itemStatus = params.get("itemStatus");
     log.info("Activating item: {}, siteId: {}, status: {}", itemName, siteId, itemStatus);
     if (siteId == null) {
+      log.warn("Failed to activate item. No site id. Params: {}", params);
       return ResponseEntity.badRequest().body("Invalid site id, none specified.");
     }
     if (itemName == null) {
+      log.warn("Failed to activate item. No item name. Params: {}", params);
       return ResponseEntity.badRequest().body("Invalid item name, none specified.");
     }
     if (itemStatus == null) {
+      log.warn("Failed to activate item. No item name. No item status: {}", params);
       return ResponseEntity.badRequest().body("Invalid item status, none specified.");
     }
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      log.warn("Invalid site id: {}", siteId);
+      log.warn("Failed to activate item. Invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    if (!List.of("Requested", "Urgent Need", "Oversupply").contains(itemStatus)) {
+    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+      log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
 
@@ -294,9 +314,11 @@ public class ManageSiteController {
     String siteId = params.get("siteId");
     String itemName = params.get("itemName");
     if (siteId == null) {
+      log.warn("Failed to deactivate item, no site id. Params: {}", params);
       throw new IllegalArgumentException("Invalid site id, none specified.");
     }
     if (itemName == null) {
+      log.warn("Failed to deactivate item, no item name. Params: {}", params);
       throw new IllegalArgumentException("Invalid item name, none specified.");
     }
 
@@ -324,7 +346,7 @@ public class ManageSiteController {
         itemName,
         newStatus);
     if (fetchSiteName(siteId) == null) {
-      log.warn("Invalid site id: {}", siteId);
+      log.warn("Failed to update item status. Invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
@@ -341,16 +363,18 @@ public class ManageSiteController {
 
     log.info("Adding item: {}, to site: {}, status: {}", itemName, siteId, itemStatus);
     if (fetchSiteName(siteId) == null) {
-      log.warn("Invalid site id: {}", siteId);
+      log.warn("Failed to add item. Invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    if (!List.of("Requested", "Urgent Need", "Oversupply").contains(itemStatus)) {
+    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+      log.warn("Failed to add item. invalid item status: {}, params: {}", itemStatus, params);
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
 
     boolean itemAdded = ManageSiteDao.addNewItem(jdbi, itemName);
     if (!itemAdded) {
+      log.warn("Failed to add item, already exists. Params: {}", params);
       return ResponseEntity.badRequest().body("Item not added, already exists");
     }
 
