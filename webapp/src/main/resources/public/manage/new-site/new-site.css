@@ -1,0 +1,22 @@
+.required {
+    color: #b60808;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+#requiredText {
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+#saveButton {
+    margin-top: 15px;
+    margin-left: 10px;
+    width: 150px;
+}
+
+.data-field {
+    margin: 10px;
+    width: 150px;
+}
+
