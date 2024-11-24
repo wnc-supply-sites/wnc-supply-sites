@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.filters;
 
+import com.vanatta.helene.supplies.database.data.CountyDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -22,7 +23,7 @@ public class FilterDataController {
   public FilterDataResponse getFilterData() {
     return FilterDataResponse.builder()
         .sites(FilterDataDao.getAllActiveSites(jdbi))
-        .counties(FilterDataDao.getAllCounties(jdbi))
+        .counties(CountyDao.fetchActiveCountyList(jdbi))
         .items(FilterDataDao.getAllItems(jdbi))
         .build();
   }

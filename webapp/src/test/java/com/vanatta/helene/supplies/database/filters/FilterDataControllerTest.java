@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.filters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,8 @@ class FilterDataControllerTest {
   void counties() {
     var response = filterDataController.getFilterData();
 
-    // spot check we return a few expected values
-    assertThat(response.getCounties()).contains("Ashe", "Watauga");
+    // spot check we return a few expected values, counties of sites that are known to be active
+    assertThat(response.getCounties()).contains("Buncombe", "Watauga");
   }
 
   @Test

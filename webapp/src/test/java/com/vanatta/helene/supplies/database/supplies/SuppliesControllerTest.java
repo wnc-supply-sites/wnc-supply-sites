@@ -3,6 +3,8 @@ package com.vanatta.helene.supplies.database.supplies;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.data.SiteType;
 import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,7 +39,7 @@ class SuppliesControllerTest {
     var result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
-                .itemStatus(SiteSupplyRequest.ItemStatus.allItemStatus())
+                .itemStatus(ItemStatus.allItemStatus())
                 .sites(List.of("site5"))
                 .build());
 
@@ -86,7 +88,7 @@ class SuppliesControllerTest {
     assertThat(result.getResults().getFirst().getItems().getFirst().getName())
         .isEqualTo("new clothes");
     assertThat(result.getResults().getFirst().getItems().getFirst().getDisplayClass())
-        .isEqualTo(SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getText());
+        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getCssClass());
   }
 
   @Test
@@ -98,29 +100,32 @@ class SuppliesControllerTest {
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder()
-                .counties(List.of("Buncombe")).build());
+            SiteSupplyRequest.builder().counties(List.of("Buncombe")).build());
     result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Buncombe"));
-    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+    assertThat(
+            result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Watauga")).build());
-    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+    assertThat(
+            result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1");
     result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Watauga"));
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Ashe", "Watauga", "Buncombe")).build());
-    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+    assertThat(
+            result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1", "site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Ashe", "Buncombe")).build());
-    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
+    assertThat(
+            result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");
   }
 
@@ -140,11 +145,17 @@ class SuppliesControllerTest {
   void multipleItemStatus() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().itemStatus(List.of("Oversupply", "Urgent Need")).build());
+            SiteSupplyRequest.builder()
+                .itemStatus(
+                    List.of(ItemStatus.OVERSUPPLY.getText(), ItemStatus.URGENTLY_NEEDED.getText()))
+                .build());
     result.getResults().stream()
         .map(SiteSupplyResponse.SiteSupplyData::getItems)
         .flatMap(List::stream)
-        .forEach(item -> assertThat(item.getDisplayClass()).isIn("Oversupply", "Urgent Need"));
+        .forEach(
+            item ->
+                assertThat(item.getDisplayClass())
+                    .isIn(ItemStatus.OVERSUPPLY.getCssClass(), ItemStatus.URGENTLY_NEEDED.getCssClass()));
   }
 
   @Test
@@ -221,11 +232,11 @@ class SuppliesControllerTest {
                 .build());
     // must contain sites that are active & accepting donations
     // (we exclude site5 because its name can change
-    assertThat(result.getResults().stream().map(r ->r.getSite()))
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite))
         .contains("site1", "site4");
     // site2 is definitely excluded because active and not accepting donations
     // site3 is excluded because it is not active
-    assertThat(result.getResults().stream().map(r ->r.getSite()))
+    assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite))
         .doesNotContain("site2", "site3");
 
     assertThat(result.getResults().getFirst().isAcceptingDonations()).isTrue();
@@ -242,26 +253,29 @@ class SuppliesControllerTest {
 
     // show all sites (false to both would always return no results, instead we just ignore the flag
     int resultCount =
-        suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder()
-                .acceptingDonations(false)
-                .notAcceptingDonations(false)
-                .build())
-                .getResultCount();
+        suppliesController
+            .getSuppliesData(
+                SiteSupplyRequest.builder()
+                    .acceptingDonations(false)
+                    .notAcceptingDonations(false)
+                    .build())
+            .getResultCount();
 
     // show all sites
     int allSiteResultCount =
-        suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder()
-                .acceptingDonations(true)
-                .notAcceptingDonations(true)
-                .build()).getResultCount();
+        suppliesController
+            .getSuppliesData(
+                SiteSupplyRequest.builder()
+                    .acceptingDonations(true)
+                    .notAcceptingDonations(true)
+                    .build())
+            .getResultCount();
 
     assertThat(resultCount).isEqualTo(allSiteResultCount);
   }
 
   @Nested
-  class SiteType {
+  class SiteTypeTest {
     /** Specify a specific site type, all results should come back with that site type */
     @ParameterizedTest
     @ValueSource(strings = {"Supply Hub", "Distribution Center"})
@@ -282,9 +296,7 @@ class SuppliesControllerTest {
               SiteSupplyRequest.builder().siteType(List.of()).build());
       var allSiteTypes =
           suppliesController.getSuppliesData(
-              SiteSupplyRequest.builder()
-                  .siteType(SiteSupplyRequest.SiteType.allSiteTypes())
-                  .build());
+              SiteSupplyRequest.builder().siteType(SiteType.allSiteTypes()).build());
       assertThat(noSiteTypes.getResultCount()).isGreaterThan(0);
       assertThat(noSiteTypes.getResultCount()).isEqualTo(allSiteTypes.getResultCount());
     }

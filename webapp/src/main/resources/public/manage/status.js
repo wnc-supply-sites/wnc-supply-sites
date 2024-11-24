@@ -29,7 +29,7 @@ async function updateSiteAcceptingDonations(siteId) {
 }
 
 async function updateSiteSiteType(siteId) {
-  const isDistSite = document.getElementById("distributionSite").checked;
+  const isDistSite = document.getElementById("distributionCenter").checked;
   await sendStatusUpdate(siteId, "distSite", isDistSite);
   document.getElementById("updateStatusConfirmation")
       .innerHTML =

@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +24,7 @@ public class SuppliesController {
   /** GET requests should be coming from the home page. */
   @GetMapping("/supplies/site-list")
   public ModelAndView supplies(@RequestParam(required = false) String mode) {
-    if(mode == null) {
+    if (mode == null) {
       mode = "view";
     }
     Map<String, String> templateValues = new HashMap<>();
@@ -34,7 +35,8 @@ public class SuppliesController {
     return new ModelAndView("supplies/supplies", templateValues);
   }
 
-  private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMM-d");
+  private static final DateTimeFormatter dateTimeFormatter =
+      DateTimeFormatter.ofPattern("yyyy-MMM-d");
 
   /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
@@ -64,9 +66,7 @@ public class SuppliesController {
                 .add(
                     SiteItem.builder()
                         .name(result.getItem())
-                        .displayClass(
-                            SiteSupplyRequest.ItemStatus.convertToDisplayClass(
-                                result.getItemStatus()))
+                        .displayClass(ItemStatus.convertToDisplayClass(result.getItemStatus()))
                         .build());
           }
         });

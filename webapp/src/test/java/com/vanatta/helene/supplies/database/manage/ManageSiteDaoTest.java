@@ -3,8 +3,8 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
-import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest.ItemStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,17 +15,11 @@ class ManageSiteDaoTest {
 
   static class Helper {
     static long getSiteId() {
-      return getSiteId("site1");
+      return TestConfiguration.getSiteId();
     }
 
     static long getSiteId(String siteName) {
-      return TestConfiguration.jdbiTest.withHandle(
-          handle ->
-              handle
-                  .createQuery("select id from site where name = :siteName")
-                  .bind("siteName", siteName)
-                  .mapTo(Long.class)
-                  .one());
+      return TestConfiguration.getSiteId(siteName);
     }
   }
 

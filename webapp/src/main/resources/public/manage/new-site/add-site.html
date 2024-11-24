@@ -2,7 +2,7 @@
 <head>
   <title>WNC Supply Sites - Add New Site</title>
   <script type="text/javascript" src="add-site.js"></script>
-  <link rel="stylesheet" href="new-site.css"/>
+  <link rel="stylesheet" href="add-site.css"/>
   <link rel="stylesheet" href="../manage.css"/>
   <link rel="stylesheet" href="../../style.css"/>
   <link rel="stylesheet" href="../../mobile.css"/>
@@ -35,7 +35,7 @@
           <label for="website">Website: </label>
         </div>
         <div class="horizontal">
-          <input id="website" type="text" class="shortTextField" value="" maxlength="128" placeholder="www.site-website.com"/>
+          <input id="Website" type="text" class="shortTextField" value="" maxlength="128" placeholder="www.site-website.com"/>
         </div>
       </div>
 
@@ -77,7 +77,11 @@
           <span class="required">*</span>
         </div>
         <div class="horizontal">
-          <input id="County" type="text" class="shortTextField" value="" maxlength="32"/>
+          <select id="County">
+            {{#countyList}}
+            <option value="{{.}}">{{.}}</option>
+            {{/countyList}}
+          </select>
         </div>
       </div>
 
@@ -86,7 +90,7 @@
           <legend>Site Type:</legend>
           <div class="horizontal">
             <input type="radio" name="siteType" id="distributionCenterRadio" checked />
-            <label for="distributionCenterRadio">Distribution Site</label>
+            <label for="distributionCenterRadio">Distribution Center</label>
           </div>
           <div class="horizontal">
             <input type="radio" name="siteType" id="supplyHubRadio" />
@@ -101,10 +105,11 @@
   </div>
 </div>
 
-
-<div id="save-site-confirm" class="confirm-text"></div>
-<div class="green-check hidden" id="County-update-confirm-checkmark">&#10003;</div>
-
+<div class="horizontal">
+  <div id="green-check" class="green-check hidden">&#10003;</div>
+  <div id="red-x" class="hidden">&#x274c;</div>
+  <div id="save-site-confirm" class="confirm-text"></div>
+</div>
 
 </body>
 </html>

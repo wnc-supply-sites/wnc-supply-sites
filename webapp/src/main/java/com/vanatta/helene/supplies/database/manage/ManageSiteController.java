@@ -1,5 +1,10 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import com.vanatta.helene.supplies.database.data.CountyDao;
+import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
+import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import java.util.Comparator;
@@ -79,9 +84,10 @@ public class ManageSiteController {
     }
   }
 
+  // TODO: TEST THAT WE GET THE COUNTY PROPERLY SELECTED
   @GetMapping("/manage/contact")
   ModelAndView manageContact(String siteId) {
-    Map<String, String> pageParams = new HashMap<>();
+    Map<String, Object> pageParams = new HashMap<>();
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
@@ -95,10 +101,29 @@ public class ManageSiteController {
     pageParams.put("siteContact", Optional.ofNullable(data.getContactNumber()).orElse(""));
     pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
-    pageParams.put("county", Optional.ofNullable(data.getCounty()).orElse(""));
 
+    // fetch all counties, mark the county of this site as "selected"
+    var countyListing = CountyDao.fetchFullCountyList(jdbi)
+            .stream().map(county ->
+              CountyListing.builder()
+                  .name(county)
+                  .selected(county.equals(data.getCounty()) ? "selected" : "")
+                  .build())
+        .sorted(Comparator.comparing(CountyListing::getName))
+        .toList();
+    pageParams.put("countyList",countyListing);
     return new ModelAndView("manage/contact", pageParams);
   }
+
+
+  @Builder
+  @Data
+  public static class CountyListing {
+    String name;
+    /** Should either be blank, or "selected" */
+    String selected;
+  }
+
 
   @PostMapping("/manage/update-site")
   @ResponseBody
@@ -142,7 +167,7 @@ public class ManageSiteController {
     pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
     pageParams.put(
-        "distributionSiteChecked",
+        "distributionCenterChecked",
         siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.DISTRIBUTION_SITE ? "checked" : "");
     pageParams.put(
         "supplyHubChecked",
@@ -239,19 +264,19 @@ public class ManageSiteController {
       itemChecked = siteInventory.isActive() ? "checked" : "";
 
       urgentChecked =
-          SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED
+          ItemStatus.URGENTLY_NEEDED
                   .getText()
                   .equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
       neededChecked =
-          SiteSupplyRequest.ItemStatus.NEEDED
+          ItemStatus.NEEDED
                   .getText()
                   .equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
       oversupplyChecked =
-          SiteSupplyRequest.ItemStatus.OVERSUPPLY
+          ItemStatus.OVERSUPPLY
                   .getText()
                   .equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
@@ -267,15 +292,15 @@ public class ManageSiteController {
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
       if (urgentChecked != null && !urgentChecked.isEmpty()) {
-        return SiteSupplyRequest.ItemStatus.URGENTLY_NEEDED.getCssClass();
+        return ItemStatus.URGENTLY_NEEDED.getCssClass();
       } else if (neededChecked != null && !neededChecked.isEmpty()) {
-        return SiteSupplyRequest.ItemStatus.NEEDED.getCssClass();
+        return ItemStatus.NEEDED.getCssClass();
       } else if (availableChecked != null && !availableChecked.isEmpty()) {
-        return SiteSupplyRequest.ItemStatus.AVAILABLE.getCssClass();
+        return ItemStatus.AVAILABLE.getCssClass();
       } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
-        return SiteSupplyRequest.ItemStatus.OVERSUPPLY.getCssClass();
+        return ItemStatus.OVERSUPPLY.getCssClass();
       } else {
-        return SiteSupplyRequest.ItemStatus.AVAILABLE.getCssClass();
+        return ItemStatus.AVAILABLE.getCssClass();
       }
     }
 
@@ -315,7 +340,7 @@ public class ManageSiteController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
       log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
@@ -383,7 +408,7 @@ public class ManageSiteController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
       log.warn("Failed to add item. invalid item status: {}, params: {}", itemStatus, params);
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
@@ -395,6 +420,31 @@ public class ManageSiteController {
     }
 
     ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    return ResponseEntity.ok("Added");
+  }
+
+  @GetMapping("/manage/new-site/add-site")
+  ModelAndView showNewSiteForm() {
+    log.info("new site");
+    Map<String, Object> model = new HashMap<>();
+    model.put("countyList", CountyDao.fetchFullCountyList(jdbi));
+    return new ModelAndView("manage/new-site/add-site", model);
+  }
+
+  @PostMapping("/manage/add-site")
+  @ResponseBody
+  ResponseEntity<?> postNewSite(@RequestBody Map<String, String> params) {
+    var addSiteData = AddSiteData.builder()
+        .contactNumber(params.get("contactNumber"))
+        .website(params.get("website"))
+        .siteType(SiteType.parseSiteType(params.get("siteType")))
+        .siteName(params.get("siteName"))
+        .streetAddress(params.get("streetAddress"))
+        .city(params.get("city"))
+        .county(params.get("county"))
+        .build();
+    AddSiteDao.addSite(jdbi, addSiteData);
+
     return ResponseEntity.ok("Added");
   }
 }

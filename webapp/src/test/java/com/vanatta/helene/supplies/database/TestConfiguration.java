@@ -43,7 +43,8 @@ public class TestConfiguration {
                    (select id from site_type where name = 'Supply Hub')
                 );
                 """,
-            // site5, (no items & not active), name, address & details may be modified by tests, data will not be stable.
+            // site5, (no items & not active), name, address & details may be modified by tests,
+            // data will not be stable.
             """
                 insert into site(name, address, city, county_id, state, site_type_id) values(
                    'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'), 'NC',
@@ -97,7 +98,25 @@ public class TestConfiguration {
                 (select id from item where name = 'water'),
                 (select id from item_status where name = 'Needed')
                )
+            """,
+            // insert a "dummy" county, where no site is in that county (this county is considered 'not active')
+            """
+              insert into county(name) values('dummy') on conflict do nothing
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));
+  }
+
+  public static long getSiteId() {
+    return getSiteId("site1");
+  }
+
+  public static long getSiteId(String siteName) {
+    return TestConfiguration.jdbiTest.withHandle(
+        handle ->
+            handle
+                .createQuery("select id from site where name = :siteName")
+                .bind("siteName", siteName)
+                .mapTo(Long.class)
+                .one());
   }
 }

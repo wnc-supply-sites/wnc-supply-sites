@@ -20,3 +20,6 @@
     width: 150px;
 }
 
+.missingData {
+    background-color: lightcoral;
+}

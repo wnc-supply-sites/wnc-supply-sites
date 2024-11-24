@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
-import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -74,15 +74,7 @@ public class ManageSiteDao {
         """
           select id from county where name = :name
         """;
-    String insertCounty =
-        """
-          insert into county(name) values(:name)
-        """;
-    String updateCounty =
-        """
-          update site set county_id = :countyId where id = :id
-        """;
-    Long countyId =
+    final Long countyId =
         jdbi.withHandle(
             handle ->
                 handle
@@ -92,19 +84,19 @@ public class ManageSiteDao {
                     .findOne()
                     .orElse(null));
     if (countyId == null) {
-      jdbi.withHandle(handle -> handle.createUpdate(insertCounty).bind("name", newValue).execute());
-
-      countyId =
-          jdbi.withHandle(
-              handle ->
-                  handle.createQuery(selectCounty).bind("name", newValue).mapTo(Long.class).one());
+      log.warn("Failed to update county for site id: {}, county value: {}", siteId, newValue);
+      throw new IllegalArgumentException("Invalid county: " + newValue);
     }
-    final long countyIdToUse = countyId;
+
+    String updateCounty =
+        """
+        update site set county_id = :countyId where id = :id
+        """;
     jdbi.withHandle(
         handle ->
             handle
                 .createUpdate(updateCounty)
-                .bind("countyId", countyIdToUse)
+                .bind("countyId", countyId)
                 .bind("id", siteId)
                 .execute());
   }
@@ -158,11 +150,7 @@ public class ManageSiteDao {
     SiteStatus siteStatus =
         jdbi.withHandle(
             handle ->
-                handle
-                    .createQuery(query)
-                    .bind("siteId", siteId)
-                    .mapToBean(SiteStatus.class)
-                    .one());
+                handle.createQuery(query).bind("siteId", siteId).mapToBean(SiteStatus.class).one());
     if (siteStatus == null) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     } else {
@@ -299,7 +287,7 @@ public class ManageSiteDao {
   }
 
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
-    if (!SiteSupplyRequest.ItemStatus.allItemStatus().contains(itemStatus)) {
+    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
       throw new IllegalArgumentException("Invalid item status: " + itemStatus);
     }
 

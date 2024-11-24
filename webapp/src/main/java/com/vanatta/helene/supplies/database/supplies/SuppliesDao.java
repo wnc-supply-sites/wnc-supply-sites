@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import com.vanatta.helene.supplies.database.data.SiteType;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
@@ -62,7 +63,7 @@ public class SuppliesDao {
     }
 
     if (!request.getSiteType().isEmpty()
-        && request.getSiteType().size() < SiteSupplyRequest.SITE_TYPE_COUNT) {
+        && request.getSiteType().size() < SiteType.values().length) {
       query.append("and st.name in (<site_type>)\n");
     }
 
@@ -96,7 +97,7 @@ public class SuppliesDao {
           }
 
           if (!request.getSiteType().isEmpty()
-              && request.getSiteType().size() < SiteSupplyRequest.SITE_TYPE_COUNT) {
+              && request.getSiteType().size() < SiteType.values().length) {
             queryBuilder.bindList("site_type", request.getSiteType());
           }
 
