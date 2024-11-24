@@ -23,3 +23,12 @@
 .missingData {
     background-color: lightcoral;
 }
+
+#saveSiteConfirmationDiv {
+    margin-top: 15px;
+}
+
+.errorMessage {
+    color: #b60808;
+    font-style: italic;
+}

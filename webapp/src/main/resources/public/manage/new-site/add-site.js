@@ -38,18 +38,17 @@ async function saveNewSite() {
     })
   })
   .then(
-      async function(response) {
-        if(response.ok) {
-          const editNewSiteInventoryUrl = response.json().editSiteInventoryUrl;
-          showSuccess(editNewSiteInventoryUrl);
-
-          // TODO: handle user error 400 (duplicate site name or something)
-        } else if (response.status === 500) {
+      async function (response) {
+        if (response.ok) {
           const responseJson = await response.json();
-          showError("Failed to save: " + response.status + ", " + responseJson.error);
+          const editNewSiteInventoryUrl = responseJson.editSiteInventoryUrl;
+          showSuccess(editNewSiteInventoryUrl, siteName.value);
+        } else {
+          const responseJson = await response.json();
+          showError("Failed to save: " + responseJson.error);
         }
       },
-      function(error) {
+      function (error) {
         showError("Failed to save, server not available.");
       });
 }
@@ -58,22 +57,32 @@ function showError(text) {
   const confirmation = document.getElementById("save-site-confirm");
   const redX = document.getElementById("red-x");
   const greenCheck = document.getElementById("green-check")
+  const confirmMessage = document.getElementById("save-site-confirm");
 
   greenCheck.classList.add("hidden");
   redX.classList.remove("hidden");
+  confirmMessage.classList.add("errorMessage");
   confirmation.innerHTML = text;
 }
 
-function showSuccess(editSiteUrl) {
+function showSuccess(editSiteUrl, siteName) {
   const confirmation = document.getElementById("save-site-confirm");
   const redX = document.getElementById("red-x");
   const greenCheck = document.getElementById("green-check")
+  const confirmMessage = document.getElementById("save-site-confirm");
 
   greenCheck.classList.remove("hidden");
   redX.classList.add("hidden");
-  confirmation.innerHTML = `Site saved. <a href=${editSiteUrl}>Click to add items to site</a>`
-}
+  confirmMessage.classList.remove("errorMessage");
+  confirmation.innerHTML = `${siteName} saved. <a href=${editSiteUrl}>Click to set up inventory</a>`
 
+  /** Clear data entry fields to facilitate adding more sites. */
+  document.getElementById("Contact Number").value = "";
+  document.getElementById("Website").value = "";
+  document.getElementById("Site Name").value = "";
+  document.getElementById("Street Address").value = "";
+  document.getElementById("City").value = "";
+}
 
 /** Returns false if field is not set, true if field is set */
 function checkField(fieldElement) {

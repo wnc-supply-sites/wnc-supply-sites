@@ -6,7 +6,6 @@ import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
-import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -103,27 +102,28 @@ public class ManageSiteController {
     pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
 
     // fetch all counties, mark the county of this site as "selected"
-    var countyListing = CountyDao.fetchFullCountyList(jdbi)
-            .stream().map(county ->
-              CountyListing.builder()
-                  .name(county)
-                  .selected(county.equals(data.getCounty()) ? "selected" : "")
-                  .build())
-        .sorted(Comparator.comparing(CountyListing::getName))
-        .toList();
-    pageParams.put("countyList",countyListing);
+    var countyListing =
+        CountyDao.fetchFullCountyList(jdbi).stream()
+            .map(
+                county ->
+                    CountyListing.builder()
+                        .name(county)
+                        .selected(county.equals(data.getCounty()) ? "selected" : "")
+                        .build())
+            .sorted(Comparator.comparing(CountyListing::getName))
+            .toList();
+    pageParams.put("countyList", countyListing);
     return new ModelAndView("manage/contact", pageParams);
   }
-
 
   @Builder
   @Data
   public static class CountyListing {
     String name;
+
     /** Should either be blank, or "selected" */
     String selected;
   }
-
 
   @PostMapping("/manage/update-site")
   @ResponseBody
@@ -264,21 +264,15 @@ public class ManageSiteController {
       itemChecked = siteInventory.isActive() ? "checked" : "";
 
       urgentChecked =
-          ItemStatus.URGENTLY_NEEDED
-                  .getText()
-                  .equalsIgnoreCase(siteInventory.getItemStatus())
+          ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
       neededChecked =
-          ItemStatus.NEEDED
-                  .getText()
-                  .equalsIgnoreCase(siteInventory.getItemStatus())
+          ItemStatus.NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
       oversupplyChecked =
-          ItemStatus.OVERSUPPLY
-                  .getText()
-                  .equalsIgnoreCase(siteInventory.getItemStatus())
+          ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
 
@@ -434,17 +428,27 @@ public class ManageSiteController {
   @PostMapping("/manage/add-site")
   @ResponseBody
   ResponseEntity<?> postNewSite(@RequestBody Map<String, String> params) {
-    var addSiteData = AddSiteData.builder()
-        .contactNumber(params.get("contactNumber"))
-        .website(params.get("website"))
-        .siteType(SiteType.parseSiteType(params.get("siteType")))
-        .siteName(params.get("siteName"))
-        .streetAddress(params.get("streetAddress"))
-        .city(params.get("city"))
-        .county(params.get("county"))
-        .build();
-    AddSiteDao.addSite(jdbi, addSiteData);
-
-    return ResponseEntity.ok("Added");
+    var addSiteData =
+        AddSiteData.builder()
+            .contactNumber(params.get("contactNumber"))
+            .website(params.get("website"))
+            .siteType(SiteType.parseSiteType(params.get("siteType")))
+            .siteName(params.get("siteName"))
+            .streetAddress(params.get("streetAddress"))
+            .city(params.get("city"))
+            .county(params.get("county"))
+            .build();
+    try {
+      long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);
+      return ResponseEntity.ok(
+          "{\"result\": \"success\", \"editSiteInventoryUrl\": \"/manage/inventory?siteId="
+              + newSiteId
+              + "\"}");
+    } catch (AddSiteDao.DuplicateSiteException e) {
+      return ResponseEntity.badRequest().body("{\"result\": \"fail\", \"error\": \"site name already exists\"}");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest()
+          .body(String.format("{\"result\": \"fail\", \"error\": \"%s\"}", e.getMessage()));
+    }
   }
 }
