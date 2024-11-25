@@ -129,16 +129,17 @@ class SuppliesControllerTest {
         .contains("site2", "site4");
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = {"Urgent Need", "Oversupply", "Requested"})
-  void requestByItemStatus(String itemStatus) {
-    var result =
-        suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().itemStatus(List.of(itemStatus)).build());
-    result.getResults().stream()
-        .map(SiteSupplyResponse.SiteSupplyData::getItems)
-        .flatMap(List::stream)
-        .forEach(item -> assertThat(item.getDisplayClass()).isEqualTo(itemStatus));
+  @Test
+  void requestByItemStatus() {
+    for(ItemStatus status : ItemStatus.values()) {
+      var result =
+          suppliesController.getSuppliesData(
+              SiteSupplyRequest.builder().itemStatus(List.of(status.getText())).build());
+      result.getResults().stream()
+          .map(SiteSupplyResponse.SiteSupplyData::getItems)
+          .flatMap(List::stream)
+          .forEach(item -> assertThat(item.getDisplayClass()).isEqualTo(status.getCssClass()));
+    }
   }
 
   @Test
