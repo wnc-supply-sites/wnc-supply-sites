@@ -111,14 +111,14 @@
 
         <!-- Filter: Available -->
         <div>
-          <input type="checkbox" id="available-items" checked value="Available" onchange="updateData()"/>
+          <input type="checkbox" id="available-items"  {{availableChecked}}  value="Available" onchange="updateData()"/>
           <label for="available-items" class="available">Available</label>
         </div>
 
         <!-- Filter: Oversupply -->
         <div>
           {{! OversupplyValue is a variable so we can pre-toggle the value }}
-          <input type="checkbox" id="oversupply-items" {{overSupplyValue}} value="Oversupply"
+          <input type="checkbox" id="oversupply-items" {{overSupplyChecked}} value="Oversupply"
                  onchange="updateData()"/>
           <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
         </div>
@@ -134,7 +134,7 @@
           <label for="accepting-donations">Accepting Donations</label>
         </div>
         <div>
-          <input type="checkbox" id="not-accepting-donations" {{ notAcceptingDonationsValue }}
+          <input type="checkbox" id="not-accepting-donations" {{notAcceptingDonationsChecked}}
                  value="Not Accepting Donations" onchange="updateData()"/>
           <label for="not-accepting-donations">Not Accepting Donations</label>
         </div>

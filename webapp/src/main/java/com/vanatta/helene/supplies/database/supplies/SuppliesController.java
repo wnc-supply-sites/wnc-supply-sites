@@ -21,6 +21,11 @@ public class SuppliesController {
 
   private final Jdbi jdbi;
 
+  @GetMapping("/supplies/needs")
+  public ModelAndView needs() {
+    return supplies("donate");
+  }
+
   /** GET requests should be coming from the home page. */
   @GetMapping("/supplies/site-list")
   public ModelAndView supplies(@RequestParam(required = false) String mode) {
@@ -29,8 +34,9 @@ public class SuppliesController {
     }
     Map<String, String> templateValues = new HashMap<>();
     templateValues.put(
-        "notAcceptingDonationsValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
-    templateValues.put("overSupplyValue", mode.equalsIgnoreCase("donate") ? "" : "checked");
+        "notAcceptingDonationsChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
+    templateValues.put("overSupplyChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
+    templateValues.put("availableChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
 
     return new ModelAndView("supplies/supplies", templateValues);
   }
