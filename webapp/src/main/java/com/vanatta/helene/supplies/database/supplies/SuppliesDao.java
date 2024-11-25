@@ -116,6 +116,7 @@ public class SuppliesDao {
     long itemId;
     String itemName;
     String itemStatus;
+    String lastUpdated;
   }
 
   static List<SupplyDataCsvBean> fetchCsvData(Jdbi jdbi) {
@@ -127,7 +128,8 @@ public class SuppliesDao {
           c.name county,
           i.id itemId,
           i.name itemName,
-          istatus.name itemStatus
+          istatus.name itemStatus,
+          si.last_updated lastUpdated
         from site_item si
         join item i on i.id = si.item_id
         join item_status istatus on istatus.id = si.item_status_id

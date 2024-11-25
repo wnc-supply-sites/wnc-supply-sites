@@ -106,7 +106,7 @@ public class SuppliesController {
 
     StringWriter writer = new StringWriter();
     try (CsvWriter csv = CsvWriter.builder().build(writer)) {
-      csv.writeRecord("Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status");
+      csv.writeRecord("Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status", "Last Updated");
 
       data.forEach(
           value ->
@@ -116,7 +116,8 @@ public class SuppliesController {
                   value.getCounty(),
                   String.valueOf(value.getItemId()),
                   value.getItemName(),
-                  value.getItemStatus()));
+                  value.getItemStatus(),
+                  value.getLastUpdated()));
 
       return writer.toString();
     }

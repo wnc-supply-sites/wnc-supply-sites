@@ -131,7 +131,7 @@ class SuppliesControllerTest {
 
   @Test
   void requestByItemStatus() {
-    for(ItemStatus status : ItemStatus.values()) {
+    for (ItemStatus status : ItemStatus.values()) {
       var result =
           suppliesController.getSuppliesData(
               SiteSupplyRequest.builder().itemStatus(List.of(status.getText())).build());
@@ -156,7 +156,9 @@ class SuppliesControllerTest {
         .forEach(
             item ->
                 assertThat(item.getDisplayClass())
-                    .isIn(ItemStatus.OVERSUPPLY.getCssClass(), ItemStatus.URGENTLY_NEEDED.getCssClass()));
+                    .isIn(
+                        ItemStatus.OVERSUPPLY.getCssClass(),
+                        ItemStatus.URGENTLY_NEEDED.getCssClass()));
   }
 
   @Test
@@ -308,7 +310,15 @@ class SuppliesControllerTest {
     String result = SuppliesController.generateCsv(TestConfiguration.jdbiTest);
 
     String firstLine = result.split("\n")[0];
-    assertThat(firstLine).contains("Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status");
+    assertThat(firstLine)
+        .contains(
+            "Site Id",
+            "Site Name",
+            "County",
+            "Item Id",
+            "Item Name",
+            "Item Status",
+            "Last Updated");
     assertThat(result).contains("site1", "site2");
     // site3 is not active, site4 does not have any items
     assertThat(result).doesNotContain("site3", "site4");
