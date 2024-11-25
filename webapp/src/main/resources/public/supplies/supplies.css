@@ -150,7 +150,6 @@ table.results-table tbody tr:nth-child(even) {
 }
 
 .downloadDiv {
-    margin-right: 0px;
-    margin-left: auto;
+    margin-left: 360px;
 }
 
