@@ -302,4 +302,16 @@ class SuppliesControllerTest {
       assertThat(noSiteTypes.getResultCount()).isEqualTo(allSiteTypes.getResultCount());
     }
   }
+
+  @Test
+  void validateCsv() throws Exception {
+    String result = SuppliesController.generateCsv(TestConfiguration.jdbiTest);
+
+    String firstLine = result.split("\n")[0];
+    assertThat(firstLine).contains("Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status");
+    assertThat(result).contains("site1", "site2");
+    // site3 is not active, site4 does not have any items
+    assertThat(result).doesNotContain("site3", "site4");
+    assertThat(result).contains("water,Available");
+  }
 }

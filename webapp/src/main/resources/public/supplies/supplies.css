@@ -148,3 +148,9 @@ table.results-table tbody tr:nth-child(even) {
     font-size: 0.9em;
     font-style: italic;
 }
+
+.downloadDiv {
+    margin-right: 0px;
+    margin-left: auto;
+}
+

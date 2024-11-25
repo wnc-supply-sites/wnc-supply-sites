@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.supplies;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -103,5 +104,41 @@ public class SuppliesDao {
 
           return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
         });
+  }
+
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Data
+  public static class SupplyDataCsvBean {
+    long siteId;
+    String siteName;
+    String county;
+    long itemId;
+    String itemName;
+    String itemStatus;
+  }
+
+  static List<SupplyDataCsvBean> fetchCsvData(Jdbi jdbi) {
+    String query =
+        """
+        select
+          s.id siteId,
+          s.name siteName,
+          c.name county,
+          i.id itemId,
+          i.name itemName,
+          istatus.name itemStatus
+        from site_item si
+        join item i on i.id = si.item_id
+        join item_status istatus on istatus.id = si.item_status_id
+        join site s on s.id = si.site_id
+        join county c on c.id = s.county_id
+        where s.active = true
+        order by lower(s.name), lower(i.name);
+        """;
+
+    return jdbi.withHandle(handle -> handle.createQuery(query)
+        .mapToBean(SupplyDataCsvBean.class)
+        .list());
   }
 }
