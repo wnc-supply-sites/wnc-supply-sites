@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.data.export;
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.filters.FilterDataDao;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +26,11 @@ public class DataExportController {
   ResponseEntity<String> siteList() {
     List<DataExportDao.SiteExportData> sites = DataExportDao.fetchAllSites(jdbi);
     return ResponseEntity.ok("{\"sites\":" + gson.toJson(sites) + "}");
+  }
+
+  @GetMapping("/export/site-items")
+  ResponseEntity<String> siteItems() {
+    List<DataExportDao.SiteItemExportData> sites = DataExportDao.fetchAllSiteItems(jdbi);
+    return ResponseEntity.ok("{\"sites-items\":" + gson.toJson(sites) + "}");
   }
 }
