@@ -36,7 +36,8 @@ public class DataExportDao {
                               s.state,
                               s.website,
                               c.name county,
-                              case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end donationStatus
+                              case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end donationStatus,
+                              s.active
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id
