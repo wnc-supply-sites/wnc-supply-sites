@@ -19,6 +19,7 @@ public class DataExportDao {
     String county;
     String website;
     String donationStatus;
+    boolean active;
   }
 
   public static List<SiteExportData> fetchAllSites(Jdbi jdbi) {
