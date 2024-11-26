@@ -1,15 +1,9 @@
 package com.vanatta.helene.supplies.database.filters;
 
-import com.vanatta.helene.supplies.database.data.CountyDao;
+import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 
-import java.util.List;
-
 public class FilterDataDao {
-  public static List<String> getAllCounties(Jdbi jdbi) {
-    return CountyDao.fetchActiveCountyList(jdbi);
-  }
-
   public static List<String> getAllItems(Jdbi jdbi) {
     String query =
         """
@@ -23,7 +17,7 @@ public class FilterDataDao {
         """
         select site.name
         from site
-        where site.active = true 
+        where site.active = true
         order by lower(site.name)
         """;
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
