@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class AuthConfiguration {
 
   @Bean
-  AuthKey authKey(Jdbi jdbi) {
-    return new AuthKey(jdbi);
+  CookieAuthenticator authKey(Jdbi jdbi) {
+    return new CookieAuthenticator(jdbi);
   }
 }

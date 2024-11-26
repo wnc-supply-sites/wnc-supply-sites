@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,14 +23,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginController {
 
   private final Jdbi jdbi;
-  private final AuthKey authKey;
+  private final CookieAuthenticator cookieAuthenticator;
   private final String validUser;
   private final String validPass;
 
 
   LoginController(Jdbi jdbi, @Value("${auth.user}") String user, @Value("${auth.pass}") String pass) {
     this.jdbi = jdbi;
-    this.authKey = new AuthKey(jdbi);
+    this.cookieAuthenticator = new CookieAuthenticator(jdbi);
     this.validUser = user;
     this.validPass = pass;
   }
@@ -56,7 +55,7 @@ public class LoginController {
 
     if(validUser.equalsIgnoreCase(user) && validPass.equalsIgnoreCase(password)) {
       LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
-      Cookie cookie = new Cookie("auth", authKey.getAuthKey());
+      Cookie cookie = new Cookie("auth", cookieAuthenticator.getAuthKey());
       response.addCookie(cookie);
       cookie.setMaxAge(14 * 24 * 60 * 60); // expires in 14 days
       cookie.setSecure(true);

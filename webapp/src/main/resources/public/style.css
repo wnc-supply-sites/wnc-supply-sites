@@ -99,3 +99,20 @@ html, table {
 .hidden {
     display: none;
 }
+
+.login-indicator {
+    font-style: italic;
+    font-size: 0.8em;
+    margin-left: 300px;
+    margin-top: 10px;
+}
+
+.mission-statement {
+    padding: 10px;
+    margin: 30px;
+    background-color: #F0F0F0;
+    border: solid #111;
+    border-radius: 20px;
+    font-size: 1.1em;
+    max-width: 500px;
+}

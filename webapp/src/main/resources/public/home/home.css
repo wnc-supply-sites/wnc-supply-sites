@@ -12,12 +12,3 @@
     transform: translateY(2px);
 }
 
-.mission-statement {
-    padding: 10px;
-    margin: 30px;
-    background-color: #F0F0F0;
-    border: solid #111;
-    border-radius: 20px;
-    font-size: 1.1em;
-    max-width: 500px;
-}

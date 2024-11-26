@@ -5,6 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
@@ -18,15 +21,19 @@ import org.springframework.web.servlet.ModelAndView;
 public class SiteDetailController {
 
   private final Jdbi jdbi;
+  private final CookieAuthenticator cookieAuthenticator;
 
   @GetMapping("/supplies/site-detail")
-  public ModelAndView siteDetail(@RequestParam Long id) {
+  public ModelAndView siteDetail(@RequestParam Long id, HttpServletRequest request) {
     if (id == null) {
       throw new IllegalArgumentException("No site id specified, missing 'id' parameter");
     }
     SiteDetailDao.SiteDetailData siteDetailData = SiteDetailDao.lookupSiteById(jdbi, id);
 
     Map<String, Object> siteDetails = new HashMap<>();
+
+    siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
+
     siteDetails.put("siteName", siteDetailData.getSiteName());
     siteDetails.put(
         "website",

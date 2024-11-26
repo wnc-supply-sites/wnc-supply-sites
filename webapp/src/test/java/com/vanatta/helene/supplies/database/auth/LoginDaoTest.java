@@ -33,15 +33,15 @@ class LoginDaoTest {
   @Test
   void authKeyGenerationAndFetch() {
 
-    AuthKey authKey = new AuthKey(TestConfiguration.jdbiTest);
-    var key = authKey.getAuthKey();
+    CookieAuthenticator cookieAuthenticator = new CookieAuthenticator(TestConfiguration.jdbiTest);
+    var key = cookieAuthenticator.getAuthKey();
     assertThat(key).isNotNull();
 
     // validate that the authKe value is stable (same if we fetch it again)
-    assertThat(key).isEqualTo(authKey.getAuthKey());
+    assertThat(key).isEqualTo(cookieAuthenticator.getAuthKey());
 
     // reload the authkey, should return the same value again
-    var reloadedKey = new AuthKey(TestConfiguration.jdbiTest).getAuthKey();
+    var reloadedKey = new CookieAuthenticator(TestConfiguration.jdbiTest).getAuthKey();
     assertThat(key).isEqualTo(reloadedKey);
   }
 

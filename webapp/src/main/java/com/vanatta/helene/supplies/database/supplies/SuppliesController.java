@@ -1,13 +1,16 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
 import com.vanatta.helene.supplies.database.supplies.SuppliesDao.SupplyDataCsvBean;
 import de.siegmar.fastcsv.writer.CsvWriter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.Authenticator;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,31 +28,39 @@ import org.springframework.web.servlet.ModelAndView;
 public class SuppliesController {
 
   private final Jdbi jdbi;
+  private final CookieAuthenticator cookieAuthenticator;
 
   @GetMapping("/supplies/needs")
-  public ModelAndView needs() {
-    return supplies("donate");
+  public ModelAndView needs(HttpServletRequest request) {
+    return supplies("donate", request);
   }
 
   /** GET requests should be coming from the home page. */
   @GetMapping("/supplies/site-list")
-  public ModelAndView supplies(@RequestParam(required = false) String mode) {
+  public ModelAndView supplies(@RequestParam(required = false) String mode, HttpServletRequest request) {
     if (mode == null) {
       mode = "view";
     }
-    Map<String, String> templateValues = new HashMap<>();
+
+    Map<String, Object> templateValues = new HashMap<>();
     templateValues.put(
         "notAcceptingDonationsChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("overSupplyChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("availableChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
 
+    templateValues.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
     return new ModelAndView("supplies/supplies", templateValues);
   }
 
   private static final DateTimeFormatter dateTimeFormatter =
       DateTimeFormatter.ofPattern("yyyy-MMM-d");
 
-  /** POST requests should be coming from supplies page JS requests for donation site data */
+  @GetMapping(value = "/supplies/all-data-json")
+  public SiteSupplyResponse getSuppliesData() {
+    return getSuppliesData(SiteSupplyRequest.builder().build());
+  }
+
+    /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
