@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.CountyListing;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao.SiteDetailData;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 class ManageSiteControllerTest {
-  ManageSiteController manageSiteController = new ManageSiteController(TestConfiguration.jdbiTest);
+  ManageSiteController manageSiteController =
+      new ManageSiteController(
+          TestConfiguration.jdbiTest, null); //new CookieAuthenticator(TestConfiguration.jdbiTest));
 
   @Test
   void manageContactSelectsCorrectCounty() {

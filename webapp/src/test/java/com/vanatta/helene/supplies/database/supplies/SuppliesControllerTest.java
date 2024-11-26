@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.supplies;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import java.util.List;
@@ -17,7 +18,8 @@ class SuppliesControllerTest {
 
   static final Jdbi jdbiTest = TestConfiguration.jdbiTest;
 
-  private final SuppliesController suppliesController = new SuppliesController(jdbiTest);
+  private final SuppliesController suppliesController =
+      new SuppliesController(jdbiTest, new CookieAuthenticator(jdbiTest));
 
   @BeforeAll
   static void clearDatabase() {

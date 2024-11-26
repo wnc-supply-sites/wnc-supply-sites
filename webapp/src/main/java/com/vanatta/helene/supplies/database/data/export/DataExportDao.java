@@ -23,30 +23,48 @@ class DataExportDao {
     boolean active;
   }
 
+  private static final String fetchSiteDataQuery =
+      """
+      select
+        s.name siteName,
+        st.name siteType,
+        s.contact_number,
+        s.address,
+        s.city,
+        s.state,
+        s.website,
+        c.name county,
+        case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end donationStatus,
+        s.active
+      from site s
+      join county c on c.id = s.county_id
+      join site_type st on st.id = s.site_type_id
+      """;
   static List<SiteExportData> fetchAllSites(Jdbi jdbi) {
+
     return jdbi.withHandle(
         handle ->
             handle
-                .createQuery(
-                    """
-                            select
-                              s.name siteName,
-                              st.name siteType,
-                              s.contact_number,
-                              s.address,
-                              s.city,
-                              s.state,
-                              s.website,
-                              c.name county,
-                              case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end donationStatus,
-                              s.active
-                            from site s
-                            join county c on c.id = s.county_id
-                            join site_type st on st.id = s.site_type_id
-                            """)
+                .createQuery(fetchSiteDataQuery)
                 .mapToBean(SiteExportData.class)
                 .list());
   }
+
+  public static SiteExportData lookupSite(Jdbi jdbi, long siteId) {
+    String fetchByIdQuery = fetchSiteDataQuery + "\nwhere s.id = :siteId";
+
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(fetchByIdQuery)
+                .bind("siteId", siteId)
+                .mapToBean(SiteExportData.class)
+                .one());
+
+  }
+
+
+
 
   @Data
   @NoArgsConstructor

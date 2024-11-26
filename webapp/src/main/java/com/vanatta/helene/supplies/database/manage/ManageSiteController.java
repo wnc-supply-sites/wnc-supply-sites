@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.data.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageSiteController {
 
   private final Jdbi jdbi;
+  private final SendSiteUpdate sendSiteUpdate;
 
   @Builder
   @Data
@@ -83,7 +85,7 @@ public class ManageSiteController {
     }
   }
 
-  // TODO: TEST THAT WE GET THE COUNTY PROPERLY SELECTED
+  /** Fetches data for the manage site page */
   @GetMapping("/manage/contact")
   ModelAndView manageContact(String siteId) {
     Map<String, Object> pageParams = new HashMap<>();
@@ -142,6 +144,8 @@ public class ManageSiteController {
     var siteField = ManageSiteDao.SiteField.lookupField(field);
     ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
     log.info("Site updated: {}", params);
+
+    sendSiteUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
   }
 
@@ -167,7 +171,7 @@ public class ManageSiteController {
     pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
 
     pageParams.put(
-        "distributionCenterChecked",
+        "distributionSiteChecked",
         siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.DISTRIBUTION_SITE ? "checked" : "");
     pageParams.put(
         "supplyHubChecked",
@@ -216,6 +220,7 @@ public class ManageSiteController {
       log.info("Updating site: {}, site type: {}", siteName, siteType);
       ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
     }
+    sendSiteUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
   }
 
@@ -440,6 +445,7 @@ public class ManageSiteController {
             .build();
     try {
       long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);
+      sendSiteUpdate.send(newSiteId);
       return ResponseEntity.ok(
           "{\"result\": \"success\", \"editSiteInventoryUrl\": \"/manage/inventory?siteId="
               + newSiteId
