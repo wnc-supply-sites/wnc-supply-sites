@@ -140,12 +140,19 @@ public class ManageSiteController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    // TODO: CATCH ERROR OF BAD FIELD (?)
     var siteField = ManageSiteDao.SiteField.lookupField(field);
-    ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
-    log.info("Site updated: {}", params);
 
-    sendSiteUpdate.send(Long.parseLong(siteId));
+    if (siteField == ManageSiteDao.SiteField.SITE_NAME) {
+      String oldName = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId)).getSiteName();
+      ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
+      log.info("Site updating (with name change), old name: {}, new data: {}", oldName, params);
+      sendSiteUpdate.sendWithNameUpdate(Long.parseLong(siteId), oldName);
+    } else {
+      ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
+      log.info("Site updated: {}", params);
+      sendSiteUpdate.send(Long.parseLong(siteId));
+    }
+
     return ResponseEntity.ok().body("Updated");
   }
 
@@ -451,7 +458,8 @@ public class ManageSiteController {
               + newSiteId
               + "\"}");
     } catch (AddSiteDao.DuplicateSiteException e) {
-      return ResponseEntity.badRequest().body("{\"result\": \"fail\", \"error\": \"site name already exists\"}");
+      return ResponseEntity.badRequest()
+          .body("{\"result\": \"fail\", \"error\": \"site name already exists\"}");
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest()
           .body(String.format("{\"result\": \"fail\", \"error\": \"%s\"}", e.getMessage()));
