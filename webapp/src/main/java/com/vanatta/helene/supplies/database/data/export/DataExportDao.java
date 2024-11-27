@@ -118,6 +118,17 @@ class DataExportDao {
 
     //    List<String> oversupply;
 
+    /**
+     * Constructor for case where site has no inventory.
+     *
+     * @param siteName the name of the site.
+     */
+    SiteItemExportJson(String siteName) {
+      this.siteName = siteName;
+      this.needed = new ArrayList<>();
+      this.available = new ArrayList<>();
+    }
+
     SiteItemExportJson(SiteItemResult result) {
       this.siteName = result.getSiteName();
       //      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
@@ -191,12 +202,28 @@ class DataExportDao {
     String query = buildFetchInventoryQuery(siteId);
     var dbResult =
         jdbi.withHandle(
+                handle ->
+                    handle
+                        .createQuery(query)
+                        .bind("siteId", siteId)
+                        .mapToBean(SiteItemResult.class)
+                        .findOne())
+            .map(SiteItemExportJson::new)
+            .orElse(null);
+    if (dbResult != null) {
+      return dbResult;
+    }
+
+    // site has no inventory, we need to look it up to find it's name and then return empty data
+    String nameLookupQuery = "select name from site where id = :siteId";
+    String siteName =
+        jdbi.withHandle(
             handle ->
                 handle
-                    .createQuery(query)
+                    .createQuery(nameLookupQuery)
                     .bind("siteId", siteId)
-                    .mapToBean(SiteItemResult.class)
+                    .mapTo(String.class)
                     .one());
-    return new SiteItemExportJson(dbResult);
+    return new SiteItemExportJson(siteName);
   }
 }
