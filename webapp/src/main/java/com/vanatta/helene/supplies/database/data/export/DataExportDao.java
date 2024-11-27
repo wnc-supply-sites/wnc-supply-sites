@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.data.export;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -105,17 +106,23 @@ class DataExportDao {
   public static class SiteItemExportData {
     String siteName;
 
+    List<String> urgentlyNeeded;
     List<String> needed;
     List<String> available;
+    List<String> oversupply;
 
     SiteItemExportData(SiteItemResult result) {
       this.siteName = result.getSiteName();
-      this.needed =
-          result.getNeeded() == null ? List.of() : Arrays.asList(result.getNeeded().split(","));
-      this.available =
-          result.getAvailable() == null
-              ? List.of()
-              : Arrays.asList(result.getAvailable().split(","));
+      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
+      this.needed = extractField(result, SiteItemResult::getNeeded);
+      this.available = extractField(result, SiteItemResult::getAvailable);
+      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
+    }
+
+    private static List<String> extractField(
+        SiteItemResult result, Function<SiteItemResult, String> mapping) {
+      String value = mapping.apply(result);
+      return value == null ? List.of() : Arrays.asList(value.split(","));
     }
   }
 
@@ -123,8 +130,10 @@ class DataExportDao {
   @NoArgsConstructor
   public static class SiteItemResult {
     String siteName;
+    String urgentlyNeeded;
     String needed;
     String available;
+    String overSupply;
   }
 
   static List<SiteItemExportData> fetchAllSiteItems(Jdbi jdbi) {
@@ -132,8 +141,10 @@ class DataExportDao {
         """
         select
           s.name site_name,
-          string_agg(i.name, ', ') filter (where its.name in ('Urgently Needed', 'Needed')) needed,
-          string_agg(i.name, ', ') filter (where its.name in ('Available', 'Oversupply')) available
+          string_agg(i.name, ', ') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
+          string_agg(i.name, ', ') filter (where its.name in ('Needed')) needed,
+          string_agg(i.name, ', ') filter (where its.name in ('Available')) available,
+          string_agg(i.name, ', ') filter (where its.name in ('Oversupply')) oversupply
         from site s
         join site_item si on s.id = si.site_id
         join item i on i.id = si.item_id

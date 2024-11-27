@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.CountyListing;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao.SiteDetailData;
@@ -12,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 class ManageSiteControllerTest {
+  // TODO: test is broken, instead of null - use dummy values.. or put a config flag to disable..
   ManageSiteController manageSiteController =
-      new ManageSiteController(
-          TestConfiguration.jdbiTest, null); //new CookieAuthenticator(TestConfiguration.jdbiTest));
+      new ManageSiteController(TestConfiguration.jdbiTest, null, null);
 
   @Test
   void manageContactSelectsCorrectCounty() {
