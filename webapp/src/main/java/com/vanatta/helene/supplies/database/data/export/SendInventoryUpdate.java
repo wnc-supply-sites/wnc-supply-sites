@@ -12,8 +12,8 @@ public class SendInventoryUpdate {
   public void send(long siteId) {
     new Thread(
         () -> {
-          DataExportDao.SiteItemExportData siteItemExportData = DataExportDao.fetchAllSiteItemsForSite(jdbi, siteId);
-          HttpPostSender.sendAsJson(webhookUrl, siteItemExportData);
+          DataExportDao.SiteItemExportJson siteItemExportJson = DataExportDao.fetchAllSiteItemsForSite(jdbi, siteId);
+          HttpPostSender.sendAsJson(webhookUrl, siteItemExportJson);
         })
         .start();
   }

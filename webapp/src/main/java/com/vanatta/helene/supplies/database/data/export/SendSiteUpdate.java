@@ -15,9 +15,9 @@ public class SendSiteUpdate {
   public void sendWithNameUpdate(long siteId, String oldName) {
     new Thread(
             () -> {
-              DataExportDao.SiteExportData siteExportData = DataExportDao.lookupSite(jdbi, siteId);
-              siteExportData.setOldName(oldName);
-              HttpPostSender.sendAsJson(webhookUrl, siteExportData);
+              DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);
+              siteExportJson.setOldName(oldName);
+              HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
         .start();
   }
@@ -25,8 +25,8 @@ public class SendSiteUpdate {
   public void send(long siteId) {
     new Thread(
             () -> {
-              DataExportDao.SiteExportData siteExportData = DataExportDao.lookupSite(jdbi, siteId);
-              HttpPostSender.sendAsJson(webhookUrl, siteExportData);
+              DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);
+              HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
         .start();
   }

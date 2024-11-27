@@ -29,13 +29,13 @@ public class DataExportController {
 
   @GetMapping("/export/site-list")
   ResponseEntity<String> siteList() {
-    List<DataExportDao.SiteExportData> sites = DataExportDao.fetchAllSites(jdbi);
+    List<DataExportDao.SiteExportJson> sites = DataExportDao.fetchAllSites(jdbi);
     return ResponseEntity.ok("{\"sites\":" + gson.toJson(sites) + "}");
   }
 
   @GetMapping("/export/site-items")
   ResponseEntity<String> siteItems() {
-    List<DataExportDao.SiteItemExportData> sites = DataExportDao.fetchAllSiteItems(jdbi);
+    List<DataExportDao.SiteItemExportJson> sites = DataExportDao.fetchAllSiteItems(jdbi);
     return ResponseEntity.ok("{\"sites-items\":" + gson.toJson(sites) + "}");
   }
 }

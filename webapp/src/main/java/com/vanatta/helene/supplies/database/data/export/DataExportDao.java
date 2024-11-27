@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.data.export;
 
 import jakarta.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -13,7 +14,7 @@ class DataExportDao {
   /** Data that can be sent as JSON to sevice. */
   @Data
   @NoArgsConstructor
-  public static class SiteExportData {
+  public static class SiteExportJson {
     String siteName;
     String oldName;
     List<String> siteType;
@@ -26,7 +27,7 @@ class DataExportDao {
     String donationStatus;
     boolean active;
 
-    SiteExportData(SiteExportDataResult result) {
+    SiteExportJson(SiteExportDataResult result) {
       this.siteName = result.getSiteName();
       oldName = this.siteName;
       this.siteType = Arrays.asList(result.getSiteType().split(","));
@@ -78,21 +79,21 @@ class DataExportDao {
       join site_type st on st.id = s.site_type_id
       """;
 
-  static List<SiteExportData> fetchAllSites(Jdbi jdbi) {
+  static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
 
     return jdbi
         .withHandle(
             handle ->
                 handle.createQuery(fetchSiteDataQuery).mapToBean(SiteExportDataResult.class).list())
         .stream()
-        .map(SiteExportData::new)
+        .map(SiteExportJson::new)
         .toList();
   }
 
-  public static SiteExportData lookupSite(Jdbi jdbi, long siteId) {
+  public static SiteExportJson lookupSite(Jdbi jdbi, long siteId) {
     String fetchByIdQuery = fetchSiteDataQuery + "\nwhere s.id = :siteId";
 
-    return new SiteExportData(
+    return new SiteExportJson(
         jdbi.withHandle(
             handle ->
                 handle
@@ -108,26 +109,33 @@ class DataExportDao {
    */
   @Data
   @NoArgsConstructor
-  public static class SiteItemExportData {
+  public static class SiteItemExportJson {
     String siteName;
 
-    List<String> urgentlyNeeded;
+    //    List<String> urgentlyNeeded;
     List<String> needed;
     List<String> available;
-    List<String> oversupply;
 
-    SiteItemExportData(SiteItemResult result) {
+    //    List<String> oversupply;
+
+    SiteItemExportJson(SiteItemResult result) {
       this.siteName = result.getSiteName();
-      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
+      //      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
       this.needed = extractField(result, SiteItemResult::getNeeded);
+      if (result.getUrgentlyNeeded() != null) {
+        needed.addAll(Arrays.asList(result.getUrgentlyNeeded().split(",")));
+      }
       this.available = extractField(result, SiteItemResult::getAvailable);
-      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
+      if (result.getOverSupply() != null) {
+        available.addAll(Arrays.asList(result.getOverSupply().split(",")));
+      }
+      //      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
     }
 
     private static List<String> extractField(
         SiteItemResult result, Function<SiteItemResult, String> mapping) {
       String value = mapping.apply(result);
-      return value == null ? List.of() : Arrays.asList(value.split(","));
+      return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
     }
   }
 
@@ -145,12 +153,12 @@ class DataExportDao {
     String overSupply;
   }
 
-  static List<SiteItemExportData> fetchAllSiteItems(Jdbi jdbi) {
+  static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
     String query = buildFetchInventoryQuery(null);
     return jdbi
         .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())
         .stream()
-        .map(SiteItemExportData::new)
+        .map(SiteItemExportJson::new)
         .toList();
   }
 
@@ -179,7 +187,7 @@ class DataExportDao {
     return query;
   }
 
-  static SiteItemExportData fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
+  static SiteItemExportJson fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
     String query = buildFetchInventoryQuery(siteId);
     var dbResult =
         jdbi.withHandle(
@@ -189,6 +197,6 @@ class DataExportDao {
                     .bind("siteId", siteId)
                     .mapToBean(SiteItemResult.class)
                     .one());
-    return new SiteItemExportData(dbResult);
+    return new SiteItemExportJson(dbResult);
   }
 }
