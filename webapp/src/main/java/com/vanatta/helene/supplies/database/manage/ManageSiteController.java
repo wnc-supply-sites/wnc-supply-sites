@@ -4,6 +4,7 @@ import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.data.export.NewItemUpdate;
+import com.vanatta.helene.supplies.database.data.export.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.data.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
@@ -36,6 +37,7 @@ public class ManageSiteController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
   private final NewItemUpdate newItemUpdate;
+  private final SendInventoryUpdate sendInventoryUpdate;
 
   @Builder
   @Data
@@ -130,6 +132,9 @@ public class ManageSiteController {
     String selected;
   }
 
+  /**
+   * Info update for a site, eg: site-rename, site contact info changed.
+   */
   @PostMapping("/manage/update-site")
   @ResponseBody
   ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
@@ -323,6 +328,7 @@ public class ManageSiteController {
     }
   }
 
+  /** Adds an item to a site */
   @PostMapping("/manage/activate-site-item")
   @ResponseBody
   ResponseEntity<String> updateSiteItemActive(@RequestBody Map<String, String> params) {
@@ -355,9 +361,11 @@ public class ManageSiteController {
     }
 
     ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    sendInventoryUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok("Updated");
   }
 
+  /** Removes an item from a site */
   @PostMapping("/manage/deactivate-site-item")
   @ResponseBody
   ResponseEntity<String> updateSiteItemInactive(@RequestBody Map<String, String> params) {
@@ -380,9 +388,11 @@ public class ManageSiteController {
     }
 
     ManageSiteDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
+    sendInventoryUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok("Updated");
   }
 
+  /** Changes the status of an item within a site */
   @PostMapping("/manage/update-site-item-status")
   @ResponseBody
   ResponseEntity<String> updateSiteItemStatus(@RequestBody Map<String, String> params) {
@@ -401,9 +411,11 @@ public class ManageSiteController {
     }
 
     ManageSiteDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
+    sendInventoryUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok("Updated");
   }
 
+  /** Creates a brand new item, and adds that item to a given site. */
   @PostMapping("/manage/add-site-item")
   @ResponseBody
   ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
@@ -430,9 +442,11 @@ public class ManageSiteController {
     newItemUpdate.sendNewItem(itemName);
 
     ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    sendInventoryUpdate.send(Long.parseLong(siteId));
     return ResponseEntity.ok("Added");
   }
 
+  /** Shows the form for adding a brand new site */
   @GetMapping("/manage/new-site/add-site")
   ModelAndView showNewSiteForm() {
     log.info("new site");
@@ -441,6 +455,7 @@ public class ManageSiteController {
     return new ModelAndView("manage/new-site/add-site", model);
   }
 
+  /** REST endpoint to create a new site */
   @PostMapping("/manage/add-site")
   @ResponseBody
   ResponseEntity<?> postNewSite(@RequestBody Map<String, String> params) {

@@ -18,4 +18,10 @@ public class ExportToMakeConfiguration {
   NewItemUpdate newItemUpdate(@Value("${make.webhook.newItem}") String newItemWebhook) {
     return new NewItemUpdate(newItemWebhook);
   }
+
+  @Bean
+  SendInventoryUpdate sendInventoryUpdate(
+      Jdbi jdbi, @Value("${make.webhook.updateInventory}") String siteUpsertWebhook) {
+    return new SendInventoryUpdate(jdbi, siteUpsertWebhook);
+  }
 }

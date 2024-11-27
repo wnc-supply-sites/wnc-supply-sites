@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.data.export;
 
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -101,6 +102,10 @@ class DataExportDao {
                     .one()));
   }
 
+  /**
+   * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
+   * values, we put those into lists.
+   */
   @Data
   @NoArgsConstructor
   public static class SiteItemExportData {
@@ -126,6 +131,10 @@ class DataExportDao {
     }
   }
 
+  /**
+   * The DB result has 'needed'/'available'/... as comma delimited fields, not as a list. We need to
+   * split those values into lists before we can send the data as a JSOn.
+   */
   @Data
   @NoArgsConstructor
   public static class SiteItemResult {
@@ -137,24 +146,49 @@ class DataExportDao {
   }
 
   static List<SiteItemExportData> fetchAllSiteItems(Jdbi jdbi) {
-    String query =
-        """
-        select
-          s.name site_name,
-          string_agg(i.name, ', ') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
-          string_agg(i.name, ', ') filter (where its.name in ('Needed')) needed,
-          string_agg(i.name, ', ') filter (where its.name in ('Available')) available,
-          string_agg(i.name, ', ') filter (where its.name in ('Oversupply')) oversupply
-        from site s
-        join site_item si on s.id = si.site_id
-        join item i on i.id = si.item_id
-        join item_status its on its.id = si.item_status_id
-        group by site_name;
-        """;
+    String query = buildFetchInventoryQuery(null);
     return jdbi
         .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())
         .stream()
         .map(SiteItemExportData::new)
         .toList();
+  }
+
+  /**
+   * Builds a query to fetch inventory for all sites. If provided siteId parameter is not null, then
+   * query is for just one site.
+   */
+  private static String buildFetchInventoryQuery(@Nullable Long siteId) {
+    String query =
+        """
+          select
+            s.name site_name,
+            string_agg(i.name, ', ') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
+            string_agg(i.name, ', ') filter (where its.name in ('Needed')) needed,
+            string_agg(i.name, ', ') filter (where its.name in ('Available')) available,
+            string_agg(i.name, ', ') filter (where its.name in ('Oversupply')) oversupply
+          from site s
+          join site_item si on s.id = si.site_id
+          join item i on i.id = si.item_id
+          join item_status its on its.id = si.item_status_id
+        """;
+    if (siteId != null) {
+      query += "\nwhere s.id = :siteId";
+    }
+    query += "\ngroup by site_name";
+    return query;
+  }
+
+  static SiteItemExportData fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
+    String query = buildFetchInventoryQuery(siteId);
+    var dbResult =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(query)
+                    .bind("siteId", siteId)
+                    .mapToBean(SiteItemResult.class)
+                    .one());
+    return new SiteItemExportData(dbResult);
   }
 }

@@ -16,5 +16,7 @@ class DataExportDaoTest {
     DataExportDao.fetchAllSites(TestConfiguration.jdbiTest);
     DataExportDao.fetchAllSiteItems(TestConfiguration.jdbiTest);
     DataExportDao.lookupSite(TestConfiguration.jdbiTest, TestConfiguration.getSiteId());
+    DataExportDao.fetchAllSiteItemsForSite(
+        TestConfiguration.jdbiTest, TestConfiguration.getSiteId());
   }
 }
