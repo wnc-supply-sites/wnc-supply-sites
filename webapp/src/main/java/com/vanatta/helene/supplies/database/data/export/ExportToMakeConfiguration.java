@@ -8,13 +8,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExportToMakeConfiguration {
 
-
   @Bean
   SendSiteUpdate sendSiteUpdate(
-      Jdbi jdbi,
-      @Value("${make.webhook.upsertSite}") String siteUpsertWebhook
-      ) {
+      Jdbi jdbi, @Value("${make.webhook.upsertSite}") String siteUpsertWebhook) {
     return new SendSiteUpdate(jdbi, siteUpsertWebhook);
   }
 
+  @Bean
+  NewItemUpdate newItemUpdate(@Value("${make.webhook.newItem}") String newItemWebhook) {
+    return new NewItemUpdate(newItemWebhook);
+  }
 }

@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.data.export.NewItemUpdate;
 import com.vanatta.helene.supplies.database.data.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
@@ -34,6 +35,7 @@ public class ManageSiteController {
 
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
+  private final NewItemUpdate newItemUpdate;
 
   @Builder
   @Data
@@ -425,6 +427,7 @@ public class ManageSiteController {
       log.warn("Failed to add item, already exists. Params: {}", params);
       return ResponseEntity.badRequest().body("Item not added, already exists");
     }
+    newItemUpdate.sendNewItem(itemName);
 
     ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
     return ResponseEntity.ok("Added");

@@ -14,13 +14,21 @@ public class HttpPostSender {
 
   public static void sendAsJson(String url, Object toSend) {
     String message = new Gson().toJson(toSend);
-    log.info("Sending to url: {}, JSON: {}", url, message);
+    sendWithJson(url, message);
+  }
+
+  /** Sends a string message already formatted as a JSON. */
+  public static void sendWithJson(String url, String json) {
+    if (!url.startsWith("http")) {
+      throw new IllegalArgumentException("Invalid url: " + url);
+    }
+    log.info("Sending to url: {}, JSON: {}", url, json);
 
     try (var client = HttpClient.newHttpClient()) {
       var uri = URI.create(url);
       var request =
           HttpRequest.newBuilder(uri)
-              .POST(HttpRequest.BodyPublishers.ofString(message))
+              .POST(HttpRequest.BodyPublishers.ofString(json))
               .header("Content-type", "application/json")
               .build();
 
@@ -33,7 +41,7 @@ public class HttpPostSender {
           log.error("Failed, bad response received: {}, {}", response, response.body());
         }
       } catch (IOException | InterruptedException e) {
-        log.error("Failed to send data to URL: {}, data: {}", url, message);
+        log.error("Failed to send data to URL: {}, data: {}", url, json);
         throw new RuntimeException(e);
       }
     }

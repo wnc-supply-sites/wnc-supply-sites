@@ -9,6 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for special export data endpoints, these are used to export all data from the system
+ * (generally as a one-off to seed data in a remote system). After the data is seeded, we send any
+ * data updates to a webhook.
+ */
 @RestController
 @AllArgsConstructor
 public class DataExportController {
