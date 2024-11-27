@@ -8,12 +8,14 @@ async function saveNewSite() {
   const streetAddress = document.getElementById("Street Address");
   const cityField = document.getElementById("City");
   const countyField = document.getElementById("County");
+  const stateField = document.getElementById("State");
 
   let validData = true;
   validData = checkField(siteName) && validData;
   validData = checkField(streetAddress) && validData;
   validData = checkField(cityField) && validData;
   validData = checkField(countyField) && validData;
+  validData = checkField(stateField) && validData;
 
   if (!validData) {
     showError("Missing required fields")
@@ -34,7 +36,8 @@ async function saveNewSite() {
       siteName: siteName.value,
       streetAddress: streetAddress.value,
       city: cityField.value,
-      county: countyField.value
+      county: countyField.value,
+      state: stateField.value
     })
   })
   .then(

@@ -34,6 +34,7 @@ public class ManageSiteDao {
     STREET_ADDRESS("address", "Street Address", true),
     CITY("city", "City", true),
     COUNTY("county", "County", true),
+    STATE("state", "State", true),
     ;
 
     private final String columnName;

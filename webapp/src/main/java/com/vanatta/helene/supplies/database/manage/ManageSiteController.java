@@ -102,6 +102,7 @@ public class ManageSiteController {
     pageParams.put("siteContact", Optional.ofNullable(data.getContactNumber()).orElse(""));
     pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
+    pageParams.put("state", Optional.ofNullable(data.getState()).orElse(""));
 
     // fetch all counties, mark the county of this site as "selected"
     var countyListing =
@@ -449,6 +450,7 @@ public class ManageSiteController {
             .streetAddress(params.get("streetAddress"))
             .city(params.get("city"))
             .county(params.get("county"))
+            .state(params.get("state"))
             .build();
     try {
       long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);

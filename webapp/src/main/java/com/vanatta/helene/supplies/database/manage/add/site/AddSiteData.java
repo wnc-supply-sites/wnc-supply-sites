@@ -19,6 +19,5 @@ public class AddSiteData {
   @Nonnull String streetAddress;
   @Nonnull String city;
   @Nonnull String county;
-
-  @Builder.Default String state = "NC";
+  @Nonnull String state;
 }
