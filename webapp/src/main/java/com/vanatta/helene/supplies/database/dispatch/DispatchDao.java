@@ -18,7 +18,7 @@ public class DispatchDao {
    * @return Returns ID of new record created
    */
   public static long recordNewDispatch(
-      Jdbi jdbi, long dispatchNumber, SendDispatchRequest.DispatchRequestJson dispatchRequest) {
+      Jdbi jdbi, long dispatchNumber, DispatchRequestService.DispatchRequestJson dispatchRequest) {
 
     String insert =
         """

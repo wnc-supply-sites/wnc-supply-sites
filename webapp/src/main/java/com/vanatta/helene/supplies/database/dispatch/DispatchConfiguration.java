@@ -10,10 +10,10 @@ public class DispatchConfiguration {
 
 
   @Bean
-  SendDispatchRequest sendDispatchRequest(
+  DispatchRequestService sendDispatchRequest(
       Jdbi jdbi,
       @Value("${make.webhook.dispatch.new}") String webhook) {
-    return new SendDispatchRequest(jdbi, webhook, "", "");
+    return new DispatchRequestService(jdbi, webhook, "", "");
   }
 
 

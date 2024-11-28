@@ -31,7 +31,7 @@ class DispatchDaoTest {
   void recordDispatchRequest() {
     String publicId = UUID.randomUUID().toString();
     var dispatchRequest =
-        SendDispatchRequest.DispatchRequestJson.builder()
+        DispatchRequestService.DispatchRequestJson.builder()
             .needRequestId(publicId)
             .requestingSite("site1")
             .items(List.of("water"))

@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 @Builder
-public class SendDispatchRequest {
+public class DispatchRequestService {
 
   private final Jdbi jdbi;
   @Nonnull private final String createDispatchRequestUrl;

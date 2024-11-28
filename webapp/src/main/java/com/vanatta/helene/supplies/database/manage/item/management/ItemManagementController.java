@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.manage.item.management;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.dispatch.SendDispatchRequest;
+import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.export.NewItemUpdate;
 import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.SendSiteUpdate;
@@ -29,7 +29,7 @@ public class ItemManagementController {
   private final SendSiteUpdate sendSiteUpdate;
   private final NewItemUpdate newItemUpdate;
   private final SendInventoryUpdate sendInventoryUpdate;
-  private final SendDispatchRequest sendDispatchRequest;
+  private final DispatchRequestService dispatchRequestService;
 
   /** Returns null if ID is not valid or DNE. */
   String fetchSiteName(String siteId) {
@@ -102,7 +102,7 @@ public class ItemManagementController {
               // adding item to site: if the item status is one of need, send a dispatching request
               var status = ItemStatus.fromTextValue(itemStatus);
               if (status.isNeeded()) {
-                sendDispatchRequest.newDispatch(
+                dispatchRequestService.newDispatch(
                     siteName, itemName, ItemStatus.fromTextValue(itemStatus));
               }
             })
@@ -138,7 +138,7 @@ public class ItemManagementController {
             () -> {
               sendInventoryUpdate.send(Long.parseLong(siteId));
               // removing item from site: send dispatch cancel
-              sendDispatchRequest.cancelDispatch(siteName, itemName);
+              dispatchRequestService.cancelDispatch(siteName, itemName);
             })
         .start();
     return ResponseEntity.ok("Updated");
@@ -178,13 +178,13 @@ public class ItemManagementController {
 
                   if (!oldStatus.isNeeded() && latestStatus.isNeeded()) {
                     // if status is moving to a status of need, then we need to do dispatch
-                    sendDispatchRequest.newDispatch(siteName, itemName, latestStatus);
+                    dispatchRequestService.newDispatch(siteName, itemName, latestStatus);
                   } else if (oldStatus.isNeeded() && latestStatus.isNeeded()) {
                     // if old & latest status are needed, then this is a status change
-                    sendDispatchRequest.changePriority(siteName, itemName, latestStatus);
+                    dispatchRequestService.changePriority(siteName, itemName, latestStatus);
                   } else if (oldStatus.isNeeded() && !latestStatus.isNeeded()) {
                     // if latest status is not needed, then this is a cancel
-                    sendDispatchRequest.cancelDispatch(siteName, itemName);
+                    dispatchRequestService.cancelDispatch(siteName, itemName);
                   }
                 }
               })

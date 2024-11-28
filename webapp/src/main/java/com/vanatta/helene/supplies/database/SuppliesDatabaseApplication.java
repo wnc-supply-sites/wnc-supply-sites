@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.dispatch.SendDispatchRequest;
+import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.context.event.EventListener;
 public class SuppliesDatabaseApplication {
 
   private final Jdbi jdbi;
-  private final SendDispatchRequest sendDispatchRequest;
+  private final DispatchRequestService dispatchRequestService;
 
   public static void main(String[] args) {
     SpringApplication.run(SuppliesDatabaseApplication.class, args);
@@ -52,7 +52,7 @@ public class SuppliesDatabaseApplication {
         r -> {
           try {
             log.info("Sending dispatch request backfill: {}", r);
-            sendDispatchRequest.newDispatch(
+            dispatchRequestService.newDispatch(
                 r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
           } catch (Exception e) {
             log.error("Failed to send dispatch request: {}", r, e);
