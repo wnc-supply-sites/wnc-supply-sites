@@ -10,13 +10,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ItemStatus {
-  URGENTLY_NEEDED("Urgently Needed", "urgent"),
-  NEEDED("Needed", "needed"),
-  AVAILABLE("Available", "available"),
-  OVERSUPPLY("Oversupply", "oversupply"),
+  URGENTLY_NEEDED("Urgently Needed", "urgent", true),
+  NEEDED("Needed", "needed", true),
+  AVAILABLE("Available", "available", false),
+  OVERSUPPLY("Oversupply", "oversupply", false),
   ;
   private final String text;
   private final String cssClass;
+  private final boolean needed;
 
   public static List<String> allItemStatus() {
     return Arrays.stream(values()).map(s -> s.text).toList();

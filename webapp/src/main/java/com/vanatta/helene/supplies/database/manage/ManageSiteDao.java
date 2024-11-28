@@ -194,7 +194,7 @@ public class ManageSiteDao {
   }
 
   /** Fetches all items, items requested/needed for a given site are listed as active. */
-  static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
+  public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =
         """
         with inventory as (
@@ -234,39 +234,6 @@ public class ManageSiteDao {
     String itemName;
     String itemStatus;
     boolean active;
-  }
-
-
-
-
-
-  static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
-    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
-      throw new IllegalArgumentException("Invalid item status: " + itemStatus);
-    }
-
-    String update =
-        """
-      update site_item
-      set item_status_id = (select id from item_status where name = :itemStatus),
-         last_updated = now()
-      where site_id = :siteId
-         and item_id = (select id from item where name = :itemName)
-      """;
-    int updateCount =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createUpdate(update)
-                    .bind("siteId", siteId)
-                    .bind("itemName", itemName)
-                    .bind("itemStatus", itemStatus)
-                    .execute());
-
-    if (updateCount != 1) {
-      throw new IllegalArgumentException(String.format("Invalid item name: %s", itemName));
-    }
-    updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
   public static void updateSiteLastUpdatedToNow(Jdbi jdbi, long siteId) {

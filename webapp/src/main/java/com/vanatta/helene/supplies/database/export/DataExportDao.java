@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
-class DataExportDao {
+public class DataExportDao {
 
   /** Data that can be sent as JSON to sevice. */
   @Data
@@ -79,7 +79,7 @@ class DataExportDao {
       join site_type st on st.id = s.site_type_id
       """;
 
-  static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
+  public static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
 
     return jdbi
         .withHandle(
@@ -164,7 +164,7 @@ class DataExportDao {
     String overSupply;
   }
 
-  static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
+  public static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
     String query = buildFetchInventoryQuery(null);
     return jdbi
         .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())
@@ -198,7 +198,7 @@ class DataExportDao {
     return query;
   }
 
-  static SiteItemExportJson fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
+  public static SiteItemExportJson fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
     String query = buildFetchInventoryQuery(siteId);
     var dbResult =
         jdbi.withHandle(

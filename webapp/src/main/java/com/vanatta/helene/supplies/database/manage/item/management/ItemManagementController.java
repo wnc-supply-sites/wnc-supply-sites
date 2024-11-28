@@ -1,35 +1,20 @@
 package com.vanatta.helene.supplies.database.manage.item.management;
 
-import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.dispatch.SendDispatchRequest;
 import com.vanatta.helene.supplies.database.export.NewItemUpdate;
 import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
-import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
-import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for operations involving item updates at sites (item added to site, item removed from
@@ -60,7 +45,20 @@ public class ItemManagementController {
     }
   }
 
+  /** Creates a brand new item, and adds that item to a given site. */
+  @PostMapping("/manage/add-site-item")
+  @ResponseBody
+  ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
+    String itemName = params.get("itemName");
 
+    boolean itemAdded = ItemManagemenetDao.addNewItem(jdbi, itemName);
+    if (!itemAdded) {
+      log.warn("Failed to add item, already exists. Params: {}", params);
+      return ResponseEntity.badRequest().body("Item not added, already exists");
+    }
+    newItemUpdate.sendNewItem(itemName);
+    return updateSiteItemActive(params);
+  }
 
   /** Adds an item to a site */
   @PostMapping("/manage/activate-site-item")
@@ -95,7 +93,20 @@ public class ItemManagementController {
     }
 
     ItemManagemenetDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
-    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId))).start();
+
+    new Thread(
+            () -> {
+              // send new item->site association to Make to external data sources
+              sendInventoryUpdate.send(Long.parseLong(siteId));
+
+              // adding item to site: if the item status is one of need, send a dispatching request
+              var status = ItemStatus.fromTextValue(itemStatus);
+              if (status.isNeeded()) {
+                sendDispatchRequest.newDispatch(
+                    siteName, itemName, ItemStatus.fromTextValue(itemStatus));
+              }
+            })
+        .start();
 
     return ResponseEntity.ok("Updated");
   }
@@ -123,7 +134,13 @@ public class ItemManagementController {
     }
 
     ItemManagemenetDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
-    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId))).start();
+    new Thread(
+            () -> {
+              sendInventoryUpdate.send(Long.parseLong(siteId));
+              // removing item from site: send dispatch cancel
+              sendDispatchRequest.cancelDispatch(siteName, itemName);
+            })
+        .start();
     return ResponseEntity.ok("Updated");
   }
 
@@ -146,57 +163,34 @@ public class ItemManagementController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    ManageSiteDao.updateSiteItemActive();
-    // TODO: lookup old status
-    ManageSiteDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
+    ItemStatus oldStatus =
+        ItemManagemenetDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
 
-    new Thread(
-            () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId));
-              sendDispatchRequest.handleDispatch(
-                  siteName, itemName, ItemStatus.fromTextValue(newStatus));
-            })
-        .start();
+    if (oldStatus != ItemStatus.fromTextValue(newStatus)) {
+      ItemManagemenetDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
+      new Thread(
+              () -> {
+                var latestStatus = ItemStatus.fromTextValue(newStatus);
+                // if data is stale, or multiple browser windows, then the status
+                // might not have actually changed. In which case, no-op.
+                if (oldStatus != latestStatus) {
+                  sendInventoryUpdate.send(Long.parseLong(siteId));
+
+                  if (!oldStatus.isNeeded() && latestStatus.isNeeded()) {
+                    // if status is moving to a status of need, then we need to do dispatch
+                    sendDispatchRequest.newDispatch(siteName, itemName, latestStatus);
+                  } else if (oldStatus.isNeeded() && latestStatus.isNeeded()) {
+                    // if old & latest status are needed, then this is a status change
+                    sendDispatchRequest.changePriority(siteName, itemName, latestStatus);
+                  } else if (oldStatus.isNeeded() && !latestStatus.isNeeded()) {
+                    // if latest status is not needed, then this is a cancel
+                    sendDispatchRequest.cancelDispatch(siteName, itemName);
+                  }
+                }
+              })
+          .start();
+    }
 
     return ResponseEntity.ok("Updated");
   }
-
-  /** Creates a brand new item, and adds that item to a given site. */
-  @PostMapping("/manage/add-site-item")
-  @ResponseBody
-  ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
-    String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
-    String itemStatus = params.get("itemStatus");
-
-    log.info("Adding item: {}, to site: {}, status: {}", itemName, siteId, itemStatus);
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn("Failed to add item. Invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
-      log.warn("Failed to add item. invalid item status: {}, params: {}", itemStatus, params);
-      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
-    }
-
-    boolean itemAdded = ManageSiteDao.addNewItem(jdbi, itemName);
-    if (!itemAdded) {
-      log.warn("Failed to add item, already exists. Params: {}", params);
-      return ResponseEntity.badRequest().body("Item not added, already exists");
-    }
-    newItemUpdate.sendNewItem(itemName);
-
-    ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
-    new Thread(
-            () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId));
-              sendDispatchRequest.handleDispatch(
-                  siteName, itemName, null, ItemStatus.fromTextValue(itemStatus));
-            })
-        .start();
-    return ResponseEntity.ok("Added");
-  }
-
 }
