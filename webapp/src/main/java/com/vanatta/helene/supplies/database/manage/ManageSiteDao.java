@@ -236,56 +236,9 @@ public class ManageSiteDao {
     boolean active;
   }
 
-  static void updateSiteItemInactive(Jdbi jdbi, long siteId, String itemName) {
-    String delete =
-        """
-            delete from site_item
-            where site_id = :siteId
-              and item_id = (select id from item where name = :itemName)
-            """;
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate(delete)
-                .bind("siteId", siteId)
-                .bind("itemName", itemName)
-                .execute());
-    updateSiteLastUpdatedToNow(jdbi, siteId);
-  }
 
-  static void updateSiteItemActive(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
-    String insert =
-        """
-          insert into site_item(site_id, item_id, item_status_id) values
-             (
-                :siteId,
-                (select id from item where name = :itemName),
-                (select id from item_status where name = :itemStatus)
-             )
-          """;
-    try {
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(insert)
-                  .bind("siteId", siteId)
-                  .bind("itemName", itemName)
-                  .bind("itemStatus", itemStatus)
-                  .execute());
-    } catch (Exception e) {
-      if (e.getMessage().contains("already exists.")
-          || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key value"))) {
-        log.warn(
-            "Duplicate key insert attempted, siteId: {}, itemName: {}, itemStatus: {}",
-            siteId,
-            itemName,
-            itemStatus);
-      } else {
-        throw e;
-      }
-    }
-    updateSiteLastUpdatedToNow(jdbi, siteId);
-  }
+
+
 
   static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
     if (!ItemStatus.allItemStatus().contains(itemStatus)) {
@@ -316,26 +269,12 @@ public class ManageSiteDao {
     updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
-  private static void updateSiteLastUpdatedToNow(Jdbi jdbi, long siteId) {
+  public static void updateSiteLastUpdatedToNow(Jdbi jdbi, long siteId) {
     String updateSiteLastUpdated = "update site set last_updated = now() where id = :siteId";
     jdbi.withHandle(
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
 
-  public static boolean addNewItem(Jdbi jdbi, String itemName) {
-    String insert = "insert into item(name) values(:itemName)";
-
-    try {
-      jdbi.withHandle(handle -> handle.createUpdate(insert).bind("itemName", itemName).execute());
-    } catch (Exception e) {
-      if (e.getMessage().contains("duplicate key")) {
-        return false;
-      } else {
-        throw e;
-      }
-    }
-    return true;
-  }
 
   @AllArgsConstructor
   enum SiteType {

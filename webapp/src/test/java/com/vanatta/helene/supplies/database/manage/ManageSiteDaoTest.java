@@ -263,25 +263,36 @@ class ManageSiteDaoTest {
     ManageSiteDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
 
-    // validate gloves status is updated 'Urgent Need'
+
+    // validation (1)
+    var newStatus = ManageSiteDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    assertThat(newStatus).isEqualTo(ItemStatus.URGENTLY_NEEDED);
+
+    // validation (2) water status is updated 'Urgent Need'
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
 
-    // change gloves status to 'Oversupply'
+    // change water status to 'Oversupply'
     ManageSiteDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.OVERSUPPLY.getText());
 
-    // validate gloves status is updated 'Oversupply'
+    // validate water status is updated 'Oversupply'
+    newStatus = ManageSiteDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    assertThat(newStatus).isEqualTo(ItemStatus.OVERSUPPLY);
+
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.OVERSUPPLY.getText());
 
-    // change gloves status to 'Need'
+    // change water status to 'Need'
     ManageSiteDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.NEEDED.getText());
 
-    // validate gloves status is updated 'Need'
+    // validate water status is updated 'Need'
+    newStatus = ManageSiteDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    assertThat(newStatus).isEqualTo(ItemStatus.NEEDED);
+
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.NEEDED.getText());

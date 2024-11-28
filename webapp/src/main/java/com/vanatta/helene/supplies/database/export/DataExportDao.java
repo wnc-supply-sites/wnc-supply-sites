@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.data.export;
+package com.vanatta.helene.supplies.database.export;
 
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;

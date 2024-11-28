@@ -3,9 +3,10 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.data.export.NewItemUpdate;
-import com.vanatta.helene.supplies.database.data.export.SendInventoryUpdate;
-import com.vanatta.helene.supplies.database.data.export.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.dispatch.SendDispatchRequest;
+import com.vanatta.helene.supplies.database.export.NewItemUpdate;
+import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
+import com.vanatta.helene.supplies.database.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
@@ -38,6 +39,7 @@ public class ManageSiteController {
   private final SendSiteUpdate sendSiteUpdate;
   private final NewItemUpdate newItemUpdate;
   private final SendInventoryUpdate sendInventoryUpdate;
+  private final SendDispatchRequest sendDispatchRequest;
 
   @Builder
   @Data
@@ -132,9 +134,7 @@ public class ManageSiteController {
     String selected;
   }
 
-  /**
-   * Info update for a site, eg: site-rename, site contact info changed.
-   */
+  /** Info update for a site, eg: site-rename, site contact info changed. */
   @PostMapping("/manage/update-site")
   @ResponseBody
   ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
@@ -326,124 +326,6 @@ public class ManageSiteController {
         return "";
       }
     }
-  }
-
-  /** Adds an item to a site */
-  @PostMapping("/manage/activate-site-item")
-  @ResponseBody
-  ResponseEntity<String> updateSiteItemActive(@RequestBody Map<String, String> params) {
-    String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
-    String itemStatus = params.get("itemStatus");
-    log.info("Activating item: {}, siteId: {}, status: {}", itemName, siteId, itemStatus);
-    if (siteId == null) {
-      log.warn("Failed to activate item. No site id. Params: {}", params);
-      return ResponseEntity.badRequest().body("Invalid site id, none specified.");
-    }
-    if (itemName == null) {
-      log.warn("Failed to activate item. No item name. Params: {}", params);
-      return ResponseEntity.badRequest().body("Invalid item name, none specified.");
-    }
-    if (itemStatus == null) {
-      log.warn("Failed to activate item. No item name. No item status: {}", params);
-      return ResponseEntity.badRequest().body("Invalid item status, none specified.");
-    }
-
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn("Failed to activate item. Invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
-      log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
-      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
-    }
-
-    ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
-    sendInventoryUpdate.send(Long.parseLong(siteId));
-    return ResponseEntity.ok("Updated");
-  }
-
-  /** Removes an item from a site */
-  @PostMapping("/manage/deactivate-site-item")
-  @ResponseBody
-  ResponseEntity<String> updateSiteItemInactive(@RequestBody Map<String, String> params) {
-    String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
-    if (siteId == null) {
-      log.warn("Failed to deactivate item, no site id. Params: {}", params);
-      throw new IllegalArgumentException("Invalid site id, none specified.");
-    }
-    if (itemName == null) {
-      log.warn("Failed to deactivate item, no item name. Params: {}", params);
-      throw new IllegalArgumentException("Invalid item name, none specified.");
-    }
-
-    log.info("Deactivating item: {}, siteId: {}", itemName, siteId);
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn("Invalid site id: {}", siteId);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    ManageSiteDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
-    sendInventoryUpdate.send(Long.parseLong(siteId));
-    return ResponseEntity.ok("Updated");
-  }
-
-  /** Changes the status of an item within a site */
-  @PostMapping("/manage/update-site-item-status")
-  @ResponseBody
-  ResponseEntity<String> updateSiteItemStatus(@RequestBody Map<String, String> params) {
-    String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
-    String newStatus = params.get("newStatus");
-
-    log.info(
-        "Updating item status, site id: {}, item name: {}, status: {}",
-        siteId,
-        itemName,
-        newStatus);
-    if (fetchSiteName(siteId) == null) {
-      log.warn("Failed to update item status. Invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    ManageSiteDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
-    sendInventoryUpdate.send(Long.parseLong(siteId));
-    return ResponseEntity.ok("Updated");
-  }
-
-  /** Creates a brand new item, and adds that item to a given site. */
-  @PostMapping("/manage/add-site-item")
-  @ResponseBody
-  ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
-    String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
-    String itemStatus = params.get("itemStatus");
-
-    log.info("Adding item: {}, to site: {}, status: {}", itemName, siteId, itemStatus);
-    if (fetchSiteName(siteId) == null) {
-      log.warn("Failed to add item. Invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
-      log.warn("Failed to add item. invalid item status: {}, params: {}", itemStatus, params);
-      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
-    }
-
-    boolean itemAdded = ManageSiteDao.addNewItem(jdbi, itemName);
-    if (!itemAdded) {
-      log.warn("Failed to add item, already exists. Params: {}", params);
-      return ResponseEntity.badRequest().body("Item not added, already exists");
-    }
-    newItemUpdate.sendNewItem(itemName);
-
-    ManageSiteDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
-    sendInventoryUpdate.send(Long.parseLong(siteId));
-    return ResponseEntity.ok("Added");
   }
 
   /** Shows the form for adding a brand new site */

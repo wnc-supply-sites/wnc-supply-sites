@@ -1,5 +1,6 @@
-package com.vanatta.helene.supplies.database.data.export;
+package com.vanatta.helene.supplies.database.export;
 
+import com.vanatta.helene.supplies.database.dispatch.SendDispatchRequest;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 class ManageSiteControllerTest {
   // TODO: test is broken, instead of null - use dummy values.. or put a config flag to disable..
   ManageSiteController manageSiteController =
-      new ManageSiteController(TestConfiguration.jdbiTest, null, null, null);
+      new ManageSiteController(TestConfiguration.jdbiTest, null, null, null, null);
 
   @Test
   void manageContactSelectsCorrectCounty() {

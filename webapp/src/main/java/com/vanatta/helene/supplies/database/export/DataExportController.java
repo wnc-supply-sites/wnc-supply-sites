@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.data.export;
+package com.vanatta.helene.supplies.database.export;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.filters.FilterDataDao;

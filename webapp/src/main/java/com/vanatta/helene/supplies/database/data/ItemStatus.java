@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database.data;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.vanatta.helene.supplies.database.util.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,11 +24,14 @@ public enum ItemStatus {
 
   /** Converts human readable status name to CSS class name. */
   public static String convertToDisplayClass(String itemStatusText) {
-    return Arrays.stream(values())
-        .filter(v -> v.getText().equals(itemStatusText))
-        .findAny()
+    return EnumUtil.mapText(values(), ItemStatus::getText, itemStatusText)
         .orElseThrow(
             () -> new IllegalArgumentException("Invalid item status text: " + itemStatusText))
         .cssClass;
+  }
+
+  public static ItemStatus fromTextValue(String textValue) {
+    return EnumUtil.mapText(values(), ItemStatus::getText, textValue)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid item status text: " + textValue));
   }
 }

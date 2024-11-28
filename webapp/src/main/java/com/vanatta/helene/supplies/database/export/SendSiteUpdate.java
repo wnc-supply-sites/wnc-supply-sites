@@ -1,5 +1,6 @@
-package com.vanatta.helene.supplies.database.data.export;
+package com.vanatta.helene.supplies.database.export;
 
+import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
