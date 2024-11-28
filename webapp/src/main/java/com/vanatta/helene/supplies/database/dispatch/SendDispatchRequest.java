@@ -14,6 +14,7 @@ import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
+// TODO: RENAME this sounds like it would be a data object rather than a relay
 @Slf4j
 @AllArgsConstructor
 @Builder
