@@ -14,11 +14,11 @@ public class HttpPostSender {
 
   public static void sendAsJson(String url, Object toSend) {
     String message = new Gson().toJson(toSend);
-    sendWithJson(url, message);
+    sendJson(url, message);
   }
 
   /** Sends a string message already formatted as a JSON. */
-  public static void sendWithJson(String url, String json) {
+  public static void sendJson(String url, String json) {
     if (!url.startsWith("http")) {
       throw new IllegalArgumentException("Invalid url: " + url);
     }

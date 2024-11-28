@@ -4,8 +4,7 @@ drop table dispatch_request;
 create table dispatch_request(
   id serial primary key,
   public_id varchar(256) not null unique,
-  request_number integer not null unique,
-  status varchar(32) not null,
+  status varchar(32) not null default 'NEW',
   priority varchar(32) not null,
   site_id integer references site(id) not null,
   date_created timestamptz not null default now(),
@@ -16,7 +15,7 @@ alter table dispatch_request owner to wnc_helene;
 
 -- when date_closed is not null, then the request is closed
 -- status: will be new/pending/cancelled/completed
--- priority: will be one of 'Urgently Needed' or 'Needed'
+-- priority: value should match what we have in airTable for status
 
 
 create dispatch_request_item(

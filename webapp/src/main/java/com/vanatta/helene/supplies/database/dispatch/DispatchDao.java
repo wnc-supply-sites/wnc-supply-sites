@@ -22,10 +22,9 @@ public class DispatchDao {
 
     String insert =
         """
-        insert into dispatch_request(public_id, request_number, priority, item_id, site_id)
+        insert into dispatch_request(public_id, priority, item_id, site_id)
         values(
           :publicId,
-          :requestNumber,
           :priority,
           (select id from item where name = :itemName),
           (select id from site where name = :siteName)
@@ -37,7 +36,6 @@ public class DispatchDao {
             handle
                 .createUpdate(insert)
                 .bind("publicId", dispatchRequest.getNeedRequestId())
-                .bind("requestNumber", dispatchNumber)
                 .bind("priority", dispatchRequest.getPriority())
                 .bind("itemName", dispatchRequest.getItems().getFirst())
                 .bind("siteName", dispatchRequest.getRequestingSite())

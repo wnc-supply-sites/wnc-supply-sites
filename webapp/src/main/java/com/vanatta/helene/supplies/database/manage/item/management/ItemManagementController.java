@@ -102,7 +102,7 @@ public class ItemManagementController {
               // adding item to site: if the item status is one of need, send a dispatching request
               var status = ItemStatus.fromTextValue(itemStatus);
               if (status.isNeeded()) {
-                dispatchRequestService.newDispatch(
+                dispatchRequestService.addDispatch(
                     siteName, itemName, ItemStatus.fromTextValue(itemStatus));
               }
             })
@@ -178,7 +178,7 @@ public class ItemManagementController {
 
                   if (!oldStatus.isNeeded() && latestStatus.isNeeded()) {
                     // if status is moving to a status of need, then we need to do dispatch
-                    dispatchRequestService.newDispatch(siteName, itemName, latestStatus);
+                    dispatchRequestService.addDispatch(siteName, itemName, latestStatus);
                   } else if (oldStatus.isNeeded() && latestStatus.isNeeded()) {
                     // if old & latest status are needed, then this is a status change
                     dispatchRequestService.changePriority(siteName, itemName, latestStatus);

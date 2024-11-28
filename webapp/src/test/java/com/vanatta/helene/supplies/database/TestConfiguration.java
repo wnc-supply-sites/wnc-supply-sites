@@ -13,6 +13,7 @@ public class TestConfiguration {
   public static void setupDatabase() {
     List.of(
             "delete from dispatch_send_queue",
+            "delete from dispatch_request_item",
             "delete from dispatch_request",
             "delete from site_item",
             "delete from item",

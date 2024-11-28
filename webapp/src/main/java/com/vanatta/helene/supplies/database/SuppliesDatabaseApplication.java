@@ -52,7 +52,7 @@ public class SuppliesDatabaseApplication {
         r -> {
           try {
             log.info("Sending dispatch request backfill: {}", r);
-            dispatchRequestService.newDispatch(
+            dispatchRequestService.addDispatch(
                 r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
           } catch (Exception e) {
             log.error("Failed to send dispatch request: {}", r, e);

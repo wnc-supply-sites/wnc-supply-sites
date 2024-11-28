@@ -10,7 +10,7 @@ public class NewItemUpdate {
 
   public void sendNewItem(String itemName) {
     new Thread(
-            () -> HttpPostSender.sendWithJson(webhookUrl, "{\"item-name\":\"" + itemName + "\"}"))
+            () -> HttpPostSender.sendJson(webhookUrl, "{\"item-name\":\"" + itemName + "\"}"))
         .start();
   }
 }

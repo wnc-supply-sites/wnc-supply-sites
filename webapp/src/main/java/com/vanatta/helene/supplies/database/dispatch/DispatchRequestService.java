@@ -13,8 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
-// TODO: RENAME this sounds like it would be a data object rather than a relay
 @Slf4j
 @AllArgsConstructor
 @Builder
@@ -23,11 +24,18 @@ public class DispatchRequestService {
   private final Jdbi jdbi;
   @Nonnull private final String createDispatchRequestUrl;
   @Nonnull private final String cancelDispatchRequestUrl;
-
   /** Webhook URL for changing dispatch request priority. */
   @Nonnull private final String updateDispatchRequestUrl;
 
-  public void newDispatch(String siteName, String item, ItemStatus itemStatus) {
+  private final BiConsumer<String, Object> httpPost;
+  private final Supplier<String> dispatchNumberGenerator;
+
+
+  /**
+   * Adds an item to an existing dispatch request if one exists that is in a NEW state.
+   * Otherwise creates a new dispatch request with the item.
+   */
+  public void addDispatch(String siteName, String item, ItemStatus itemStatus) {
     if (!itemStatus.isNeeded()) {
       throw new IllegalArgumentException(
           "Illegal new dispatch requested for non-needed status! " + itemStatus);
