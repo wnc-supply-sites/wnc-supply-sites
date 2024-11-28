@@ -51,6 +51,7 @@ public class SuppliesDatabaseApplication {
     results.forEach(
         r -> {
           try {
+            log.info("Sending dispatch request backfill: {}", r);
             sendDispatchRequest.newDispatch(
                 r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
           } catch (Exception e) {
