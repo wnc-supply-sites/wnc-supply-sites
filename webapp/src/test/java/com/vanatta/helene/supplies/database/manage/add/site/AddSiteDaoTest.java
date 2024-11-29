@@ -27,6 +27,7 @@ public class AddSiteDaoTest {
           .streetAddress("data 1 address")
           .city("data 1 city")
           .county("Ashe")
+          .state("NC")
           .build();
 
   private static final AddSiteData siteData2 =
@@ -36,6 +37,7 @@ public class AddSiteDaoTest {
           .streetAddress("data 2 address")
           .city("data 2 city")
           .county("Ashe")
+          .state("NC")
           .build();
 
   @Test

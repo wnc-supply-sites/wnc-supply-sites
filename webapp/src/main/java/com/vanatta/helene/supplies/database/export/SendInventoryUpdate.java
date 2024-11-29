@@ -9,9 +9,13 @@ public class SendInventoryUpdate {
 
   private final Jdbi jdbi;
   private final String webhookUrl;
+  private final boolean enabled;
 
   public void send(long siteId) {
-      DataExportDao.SiteItemExportJson siteItemExportJson = DataExportDao.fetchAllSiteItemsForSite(jdbi, siteId);
+    if (enabled) {
+      DataExportDao.SiteItemExportJson siteItemExportJson =
+          DataExportDao.fetchAllSiteItemsForSite(jdbi, siteId);
       HttpPostSender.sendAsJson(webhookUrl, siteItemExportJson);
+    }
   }
 }

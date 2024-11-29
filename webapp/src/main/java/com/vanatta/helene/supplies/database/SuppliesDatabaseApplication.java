@@ -7,25 +7,36 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 @SpringBootApplication
-@AllArgsConstructor
 @Slf4j
 public class SuppliesDatabaseApplication {
 
   private final Jdbi jdbi;
-  private final DispatchRequestService dispatchRequestService;
+  private final boolean backfillEnabled;
+
+  SuppliesDatabaseApplication(
+      Jdbi jdbi, @Value("${dispatch.request.backfill.enabled}") boolean backfillEnabled) {
+    this.jdbi = jdbi;
+    this.backfillEnabled = backfillEnabled;
+    log.info("Dispatch requests backfill enabled: " + backfillEnabled);
+  }
 
   public static void main(String[] args) {
     SpringApplication.run(SuppliesDatabaseApplication.class, args);
   }
 
   @EventListener(ApplicationReadyEvent.class)
-  public void doSomethingAfterStartup() {
+  public void runBackFillAfterStartup() {
+    if (!backfillEnabled) {
+      return;
+    }
+
     String query =
         """
         select
@@ -52,8 +63,10 @@ public class SuppliesDatabaseApplication {
         r -> {
           try {
             log.info("Sending dispatch request backfill: {}", r);
-            dispatchRequestService.computeDispatch(
-                r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
+
+            DispatchRequestService.create(jdbi)
+                .computeDispatch(
+                    r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
           } catch (Exception e) {
             log.error("Failed to send dispatch request: {}", r, e);
           }

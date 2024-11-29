@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class NewItemUpdate {
   private final String webhookUrl;
+  private final boolean enabled;
 
   public void sendNewItem(String itemName) {
-    new Thread(
-            () -> HttpPostSender.sendJson(webhookUrl, "{\"item-name\":\"" + itemName + "\"}"))
-        .start();
+    if (enabled) {
+      new Thread(() -> HttpPostSender.sendJson(webhookUrl, "{\"item-name\":\"" + itemName + "\"}"))
+          .start();
+    }
   }
 }

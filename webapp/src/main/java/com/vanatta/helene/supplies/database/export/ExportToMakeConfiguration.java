@@ -10,18 +10,24 @@ public class ExportToMakeConfiguration {
 
   @Bean
   SendSiteUpdate sendSiteUpdate(
-      Jdbi jdbi, @Value("${make.webhook.upsertSite}") String siteUpsertWebhook) {
-    return new SendSiteUpdate(jdbi, siteUpsertWebhook);
+      Jdbi jdbi,
+      @Value("${make.webhook.upsertSite}") String siteUpsertWebhook,
+      @Value("${make.enabled}") boolean enabled) {
+    return new SendSiteUpdate(jdbi, siteUpsertWebhook, enabled);
   }
 
   @Bean
-  NewItemUpdate newItemUpdate(@Value("${make.webhook.newItem}") String newItemWebhook) {
-    return new NewItemUpdate(newItemWebhook);
+  NewItemUpdate newItemUpdate(
+      @Value("${make.enabled}") boolean enabled,
+      @Value("${make.webhook.newItem}") String newItemWebhook) {
+    return new NewItemUpdate(newItemWebhook, enabled);
   }
 
   @Bean
   SendInventoryUpdate sendInventoryUpdate(
-      Jdbi jdbi, @Value("${make.webhook.updateInventory}") String siteUpsertWebhook) {
-    return new SendInventoryUpdate(jdbi, siteUpsertWebhook);
+      Jdbi jdbi,
+      @Value("${make.webhook.updateInventory}") String siteUpsertWebhook,
+      @Value("${make.enabled}") boolean enabled) {
+    return new SendInventoryUpdate(jdbi, siteUpsertWebhook, enabled);
   }
 }

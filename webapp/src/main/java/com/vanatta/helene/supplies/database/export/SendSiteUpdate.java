@@ -12,8 +12,12 @@ public class SendSiteUpdate {
 
   private final Jdbi jdbi;
   private final String webhookUrl;
+  private final boolean enabled;
 
   public void sendWithNameUpdate(long siteId, String oldName) {
+    if(!enabled) {
+      return;
+    }
     new Thread(
             () -> {
               DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);
@@ -24,6 +28,9 @@ public class SendSiteUpdate {
   }
 
   public void send(long siteId) {
+    if(!enabled) {
+      return;
+    }
     new Thread(
             () -> {
               DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);

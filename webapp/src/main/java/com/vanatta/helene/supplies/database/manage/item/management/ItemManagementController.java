@@ -39,13 +39,7 @@ public class ItemManagementController {
     this.jdbi = jdbi;
     this.newItemUpdate = newItemUpdate;
     this.sendInventoryUpdate = sendInventoryUpdate;
-    this.dispatchRequestService =
-        DispatchRequestService.builder()
-            .jdbi(jdbi)
-            .dispatchNumberGenerator(
-                siteName ->
-                    String.format("#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
-            .build();
+    this.dispatchRequestService = DispatchRequestService.create(jdbi);
     this.dispatchRequestUrl = webhook;
   }
 

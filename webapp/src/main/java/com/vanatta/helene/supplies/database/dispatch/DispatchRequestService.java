@@ -21,6 +21,14 @@ public class DispatchRequestService {
   private final Jdbi jdbi;
   private Function<String, String> dispatchNumberGenerator;
 
+  public static DispatchRequestService create(Jdbi jdbi) {
+    return DispatchRequestService.builder()
+        .jdbi(jdbi)
+        .dispatchNumberGenerator(
+            siteName -> String.format("#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
+        .build();
+  }
+
   public Optional<DispatchRequestJson> removeItemFromDispatch(String siteName, String itemName) {
     // while we *are* removing the item, setting its status to 'available' will remove it
     // from a dispatch request. This is a clever way to re-use code and re-use the computeDispatch
