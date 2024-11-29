@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
+import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,12 +20,15 @@ public class SuppliesDatabaseApplication {
 
   private final Jdbi jdbi;
   private final boolean backfillEnabled;
+  private final String dispatchUrl;
 
   SuppliesDatabaseApplication(
-      Jdbi jdbi, @Value("${dispatch.request.backfill.enabled}") boolean backfillEnabled) {
+      Jdbi jdbi,
+      @Value("${dispatch.request.backfill.enabled}") boolean backfillEnabled,
+      @Value("${make.webhook.dispatch.new}") String dispatchUrl) {
     this.jdbi = jdbi;
     this.backfillEnabled = backfillEnabled;
-    log.info("Dispatch requests backfill enabled: " + backfillEnabled);
+    this.dispatchUrl = dispatchUrl;
   }
 
   public static void main(String[] args) {
@@ -63,11 +67,11 @@ public class SuppliesDatabaseApplication {
     results.forEach(
         r -> {
           try {
-            log.info("Sending dispatch request backfill: {}", r);
-
+            log.info("Processing dispatch request backfill: {}", r);
             DispatchRequestService.create(jdbi)
                 .computeDispatch(
-                    r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()));
+                    r.getSiteName(), r.getItemName(), ItemStatus.fromTextValue(r.getItemStatus()))
+                .ifPresent(json -> HttpPostSender.sendAsJson(dispatchUrl, json));
           } catch (Exception e) {
             log.error("Failed to send dispatch request: {}", r, e);
           }

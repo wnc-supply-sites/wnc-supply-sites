@@ -52,6 +52,10 @@ public class DispatchRequestService {
     Long dispatchRequestId = DispatchDao.findOpenDispatch(jdbi, siteName).orElse(null);
     if (dispatchRequestId == null) {
       if (!itemStatus.isNeeded()) {
+        log.info(
+            "Send dispatch no-op, item is not needed & site has no NEW dispatch record, item: {}, site: {}",
+            item,
+            siteName);
         // no-op, no record; and this item is not needed. Nothing to do. No request is needed.
         return Optional.empty();
       } else {
@@ -72,25 +76,14 @@ public class DispatchRequestService {
       DispatchDao.deleteItemFromRequest(jdbi, dispatchRequestId, item);
     }
     DispatchDao.updateRequestStatusAndPriority(jdbi, dispatchRequestId);
-
-    // send request update
-    //
-    //    DispatchPriority priority =
-    //        (itemStatus == ItemStatus.NEEDED) ? DispatchPriority.P3_NORMAL :
-    // DispatchPriority.P2_URGENT;
-    //
-    //    long dispatchNumber = DispatchDao.nextDispatchNumber(jdbi);
-    //
-    //    var dispatchRequest =
-    //        DispatchRequestJson.builder()
-    //            .needRequestId("#" + dispatchNumber + " - " + siteName + " - " + item)
-    //            .requestingSite(siteName)
-    //            .items(List.of(item))
-    //            .priority(priority.getDisplayText())
-    //            .build();
-    //    long dispatchId = DispatchDao.recordNewDispatch(jdbi, dispatchNumber, dispatchRequest);
-
-    return Optional.of(DispatchDao.lookupDispatchDetails(jdbi, dispatchRequestId));
+    var updated = DispatchDao.lookupDispatchDetails(jdbi, dispatchRequestId);
+    log.info(
+        "Dispatch update computed, site: {}, item: {}, status: {}, end result: {}",
+        siteName,
+        item,
+        itemStatus,
+        updated);
+    return Optional.of(updated);
   }
 
   @Builder
