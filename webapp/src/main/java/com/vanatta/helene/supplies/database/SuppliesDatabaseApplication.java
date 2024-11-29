@@ -52,7 +52,8 @@ public class SuppliesDatabaseApplication {
            and not exists
            (select 1
             from dispatch_request dr
-            where dr.site_id = si.site_id and dr.item_id = si.item_id)
+            join dispatch_request_item dri on dri.dispatch_request_id = dr.id
+            where dr.site_id = si.site_id and dri.item_id = si.item_id)
         """;
 
     var results =
