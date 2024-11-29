@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.item.management;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.dispatch.DispatchDao;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.export.NewItemUpdate;
 import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
@@ -30,17 +29,20 @@ public class ItemManagementController {
   private final SendInventoryUpdate sendInventoryUpdate;
   private final DispatchRequestService dispatchRequestService;
   private final String dispatchRequestUrl;
+  private final boolean makeEnabled;
 
   public ItemManagementController(
       Jdbi jdbi,
       NewItemUpdate newItemUpdate,
       SendInventoryUpdate sendInventoryUpdate,
-      @Value("${make.webhook.dispatch.new}") String webhook) {
+      @Value("${make.webhook.dispatch.new}") String webhook,
+      @Value("${make.enabled}") boolean makeEnabled) {
     this.jdbi = jdbi;
     this.newItemUpdate = newItemUpdate;
     this.sendInventoryUpdate = sendInventoryUpdate;
     this.dispatchRequestService = DispatchRequestService.create(jdbi);
     this.dispatchRequestUrl = webhook;
+    this.makeEnabled = makeEnabled;
   }
 
   /** Returns null if ID is not valid or DNE. */
@@ -112,6 +114,7 @@ public class ItemManagementController {
 
               dispatchRequestService
                   .computeDispatch(siteName, itemName, ItemStatus.fromTextValue(itemStatus))
+                  .filter(_ -> makeEnabled)
                   .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
             })
         .start();
@@ -148,6 +151,7 @@ public class ItemManagementController {
               // removing item from site: send dispatch update if needed
               dispatchRequestService
                   .removeItemFromDispatch(siteName, itemName)
+                  .filter(_ -> makeEnabled)
                   .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
             })
         .start();
@@ -185,7 +189,10 @@ public class ItemManagementController {
                   // if data is stale, or multiple browser windows, then the status
                   // might not have actually changed. In which case, no-op.
                   sendInventoryUpdate.send(Long.parseLong(siteId));
-                  dispatchRequestService.computeDispatch(siteName, itemName, latestStatus);
+                  dispatchRequestService
+                      .computeDispatch(siteName, itemName, latestStatus)
+                      .filter(_ -> makeEnabled)
+                      .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
                 })
             .start();
       }
