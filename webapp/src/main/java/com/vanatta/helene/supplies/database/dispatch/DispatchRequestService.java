@@ -2,8 +2,10 @@ package com.vanatta.helene.supplies.database.dispatch;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.util.EnumUtil;
-import com.vanatta.helene.supplies.database.util.HttpPostSender;
-import jakarta.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,51 +14,75 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 @Slf4j
 @AllArgsConstructor
 @Builder
 public class DispatchRequestService {
-
   private final Jdbi jdbi;
-  @Nonnull private final String createDispatchRequestUrl;
-  @Nonnull private final String cancelDispatchRequestUrl;
-  /** Webhook URL for changing dispatch request priority. */
-  @Nonnull private final String updateDispatchRequestUrl;
+  private Function<String, String> dispatchNumberGenerator;
 
-  private final BiConsumer<String, Object> httpPost;
-  private final Supplier<String> dispatchNumberGenerator;
-
+  public Optional<DispatchRequestJson> removeItemFromDispatch(String siteName, String itemName) {
+    // while we *are* removing the item, setting its status to 'available' will remove it
+    // from a dispatch request. This is a clever way to re-use code and re-use the computeDispatch
+    // method.
+    return computeDispatch(siteName, itemName, ItemStatus.AVAILABLE);
+  }
 
   /**
-   * Adds an item to an existing dispatch request if one exists that is in a NEW state.
-   * Otherwise creates a new dispatch request with the item.
+   * Updates any open dispatch requests with the new item, creating one if needed. If item status is
+   * 'not needed', then any open dispatch requests are updated to delete that item. If this results
+   * in all items being deleted, the dispatch request is deleted.
+   *
+   * @return Empty optional if no-op, otherwise returns updated JSON data that should be sent out
+   *     for update.
    */
-  public void addDispatch(String siteName, String item, ItemStatus itemStatus) {
-    if (!itemStatus.isNeeded()) {
-      throw new IllegalArgumentException(
-          "Illegal new dispatch requested for non-needed status! " + itemStatus);
+  public Optional<DispatchRequestJson> computeDispatch(
+      String siteName, String item, ItemStatus itemStatus) {
+    // is there a new dispatch request open?
+    //   no =>  is this item needed? no -> no-op ; yes -> create
+
+    Long dispatchRequestId = DispatchDao.findOpenDispatch(jdbi, siteName).orElse(null);
+    if (dispatchRequestId == null) {
+      if (!itemStatus.isNeeded()) {
+        // no-op, no record; and this item is not needed. Nothing to do. No request is needed.
+        return Optional.empty();
+      } else {
+        DispatchDao.createNewDispatchRequest(
+            jdbi, dispatchNumberGenerator.apply(siteName), siteName);
+        dispatchRequestId = DispatchDao.findOpenDispatch(jdbi, siteName).orElseThrow();
+      }
     }
 
-    DispatchPriority priority =
-        (itemStatus == ItemStatus.NEEDED) ? DispatchPriority.P3_NORMAL : DispatchPriority.P2_URGENT;
+    // dispatch request exists or we had a no-op
+    assert dispatchRequestId != null;
 
-    long dispatchNumber = DispatchDao.nextDispatchNumber(jdbi);
+    if (itemStatus.isNeeded()) {
+      // if the item is needed -> add it
+      DispatchDao.addItemToRequest(jdbi, dispatchRequestId, item, itemStatus);
+    } else {
+      // is this item no longer needed? -> remove it
+      DispatchDao.deleteItemFromRequest(jdbi, dispatchRequestId, item);
+    }
+    DispatchDao.updateRequestStatusAndPriority(jdbi, dispatchRequestId);
 
-    var dispatchRequest =
-        DispatchRequestJson.builder()
-            .needRequestId("#" + dispatchNumber + " - " + siteName + " - " + item)
-            .requestingSite(siteName)
-            .items(List.of(item))
-            .priority(priority.getDisplayText())
-            .build();
-    long dispatchId = DispatchDao.recordNewDispatch(jdbi, dispatchNumber, dispatchRequest);
-    long dispatchSendId = DispatchDao.storeSendRequest(jdbi, dispatchId, "NEW");
-    HttpPostSender.sendAsJson(createDispatchRequestUrl, dispatchRequest);
-    DispatchDao.completeSendRequest(jdbi, dispatchSendId);
+    // send request update
+    //
+    //    DispatchPriority priority =
+    //        (itemStatus == ItemStatus.NEEDED) ? DispatchPriority.P3_NORMAL :
+    // DispatchPriority.P2_URGENT;
+    //
+    //    long dispatchNumber = DispatchDao.nextDispatchNumber(jdbi);
+    //
+    //    var dispatchRequest =
+    //        DispatchRequestJson.builder()
+    //            .needRequestId("#" + dispatchNumber + " - " + siteName + " - " + item)
+    //            .requestingSite(siteName)
+    //            .items(List.of(item))
+    //            .priority(priority.getDisplayText())
+    //            .build();
+    //    long dispatchId = DispatchDao.recordNewDispatch(jdbi, dispatchNumber, dispatchRequest);
+
+    return Optional.of(DispatchDao.lookupDispatchDetails(jdbi, dispatchRequestId));
   }
 
   @Builder
@@ -66,71 +92,27 @@ public class DispatchRequestService {
   public static class DispatchRequestJson {
     String needRequestId;
     String requestingSite;
-
-    // TODO: handle fact this is always size of one.
-    List<String> items;
+    String status;
     String priority;
-    String date;
-    String lastModified;
-    String created;
+    List<String> items;
+
+    public DispatchRequestJson(DispatchDao.DispatchRequestDbRecord dbRecord) {
+      needRequestId = dbRecord.getNeedRequestId();
+      requestingSite = dbRecord.getRequestingSite();
+      status = dbRecord.getStatus();
+      priority =
+          ItemStatus.fromTextValue(dbRecord.getPriority()) == ItemStatus.URGENTLY_NEEDED
+              ? DispatchPriority.P2_URGENT.getDisplayText()
+              : DispatchPriority.P3_NORMAL.getDisplayText();
+      items =
+          dbRecord.getItems() == null ? List.of() : Arrays.asList(dbRecord.getItems().split(","));
+    }
   }
 
-  public void cancelDispatch(String siteName, String itemName) {
-    long dispatchId = DispatchDao.lookupDispatchRequestId(jdbi, siteName, itemName);
-    long dispatchSendId = DispatchDao.storeSendRequest(jdbi, dispatchId, "CANCEL");
-    String dispatchPublicId = DispatchDao.fetchDispatchPublicId(jdbi, dispatchId);
-
-    // TODO
-    /*
-    HttpPostSender.sendAsJson(
-        cancelDispatchRequestUrl,
-        CancelDispatchJson.builder().needRequestId(dispatchPublicId).build());
-    DispatchDao.completeSendRequest(jdbi, dispatchSendId);
-
-     */
-  }
-
-  @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Data
-  static class CancelDispatchJson {
-    String needRequestId;
-  }
-
-  public void changePriority(String siteName, String itemName, ItemStatus latestStatus) {
-    long dispatchId = DispatchDao.lookupDispatchRequestId(jdbi, siteName, itemName);
-    DispatchDao.changeDispatchPriority(latestStatus, latestStatus.getText());
-    long dispatchSendId = DispatchDao.storeSendRequest(jdbi, dispatchId, "UPDATE_PRIORITY");
-    String dispatchPublicId = DispatchDao.fetchDispatchPublicId(jdbi, dispatchId);
-
-    // TODO
-    /*
-    HttpPostSender.sendAsJson(
-        updateDispatchRequestUrl,
-        UpdateDispatchPriorityRequestJson.builder()
-            .needRequestId(dispatchPublicId)
-            .itemStatus(latestStatus.getText())
-            .build());
-    DispatchDao.completeSendRequest(jdbi, dispatchSendId);
-
-     */
-  }
-
-  @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Data
-  static class UpdateDispatchPriorityRequestJson {
-    String needRequestId;
-    String itemStatus;
-  }
-
-  // TODO: NOT YET USED
   @Getter
   @AllArgsConstructor
   public enum DispatchStatus {
-    NEW(""),
+    NEW("NEW"),
     PENDING("Pending"),
     IN_PROGRESS("In Progress"),
     CANCELLED("Cancelled"),

@@ -1,15 +1,16 @@
 package com.vanatta.helene.supplies.database.manage.item.management;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.dispatch.DispatchDao;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.export.NewItemUpdate;
 import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
-import com.vanatta.helene.supplies.database.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,15 +22,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * site, item status changed).
  */
 @Controller
-@AllArgsConstructor
 @Slf4j
 public class ItemManagementController {
 
   private final Jdbi jdbi;
-  private final SendSiteUpdate sendSiteUpdate;
   private final NewItemUpdate newItemUpdate;
   private final SendInventoryUpdate sendInventoryUpdate;
   private final DispatchRequestService dispatchRequestService;
+  private final String dispatchRequestUrl;
+
+  public ItemManagementController(
+      Jdbi jdbi,
+      NewItemUpdate newItemUpdate,
+      SendInventoryUpdate sendInventoryUpdate,
+      @Value("${make.webhook.dispatch.new}") String webhook) {
+    this.jdbi = jdbi;
+    this.newItemUpdate = newItemUpdate;
+    this.sendInventoryUpdate = sendInventoryUpdate;
+    this.dispatchRequestService =
+        DispatchRequestService.builder()
+            .jdbi(jdbi)
+            .dispatchNumberGenerator(
+                siteName ->
+                    String.format("#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
+            .build();
+    this.dispatchRequestUrl = webhook;
+  }
 
   /** Returns null if ID is not valid or DNE. */
   String fetchSiteName(String siteId) {
@@ -96,15 +114,11 @@ public class ItemManagementController {
 
     new Thread(
             () -> {
-              // send new item->site association to Make to external data sources
               sendInventoryUpdate.send(Long.parseLong(siteId));
 
-              // adding item to site: if the item status is one of need, send a dispatching request
-              var status = ItemStatus.fromTextValue(itemStatus);
-              if (status.isNeeded()) {
-                dispatchRequestService.addDispatch(
-                    siteName, itemName, ItemStatus.fromTextValue(itemStatus));
-              }
+              dispatchRequestService
+                  .computeDispatch(siteName, itemName, ItemStatus.fromTextValue(itemStatus))
+                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
             })
         .start();
 
@@ -137,8 +151,10 @@ public class ItemManagementController {
     new Thread(
             () -> {
               sendInventoryUpdate.send(Long.parseLong(siteId));
-              // removing item from site: send dispatch cancel
-              dispatchRequestService.cancelDispatch(siteName, itemName);
+              // removing item from site: send dispatch update if needed
+              dispatchRequestService
+                  .removeItemFromDispatch(siteName, itemName)
+                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
             })
         .start();
     return ResponseEntity.ok("Updated");
@@ -168,27 +184,17 @@ public class ItemManagementController {
 
     if (oldStatus != ItemStatus.fromTextValue(newStatus)) {
       ItemManagemenetDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
-      new Thread(
-              () -> {
-                var latestStatus = ItemStatus.fromTextValue(newStatus);
-                // if data is stale, or multiple browser windows, then the status
-                // might not have actually changed. In which case, no-op.
-                if (oldStatus != latestStatus) {
+      var latestStatus = ItemStatus.fromTextValue(newStatus);
+      if (oldStatus != latestStatus) {
+        new Thread(
+                () -> {
+                  // if data is stale, or multiple browser windows, then the status
+                  // might not have actually changed. In which case, no-op.
                   sendInventoryUpdate.send(Long.parseLong(siteId));
-
-                  if (!oldStatus.isNeeded() && latestStatus.isNeeded()) {
-                    // if status is moving to a status of need, then we need to do dispatch
-                    dispatchRequestService.addDispatch(siteName, itemName, latestStatus);
-                  } else if (oldStatus.isNeeded() && latestStatus.isNeeded()) {
-                    // if old & latest status are needed, then this is a status change
-                    dispatchRequestService.changePriority(siteName, itemName, latestStatus);
-                  } else if (oldStatus.isNeeded() && !latestStatus.isNeeded()) {
-                    // if latest status is not needed, then this is a cancel
-                    dispatchRequestService.cancelDispatch(siteName, itemName);
-                  }
-                }
-              })
-          .start();
+                  dispatchRequestService.computeDispatch(siteName, itemName, latestStatus);
+                })
+            .start();
+      }
     }
 
     return ResponseEntity.ok("Updated");

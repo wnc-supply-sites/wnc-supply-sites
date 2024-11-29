@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,33 @@ class DispatchRequestServiceTest {
           handle ->
               handle.createQuery(query).bind("publicId", publicId).mapTo(Integer.class).one());
     }
+
+    static String getDispatchPriority(String publicId) {
+      String query =
+          """
+        select dr.priority from dispatch_request dr
+        where dr.public_id = :publicId
+      """;
+      return jdbiTest.withHandle(
+          handle -> handle.createQuery(query).bind("publicId", publicId).mapTo(String.class).one());
+    }
+
+    @Nullable
+    static String getDispatchStatus(String publicId) {
+      String query =
+          """
+        select dr.status from dispatch_request dr
+        where dr.public_id = :publicId
+      """;
+      return jdbiTest.withHandle(
+          handle ->
+              handle
+                  .createQuery(query)
+                  .bind("publicId", publicId)
+                  .mapTo(String.class)
+                  .findOne()
+                  .orElse(null));
+    }
   }
 
   static final String SITE1_NEW_DISPATCH = "#1 site1";
@@ -33,14 +61,7 @@ class DispatchRequestServiceTest {
   static final String TEST_DISPATCH = "#Test";
 
   DispatchRequestService dispatchRequestService =
-      DispatchRequestService.builder()
-          .httpPost((s, o) -> {})
-          .createDispatchRequestUrl("")
-          .updateDispatchRequestUrl("")
-          .cancelDispatchRequestUrl("")
-          .dispatchNumberGenerator(() -> TEST_DISPATCH)
-          .jdbi(jdbiTest)
-          .build();
+      new DispatchRequestService(jdbiTest, _ -> TEST_DISPATCH);
 
   @BeforeEach
   void dbSetup() {
@@ -90,7 +111,7 @@ class DispatchRequestServiceTest {
                 insert into dispatch_request(public_id, priority, status, site_id)
                 values(
                   '%s',
-                  'P1',
+                  'Urgently Needed',
                   'PENDING',
                   (select id from site where name = 'site3')
                 )
@@ -111,59 +132,148 @@ class DispatchRequestServiceTest {
 
   @Test
   void addItemToExistingNewDispatch() {
-    dispatchRequestService.addDispatch("site1", "gloves", ItemStatus.NEEDED);
+    dispatchRequestService.computeDispatch("site1", "gloves", ItemStatus.NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(1);
 
-    dispatchRequestService.addDispatch("site1", "gloves", ItemStatus.AVAILABLE);
+    dispatchRequestService.computeDispatch("site1", "gloves", ItemStatus.AVAILABLE);
     assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(0);
 
-    dispatchRequestService.addDispatch("site1", "gloves", ItemStatus.NEEDED);
-    assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(1);
+    var result = dispatchRequestService.computeDispatch("site1", "gloves", ItemStatus.NEEDED);
+    assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(1);
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
 
-    dispatchRequestService.addDispatch("site1", "gloves", ItemStatus.URGENTLY_NEEDED);
-    assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(1);
+    result = dispatchRequestService.computeDispatch("site1", "gloves", ItemStatus.URGENTLY_NEEDED);
+    assertThat(Helper.countItemsInDispatchRequest(SITE1_NEW_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(1);
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
   }
 
   /** Site2 has a pending dispatch. Any dispatches we should should go to a new dispatch request. */
   @Test
-  void site2_addDispatch_withPending() {
-    /* Adding a non-needed item is a no-op */
-    dispatchRequestService.addDispatch("site2", "gloves", ItemStatus.AVAILABLE);
-    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(0);
-    assertThat(Helper.countItemsInDispatchRequest(SITE2_PENDING_DISPATCH)).isEqualTo(0);
-
+  void site2_computeDispatch_withPending() {
     /* Adding a needed item should create a new dispatch */
-    dispatchRequestService.addDispatch("site2", "gloves", ItemStatus.NEEDED);
+    dispatchRequestService.computeDispatch("site2", "gloves", ItemStatus.NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(1);
     assertThat(Helper.countItemsInDispatchRequest(SITE2_PENDING_DISPATCH)).isEqualTo(0);
 
     /* Adding another needed item should go to the new dispatch */
-    dispatchRequestService.addDispatch("site2", "water", ItemStatus.NEEDED);
+    dispatchRequestService.computeDispatch("site2", "water", ItemStatus.NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(2);
     assertThat(Helper.countItemsInDispatchRequest(SITE2_PENDING_DISPATCH)).isEqualTo(0);
   }
 
   /**
-   * Site3 has an existing pending & new dispatch request. Adding a needed item
-   * should be added to the new dispatch request, not the pending.
+   * Site3 has an existing pending & new dispatch request. Adding a needed item should be added to
+   * the new dispatch request, not the pending.
    */
   @Test
-  void site3_addDispatch() {
-    dispatchRequestService.addDispatch("site3", "water", ItemStatus.NEEDED);
-    assertThat(Helper.countItemsInDispatchRequest(SITE3_PENDING_DISPATCH)).isEqualTo(1);
-    assertThat(Helper.countItemsInDispatchRequest(SITE3_NEW_DISPATCH)).isEqualTo(0);
+  void site3_computeDispatch() {
+    var result = dispatchRequestService.computeDispatch("site3", "water", ItemStatus.NEEDED);
+    assertThat(Helper.countItemsInDispatchRequest(SITE3_PENDING_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.countItemsInDispatchRequest(SITE3_NEW_DISPATCH)).isEqualTo(1);
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water");
 
-    dispatchRequestService.addDispatch("site3", "gloves", ItemStatus.URGENTLY_NEEDED);
-    assertThat(Helper.countItemsInDispatchRequest(SITE3_PENDING_DISPATCH)).isEqualTo(2);
-    assertThat(Helper.countItemsInDispatchRequest(SITE3_NEW_DISPATCH)).isEqualTo(0);
+    result = dispatchRequestService.computeDispatch("site3", "gloves", ItemStatus.URGENTLY_NEEDED);
+    assertThat(Helper.countItemsInDispatchRequest(SITE3_PENDING_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.countItemsInDispatchRequest(SITE3_NEW_DISPATCH)).isEqualTo(2);
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water", "gloves");
   }
 
-  /** Site4 has no dispatch requests, adding a needed item should create a brand new dispatch request. */
+  /**
+   * Site4 has no dispatch requests, adding a needed item should create a brand new dispatch
+   * request. Then, we remove items by adding them in with available item status.
+   */
   @Test
-  void site4_brandNewDispatch() {
-    dispatchRequestService.addDispatch("site4", "water", ItemStatus.NEEDED);
+  void site4_brandNewDispatch_and_RemoveItems() {
+    // Adding 'available' is a no-op
+    var result = dispatchRequestService.computeDispatch("site4", "water", ItemStatus.AVAILABLE);
+    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.getDispatchStatus(TEST_DISPATCH)).isNull();
+    assertThat(result).isEmpty();
+
+    // add needed water - should have 1 item in the dispatch with normal priority
+    result = dispatchRequestService.computeDispatch("site4", "water", ItemStatus.NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(1);
-    dispatchRequestService.addDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
+    assertThat(Helper.getDispatchStatus(TEST_DISPATCH))
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH)).isEqualTo(ItemStatus.NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water");
+
+    // add urgent need, gloves, priority should be bumped up & gloves added to the request list
+    result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(2);
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH))
+        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water", "gloves");
+
+    // mark gloves as available, this should remove them from the request list
+    // the priority of the request list should drop back down to normal
+    result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.AVAILABLE);
+    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(1);
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH)).isEqualTo(ItemStatus.NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water");
+
+    // finally remove 'water' from the request, this should remove all items and move the dispatch
+    // request status to cancelled
+    result = dispatchRequestService.computeDispatch("site4", "water", ItemStatus.OVERSUPPLY);
+    assertThat(Helper.countItemsInDispatchRequest(TEST_DISPATCH)).isEqualTo(0);
+    assertThat(Helper.getDispatchStatus(TEST_DISPATCH))
+        .isEqualTo(DispatchRequestService.DispatchStatus.CANCELLED.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.CANCELLED.getDisplayText());
+    assertThat(result.get().getItems()).isEmpty();
+  }
+
+  @Test
+  void site4_priorities() {
+    var result = dispatchRequestService.computeDispatch("site4", "water", ItemStatus.NEEDED);
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH)).isEqualTo(ItemStatus.NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water");
+
+    result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH))
+        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water", "gloves");
+
+    /* Sending another 'needed' item should not reduce the priority */
+    result = dispatchRequestService.computeDispatch("site4", "random stuff", ItemStatus.NEEDED);
+    assertThat(Helper.getDispatchPriority(TEST_DISPATCH))
+        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
+    assertThat(result.get().getPriority())
+        .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
+    assertThat(result.get().getStatus())
+        .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
+    assertThat(result.get().getItems()).contains("water", "gloves", "random stuff");
   }
 }

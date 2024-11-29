@@ -3,9 +3,6 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
-import com.vanatta.helene.supplies.database.export.NewItemUpdate;
-import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
@@ -37,9 +34,6 @@ public class ManageSiteController {
 
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
-  private final NewItemUpdate newItemUpdate;
-  private final SendInventoryUpdate sendInventoryUpdate;
-  private final DispatchRequestService dispatchRequestService;
 
   @Builder
   @Data
