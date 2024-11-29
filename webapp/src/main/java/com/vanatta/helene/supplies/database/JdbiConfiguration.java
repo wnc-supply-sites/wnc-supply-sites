@@ -19,8 +19,6 @@ public class JdbiConfiguration {
       @Value("${jdbi.url}") String url,
       @Value("${jdbi.user}") String user,
       @Value("${jdbi.password}") String password) {
-    log.info("Using DB url: {}, user: {}", url, user);
-
     HikariConfig config = new HikariConfig();
     config.setJdbcUrl(url);
     config.setUsername(user);
