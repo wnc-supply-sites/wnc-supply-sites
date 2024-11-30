@@ -25,7 +25,7 @@ public class DispatchRequestService {
     return DispatchRequestService.builder()
         .jdbi(jdbi)
         .dispatchNumberGenerator(
-            siteName -> String.format("#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
+            siteName -> String.format("Supply#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
         .build();
   }
 
@@ -95,7 +95,8 @@ public class DispatchRequestService {
     String requestingSite;
     String status;
     String priority;
-    List<String> items;
+    List<String> neededItems;
+    List<String> urgentlyNeededItems;
 
     public DispatchRequestJson(DispatchDao.DispatchRequestDbRecord dbRecord) {
       needRequestId = dbRecord.getNeedRequestId();
@@ -105,8 +106,14 @@ public class DispatchRequestService {
           ItemStatus.fromTextValue(dbRecord.getPriority()) == ItemStatus.URGENTLY_NEEDED
               ? DispatchPriority.P2_URGENT.getDisplayText()
               : DispatchPriority.P3_NORMAL.getDisplayText();
-      items =
-          dbRecord.getItems() == null ? List.of() : Arrays.asList(dbRecord.getItems().split(","));
+      neededItems =
+          dbRecord.getNeededItems() == null
+              ? List.of()
+              : Arrays.asList(dbRecord.getNeededItems().split(","));
+      urgentlyNeededItems =
+          dbRecord.getUrgentlyNeededItems() == null
+              ? List.of()
+              : Arrays.asList(dbRecord.getUrgentlyNeededItems().split(","));
     }
   }
 

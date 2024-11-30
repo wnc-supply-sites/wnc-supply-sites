@@ -178,7 +178,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
 
     result = dispatchRequestService.computeDispatch("site3", "gloves", ItemStatus.URGENTLY_NEEDED);
     assertThat(Helper.countItemsInDispatchRequest(SITE3_PENDING_DISPATCH)).isEqualTo(0);
@@ -187,7 +188,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water", "gloves");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).contains("gloves");
   }
 
   /**
@@ -212,7 +214,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
 
     // add urgent need, gloves, priority should be bumped up & gloves added to the request list
     result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
@@ -223,7 +226,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water", "gloves");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).contains("gloves");
 
     // mark gloves as available, this should remove them from the request list
     // the priority of the request list should drop back down to normal
@@ -234,7 +238,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
 
     // finally remove 'water' from the request, this should remove all items and move the dispatch
     // request status to cancelled
@@ -244,7 +249,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchStatus.CANCELLED.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.CANCELLED.getDisplayText());
-    assertThat(result.get().getItems()).isEmpty();
+    assertThat(result.get().getNeededItems()).isEmpty();
+    assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
   }
 
   @Test
@@ -255,7 +261,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
 
     result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
     assertThat(Helper.getDispatchPriority(TEST_DISPATCH))
@@ -264,7 +271,8 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water", "gloves");
+    assertThat(result.get().getNeededItems()).contains("water");
+    assertThat(result.get().getUrgentlyNeededItems()).contains("gloves");
 
     /* Sending another 'needed' item should not reduce the priority */
     result = dispatchRequestService.computeDispatch("site4", "random stuff", ItemStatus.NEEDED);
@@ -274,6 +282,7 @@ class DispatchRequestServiceTest {
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(result.get().getItems()).contains("water", "gloves", "random stuff");
+    assertThat(result.get().getNeededItems()).contains("water", "random stuff");
+    assertThat(result.get().getUrgentlyNeededItems()).contains("gloves");
   }
 }

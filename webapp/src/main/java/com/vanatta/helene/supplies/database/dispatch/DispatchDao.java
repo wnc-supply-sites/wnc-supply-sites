@@ -179,10 +179,12 @@ public class DispatchDao {
           s.name requestingSite,
           dr.status,
           dr.priority,
-          string_agg(i.name, ',') items
+          string_agg(i.name, ',') filter (where its.name in ('Needed')) neededItems,
+          string_agg(i.name, ',') filter (where its.name in ('Urgently Needed'))  urgentlyNeededItems
         from dispatch_request dr
         join site s on s.id = dr.site_id
         left join dispatch_request_item dri on dri.dispatch_request_id = dr.id
+        left join item_status its on its.id = dri.item_status_id
         left join item i on i.id = dri.item_id
         where dr.id = :dispatchRequestId
         group by dr.public_id, s.name, dr.status, dr.priority
@@ -208,6 +210,7 @@ public class DispatchDao {
     String priority;
 
     /** Comma delimited list of items */
-    String items;
+    String neededItems;
+    String urgentlyNeededItems;
   }
 }
