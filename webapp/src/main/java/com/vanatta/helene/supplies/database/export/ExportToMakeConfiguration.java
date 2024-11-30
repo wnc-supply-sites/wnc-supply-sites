@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/** Config for classes that can be used to send data updates to Make. */
 @Configuration
 public class ExportToMakeConfiguration {
 

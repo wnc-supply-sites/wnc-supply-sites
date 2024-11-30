@@ -112,11 +112,10 @@ public class DataExportDao {
   public static class SiteItemExportJson {
     String siteName;
 
-    //    List<String> urgentlyNeeded;
+    List<String> urgentlyNeeded;
     List<String> needed;
     List<String> available;
-
-    //    List<String> oversupply;
+    List<String> oversupply;
 
     /**
      * Constructor for case where site has no inventory.
@@ -131,16 +130,10 @@ public class DataExportDao {
 
     SiteItemExportJson(SiteItemResult result) {
       this.siteName = result.getSiteName();
-      //      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
+      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
       this.needed = extractField(result, SiteItemResult::getNeeded);
-      if (result.getUrgentlyNeeded() != null) {
-        needed.addAll(Arrays.asList(result.getUrgentlyNeeded().split(",")));
-      }
       this.available = extractField(result, SiteItemResult::getAvailable);
-      if (result.getOverSupply() != null) {
-        available.addAll(Arrays.asList(result.getOverSupply().split(",")));
-      }
-      //      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
+      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
     }
 
     private static List<String> extractField(
@@ -164,7 +157,7 @@ public class DataExportDao {
     String overSupply;
   }
 
-  static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
+  public static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
     String query = buildFetchInventoryQuery(null);
     return jdbi
         .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())

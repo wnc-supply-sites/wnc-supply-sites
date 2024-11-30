@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.data.export;
+package com.vanatta.helene.supplies.database.data.export.bulk;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

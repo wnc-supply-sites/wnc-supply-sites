@@ -21,7 +21,7 @@ class ManageSiteControllerTest {
     SiteDetailData siteDetailData =
         SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
 
-    ModelAndView result = manageSiteController.manageContact(String.valueOf(siteId));
+    ModelAndView result = manageSiteController.fetchSiteContact(String.valueOf(siteId));
 
     List<CountyListing> countyListResult =
         (List<CountyListing>) result.getModelMap().get("countyList");
