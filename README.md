@@ -71,9 +71,6 @@ sudo -u postgres psql
 
 ### Project Layout
 
-- db-loading
-  - This is almost legacy. It's an app to parse a spreadsheet for initial
-  data seeding of the database
 - webapp
   - This is the interesting part that is the webapp.
 - schema
