@@ -54,7 +54,51 @@ from sites that have too much, to those that need those items.
   - `sudo -u postgres psql; \c wnc_helene;`
 - run `/root/redeploy.sh`
 
+## Prod Ops
+
+### Adding SSH user with sudo
+
+* Requires a public SSH key
+* Requires pre-existing access to the server
+* Access granted provides full sudo
+
+
+
+```bash
+# Set these two variables:
+
+USERNAME=[last name of user here, all lower case, no spaces]
+PUBLIC_SSH_KEY="[add public key here, do use double quotes around it]"
+
+
+# Now run the following, (can copy paste and run everything below):
+
+## Create user with home folder
+sudo useradd $USERNAME
+sudo chsh -s /usr/bin/bash $USERNAME
+sudo mkdir -p /home/$USERNAME/.ssh/
+
+## Set up the SSH key for access
+sudo chmod 0700 /home/$USERNAME/.ssh/ 
+echo "$PUBLIC_SSH_KEY" | sudo tee /home/$USERNAME/.ssh/authorized_keys
+sudo chmod 0600 /home/$USERNAME/.ssh/authorized_keys
+sudo chown -R $USERNAME:$USERNAME /home/$USERNAME
+
+## Enable sudo for the user
+sudo cp /root/template-sudoers-file /root/$USERNAME
+sudo sed -i "s/^USERNAME/$USERNAME/" /root/$USERNAME
+sudo mv -v /root/$USERNAME /etc/sudoers.d/
+
+
+# Add user to 'docker' group, allows for 'docker' commands
+# to be run without sudo
+usermod -a -G docker $USERNAME
+```
+
+
+
 ## Prod Setup/Install
+
 
 ### System setup
 
