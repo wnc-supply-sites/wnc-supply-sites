@@ -206,12 +206,12 @@ async function sendItemStatusChange(siteId, itemName, newStatus) {
 }
 
 async function addItem(siteId) {
-  const itemName = document.getElementById("newItemText").value;
-  const itemNameEncoded = htmlEncode(itemName);
-
+  const itemName = document.getElementById("newItemText").value.trim();
   if (itemName === "") {
     return;
   }
+
+  const itemNameEncoded = htmlEncode(itemName);
 
   const urgentChecked = document.getElementById("urgentlyNeededRadioNew")
       .checked ? "checked" : "";
