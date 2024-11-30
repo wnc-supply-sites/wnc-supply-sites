@@ -23,12 +23,12 @@ public class AddSiteData {
 
   @SuppressWarnings("ConstantValue")
   public boolean isMissingRequiredData() {
-    return siteType != null
-        && siteName != null
-        && streetAddress != null
-        && city != null
-        && county != null
-        && state != null;
+    return siteType == null
+        || siteName == null
+        || streetAddress == null
+        || city == null
+        || county == null
+        || state == null;
   }
 
   String getSiteName() {
