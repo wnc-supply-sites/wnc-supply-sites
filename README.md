@@ -25,17 +25,6 @@ from sites that have too much, to those that need those items.
 - Tests run primarily through IDEA IDE, can be run with gradle as well
 - App launched via IDEA IDE, main class is `SuppliesDatabaseApplication.java`
 
-### Env Variables
-
-Configuration values are in 'application.properties'.
-The config values all have defaults and will work out of the box.
-To override config values, set the appropriate environment variables in IntelliJ,
-launch configuration. It will look something like this:
-<img width="530" alt="env variables config in IntelliJ"
-  src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364c821">
-
-
-
 ### Tech Stack
  
 - springboot
@@ -55,6 +44,17 @@ launch configuration. It will look something like this:
   - This is the interesting part that is the webapp.
 - schema
   - contains DB migration files
+
+### Env Variables
+
+Configuration values are in 'application.properties'.
+The config values all have defaults and will work out of the box.
+To override config values, set the appropriate environment variables in IntelliJ,
+launch configuration. It will look something like this:
+<img width="530" alt="env variables config in IntelliJ"
+src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364c821">
+
+
 
 ## Deployment
 
