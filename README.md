@@ -18,12 +18,46 @@ from sites that have too much, to those that need those items.
 
 ## Development 
 
-- postgres installed to bare-metal (laptop)
-- Run 'schema1.sql' file and subsequent migration files
-  - (data seeding might be difficult. There is a sample data seeding
-    config in `TestConfiguration.java`)
-- Tests run primarily through IDEA IDE, can be run with gradle as well
-- App launched via IDEA IDE, main class is `SuppliesDatabaseApplication.java`
+### Local Setup
+
+- install postgres to your machine (bare-metal)
+   - ideally this would be a postgres on docker. If you get that setup, please update these README instructions
+- Create databases. Two of them. Login and user are same for both. One is 'wnc_helene' which will be used 
+  when running the app locally and accessing via "localhost:8080", the other DB, 'wnc_helene_test' is used 
+  by unit tests.
+
+```bash
+sudo -u postgres psql
+create database wnc_helene;
+create user wnc_helene with password 'wnc_helene';
+alter database wnc_helene owner to wnc_helene;
+
+create database wnc_helene_test;
+create user wnc_helene_test with password 'wnc_helene';
+alter database wnc_helene_test owner to wnc_helene;
+```
+
+- Run the schema migration files found in the 'schema/' folder (schema1.sql and on, in order)
+   - ideally this would be executed via flyway
+   - needs to be done for both database
+
+```bash
+sudo -u postgres psql
+\c wnc_helene
+# [now copy paste contents of each schema file]
+```
+
+- The databases will have empty data. Example data can be found in `TestConfiguration.java`
+
+- Finally, the app can be launched via Intellj IDE, main class is `SuppliesDatabaseApplication.java`
+  - The app can also be likely be run via gradle `./gradlew bootRun` (not well tested/vetted, but should work)
+
+
+### Development - Running unit tests
+
+- Tests run primarily through IntelliJ IDE, right click 'test' folder & run
+- Test can be run with gradle as well `./gradlew test`
+
 
 ### Tech Stack
  
