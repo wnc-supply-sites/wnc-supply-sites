@@ -30,14 +30,14 @@ async function saveNewSite() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      contactNumber: contactNumber.value,
-      website: website.value,
-      siteType: siteType,
-      siteName: siteName.value,
-      streetAddress: streetAddress.value,
-      city: cityField.value,
-      county: countyField.value,
-      state: stateField.value
+      contactNumber: contactNumber.value.trim(),
+      website: website.value.trim(),
+      siteType: siteType.trim(),
+      siteName: siteName.value.trim(),
+      streetAddress: streetAddress.value.trim(),
+      city: cityField.value.trim(),
+      county: countyField.value.trim(),
+      state: stateField.value.trim()
     })
   })
   .then(

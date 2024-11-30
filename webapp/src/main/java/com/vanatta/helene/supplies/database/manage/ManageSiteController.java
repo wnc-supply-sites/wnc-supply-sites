@@ -46,7 +46,7 @@ public class ManageSiteController {
 
   /** User will be shown a page to select the site they want to manage. */
   @GetMapping("/manage/select-site")
-  ModelAndView selectSite() {
+  ModelAndView showSelectSitePage() {
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("sites", ManageSiteDao.fetchSiteList(jdbi));
     return new ModelAndView("manage/select-site", pageParams);
@@ -56,13 +56,13 @@ public class ManageSiteController {
    * After a site is selected, user selects which aspect they want to manage (eg: inventory, status)
    */
   @GetMapping("/manage/site-selected")
-  ModelAndView siteSelected(
+  ModelAndView showSiteSelectedPage(
       //      @CookieValue(value = "auth") String auth,
       @RequestParam String siteId) {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return selectSite();
+      return showSelectSitePage();
     }
 
     Map<String, String> pageParams = new HashMap<>();
@@ -72,7 +72,7 @@ public class ManageSiteController {
   }
 
   /** Returns null if ID is not valid or DNE. */
-  String fetchSiteName(String siteId) {
+  private String fetchSiteName(String siteId) {
     if (siteId == null || siteId.isBlank()) {
       return null;
     }
@@ -87,12 +87,12 @@ public class ManageSiteController {
 
   /** Fetches data for the manage site page */
   @GetMapping("/manage/contact")
-  ModelAndView manageContact(String siteId) {
+  ModelAndView fetchSiteContact(String siteId) {
     Map<String, Object> pageParams = new HashMap<>();
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return selectSite();
+      return showSelectSitePage();
     }
 
     SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
@@ -132,10 +132,15 @@ public class ManageSiteController {
   @PostMapping("/manage/update-site")
   @ResponseBody
   ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
+    log.info("Update site data request received: {}", params);
 
     String siteId = params.get("siteId");
     String field = params.get("field");
     String newValue = params.get("newValue");
+
+    if (newValue != null) {
+      newValue = newValue.trim();
+    }
 
     if (fetchSiteName(siteId) == null) {
       log.warn("invalid site id: {}, request: {}", siteId, params);
@@ -145,6 +150,12 @@ public class ManageSiteController {
     var siteField = ManageSiteDao.SiteField.lookupField(field);
 
     if (siteField == ManageSiteDao.SiteField.SITE_NAME) {
+      if (newValue == null || newValue.isBlank()) {
+        log.warn(
+            "Blank site name field sent to backend, invalid request! Params received: {}", params);
+        return ResponseEntity.badRequest()
+            .body("Invalid request, required field 'site name' cannot be blank.");
+      }
       String oldName = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId)).getSiteName();
       ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
       log.info("Site updating (with name change), old name: {}, new data: {}", oldName, params);
@@ -161,10 +172,9 @@ public class ManageSiteController {
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status")
   ModelAndView showManageStatusPage(String siteId) {
-
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return selectSite();
+      return showSelectSitePage();
     }
 
     Map<String, String> pageParams = new HashMap<>();
@@ -193,6 +203,8 @@ public class ManageSiteController {
   @PostMapping("/manage/update-status")
   @ResponseBody
   ResponseEntity<?> updateStatus(@RequestBody Map<String, String> params) {
+    log.info("Update site status request received: {}", params);
+
     String siteId = params.get("siteId");
     String statusFlag = params.get("statusFlag");
     String newValue = params.get("newValue");
@@ -235,11 +247,10 @@ public class ManageSiteController {
 
   /** Display inventory listing for a site. */
   @GetMapping("/manage/inventory")
-  ModelAndView displaySiteInventory(String siteId) {
-
+  ModelAndView fetchSiteInventoryListing(String siteId) {
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return selectSite();
+      return showSelectSitePage();
     }
 
     Map<String, Object> pageParams = new HashMap<>();
@@ -324,7 +335,7 @@ public class ManageSiteController {
 
   /** Shows the form for adding a brand new site */
   @GetMapping("/manage/new-site/add-site")
-  ModelAndView showNewSiteForm() {
+  ModelAndView showAddNewSiteForm() {
     log.info("new site");
     Map<String, Object> model = new HashMap<>();
     model.put("countyList", CountyDao.fetchFullCountyList(jdbi));
@@ -335,6 +346,7 @@ public class ManageSiteController {
   @PostMapping("/manage/add-site")
   @ResponseBody
   ResponseEntity<?> postNewSite(@RequestBody Map<String, String> params) {
+    log.info("Received add new site data: {}", params);
     var addSiteData =
         AddSiteData.builder()
             .contactNumber(params.get("contactNumber"))
@@ -346,6 +358,14 @@ public class ManageSiteController {
             .county(params.get("county"))
             .state(params.get("state"))
             .build();
+    if (addSiteData.isMissingRequiredData()) {
+      log.warn(
+          "Add new site data is missing required data. Add new site data received: {}",
+          addSiteData);
+      // front end should be enforcing required data, error messaging back to user here is
+      // pretty minimal.
+      return ResponseEntity.badRequest().body("Failed, missing required data.");
+    }
     try {
       long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);
       sendSiteUpdate.send(newSiteId);
