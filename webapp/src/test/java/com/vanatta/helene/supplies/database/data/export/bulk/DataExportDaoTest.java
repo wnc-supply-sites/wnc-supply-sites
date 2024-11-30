@@ -19,7 +19,7 @@ class DataExportDaoTest {
   @Test
   void queriesForBulkSync() {
     assertThat(DataExportDao.fetchAllSites(TestConfiguration.jdbiTest)).isNotEmpty();
-    assertThat(DataExportDao.fetchAllSiteItems(TestConfiguration.jdbiTest));
+    assertThat(DataExportDao.fetchAllSiteItems(TestConfiguration.jdbiTest)).isNotEmpty();
   }
 
   /**
