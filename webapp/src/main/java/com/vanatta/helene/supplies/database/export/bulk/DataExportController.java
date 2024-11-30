@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.export;
+package com.vanatta.helene.supplies.database.export.bulk;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.filters.FilterDataDao;
@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for special export data endpoints, these are used to export all data from the system
- * (generally as a one-off to seed data in a remote system). After the data is seeded, we send any
- * data updates to a webhook.
+ * Controller for special bulk data export endpoints. These endpoints serve large JSON data payloads
+ * useful for grabbing all the data.
+ *
+ * <p>For sending updates when item status changes, see classes like {@see SendSiteUpdate}
  */
 @RestController
 @AllArgsConstructor

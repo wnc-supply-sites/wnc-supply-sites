@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.export;
+package com.vanatta.helene.supplies.database.export.bulk;
 
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public class DataExportDao {
     String overSupply;
   }
 
-  public static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
+  static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
     String query = buildFetchInventoryQuery(null);
     return jdbi
         .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())
