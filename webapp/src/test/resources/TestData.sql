@@ -4,10 +4,6 @@ delete from site_item;
 delete from item;
 delete from site;
 
-delete from webhook_auth_secret;
-insert into webhook_auth_secret(secret) values('open-sesame');
-
-
 -- site1, in Watauga county            
 insert into site(name, address, city, county_id, state, website, site_type_id) values(
 'site1', 'address1', 'city1', (select id from county where name = 'Watauga'), 'NC', 'site1website',

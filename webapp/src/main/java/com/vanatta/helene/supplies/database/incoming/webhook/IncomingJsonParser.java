@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.incoming.webhook;
 import com.google.gson.Gson;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,15 +22,19 @@ import org.springframework.stereotype.Component;
 // @AllArgsConstructor
 @Slf4j
 public class IncomingJsonParser {
-  private final WebhookSecret webhookSecret;
   private static final Gson gson = new Gson();
+  private final String authSecret;
   // max length is very large here. Intended to future proof us a bit,
   // but still avoid running a lot of processing for input that
   // is clearly too long to be legit.
   private static final int INPUT_MAX_CHARACTER_LENGTH = 6400;
 
-  public IncomingJsonParser(Jdbi jdbi) {
-    webhookSecret = new WebhookSecret(jdbi);
+  public IncomingJsonParser(@Value("${webhook.auth.secret}") String authSecret) {
+    this.authSecret = authSecret;
+    if (authSecret == null || authSecret.isBlank()) {
+      throw new IllegalArgumentException(
+          "Webhook secret not specified! SET THE ENVIRONMENT VARIABLE: 'WEBHOOK_SECRET'");
+    }
   }
 
   /**
@@ -40,14 +44,17 @@ public class IncomingJsonParser {
   public static class BadAuthException extends IllegalArgumentException {
     public BadAuthException(String input) {
       super(
-          "No auth-secret, or invalid value found in input, input:" + input == null
-              ? null
-              : input.substring(0, Math.min(200, input.length())));
+          "No auth-secret, or invalid value found in input, input:"
+              + input.substring(0, Math.min(200, input.length())));
     }
   }
 
   /** Converts String input from Make endpoint to a class object. */
   public <T> T parse(Class<T> jsonClass, String input) {
+    if (input == null) {
+      throw new IllegalArgumentException("No incoming webhook data was received.");
+    }
+
     if (input.length() > INPUT_MAX_CHARACTER_LENGTH) {
       log.warn("Input rejected, too long! {}", input);
       throw new IllegalArgumentException("Input too long");
@@ -59,7 +66,7 @@ public class IncomingJsonParser {
     String json = cleanupString(input);
 
     AuthJson authJson = gson.fromJson(json, AuthJson.class);
-    if (authJson.authSecret != null && webhookSecret.isValid(authJson.authSecret)) {
+    if (authSecret.equals(authJson.authSecret)) {
       return gson.fromJson(json, jsonClass);
     } else {
       throw new BadAuthException(json);

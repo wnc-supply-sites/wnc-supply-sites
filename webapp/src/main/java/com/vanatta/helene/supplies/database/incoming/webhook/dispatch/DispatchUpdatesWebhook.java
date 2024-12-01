@@ -12,15 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@AllArgsConstructor
 public class DispatchUpdatesWebhook {
 
-  private final IncomingJsonParser incomingJsonParser;
   private final Jdbi jdbi;
+  private final IncomingJsonParser incomingJsonParser;
 
-  DispatchUpdatesWebhook(Jdbi jdbi) {
-    this.jdbi = jdbi;
-    this.incomingJsonParser = new IncomingJsonParser(jdbi);
-  }
 
   @PostMapping("/webhook/needs-request-update")
   ResponseEntity<String> updateNeedsRequest(@RequestBody String body) {

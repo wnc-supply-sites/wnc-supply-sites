@@ -52,6 +52,8 @@ sudo -u postgres psql
 - Finally, the app can be launched via Intellj IDE, main class is `SuppliesDatabaseApplication.java`
   - The app can also be likely be run via gradle `./gradlew bootRun` (not well tested/vetted, but should work)
 
+- A few environment variables need to be set. This can be done in the run config in IntelliJ:
+  - WEBHOOK_SECRET  (can be set to any value)
 
 ### Development - Running unit tests
 

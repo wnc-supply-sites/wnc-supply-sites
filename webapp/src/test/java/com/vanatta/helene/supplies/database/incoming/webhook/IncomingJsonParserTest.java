@@ -2,7 +2,6 @@ package com.vanatta.helene.supplies.database.incoming.webhook;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.incoming.webhook.dispatch.DispatchUpdatesWebhook;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import java.util.List;
@@ -13,8 +12,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class IncomingJsonParserTest {
-  private final IncomingJsonParser incomingJsonParser =
-      new IncomingJsonParser(TestConfiguration.jdbiTest);
+  private final IncomingJsonParser incomingJsonParser = new IncomingJsonParser("open-sesame");
+
+  @Test
+  void authSecretMustBeSpecified() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new IncomingJsonParser(null));
+    Assertions.assertThrows(IllegalArgumentException.class, () -> new IncomingJsonParser(""));
+  }
 
   @Nested
   class AuthIsChecked {
