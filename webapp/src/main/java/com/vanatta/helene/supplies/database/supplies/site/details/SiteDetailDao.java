@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.site.details;
+package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

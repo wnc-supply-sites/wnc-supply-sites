@@ -1,9 +1,9 @@
-package com.vanatta.helene.supplies.database.filters;
+package com.vanatta.helene.supplies.database.supplies.filters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.filters.FilterDataController;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

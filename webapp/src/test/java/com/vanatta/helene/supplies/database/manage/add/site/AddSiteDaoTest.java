@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao.SiteDetailData;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao.SiteDetailData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

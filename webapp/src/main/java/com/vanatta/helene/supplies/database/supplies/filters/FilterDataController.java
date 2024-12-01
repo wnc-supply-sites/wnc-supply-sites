@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.filters;
+package com.vanatta.helene.supplies.database.supplies.filters;
 
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import lombok.AllArgsConstructor;

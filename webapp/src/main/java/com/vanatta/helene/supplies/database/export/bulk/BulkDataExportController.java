@@ -3,6 +3,9 @@ package com.vanatta.helene.supplies.database.export.bulk;
 import com.google.gson.Gson;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,23 +21,24 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class BulkDataExportController {
 
-  private static final Gson gson = new Gson();
   private final Jdbi jdbi;
 
   @GetMapping("/export/data")
-  ResponseEntity<String> exportData() {
+  ResponseEntity<ExportDataJson> exportData() {
     List<String> items = BulkDataExportDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
 
     return ResponseEntity.ok(
-        String.format(
-            """
-       {
-          "items":%s,
-          "sites":%s,
-          "needRequests":%s
-        }
-    """,
-            gson.toJson(items), gson.toJson(sites), gson.toJson()));
+        ExportDataJson.builder().items(items).sites(sites).needRequests(List.of()).build());
+  }
+
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ExportDataJson {
+    List<String> items;
+    List<BulkDataExportDao.SiteExportJson> sites;
+    List<String> needRequests;
   }
 }

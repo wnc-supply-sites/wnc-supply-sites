@@ -1,7 +1,8 @@
-package com.vanatta.helene.supplies.database.site.details;
+package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailController;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.site.details;
+package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.CountyListing;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao.SiteDetailData;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao.SiteDetailData;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;

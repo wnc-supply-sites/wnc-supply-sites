@@ -1,9 +1,8 @@
 package com.vanatta.helene.supplies.database;
 
+import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
-
-import java.util.List;
 
 public class TestConfiguration {
   public static final Jdbi jdbiTest =
@@ -101,9 +100,22 @@ public class TestConfiguration {
                 (select id from item_status where name = 'Needed')
                )
             """,
-            // insert a "dummy" county, where no site is in that county (this county is considered 'not active')
+            // insert a "dummy" county, where no site is in that county (this county is considered
+            // 'not active')
             """
               insert into county(name) values('dummy') on conflict do nothing
+            """,
+            """
+            insert into dispatch_request(id, public_id, site_id)
+            values( -1, '#1', (select id from site where name = 'site1'))
+            """,
+            """
+            insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
+            values(
+              -1,
+              (select id from item where name = 'water'),
+              (select id from item_status where name = 'Needed')
+            )
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));
   }

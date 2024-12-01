@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;

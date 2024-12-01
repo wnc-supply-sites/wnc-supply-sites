@@ -6,7 +6,7 @@ import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
-import com.vanatta.helene.supplies.database.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;

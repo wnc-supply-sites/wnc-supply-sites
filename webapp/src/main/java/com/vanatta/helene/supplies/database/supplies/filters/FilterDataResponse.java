@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.filters;
+package com.vanatta.helene.supplies.database.supplies.filters;
 
 import java.util.List;
 import lombok.Builder;

@@ -3,14 +3,15 @@ package com.vanatta.helene.supplies.database.export.bulk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SequencedCollection;
 import java.util.function.Function;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
-public class BulkDataExportDao {
+class BulkDataExportDao {
 
-  public static List<String> getAllItems(Jdbi jdbi) {
+  static List<String> getAllItems(Jdbi jdbi) {
     String query =
         """
           select name from item order by lower(name)
@@ -18,34 +19,36 @@ public class BulkDataExportDao {
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
 
-  public static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
+  static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
     String fetchSiteDataQuery =
         """
-        select
-          s.name siteName,
-          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
-          s.contact_number,
-          s.address,
-          s.city,
-          s.state,
-          s.website,
-          c.name county,
-          case when not active
-            then 'Closed'
-            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
-          end donationStatus,
-          s.active,
-          string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
-          string_agg(i.name, ',') filter (where its.name in ('Needed')) needed,
-          string_agg(i.name, ',') filter (where its.name in ('Available')) available,
-          string_agg(i.name, ',') filter (where its.name in ('Oversupply')) oversupply
-        from site s
-        join county c on c.id = s.county_id
-        join site_type st on st.id = s.site_type_id
-        left join site_item si on s.id = si.site_id
-        left join item i on i.id = si.item_id
-        left join item_status its on its.id = si.item_status_id
-        """;
+            select
+              s.name siteName,
+              case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
+              s.contact_number,
+              s.address,
+              s.city,
+              s.state,
+              s.website,
+              c.name county,
+              case when not active
+                then 'Closed'
+                else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
+              end donationStatus,
+              s.active,
+              string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
+              string_agg(i.name, ',') filter (where its.name in ('Needed')) needed,
+              string_agg(i.name, ',') filter (where its.name in ('Available')) available,
+              string_agg(i.name, ',') filter (where its.name in ('Oversupply')) oversupply
+            from site s
+            join county c on c.id = s.county_id
+            join site_type st on st.id = s.site_type_id
+            left join site_item si on s.id = si.site_id
+            left join item i on i.id = si.item_id
+            left join item_status its on its.id = si.item_status_id
+            group by s.name, siteType, s.contact_number, s.address, s.city, 
+             s.state, s.website, county, donationStatus, s.active
+            """;
 
     return jdbi
         .withHandle(
@@ -123,4 +126,10 @@ public class BulkDataExportDao {
     String available;
     String overSupply;
   }
+
+
+  public static SequencedCollection<Object> getAllNeedsRequests() {
+  }
+
+
 }

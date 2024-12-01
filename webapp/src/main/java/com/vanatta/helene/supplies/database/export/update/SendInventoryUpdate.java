@@ -1,6 +1,5 @@
 package com.vanatta.helene.supplies.database.export.update;
 
-import com.vanatta.helene.supplies.database.export.bulk.BulkDataExportDao;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.ArrayList;
 import java.util.Arrays;
