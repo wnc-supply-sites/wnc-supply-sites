@@ -3,10 +3,11 @@ package com.vanatta.helene.supplies.database.export.bulk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.SequencedCollection;
 import java.util.function.Function;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
 
 class BulkDataExportDao {
@@ -46,7 +47,7 @@ class BulkDataExportDao {
             left join site_item si on s.id = si.site_id
             left join item i on i.id = si.item_id
             left join item_status its on its.id = si.item_status_id
-            group by s.name, siteType, s.contact_number, s.address, s.city, 
+            group by s.name, siteType, s.contact_number, s.address, s.city,
              s.state, s.website, county, donationStatus, s.active
             """;
 
@@ -127,9 +128,75 @@ class BulkDataExportDao {
     String overSupply;
   }
 
-
-  public static SequencedCollection<Object> getAllNeedsRequests() {
+  /** Fetche all needs requests (dispatch_requests) */
+  public static List<NeedRequest> getAllNeedsRequests(Jdbi jdbi) {
+    String query =
+        """
+            select
+              dr.public_id needRequestId,
+              s.name site,
+              dr.status,
+              dr.priority,
+              string_agg(i.name, ',') filter (where its.name in ('Needed')) suppliesNeeded,
+              string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) suppliesUrgentlyNeeded
+            from dispatch_request dr
+            join dispatch_request_item dri on dri.dispatch_request_id = dr.id
+            join item i on i.id = dri.item_id
+            join item_status its on its.id = dri.item_status_id
+            join site s on s.id = dr.site_id
+            group by dr.public_id, s.name, dr.status, dr.priority
+            order by needRequestId;
+            """;
+    return jdbi
+        .withHandle(
+            handle ->
+                handle
+                    .createQuery(query) //
+                    .mapToBean(NeedRequestDbResult.class)
+                    .list())
+        .stream()
+        .map(NeedRequest::new)
+        .toList();
   }
 
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class NeedRequestDbResult {
+    String needRequestId;
+    String site;
+    String status;
+    String priority;
 
+    /** Comma delimited */
+    String suppliesNeeded;
+
+    /** Comma delimited */
+    String suppliesUrgentlyNeeded;
+  }
+
+  @Value
+  public static class NeedRequest {
+    String needRequestId;
+    String site;
+    String status;
+    String priority;
+    List<String> suppliesNeeded;
+    List<String> suppliesUrgentlyNeeded;
+
+    NeedRequest(NeedRequestDbResult dbResult) {
+      this.needRequestId = dbResult.needRequestId;
+      this.site = dbResult.site;
+      this.status = dbResult.status;
+      this.priority = dbResult.priority;
+      this.suppliesNeeded =
+          dbResult.suppliesNeeded == null
+              ? List.of()
+              : Arrays.asList(dbResult.suppliesNeeded.split(","));
+      this.suppliesUrgentlyNeeded =
+          dbResult.suppliesUrgentlyNeeded == null
+              ? List.of()
+              : Arrays.asList(dbResult.suppliesUrgentlyNeeded.split(","));
+    }
+  }
 }

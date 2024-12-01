@@ -24,8 +24,13 @@ class BulkDataExportDaoTest {
    */
   @Test
   void getDispatchRequest() {
-    var needRequest = BulkDataExportDao.getAllNeedsRequests().getFirst();
+    var needRequest = BulkDataExportDao.getAllNeedsRequests(TestConfiguration.jdbiTest).getFirst();
 
-
+    assertThat(needRequest.getNeedRequestId()).isEqualTo("#1");
+    assertThat(needRequest.getSite()).isEqualTo("site6");
+    assertThat(needRequest.getStatus()).isEqualTo("NEW");
+    assertThat(needRequest.getPriority()).isEqualTo("Needed");
+    assertThat(needRequest.getSuppliesNeeded()).contains("water", "used clothes");
+    assertThat(needRequest.getSuppliesUrgentlyNeeded()).contains("gloves");
   }
 }

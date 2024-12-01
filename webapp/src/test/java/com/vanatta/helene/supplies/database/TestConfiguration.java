@@ -52,6 +52,12 @@ public class TestConfiguration {
                    (select id from site_type where name = 'Distribution Center')
                 );
                 """,
+            """
+              insert into site(name, address, city, county_id, state, website, site_type_id) values(
+                 'site6', 'address6', 'city6', (select id from county where name = 'Watauga'), 'NC', 'site6website',
+                 (select id from site_type where name = 'Distribution Center')
+              );
+              """,
             "insert into item(name) values('water')",
             "insert into item(name) values('gloves')",
             "insert into item(name) values('used clothes')",
@@ -107,7 +113,7 @@ public class TestConfiguration {
             """,
             """
             insert into dispatch_request(id, public_id, site_id)
-            values( -1, '#1', (select id from site where name = 'site1'))
+            values( -1, '#1', (select id from site where name = 'site6'))
             """,
             """
             insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
@@ -115,6 +121,22 @@ public class TestConfiguration {
               -1,
               (select id from item where name = 'water'),
               (select id from item_status where name = 'Needed')
+            )
+            """,
+            """
+            insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
+            values(
+              -1,
+              (select id from item where name = 'used clothes'),
+              (select id from item_status where name = 'Needed')
+            )
+            """,
+            """
+            insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
+            values(
+              -1,
+              (select id from item where name = 'gloves'),
+              (select id from item_status where name = 'Urgently Needed')
             )
             """)
         .forEach(sql -> jdbiTest.withHandle(handle -> handle.createUpdate(sql).execute()));

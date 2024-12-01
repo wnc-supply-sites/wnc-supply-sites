@@ -1,6 +1,5 @@
 package com.vanatta.helene.supplies.database.export.bulk;
 
-import com.google.gson.Gson;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +26,14 @@ public class BulkDataExportController {
   ResponseEntity<ExportDataJson> exportData() {
     List<String> items = BulkDataExportDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
+    List<BulkDataExportDao.NeedRequest> needRequests = BulkDataExportDao.getAllNeedsRequests(jdbi);
 
     return ResponseEntity.ok(
-        ExportDataJson.builder().items(items).sites(sites).needRequests(List.of()).build());
+        ExportDataJson.builder() //
+            .items(items)
+            .sites(sites)
+            .needRequests(needRequests)
+            .build());
   }
 
   @Data
@@ -39,6 +43,6 @@ public class BulkDataExportController {
   public static class ExportDataJson {
     List<String> items;
     List<BulkDataExportDao.SiteExportJson> sites;
-    List<String> needRequests;
+    List<BulkDataExportDao.NeedRequest> needRequests;
   }
 }

@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.supplies.filters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.supplies.filters.FilterDataController;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -41,6 +40,6 @@ class FilterDataControllerTest {
     // site3 is not active
     assertThat(response.getSites()).doesNotContain("site3");
     // all active sites should be returned
-    assertThat(response.getSites()).hasSize(4);
+    assertThat(response.getSites()).hasSize(5);
   }
 }
