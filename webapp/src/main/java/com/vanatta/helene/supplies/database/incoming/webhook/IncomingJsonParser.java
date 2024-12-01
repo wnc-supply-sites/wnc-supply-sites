@@ -65,11 +65,15 @@ public class IncomingJsonParser {
 
     String json = cleanupString(input);
 
-    AuthJson authJson = gson.fromJson(json, AuthJson.class);
-    if (authSecret.equals(authJson.authSecret)) {
-      return gson.fromJson(json, jsonClass);
-    } else {
-      throw new BadAuthException(json);
+    try {
+      AuthJson authJson = gson.fromJson(json, AuthJson.class);
+      if (authSecret.equals(authJson.authSecret)) {
+        return gson.fromJson(json, jsonClass);
+      } else {
+        throw new BadAuthException(json);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Error parsing JSON: " + json, e);
     }
   }
 
