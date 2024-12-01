@@ -29,36 +29,6 @@ public class SendInventoryUpdate {
     }
   }
 
-  /**
-   * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
-   * values, we put those into lists.
-   */
-  @Data
-  @NoArgsConstructor
-  public static class SiteItemExportJson {
-    String siteName;
-
-    List<String> urgentlyNeeded;
-    List<String> needed;
-    List<String> available;
-    List<String> oversupply;
-
-    SiteItemExportJson(BulkDataExportDao.SiteItemResult result) {
-      this.siteName = result.getSiteName();
-      this.urgentlyNeeded =
-          extractField(result, BulkDataExportDao.SiteItemResult::getUrgentlyNeeded);
-      this.needed = extractField(result, BulkDataExportDao.SiteItemResult::getNeeded);
-      this.available = extractField(result, BulkDataExportDao.SiteItemResult::getAvailable);
-      this.oversupply = extractField(result, BulkDataExportDao.SiteItemResult::getOverSupply);
-    }
-
-    private static List<String> extractField(
-        BulkDataExportDao.SiteItemResult result,
-        Function<BulkDataExportDao.SiteItemResult, String> mapping) {
-      String value = mapping.apply(result);
-      return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
-    }
-  }
 
   static SiteItemExportJson fetchAllItemsForSite(Jdbi jdbi, long siteId) {
     String query =
@@ -83,8 +53,53 @@ public class SendInventoryUpdate {
                 handle
                     .createQuery(query)
                     .bind("siteId", siteId)
-                    .mapToBean(BulkDataExportDao.SiteItemResult.class)
+                    .mapToBean(SiteDataResult.class)
                     .one());
     return new SiteItemExportJson(result);
+  }
+
+  /** Represents DB data for one site with all of its inventory availability and needs. */
+  @Data
+  @NoArgsConstructor
+  public static class SiteDataResult {
+    String siteName;
+
+    /** Items are encoded as a comma delimited list */
+    String urgentlyNeeded;
+    String needed;
+    String available;
+    String overSupply;
+  }
+
+
+  /**
+   * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
+   * values, we put those into lists.
+   */
+  @Data
+  @NoArgsConstructor
+  public static class SiteItemExportJson {
+    String siteName;
+
+    List<String> urgentlyNeeded;
+    List<String> needed;
+    List<String> available;
+    List<String> oversupply;
+
+    SiteItemExportJson(SiteDataResult result) {
+      this.siteName = result.getSiteName();
+      this.urgentlyNeeded =
+          extractField(result, SiteDataResult::getUrgentlyNeeded);
+      this.needed = extractField(result, SiteDataResult::getNeeded);
+      this.available = extractField(result, SiteDataResult::getAvailable);
+      this.oversupply = extractField(result, SiteDataResult::getOverSupply);
+    }
+
+    private static List<String> extractField(
+        SiteDataResult result,
+        Function<SiteDataResult, String> mapping) {
+      String value = mapping.apply(result);
+      return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
+    }
   }
 }

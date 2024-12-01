@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
-/** Sends updates site to "Make.com" */
+/**
+ * Sends site updates "Make". For example, if a site updates its contact info, website, address. On
+ * any such update, we send a full snapshot of the sites data.
+ */
 @Slf4j
 @AllArgsConstructor
 public class SendSiteUpdate {
@@ -24,7 +27,7 @@ public class SendSiteUpdate {
     }
     new Thread(
             () -> {
-              SiteExportJson siteExportJson = new SiteExportJson(lookupSite(jdbi, siteId));
+              SiteExportJson siteExportJson = lookupSite(jdbi, siteId);
               siteExportJson.setOldName(oldName);
               HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
@@ -37,14 +40,14 @@ public class SendSiteUpdate {
     }
     new Thread(
             () -> {
-              var dbResult = lookupSite(jdbi, siteId);
-              SiteExportJson siteExportJson = new SiteExportJson(dbResult);
+              var siteExportJson = lookupSite(jdbi, siteId);
+              siteExportJson.setOldName(siteExportJson.getSiteName());
               HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
         .start();
   }
 
-  static SiteExportDataResult lookupSite(Jdbi jdbi, long siteId) {
+  static SiteExportJson lookupSite(Jdbi jdbi, long siteId) {
     String fetchByIdQuery =
         """
             select
@@ -67,13 +70,15 @@ public class SendSiteUpdate {
             where s.id = :siteId
             """;
 
-    return jdbi.withHandle(
-        handle ->
-            handle
-                .createQuery(fetchByIdQuery)
-                .bind("siteId", siteId)
-                .mapToBean(SiteExportDataResult.class)
-                .one());
+    var result =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(fetchByIdQuery)
+                    .bind("siteId", siteId)
+                    .mapToBean(SiteExportDataResult.class)
+                    .one());
+    return new SiteExportJson(result);
   }
 
   /** Data from DB for a single site. */

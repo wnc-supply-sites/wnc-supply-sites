@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.export.bulk;
 
 import com.google.gson.Gson;
-import com.vanatta.helene.supplies.database.filters.FilterDataDao;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -24,17 +23,18 @@ public class BulkDataExportController {
 
   @GetMapping("/export/data")
   ResponseEntity<String> exportData() {
-    List<String> items = FilterDataDao.getAllItems(jdbi);
+    List<String> items = BulkDataExportDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
 
-
     return ResponseEntity.ok(
-    String.format("""
+        String.format(
+            """
        {
           "items":%s,
           "sites":%s,
           "needRequests":%s
         }
-    """, gson.toJson(items), gson.toJson(sites), gson.toJson( )));
+    """,
+            gson.toJson(items), gson.toJson(sites), gson.toJson()));
   }
 }

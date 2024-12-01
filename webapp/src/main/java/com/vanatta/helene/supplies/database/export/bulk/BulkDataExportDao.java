@@ -1,6 +1,5 @@
 package com.vanatta.helene.supplies.database.export.bulk;
 
-import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +9,51 @@ import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
 public class BulkDataExportDao {
+
+  public static List<String> getAllItems(Jdbi jdbi) {
+    String query =
+        """
+          select name from item order by lower(name)
+        """;
+    return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
+  }
+
+  public static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
+    String fetchSiteDataQuery =
+        """
+        select
+          s.name siteName,
+          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
+          s.contact_number,
+          s.address,
+          s.city,
+          s.state,
+          s.website,
+          c.name county,
+          case when not active
+            then 'Closed'
+            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
+          end donationStatus,
+          s.active,
+          string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
+          string_agg(i.name, ',') filter (where its.name in ('Needed')) needed,
+          string_agg(i.name, ',') filter (where its.name in ('Available')) available,
+          string_agg(i.name, ',') filter (where its.name in ('Oversupply')) oversupply
+        from site s
+        join county c on c.id = s.county_id
+        join site_type st on st.id = s.site_type_id
+        left join site_item si on s.id = si.site_id
+        left join item i on i.id = si.item_id
+        left join item_status its on its.id = si.item_status_id
+        """;
+
+    return jdbi
+        .withHandle(
+            handle -> handle.createQuery(fetchSiteDataQuery).mapToBean(SiteDataResult.class).list())
+        .stream()
+        .map(SiteExportJson::new)
+        .toList();
+  }
 
   /** Data that can be sent as JSON to sevice. */
   @Data
@@ -31,8 +75,7 @@ public class BulkDataExportDao {
     List<String> availableItems;
     List<String> oversupplyItems;
 
-
-    SiteExportJson(SiteExportDataResult result) {
+    SiteExportJson(SiteDataResult result) {
       this.siteName = result.getSiteName();
       oldName = this.siteName;
       this.siteType = Arrays.asList(result.getSiteType().split(","));
@@ -44,13 +87,24 @@ public class BulkDataExportDao {
       this.website = result.getWebsite();
       this.donationStatus = result.getDonationStatus();
       this.active = result.isActive();
+
+      this.urgentlyNeededItems = extractField(result, SiteDataResult::getUrgentlyNeeded);
+      this.neededItems = extractField(result, SiteDataResult::getNeeded);
+      this.availableItems = extractField(result, SiteDataResult::getAvailable);
+      this.oversupplyItems = extractField(result, SiteDataResult::getOverSupply);
+    }
+
+    private static List<String> extractField(
+        SiteDataResult result, Function<SiteDataResult, String> mapping) {
+      String value = mapping.apply(result);
+      return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
     }
   }
 
-  /** Data value that comes from JSON */
+  /** Represents DB data for one site. */
   @Data
   @NoArgsConstructor
-  public static class SiteExportDataResult {
+  public static class SiteDataResult {
     String siteName;
     String siteType;
     String contactNumber;
@@ -61,155 +115,12 @@ public class BulkDataExportDao {
     String website;
     String donationStatus;
     boolean active;
-  }
 
-
-
-  public static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
-    String fetchSiteDataQuery =
-        """
-        select
-          s.name siteName,
-          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
-          s.contact_number,
-          s.address,
-          s.city,
-          s.state,
-          s.website,
-          c.name county,
-          case when not active
-            then 'Closed'
-            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
-          end donationStatus,
-          s.active
-        from site s
-        join county c on c.id = s.county_id
-        join site_type st on st.id = s.site_type_id
-        """;
-
-    return jdbi
-        .withHandle(
-            handle ->
-                handle.createQuery(fetchSiteDataQuery).mapToBean(SiteExportDataResult.class).list())
-        .stream()
-        .map(SiteExportJson::new)
-        .toList();
-  }
-
-  /**
-   * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
-   * values, we put those into lists.
-   */
-  @Data
-  @NoArgsConstructor
-  public static class SiteItemExportJson {
-    String siteName;
-
-    List<String> urgentlyNeeded;
-    List<String> needed;
-    List<String> available;
-    List<String> oversupply;
-
-    /**
-     * Constructor for case where site has no inventory.
-     *
-     * @param siteName the name of the site.
-     */
-    SiteItemExportJson(String siteName) {
-      this.siteName = siteName;
-      this.needed = new ArrayList<>();
-      this.available = new ArrayList<>();
-    }
-
-    SiteItemExportJson(SiteItemResult result) {
-      this.siteName = result.getSiteName();
-      this.urgentlyNeeded = extractField(result, SiteItemResult::getUrgentlyNeeded);
-      this.needed = extractField(result, SiteItemResult::getNeeded);
-      this.available = extractField(result, SiteItemResult::getAvailable);
-      this.oversupply = extractField(result, SiteItemResult::getOverSupply);
-    }
-
-    private static List<String> extractField(
-        SiteItemResult result, Function<SiteItemResult, String> mapping) {
-      String value = mapping.apply(result);
-      return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
-    }
-  }
-
-  /**
-   * The DB result has 'needed'/'available'/... as comma delimited fields, not as a list. We need to
-   * split those values into lists before we can send the data as a JSOn.
-   */
-  @Data
-  @NoArgsConstructor
-  public static class SiteItemResult {
-    String siteName;
+    /** Items are encoded as a comma delimited list */
     String urgentlyNeeded;
+
     String needed;
     String available;
     String overSupply;
-  }
-
-  public static List<SiteItemExportJson> fetchAllSiteItems(Jdbi jdbi) {
-    String query = buildFetchInventoryQuery(null);
-    return jdbi
-        .withHandle(handle -> handle.createQuery(query).mapToBean(SiteItemResult.class).list())
-        .stream()
-        .map(SiteItemExportJson::new)
-        .toList();
-  }
-
-  /**
-   * Builds a query to fetch inventory for all sites. If provided siteId parameter is not null, then
-   * query is for just one site.
-   */
-  private static String buildFetchInventoryQuery(@Nullable Long siteId) {
-    String query =
-        """
-          select
-            s.name site_name,
-            string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
-            string_agg(i.name, ',') filter (where its.name in ('Needed')) needed,
-            string_agg(i.name, ',') filter (where its.name in ('Available')) available,
-            string_agg(i.name, ',') filter (where its.name in ('Oversupply')) oversupply
-          from site s
-          join site_item si on s.id = si.site_id
-          join item i on i.id = si.item_id
-          join item_status its on its.id = si.item_status_id
-        """;
-    if (siteId != null) {
-      query += "\nwhere s.id = :siteId";
-    }
-    query += "\ngroup by site_name";
-    return query;
-  }
-
-  public static SiteItemExportJson fetchAllSiteItemsForSite(Jdbi jdbi, long siteId) {
-    String query = buildFetchInventoryQuery(siteId);
-    var dbResult =
-        jdbi.withHandle(
-                handle ->
-                    handle
-                        .createQuery(query)
-                        .bind("siteId", siteId)
-                        .mapToBean(SiteItemResult.class)
-                        .findOne())
-            .map(SiteItemExportJson::new)
-            .orElse(null);
-    if (dbResult != null) {
-      return dbResult;
-    }
-
-    // site has no inventory, we need to look it up to find it's name and then return empty data
-    String nameLookupQuery = "select name from site where id = :siteId";
-    String siteName =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createQuery(nameLookupQuery)
-                    .bind("siteId", siteId)
-                    .mapTo(String.class)
-                    .one());
-    return new SiteItemExportJson(siteName);
   }
 }
