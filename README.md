@@ -98,6 +98,18 @@ src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364
 
 ## Prod Ops
 
+### Logs
+
+- Tail application logs
+```bash
+docker log -f webapp
+```
+
+- Tail nginx access logs (can be used to gauge if there are active users in the system)
+```bash
+sudo tail -f /var/log/nginx/access.log
+```
+
 ### Adding SSH user with sudo
 
 * Requires a public SSH key
