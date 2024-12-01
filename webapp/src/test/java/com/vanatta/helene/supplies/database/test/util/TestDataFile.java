@@ -18,6 +18,9 @@ public enum TestDataFile {
 
   // A Make encoded string that has an incorrect auth value
   INCORRECT_AUTH("/webhook/json/incorrect-auth-string.json"),
+
+  // contains a value with a quote in it. Encoded as  \\\"
+  DATA_CONTAINS_DOUBLE_QUOTE("/webhook/json/double-escaped-quote-in-value.json"),
   ;
   private final String path;
 

@@ -75,12 +75,35 @@ class IncomingJsonParserTest {
     }
 
     @Test
+    void cleanupStringWithQuoteInJsonValue() {
+      var input = TestDataFile.DATA_CONTAINS_DOUBLE_QUOTE.readData();
+
+      String output = IncomingJsonParser.cleanupString(input);
+
+      //    "{\n \"needsRequestId\":\"#1\",\n  \"status\":\"Pending\",\n
+      // \"authSecret\":\"open-sesame\"  \n}"
+      String expectedOutput =
+          """
+        { "needsRequestId":"Supply#313 - z\\"Test", "status":"Pending", "authSecret":"open-sesame"}""";
+      assertThat(output).isEqualTo(expectedOutput);
+
+    }
+
+    @Test
     void canParseToObject() {
       var input = TestDataFile.STATUS_CHANGE_JSON.readData();
       var output = incomingJsonParser.parse(DispatchUpdatesWebhook.StatusUpdateJson.class, input);
 
       assertThat(output.getNeedsRequestId()).isEqualTo("#1");
       assertThat(output.getStatus()).isEqualTo("Pending");
+    }
+
+    @Test
+    void canParseWithQuotesInValues() {
+      var input = TestDataFile.DATA_CONTAINS_DOUBLE_QUOTE.readData();
+      var output = incomingJsonParser.parse(DispatchUpdatesWebhook.StatusUpdateJson.class, input);
+
+      assertThat(output.getNeedsRequestId()).isEqualTo("z\"Test");
     }
   }
 }

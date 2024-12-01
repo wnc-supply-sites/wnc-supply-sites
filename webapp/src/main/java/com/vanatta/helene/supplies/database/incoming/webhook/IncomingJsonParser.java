@@ -65,15 +65,19 @@ public class IncomingJsonParser {
 
     String json = cleanupString(input);
 
+    AuthJson authJson = parseJson(json);
+    if (authSecret.equals(authJson.authSecret)) {
+      return gson.fromJson(json, jsonClass);
+    } else {
+      throw new BadAuthException(json);
+    }
+  }
+
+  private static AuthJson parseJson(String input) {
     try {
-      AuthJson authJson = gson.fromJson(json, AuthJson.class);
-      if (authSecret.equals(authJson.authSecret)) {
-        return gson.fromJson(json, jsonClass);
-      } else {
-        throw new BadAuthException(json);
-      }
+      return gson.fromJson(input, AuthJson.class);
     } catch (Exception e) {
-      throw new RuntimeException("Error parsing JSON: " + json, e);
+      throw new RuntimeException("Error parsing JSON: " + input, e);
     }
   }
 
@@ -102,6 +106,9 @@ public class IncomingJsonParser {
         // remove newline characters
         .replaceAll("\\\\n", "")
         // unescape double quotes, \"  -> "
+        .replaceAll("\\\\\"", "\"")
+        // unescape again, double quotes will have a double escaping
+        // Convert  \\"  to  \"
         .replaceAll("\\\\\"", "\"")
         // clean up whitespacing a little bit
         .replaceAll(" {2}", " ")
