@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
-public class DataExportDao {
+public class BulkDataExportDao {
 
   /** Data that can be sent as JSON to sevice. */
   @Data
@@ -26,6 +26,11 @@ public class DataExportDao {
     String website;
     String donationStatus;
     boolean active;
+    List<String> urgentlyNeededItems;
+    List<String> neededItems;
+    List<String> availableItems;
+    List<String> oversupplyItems;
+
 
     SiteExportJson(SiteExportDataResult result) {
       this.siteName = result.getSiteName();
@@ -58,28 +63,29 @@ public class DataExportDao {
     boolean active;
   }
 
-  private static final String fetchSiteDataQuery =
-      """
-      select
-        s.name siteName,
-        case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
-        s.contact_number,
-        s.address,
-        s.city,
-        s.state,
-        s.website,
-        c.name county,
-        case when not active
-          then 'Closed'
-          else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
-        end donationStatus,
-        s.active
-      from site s
-      join county c on c.id = s.county_id
-      join site_type st on st.id = s.site_type_id
-      """;
+
 
   public static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
+    String fetchSiteDataQuery =
+        """
+        select
+          s.name siteName,
+          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
+          s.contact_number,
+          s.address,
+          s.city,
+          s.state,
+          s.website,
+          c.name county,
+          case when not active
+            then 'Closed'
+            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
+          end donationStatus,
+          s.active
+        from site s
+        join county c on c.id = s.county_id
+        join site_type st on st.id = s.site_type_id
+        """;
 
     return jdbi
         .withHandle(
@@ -91,7 +97,27 @@ public class DataExportDao {
   }
 
   public static SiteExportJson lookupSite(Jdbi jdbi, long siteId) {
-    String fetchByIdQuery = fetchSiteDataQuery + "\nwhere s.id = :siteId";
+    String fetchByIdQuery =
+        """
+        select
+          s.name siteName,
+          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
+          s.contact_number,
+          s.address,
+          s.city,
+          s.state,
+          s.website,
+          c.name county,
+          case when not active
+            then 'Closed'
+            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
+          end donationStatus,
+          s.active
+        from site s
+        join county c on c.id = s.county_id
+        join site_type st on st.id = s.site_type_id
+        where s.id = :siteId
+        """;
 
     return new SiteExportJson(
         jdbi.withHandle(
@@ -175,10 +201,10 @@ public class DataExportDao {
         """
           select
             s.name site_name,
-            string_agg(i.name, ', ') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
-            string_agg(i.name, ', ') filter (where its.name in ('Needed')) needed,
-            string_agg(i.name, ', ') filter (where its.name in ('Available')) available,
-            string_agg(i.name, ', ') filter (where its.name in ('Oversupply')) oversupply
+            string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) urgentlyNeeded,
+            string_agg(i.name, ',') filter (where its.name in ('Needed')) needed,
+            string_agg(i.name, ',') filter (where its.name in ('Available')) available,
+            string_agg(i.name, ',') filter (where its.name in ('Oversupply')) oversupply
           from site s
           join site_item si on s.id = si.site_id
           join item i on i.id = si.item_id

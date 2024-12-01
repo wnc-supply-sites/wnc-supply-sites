@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.export;
+package com.vanatta.helene.supplies.database.export.update;
 
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +18,10 @@ public class ExportToMakeConfiguration {
   }
 
   @Bean
-  NewItemUpdate newItemUpdate(
+  SendNewItemUpdate newItemUpdate(
       @Value("${make.enabled}") boolean enabled,
       @Value("${make.webhook.newItem}") String newItemWebhook) {
-    return new NewItemUpdate(newItemWebhook, enabled);
+    return new SendNewItemUpdate(newItemWebhook, enabled);
   }
 
   @Bean

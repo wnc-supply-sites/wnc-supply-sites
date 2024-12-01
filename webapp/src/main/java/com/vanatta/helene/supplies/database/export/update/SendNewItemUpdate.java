@@ -1,11 +1,11 @@
-package com.vanatta.helene.supplies.database.export;
+package com.vanatta.helene.supplies.database.export.update;
 
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import lombok.AllArgsConstructor;
 
 /** Sends updates to 'make' that a new item was created */
 @AllArgsConstructor
-public class NewItemUpdate {
+public class SendNewItemUpdate {
   private final String webhookUrl;
   private final boolean enabled;
 

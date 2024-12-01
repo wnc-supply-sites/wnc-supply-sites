@@ -2,8 +2,8 @@ package com.vanatta.helene.supplies.database.manage.item.management;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
-import com.vanatta.helene.supplies.database.export.NewItemUpdate;
-import com.vanatta.helene.supplies.database.export.SendInventoryUpdate;
+import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
+import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ItemManagementController {
 
   private final Jdbi jdbi;
-  private final NewItemUpdate newItemUpdate;
+  private final SendNewItemUpdate sendNewItemUpdate;
   private final SendInventoryUpdate sendInventoryUpdate;
   private final DispatchRequestService dispatchRequestService;
   private final String dispatchRequestUrl;
@@ -33,12 +33,12 @@ public class ItemManagementController {
 
   public ItemManagementController(
       Jdbi jdbi,
-      NewItemUpdate newItemUpdate,
+      SendNewItemUpdate sendNewItemUpdate,
       SendInventoryUpdate sendInventoryUpdate,
       @Value("${make.webhook.dispatch.new}") String webhook,
       @Value("${make.enabled}") boolean makeEnabled) {
     this.jdbi = jdbi;
-    this.newItemUpdate = newItemUpdate;
+    this.sendNewItemUpdate = sendNewItemUpdate;
     this.sendInventoryUpdate = sendInventoryUpdate;
     this.dispatchRequestService = DispatchRequestService.create(jdbi);
     this.dispatchRequestUrl = webhook;
@@ -70,7 +70,7 @@ public class ItemManagementController {
       log.warn("Failed to add item, already exists. Params: {}", params);
       return ResponseEntity.badRequest().body("Item not added, already exists");
     }
-    newItemUpdate.sendNewItem(itemName);
+    sendNewItemUpdate.sendNewItem(itemName);
     return updateSiteItemActive(params);
   }
 

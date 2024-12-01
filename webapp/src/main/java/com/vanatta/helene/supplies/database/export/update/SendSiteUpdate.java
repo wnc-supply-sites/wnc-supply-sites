@@ -1,6 +1,6 @@
-package com.vanatta.helene.supplies.database.export;
+package com.vanatta.helene.supplies.database.export.update;
 
-import com.vanatta.helene.supplies.database.export.bulk.DataExportDao;
+import com.vanatta.helene.supplies.database.export.bulk.BulkDataExportDao;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class SendSiteUpdate {
     }
     new Thread(
             () -> {
-              DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);
+              BulkDataExportDao.SiteExportJson siteExportJson = BulkDataExportDao.lookupSite(jdbi, siteId);
               siteExportJson.setOldName(oldName);
               HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
@@ -34,7 +34,7 @@ public class SendSiteUpdate {
     }
     new Thread(
             () -> {
-              DataExportDao.SiteExportJson siteExportJson = DataExportDao.lookupSite(jdbi, siteId);
+              BulkDataExportDao.SiteExportJson siteExportJson = BulkDataExportDao.lookupSite(jdbi, siteId);
               HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
             })
         .start();

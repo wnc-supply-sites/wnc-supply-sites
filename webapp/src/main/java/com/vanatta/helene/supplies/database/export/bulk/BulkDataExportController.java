@@ -17,26 +17,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @AllArgsConstructor
-public class DataExportController {
+public class BulkDataExportController {
 
   private static final Gson gson = new Gson();
   private final Jdbi jdbi;
 
-  @GetMapping("/export/items")
-  ResponseEntity<String> itemList() {
+  @GetMapping("/export/data")
+  ResponseEntity<String> exportData() {
     List<String> items = FilterDataDao.getAllItems(jdbi);
-    return ResponseEntity.ok("{\"items\":" + gson.toJson(items) + "}");
+    List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
+
+    return ResponseEntity.ok(
+    String.format("""
+       {
+          "items":%s,
+          "sites":%s
+        }
+    """, gson.toJson(items), gson.toJson(sites)));
+//    return ResponseEntity.ok("{\"items\":" + gson.toJson(items) + "}");
   }
 
-  @GetMapping("/export/site-list")
-  ResponseEntity<String> siteList() {
-    List<DataExportDao.SiteExportJson> sites = DataExportDao.fetchAllSites(jdbi);
-    return ResponseEntity.ok("{\"sites\":" + gson.toJson(sites) + "}");
-  }
 
   @GetMapping("/export/site-items")
   ResponseEntity<String> siteItems() {
-    List<DataExportDao.SiteItemExportJson> sites = DataExportDao.fetchAllSiteItems(jdbi);
+    List<BulkDataExportDao.SiteItemExportJson> sites = BulkDataExportDao.fetchAllSiteItems(jdbi);
     return ResponseEntity.ok("{\"sites-items\":" + gson.toJson(sites) + "}");
   }
 }
