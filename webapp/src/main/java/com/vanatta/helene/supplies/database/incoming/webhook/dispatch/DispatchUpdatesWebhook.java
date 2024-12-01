@@ -27,7 +27,7 @@ public class DispatchUpdatesWebhook {
       return ResponseEntity.badRequest().body("rejected");
     }
 
-    log.info("Webhook needs request update received data: {}", body);
+    log.info("Webhook - received NeedsRequest Update! New Data: {}", body);
     if (incoming.needsRequestId == null || incoming.status == null) {
       log.warn("Invalid request received, empty data!! Data: {}", body);
       return ResponseEntity.badRequest().body("missing data");
