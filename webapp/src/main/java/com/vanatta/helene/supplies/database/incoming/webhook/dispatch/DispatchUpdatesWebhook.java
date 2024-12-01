@@ -22,12 +22,13 @@ public class DispatchUpdatesWebhook {
 
   @PostMapping("/webhook/needs-request-update")
   ResponseEntity<String> updateNeedsRequest(@RequestBody String body) {
+    log.info("Webhook - received NeedsRequest Update! New Data: {}", body);
+
     StatusUpdateJson incoming = gson.fromJson(body, StatusUpdateJson.class);
     if (!webhookSecret.isValid(incoming.authSecret)) {
       return ResponseEntity.badRequest().body("rejected");
     }
 
-    log.info("Webhook - received NeedsRequest Update! New Data: {}", body);
     if (incoming.needsRequestId == null || incoming.status == null) {
       log.warn("Invalid request received, empty data!! Data: {}", body);
       return ResponseEntity.badRequest().body("missing data");
