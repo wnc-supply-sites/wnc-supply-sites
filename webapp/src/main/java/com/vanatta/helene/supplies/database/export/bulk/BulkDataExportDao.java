@@ -96,39 +96,6 @@ public class BulkDataExportDao {
         .toList();
   }
 
-  public static SiteExportJson lookupSite(Jdbi jdbi, long siteId) {
-    String fetchByIdQuery =
-        """
-        select
-          s.name siteName,
-          case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
-          s.contact_number,
-          s.address,
-          s.city,
-          s.state,
-          s.website,
-          c.name county,
-          case when not active
-            then 'Closed'
-            else case when s.accepting_donations then 'Accepting Donations' else 'Not Accepting Donations' end
-          end donationStatus,
-          s.active
-        from site s
-        join county c on c.id = s.county_id
-        join site_type st on st.id = s.site_type_id
-        where s.id = :siteId
-        """;
-
-    return new SiteExportJson(
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createQuery(fetchByIdQuery)
-                    .bind("siteId", siteId)
-                    .mapToBean(SiteExportDataResult.class)
-                    .one()));
-  }
-
   /**
    * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
    * values, we put those into lists.

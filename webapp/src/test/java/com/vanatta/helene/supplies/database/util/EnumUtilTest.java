@@ -1,10 +1,9 @@
-package com.vanatta.helene.supplies.database.data;
+package com.vanatta.helene.supplies.database.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
-import com.vanatta.helene.supplies.database.util.EnumUtil;
 import org.junit.jupiter.api.Test;
 
 class EnumUtilTest {

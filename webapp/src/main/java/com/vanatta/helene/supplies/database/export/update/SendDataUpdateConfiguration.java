@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /** Config for classes that can be used to send data updates to Make. */
 @Configuration
-public class ExportToMakeConfiguration {
+public class SendDataUpdateConfiguration {
 
   @Bean
   SendSiteUpdate sendSiteUpdate(

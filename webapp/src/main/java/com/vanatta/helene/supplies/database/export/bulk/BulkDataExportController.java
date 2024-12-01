@@ -27,20 +27,14 @@ public class BulkDataExportController {
     List<String> items = FilterDataDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
 
+
     return ResponseEntity.ok(
     String.format("""
        {
           "items":%s,
-          "sites":%s
+          "sites":%s,
+          "needRequests":%s
         }
-    """, gson.toJson(items), gson.toJson(sites)));
-//    return ResponseEntity.ok("{\"items\":" + gson.toJson(items) + "}");
-  }
-
-
-  @GetMapping("/export/site-items")
-  ResponseEntity<String> siteItems() {
-    List<BulkDataExportDao.SiteItemExportJson> sites = BulkDataExportDao.fetchAllSiteItems(jdbi);
-    return ResponseEntity.ok("{\"sites-items\":" + gson.toJson(sites) + "}");
+    """, gson.toJson(items), gson.toJson(sites), gson.toJson( )));
   }
 }
