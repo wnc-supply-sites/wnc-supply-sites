@@ -24,7 +24,10 @@ public class DispatchUpdatesWebhook {
   ResponseEntity<String> updateNeedsRequest(@RequestBody String body) {
     log.info("Webhook - received NeedsRequest Update! New Data: {}", body);
 
-    StatusUpdateJson incoming = gson.fromJson(body, StatusUpdateJson.class);
+    String json = body.replaceAll("\\\\\"", "\"")
+        .replaceAll("\\\\n", "");
+
+    StatusUpdateJson incoming = gson.fromJson(json, StatusUpdateJson.class);
     if (!webhookSecret.isValid(incoming.authSecret)) {
       return ResponseEntity.badRequest().body("rejected");
     }

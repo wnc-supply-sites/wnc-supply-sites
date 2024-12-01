@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
@@ -12,8 +14,7 @@ public class TestConfiguration {
 
   public static void setupDatabase() {
     try {
-      var sql =
-          Files.readString(Path.of(TestConfiguration.class.getResource("/TestData.sql").toURI()));
+      var sql = TestDataFile.TEST_DATA_SCHEMA.readData();
       TestConfiguration.jdbiTest.withHandle(handle -> handle.createScript(sql).execute());
     } catch (Exception e) {
       throw new RuntimeException(e);

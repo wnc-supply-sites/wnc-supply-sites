@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.dispatch.DispatchDao;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.incoming.webhook.WebhookSecret;
+import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +17,7 @@ class DispatchUpdatesWebhookTest {
     TestConfiguration.setupDatabase();
   }
 
-  private static final String exampleJson =
-      "{\n \"needsRequestId\":\"#1\",\n  \"status\":\"Pending\",\n  \"authSecret\":\"open-sesame\"  \n}";
+  private static final String exampleJson = TestDataFile.STATUS_CHANGE_JSON.readData();
 
   @Test
   void acceptJsonAndUpdateDatabase() {
