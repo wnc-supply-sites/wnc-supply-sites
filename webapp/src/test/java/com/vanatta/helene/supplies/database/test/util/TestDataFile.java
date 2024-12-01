@@ -7,8 +7,17 @@ import lombok.AllArgsConstructor;
 /** Can be used to pull data from files in "test/resources" */
 @AllArgsConstructor
 public enum TestDataFile {
+  // Big data file with SQL statements to seed test database, preps for unit tests.
   TEST_DATA_SCHEMA("/TestData.sql"),
+
+  // Example input from Make for a status change JSON
   STATUS_CHANGE_JSON("/webhook/json/status-change.json"),
+
+  // A Make encoded string that is missing the auth secret
+  MISSING_AUTH("/webhook/json/no-auth-string.json"),
+
+  // A Make encoded string that has an incorrect auth value
+  INCORRECT_AUTH("/webhook/json/incorrect-auth-string.json"),
   ;
   private final String path;
 

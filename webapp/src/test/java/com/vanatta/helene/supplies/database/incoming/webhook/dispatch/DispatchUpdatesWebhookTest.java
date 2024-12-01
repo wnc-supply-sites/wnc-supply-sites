@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.dispatch.DispatchDao;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
-import com.vanatta.helene.supplies.database.incoming.webhook.WebhookSecret;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,8 +21,7 @@ class DispatchUpdatesWebhookTest {
   @Test
   void acceptJsonAndUpdateDatabase() {
     DispatchUpdatesWebhook dispatchUpdatesWebhook =
-        new DispatchUpdatesWebhook(
-            new WebhookSecret(TestConfiguration.jdbiTest), TestConfiguration.jdbiTest);
+        new DispatchUpdatesWebhook(TestConfiguration.jdbiTest);
     var response = dispatchUpdatesWebhook.updateNeedsRequest(exampleJson);
 
     assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();

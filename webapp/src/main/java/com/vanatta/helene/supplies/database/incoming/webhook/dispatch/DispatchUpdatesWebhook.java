@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.incoming.webhook.dispatch;
 
-import com.google.gson.Gson;
-import com.vanatta.helene.supplies.database.incoming.webhook.WebhookSecret;
+import com.vanatta.helene.supplies.database.incoming.webhook.IncomingJsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -13,25 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
 public class DispatchUpdatesWebhook {
 
-  private static final Gson gson = new Gson();
-  private final WebhookSecret webhookSecret;
+  private final IncomingJsonParser incomingJsonParser;
   private final Jdbi jdbi;
+
+  DispatchUpdatesWebhook(Jdbi jdbi) {
+    this.jdbi = jdbi;
+    this.incomingJsonParser = new IncomingJsonParser(jdbi);
+  }
 
   @PostMapping("/webhook/needs-request-update")
   ResponseEntity<String> updateNeedsRequest(@RequestBody String body) {
-    log.info("Webhook - received NeedsRequest Update! New Data: {}", body);
+    log.info("Webhook, received data: {}", body);
 
-    String json = body.replaceAll("\\\\\"", "\"")
-        .replaceAll("\\\\n", "");
-
-    StatusUpdateJson incoming = gson.fromJson(json, StatusUpdateJson.class);
-    if (!webhookSecret.isValid(incoming.authSecret)) {
-      return ResponseEntity.badRequest().body("rejected");
-    }
-
+    StatusUpdateJson incoming = incomingJsonParser.parse(StatusUpdateJson.class, body);
     if (incoming.needsRequestId == null || incoming.status == null) {
       log.warn("Invalid request received, empty data!! Data: {}", body);
       return ResponseEntity.badRequest().body("missing data");
@@ -51,7 +46,6 @@ public class DispatchUpdatesWebhook {
   public static class StatusUpdateJson {
     String needsRequestId;
     String status;
-    String authSecret;
   }
 
   private int updateDispatchRequest(StatusUpdateJson incoming) {
