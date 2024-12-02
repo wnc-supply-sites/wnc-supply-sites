@@ -53,13 +53,16 @@ class DispatchRequestServiceTest {
     }
   }
 
+  // public IDs of the dispatches that we will creaete in the test data setup
   static final String SITE1_NEW_DISPATCH = "#1 site1";
   static final String SITE2_PENDING_DISPATCH = "#2 site2";
   static final String SITE3_NEW_DISPATCH = "#30 site3 new";
   static final String SITE3_PENDING_DISPATCH = "#33 site3 pending";
   static final String SITE4_NO_DISPATCH = "#4 site4";
-  static final String TEST_DISPATCH = "#Test";
 
+
+  // when creating a new dispatch request, this is the public ID value that will be used.
+  static final String TEST_DISPATCH = "#Test";
   DispatchRequestService dispatchRequestService =
       new DispatchRequestService(jdbiTest, _ -> TEST_DISPATCH);
 
