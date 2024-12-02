@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class NeedRequestImportController {
 
+/*
+  // Example data
+     {airtableId=.., status=NEW,
+     needRequestId=Supply#297 - Appalachian Guard, suppiesNeeded=[],
+     suppliesUrgentlyNeeded=[Dehumidifier, Heater, Kerosene, Propane, Wood, Shelving Units]}
+*/
+
   @PostMapping("/import/update/need-request")
   ResponseEntity<String> updateNeedRequest(@RequestBody Map<String, Object> body) {
     log.info("Received import data: {}", body);

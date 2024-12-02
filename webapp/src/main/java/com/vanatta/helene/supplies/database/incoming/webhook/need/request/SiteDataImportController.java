@@ -11,9 +11,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class SiteDataImportController {
 
+/*
+  // Example input:
+   {airtableId=3, siteName=Affordable Senior Housing Foundation, siteCategory=[POD, POC],
+   publicVisibility=true, status=Accepting Donations, hours=null, streetAddress=....,
+   city=Hudson, state=NC, county=Caldwell, pointOfContact=null, email=null, phone=....,
+   website=null, facebook=null}
+*/
+
   @PostMapping("/import/update/site-data")
-  ResponseEntity<String> updateNeedRequest(@RequestBody Map<String, Object> body) {
+  ResponseEntity<String> updateSiteData(@RequestBody Map<String, Object> body) {
     log.info("Received import data: {}", body);
+
+
     return ResponseEntity.ok().build();
   }
+
+
 }

@@ -2,10 +2,12 @@ package com.vanatta.helene.supplies.database.incoming.webhook;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.incoming.webhook.dispatch.DispatchUpdatesWebhook;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +15,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class IncomingJsonParserTest {
   private final IncomingJsonParser incomingJsonParser = new IncomingJsonParser("open-sesame");
+
+  @BeforeAll
+  static void setUp() {
+    TestConfiguration.setupDatabase();
+  }
 
   @Test
   void authSecretMustBeSpecified() {
@@ -103,7 +110,7 @@ class IncomingJsonParserTest {
       var input = TestDataFile.DATA_CONTAINS_DOUBLE_QUOTE.readData();
       var output = incomingJsonParser.parse(DispatchUpdatesWebhook.StatusUpdateJson.class, input);
 
-      assertThat(output.getNeedsRequestId()).isEqualTo("z\"Test");
+      assertThat(output.getNeedsRequestId()).isEqualTo("Supply#313 - z\"Test");
     }
   }
 }
