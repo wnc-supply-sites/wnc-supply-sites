@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.incoming.webhook.need.request;
 
+import com.vanatta.helene.supplies.database.util.TrimUtil;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +20,6 @@ public class InventoryItemImportController {
 
   private final Jdbi jdbi;
 
-  /*
-    // Example input:
-    {airtableId=2, itemName=Air purifiers, descriptionTags=[]}
-  */
   @Data
   @Builder(toBuilder = true)
   @NoArgsConstructor
@@ -31,17 +28,31 @@ public class InventoryItemImportController {
     Long airtableId;
     String itemName;
     List<String> descriptionTags;
+
+    static ItemImport clean(ItemImport itemImport) {
+      if (itemImport.isMissingData()) {
+        throw new IllegalStateException();
+      }
+      return itemImport.toBuilder()
+          .itemName(TrimUtil.trim(itemImport.getItemName()))
+          .descriptionTags(TrimUtil.trim(itemImport.getDescriptionTags()))
+          .build();
+    }
+
+    boolean isMissingData() {
+      return airtableId == null || itemName == null || itemName.isBlank();
+    }
   }
 
   @PostMapping("/import/update/inventory-item")
   ResponseEntity<String> updateInventoryItem(@RequestBody ItemImport itemImport) {
     log.info("Received import data: {}", itemImport);
-    if (itemImport.airtableId == null || itemImport.itemName == null) {
+    if (itemImport.isMissingData()) {
       log.warn("Bad data received for update inventory-item: {}", itemImport);
       return ResponseEntity.badRequest().body("Missing data");
     }
 
-    itemImport = itemImport.toBuilder().itemName(itemImport.getItemName().trim()).build();
+    itemImport = ItemImport.clean(itemImport);
 
     // first try to update the item by an ID - if that fails then we'll update it by name. If both
     // fail, then it's a new item and we insert it.
