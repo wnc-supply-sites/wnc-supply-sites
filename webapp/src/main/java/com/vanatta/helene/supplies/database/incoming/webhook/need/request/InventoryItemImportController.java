@@ -24,7 +24,7 @@ public class InventoryItemImportController {
     {airtableId=2, itemName=Air purifiers, descriptionTags=[]}
   */
   @Data
-  @Builder
+  @Builder(toBuilder = true)
   @NoArgsConstructor
   @AllArgsConstructor
   public static class ItemImport {
@@ -36,6 +36,12 @@ public class InventoryItemImportController {
   @PostMapping("/import/update/inventory-item")
   ResponseEntity<String> updateInventoryItem(@RequestBody ItemImport itemImport) {
     log.info("Received import data: {}", itemImport);
+    if (itemImport.airtableId == null || itemImport.itemName == null) {
+      log.warn("Bad data received for update inventory-item: {}", itemImport);
+      return ResponseEntity.badRequest().body("Missing data");
+    }
+
+    itemImport = itemImport.toBuilder().itemName(itemImport.getItemName().trim()).build();
 
     // first try to update the item by an ID - if that fails then we'll update it by name. If both
     // fail, then it's a new item and we insert it.
