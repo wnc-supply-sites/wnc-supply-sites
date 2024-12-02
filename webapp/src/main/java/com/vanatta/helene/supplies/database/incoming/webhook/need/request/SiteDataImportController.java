@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class NeedRequestImportController {
+public class SiteDataImportController {
 
-  @PostMapping("/import/update/need-request")
+  @PostMapping("/import/update/site-data")
   ResponseEntity<String> updateNeedRequest(@RequestBody Map<String, Object> body) {
     log.info("Received import data: {}", body);
     return ResponseEntity.ok().build();
