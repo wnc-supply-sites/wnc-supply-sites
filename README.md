@@ -207,6 +207,12 @@ certbot --nginx -d wnc-supply-sites.com www.wnc-supply-sites.com
 ufw allow 443
 ```
 
+*Configure Staging*:
+
+```bash
+certbot --nginx -d staging.wnc-supply-sites.com
+```
+
 
 #### Create cron entry (renew cert)
 
