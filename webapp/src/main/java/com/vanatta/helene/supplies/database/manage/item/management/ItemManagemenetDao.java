@@ -10,22 +10,28 @@ public class ItemManagemenetDao {
 
   // TODO: handle null case (can be possible if a person is using multiple browser windows
   static ItemStatus fetchItemStatus(Jdbi jdbi, long siteId, String itemName) {
-    String query = """
+    String query =
+        """
         select ist.name
         from item_status ist
         join site_item si on si.item_status_id = ist.id
         join item i on i.id = si.item_id
         where i.name = :itemName and si.site_id = :siteId
         """;
-    String status = jdbi.withHandle(handle -> handle.createQuery(query)
-        .bind("siteId", siteId)
-        .bind("itemName", itemName)
-        .mapTo(String.class)
-        .one());
+    String status =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(query)
+                    .bind("siteId", siteId)
+                    .bind("itemName", itemName)
+                    .mapTo(String.class)
+                    .one());
     return ItemStatus.fromTextValue(status);
   }
 
-  public static void updateSiteItemActive(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
+  public static void updateSiteItemActive(
+      Jdbi jdbi, long siteId, String itemName, String itemStatus) {
     String insert =
         """
           insert into site_item(site_id, item_id, item_status_id) values
@@ -105,22 +111,41 @@ public class ItemManagemenetDao {
     ManageSiteDao.updateSiteLastUpdatedToNow(jdbi, siteId);
   }
 
-
-  /** Adds a brand new item to database, inserts into item table. */
+  /**
+   * Adds a brand new item to database, inserts into item table. No-op if the item already exists.
+   * Item will exist when this method is done.
+   *
+   * @return True if the item was added, false if the item already exists.
+   */
   public static boolean addNewItem(Jdbi jdbi, String itemName) {
-    String insert = "insert into item(name) values(:itemName)";
+    // we explicitly select for an item rather than "insert & let it fail"
+    // the latter is more performant, but we'll get error messages in the logs if we do that.
+    // The "check & insert" method does suffer from a time-of-check vs time-of-execution error
+    String select = "select id from item where name = :itemName";
 
-    try {
-      jdbi.withHandle(handle -> handle.createUpdate(insert).bind("itemName", itemName).execute());
-    } catch (Exception e) {
-      if (e.getMessage().contains("duplicate key")) {
-        return false;
-      } else {
-        throw e;
+    Long result =
+        jdbi.withHandle(
+                handle ->
+                    handle
+                        .createQuery(select)
+                        .bind("itemName", itemName)
+                        .mapTo(Long.class)
+                        .findOne())
+            .orElse(null);
+    if (result != null) {
+      return false;
+    } else {
+      try {
+        String insert = "insert into item(name) values(:itemName)";
+        jdbi.withHandle(handle -> handle.createUpdate(insert).bind("itemName", itemName).execute());
+      } catch (Exception e) {
+        if (e.getMessage().contains("duplicate key")) {
+          return false;
+        } else {
+          throw e;
+        }
       }
+      return true;
     }
-    return true;
   }
-
-
 }

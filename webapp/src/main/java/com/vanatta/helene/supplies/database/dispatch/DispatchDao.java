@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.dispatch;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.manage.item.management.ItemManagemenetDao;
 import java.util.List;
 import java.util.Optional;
 import lombok.Data;
@@ -56,8 +57,12 @@ public class DispatchDao {
             handle.createQuery(select).bind("siteName", siteName).mapTo(Long.class).findOne());
   }
 
+  /** Creates an item if it does not exist & then adds it to a given dispatch request. */
   public static void addItemToRequest(
       Jdbi jdbi, long dispatchRequestId, String item, ItemStatus itemStatus) {
+
+    // add the item first in case it does not exist.
+    ItemManagemenetDao.addNewItem(jdbi, item);
 
     String insert =
         """
@@ -67,7 +72,7 @@ public class DispatchDao {
               (select id from item where name = :itemName),
               (select id from item_status where name = :itemStatusName)
             )
-            on conflict(dispatch_request_id, item_id) 
+            on conflict(dispatch_request_id, item_id)
             do update set item_status_id = (select id from item_status where name = :itemStatusName)
             """;
 
@@ -178,7 +183,6 @@ public class DispatchDao {
           dr.public_id needRequestId,
           s.name requestingSite,
           dr.status,
-          dr.priority,
           string_agg(i.name, ',') filter (where its.name in ('Needed')) neededItems,
           string_agg(i.name, ',') filter (where its.name in ('Urgently Needed'))  urgentlyNeededItems
         from dispatch_request dr
@@ -187,7 +191,7 @@ public class DispatchDao {
         left join item_status its on its.id = dri.item_status_id
         left join item i on i.id = dri.item_id
         where dr.id = :dispatchRequestId
-        group by dr.public_id, s.name, dr.status, dr.priority
+        group by dr.public_id, s.name, dr.status
         """;
 
     var result =
@@ -207,10 +211,10 @@ public class DispatchDao {
     String needRequestId;
     String requestingSite;
     String status;
-    String priority;
 
     /** Comma delimited list of items */
     String neededItems;
+
     String urgentlyNeededItems;
   }
 }

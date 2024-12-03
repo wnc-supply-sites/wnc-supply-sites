@@ -15,6 +15,7 @@ class DispatchUpdatesWebhookTest {
   @BeforeAll
   static void setup() {
     TestConfiguration.setupDatabase();
+    TestConfiguration.setupDispatchRequests();
   }
 
   private static final String exampleJson = TestDataFile.STATUS_CHANGE_JSON.readData();

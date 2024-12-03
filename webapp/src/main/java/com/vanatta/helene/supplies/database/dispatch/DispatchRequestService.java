@@ -24,9 +24,12 @@ public class DispatchRequestService {
   public static DispatchRequestService create(Jdbi jdbi) {
     return DispatchRequestService.builder()
         .jdbi(jdbi)
-        .dispatchNumberGenerator(
-            siteName -> String.format("Supply#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName))
+        .dispatchNumberGenerator(siteName -> buildDispatchPublicId(jdbi, siteName))
         .build();
+  }
+
+  public static String buildDispatchPublicId(Jdbi jdbi, String siteName) {
+    return String.format("Supply#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName);
   }
 
   public Optional<DispatchRequestJson> removeItemFromDispatch(String siteName, String itemName) {
@@ -94,18 +97,14 @@ public class DispatchRequestService {
     String needRequestId;
     String requestingSite;
     String status;
-    String priority;
     List<String> neededItems;
     List<String> urgentlyNeededItems;
+    String priority;
 
     public DispatchRequestJson(DispatchDao.DispatchRequestDbRecord dbRecord) {
       needRequestId = dbRecord.getNeedRequestId();
       requestingSite = dbRecord.getRequestingSite();
       status = dbRecord.getStatus();
-      priority =
-          ItemStatus.fromTextValue(dbRecord.getPriority()) == ItemStatus.URGENTLY_NEEDED
-              ? DispatchPriority.P2_URGENT.getDisplayText()
-              : DispatchPriority.P3_NORMAL.getDisplayText();
       neededItems =
           dbRecord.getNeededItems() == null
               ? List.of()
@@ -114,6 +113,10 @@ public class DispatchRequestService {
           dbRecord.getUrgentlyNeededItems() == null
               ? List.of()
               : Arrays.asList(dbRecord.getUrgentlyNeededItems().split(","));
+      priority =
+          urgentlyNeededItems.isEmpty()
+              ? DispatchPriority.P3_NORMAL.getDisplayText()
+              : DispatchPriority.P2_URGENT.getDisplayText();
     }
   }
 

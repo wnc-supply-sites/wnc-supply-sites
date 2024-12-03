@@ -42,6 +42,7 @@ insert into site(name, address, city, county_id, state, website, site_type_id) v
 
 
 insert into item(name) values('water');
+insert into item(name) values('soap');
 insert into item(name) values('gloves');
 insert into item(name) values('used clothes');
 insert into item(name) values('new clothes');

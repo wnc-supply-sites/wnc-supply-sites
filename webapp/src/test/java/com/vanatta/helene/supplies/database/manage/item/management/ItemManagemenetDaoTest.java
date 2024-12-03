@@ -118,7 +118,7 @@ class ItemManagemenetDaoTest {
   }
 
   @Test
-  void duplicateItemCannotBeAdded() {
+  void duplicateItemIsNoOp() {
     ItemManagemenetDao.addNewItem(TestConfiguration.jdbiTest, "some item");
     boolean result = ItemManagemenetDao.addNewItem(TestConfiguration.jdbiTest, "SOME ITEM");
     assertThat(result).isFalse();

@@ -4,8 +4,7 @@ import com.vanatta.helene.supplies.database.util.TrimUtil;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +19,21 @@ public class InventoryItemImportController {
 
   private final Jdbi jdbi;
 
-  @Data
+  @Value
   @Builder(toBuilder = true)
-  @NoArgsConstructor
   @AllArgsConstructor
   public static class ItemImport {
     Long airtableId;
     String itemName;
     List<String> descriptionTags;
 
-    static ItemImport clean(ItemImport itemImport) {
+    ItemImport(ItemImport itemImport) {
       if (itemImport.isMissingData()) {
         throw new IllegalStateException();
       }
-      return itemImport.toBuilder()
-          .itemName(TrimUtil.trim(itemImport.getItemName()))
-          .descriptionTags(TrimUtil.trim(itemImport.getDescriptionTags()))
-          .build();
+      this.airtableId = itemImport.airtableId;
+      this.itemName = TrimUtil.trim(itemImport.itemName);
+      this.descriptionTags = TrimUtil.trim(itemImport.descriptionTags);
     }
 
     boolean isMissingData() {
@@ -46,13 +43,13 @@ public class InventoryItemImportController {
 
   @PostMapping("/import/update/inventory-item")
   ResponseEntity<String> updateInventoryItem(@RequestBody ItemImport itemImport) {
-    log.info("Received import data: {}", itemImport);
     if (itemImport.isMissingData()) {
-      log.warn("Bad data received for update inventory-item: {}", itemImport);
+      log.warn("DATA IMPORT (INCOMPLETE DATA), received item update: {}", itemImport);
       return ResponseEntity.badRequest().body("Missing data");
     }
+    log.info("DATA IMPORT, received inventory item update: {}", itemImport);
 
-    itemImport = ItemImport.clean(itemImport);
+    itemImport = new ItemImport(itemImport);
 
     // first try to update the item by an ID - if that fails then we'll update it by name. If both
     // fail, then it's a new item and we insert it.
