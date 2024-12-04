@@ -31,6 +31,8 @@ class SiteDataImportControllerTest {
           .wssId(null) // wssId being null will make us insert data.
           .airtableId((long) (Math.random() * 100_000_000))
           .siteName("SiteName " + UUID.randomUUID())
+          .donationStatus(
+              SiteDataImportController.DonationStatus.ACCEPTING_DONATIONS.getTextValue())
           .streetAddress("Fake street")
           .city("the city")
           .county("Ashe")
@@ -52,6 +54,7 @@ class SiteDataImportControllerTest {
           .wssId((long) (Math.random() * 100_000_000))
           .build();
 
+  
   /** Insert a site that we will later use for update testing. */
   @BeforeEach
   void setupSiteForUpdate() {
@@ -92,7 +95,23 @@ class SiteDataImportControllerTest {
         handle ->
             handle.createQuery(selectSiteQuery).bind("airtableId", airTableId).mapToMap().one());
   }
-
+  
+  private static void validateDataMatches(Map<String, Object> results, SiteDataImportController.SiteUpdate input) {
+    assertThat(results.get("name")).isEqualTo(input.getSiteName());
+    assertThat(results.get("address")).isEqualTo(input.getStreetAddress());
+    assertThat(results.get("city")).isEqualTo(input.getCity());
+    assertThat(results.get("county")).isEqualTo(input.getCounty());
+    assertThat(results.get("state")).isEqualTo(input.getState());
+    assertThat(results.get("contact_number")).isEqualTo(input.getPhone());
+    assertThat(results.get("website")).isEqualTo(input.getWebsite());
+    assertThat((int) results.get("airtable_id")).isEqualTo((int) input.getAirtableId().longValue());
+    assertThat(results.get("hours")).isEqualTo(input.getHours());
+    assertThat(results.get("contact_name")).isEqualTo(input.getPointOfContact());
+    assertThat(results.get("contact_email")).isEqualTo(input.getEmail());
+    assertThat(results.get("facebook")).isEqualTo(input.getFacebook());
+    
+  }
+  
   private final SiteDataImportController siteDataImportController =
       new SiteDataImportController(TestConfiguration.jdbiTest);
 
@@ -101,25 +120,18 @@ class SiteDataImportControllerTest {
     /** Insert a happy case amount, where incoming data is the full payload with every field set. */
     @Test
     void insert() {
-      var input = sampleData;
+      var input =
+          sampleData.toBuilder()
+              .siteName("SiteName " + UUID.randomUUID())
+              .airtableId((long) (Math.random() * 100_000_000))
+              .build();
 
       var response = siteDataImportController.updateSiteData(input);
 
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       // fetch results from DB and validate that everything is updated
       Map<String, Object> results = querySite(input.getAirtableId());
-      assertThat(results.get("name")).isEqualTo(input.getSiteName());
-      assertThat(results.get("address")).isEqualTo(input.getStreetAddress());
-      assertThat(results.get("city")).isEqualTo(input.getCity());
-      assertThat(results.get("county")).isEqualTo(input.getCounty());
-      assertThat(results.get("state")).isEqualTo(input.getState());
-      assertThat(results.get("contact_number")).isEqualTo(input.getPhone());
-      assertThat(results.get("website")).isEqualTo(input.getWebsite());
-      assertThat(results.get("airtable_id")).isEqualTo(input.getAirtableId());
-      assertThat(results.get("hours")).isEqualTo(input.getHours());
-      assertThat(results.get("contact_name")).isEqualTo(input.getPointOfContact());
-      assertThat(results.get("email")).isEqualTo(input.getEmail());
-      assertThat(results.get("facebook")).isEqualTo(input.getFacebook());
+      validateDataMatches(results, input);
     }
 
     /** Try to insert minimal data and validate we have a lot of null data. */
@@ -127,6 +139,8 @@ class SiteDataImportControllerTest {
     void insertMinimalData() {
       var input =
           sampleData.toBuilder()
+              .siteName("SiteName " + UUID.randomUUID())
+              .airtableId((long) (Math.random() * 100_000_000))
               .pointOfContact(null)
               .website(null)
               .hours(null)
@@ -140,18 +154,26 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       // fetch results from DB and validate that everything is updated
       Map<String, Object> results = querySite(input.getAirtableId());
-      assertThat(results.get("name")).isEqualTo(input.getSiteName());
-      assertThat(results.get("address")).isEqualTo(input.getStreetAddress());
-      assertThat(results.get("city")).isEqualTo(input.getCity());
-      assertThat(results.get("county")).isEqualTo(input.getCounty());
-      assertThat(results.get("state")).isEqualTo(input.getState());
-      assertThat(results.get("contact_number")).isNull();
-      assertThat(results.get("website")).isNull();
-      assertThat(results.get("airtable_id")).isEqualTo(input.getAirtableId());
-      assertThat(results.get("hours")).isNull();
-      assertThat(results.get("contact_name")).isNull();
-      assertThat(results.get("email")).isNull();
-      assertThat(results.get("facebook")).isNull();
+      validateDataMatches(results, input);
+    }
+
+    @Test
+    void missingCountyStatePairsAreCreated() {
+      var input =
+          sampleData.toBuilder()
+              .siteName("SiteName " + UUID.randomUUID())
+              .airtableId((long) (Math.random() * 100_000_000))
+              .county("new county")
+              .state("VA")
+              .build();
+
+      var response = siteDataImportController.updateSiteData(input);
+
+      assertThat(response.getStatusCode().value()).isEqualTo(200);
+      // fetch results from DB and validate that everything is updated
+      Map<String, Object> results = querySite(input.getAirtableId());
+      assertThat(results.get("state")).isEqualTo("VA");
+      assertThat(results.get("county")).isEqualTo("new county");
     }
   }
 
@@ -180,18 +202,7 @@ class SiteDataImportControllerTest {
 
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       Map<String, Object> results = querySite(input.getAirtableId());
-      assertThat(results.get("name")).isEqualTo(input.getSiteName());
-      assertThat(results.get("address")).isEqualTo(input.getStreetAddress());
-      assertThat(results.get("city")).isEqualTo(input.getCity());
-      assertThat(results.get("county")).isEqualTo(input.getCounty());
-      assertThat(results.get("state")).isEqualTo(input.getState());
-      assertThat(results.get("contact_number")).isEqualTo(input.getPhone());
-      assertThat(results.get("website")).isEqualTo(input.getWebsite());
-      assertThat(results.get("airtable_id")).isEqualTo(input.getAirtableId());
-      assertThat(results.get("hours")).isEqualTo(input.getHours());
-      assertThat(results.get("contact_name")).isEqualTo(input.getPointOfContact());
-      assertThat(results.get("email")).isEqualTo(input.getEmail());
-      assertThat(results.get("facebook")).isEqualTo(input.getFacebook());
+      validateDataMatches(results, input);
     }
 
     @Test
@@ -317,12 +328,12 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       var donationStatus = queryForDonationStatus(input.getAirtableId());
       assertThat(donationStatus).isEqualTo(Boolean.valueOf(expectedIsAcceptingDonations));
-      
+
       // UPDATE CASE
       input = updateSampleData.toBuilder().donationStatus(inputDonationStatus).build();
-      
+
       response = siteDataImportController.updateSiteData(input);
-      
+
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       donationStatus = queryForDonationStatus(input.getAirtableId());
       assertThat(donationStatus).isEqualTo(Boolean.valueOf(expectedIsAcceptingDonations));
@@ -333,17 +344,11 @@ class SiteDataImportControllerTest {
           """
           select accepting_donations from site where airtable_id = :airtableId
           """;
-      return
-          TestConfiguration.jdbiTest.withHandle(
-              handle ->
-                  handle
-                      .createQuery(query)
-                      .bind("airtableId", airtableId)
-                      .mapTo(Boolean.class)
-                      .one());
-      
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle.createQuery(query).bind("airtableId", airtableId).mapTo(Boolean.class).one());
     }
-    
+
     /** Expected data pairs are incoming donation status and expected value of active. */
     @ParameterizedTest
     @CsvSource({
@@ -361,31 +366,25 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       var activeStatus = queryForActiveStatus(input.getAirtableId());
       assertThat(activeStatus).isEqualTo(Boolean.valueOf(expectedActive));
-      
+
       // UPDATE CASE
       input = updateSampleData.toBuilder().donationStatus(inputDonationStatus).build();
-      
+
       response = siteDataImportController.updateSiteData(input);
-      
+
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       activeStatus = queryForActiveStatus(input.getAirtableId());
       assertThat(activeStatus).isEqualTo(Boolean.valueOf(expectedActive));
     }
-    
+
     static boolean queryForActiveStatus(long airtableId) {
       String query =
           """
           select accepting_donations from site where airtable_id = :airtableId
           """;
-      return
-          TestConfiguration.jdbiTest.withHandle(
-              handle ->
-                  handle
-                      .createQuery(query)
-                      .bind("airtableId", airtableId)
-                      .mapTo(Boolean.class)
-                      .one());
-      
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle.createQuery(query).bind("airtableId", airtableId).mapTo(Boolean.class).one());
     }
 
     @ParameterizedTest
@@ -399,31 +398,25 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       var publiclyVisible = queryForPubliclyVisible(input.getAirtableId());
       assertThat(publiclyVisible).isEqualTo(isPubliclyVisible);
-      
+
       // UPDATE CASE
       input = updateSampleData.toBuilder().publicVisibility(isPubliclyVisible).build();
-      
+
       response = siteDataImportController.updateSiteData(input);
-      
+
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       publiclyVisible = queryForPubliclyVisible(input.getAirtableId());
       assertThat(publiclyVisible).isEqualTo(isPubliclyVisible);
     }
-    
+
     static boolean queryForPubliclyVisible(long airtableId) {
       String query =
           """
           select publicly_visible from site where airtable_id = :airtableId
           """;
-      return
-          TestConfiguration.jdbiTest.withHandle(
-              handle ->
-                  handle
-                      .createQuery(query)
-                      .bind("airtableId", airtableId)
-                      .mapTo(Boolean.class)
-                      .one());
-      
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle.createQuery(query).bind("airtableId", airtableId).mapTo(Boolean.class).one());
     }
   }
 }

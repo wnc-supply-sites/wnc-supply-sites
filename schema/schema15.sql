@@ -25,3 +25,5 @@ alter table item add column wss_id integer not null unique
 /**  move 'state' to be a column of county table */
 alter table county add column state varchar(2) not null default 'NC';
 alter table site drop column state;
+
+create unique index conty_unique  on county(name, state);

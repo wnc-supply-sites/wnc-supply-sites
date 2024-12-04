@@ -3,6 +3,10 @@ delete from dispatch_request;
 delete from site_item;
 delete from item;
 delete from site;
+delete from county;
+insert into county(name, state) values('Ashe', 'NC');
+insert into county(name, state) values('Buncombe', 'NC');
+insert into county(name, state) values('Watauga', 'NC');
 
 -- site1, in Watauga county            
 insert into site(name, address, city, county_id, website, site_type_id) values(

@@ -23,4 +23,8 @@ public enum SiteType {
         .findAny()
         .orElseThrow(() -> new IllegalArgumentException("Invalid site type: " + text));
   }
+
+  public static SiteType fromAirtableSiteTypes(List<String> siteTypes) {
+    return siteTypes.contains("HUB") ? SiteType.SUPPLY_HUB : SiteType.DISTRIBUTION_CENTER;
+  }
 }
