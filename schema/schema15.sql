@@ -5,7 +5,7 @@ alter table site add column contact_email varchar(256);
 alter table site add column website varchar(256);
 alter table site add column facebook varchar(256);
 alter table site add column hours varchar(512);
-alter table site add column distributing_donations boolean not null default true;
+alter table site add column distributing_supplies boolean not null default true;
 
 /** Add wss_id column */
 

@@ -52,18 +52,15 @@ public class SiteDataImportController {
           || state == null
           || siteType == null;
     }
-    
-    /**
-     * Returns true if the site type list contains one of 'HUB' or 'POD'
-     */
-    boolean checkSiteTypeIsValid() {
+
+    /** Returns true if the site type list contains one of 'HUB' or 'POD' */
+    SiteType getSiteType() {
       assert siteType != null;
-      
-      
-      // ensure we can parse each of the site types, if we cannot, we'll get an exception.
-      siteType.forEach(SiteType::parseSiteType);
-      
-      return false;
+      return siteType.contains("HUB") ? SiteType.SUPPLY_HUB : SiteType.DISTRIBUTION_CENTER;
+    }
+
+    boolean isDistributingSupplies() {
+      return siteType.contains("POD");
     }
   }
 
@@ -92,8 +89,6 @@ public class SiteDataImportController {
       log.warn("DATA IMPORT (INCOMPLETE DATA), received site update: {}", siteUpdate);
       return ResponseEntity.badRequest().body("Missing data");
     }
-//    siteUpdate.assertSiteTypeDataIsValid();
-
     insertStateCountyIfDoesNotExist(jdbi, siteUpdate.county, siteUpdate.state);
 
     if (siteUpdate.getWssId() == null) {
@@ -141,13 +136,13 @@ public class SiteDataImportController {
         """
         insert into site(name, address, city, accepting_donations, active,
           contact_number, website, airtable_id, hours, contact_name, facebook,
-          contact_email, publicly_visible,
+          contact_email, publicly_visible, distributing_supplies,
           county_id,
           site_type_id)
         values(
           :name, :address, :city, :acceptingDonations, :active,
           :contactNumber, :website, :airtableId, :hours, :contactName, :facebook,
-          :contactEmail, :publiclyVisible,
+          :contactEmail, :publiclyVisible, :distributingSupplies,
           (select id from county where name = :county and state = :state),
           (select id from site_type where name = :siteType)
         )
@@ -165,6 +160,7 @@ public class SiteDataImportController {
           address = :address,
           city = :city,
           accepting_donations = :acceptingDonations,
+          distributing_supplies = :distributingSupplies,
           active = :active,
           contact_number = :contactNumber,
           website = :website,
@@ -187,13 +183,13 @@ public class SiteDataImportController {
 
   private static Update doBindings(Update sqlStatement, SiteUpdate input) {
     DonationStatus donationStatus = DonationStatus.fromText(input.getDonationStatus());
-    SiteType siteType = SiteType.fromAirtableSiteTypes(input.getSiteType());
     return sqlStatement
         .bind("airtableId", input.getAirtableId())
         .bind("name", input.getSiteName())
         .bind("address", input.getStreetAddress())
         .bind("city", input.getCity())
         .bind("acceptingDonations", donationStatus.acceptingDonations)
+        .bind("distributingSupplies", input.isDistributingSupplies())
         .bind("active", donationStatus.active)
         .bind("contactNumber", input.getPhone())
         .bind("website", input.getWebsite())
@@ -204,6 +200,6 @@ public class SiteDataImportController {
         .bind("publiclyVisible", input.isPublicVisibility())
         .bind("county", input.getCounty())
         .bind("state", input.getState())
-        .bind("siteType", siteType.getText());
+        .bind("siteType", input.getSiteType().getText());
   }
 }

@@ -54,8 +54,6 @@ class SiteDataImportControllerTest {
           .wssId((long) (Math.random() * 100_000_000))
           .build();
 
-
-  
   private static void insertData(SiteDataImportController.SiteUpdate input) {
     String insertSiteToUpdate =
         """
@@ -96,8 +94,9 @@ class SiteDataImportControllerTest {
         handle ->
             handle.createQuery(selectSiteQuery).bind("airtableId", airTableId).mapToMap().one());
   }
-  
-  private static void validateDataMatches(Map<String, Object> results, SiteDataImportController.SiteUpdate input) {
+
+  private static void validateDataMatches(
+      Map<String, Object> results, SiteDataImportController.SiteUpdate input) {
     assertThat(results.get("name")).isEqualTo(input.getSiteName());
     assertThat(results.get("address")).isEqualTo(input.getStreetAddress());
     assertThat(results.get("city")).isEqualTo(input.getCity());
@@ -110,9 +109,8 @@ class SiteDataImportControllerTest {
     assertThat(results.get("contact_name")).isEqualTo(input.getPointOfContact());
     assertThat(results.get("contact_email")).isEqualTo(input.getEmail());
     assertThat(results.get("facebook")).isEqualTo(input.getFacebook());
-    
   }
-  
+
   private final SiteDataImportController siteDataImportController =
       new SiteDataImportController(TestConfiguration.jdbiTest);
 
@@ -180,14 +178,13 @@ class SiteDataImportControllerTest {
 
   @Nested
   class UpdateScenarios {
-    
-    
+
     /** Insert a site that we will later use for update testing. */
     @BeforeEach
     void setupSiteForUpdate() {
       insertData(updateSampleData);
     }
-    
+
     @Test
     void updateMostEverything() {
       var input =
@@ -225,9 +222,9 @@ class SiteDataImportControllerTest {
               .website(null)
               .pointOfContact(null)
               .build();
-      
+
       var response = siteDataImportController.updateSiteData(input);
-      
+
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       Map<String, Object> results = querySite(input.getAirtableId());
       validateDataMatches(results, input);
@@ -240,29 +237,30 @@ class SiteDataImportControllerTest {
    */
   @Nested
   class MultiValuedFieldScenarios {
-    
+
     /** Insert a site that we will later use for update testing. */
     @BeforeEach
     void setupSiteForUpdate() {
       insertData(updateSampleData);
-      sampleData = sampleData.toBuilder()
-          .siteName("SiteName " + UUID.randomUUID())
-          .airtableId((long) (Math.random() * 100_000_000))
-          .build();
+      sampleData =
+          sampleData.toBuilder()
+              .siteName("SiteName " + UUID.randomUUID())
+              .airtableId((long) (Math.random() * 100_000_000))
+              .build();
     }
-    
-    
+
     @Builder
     @Value
     static class SiteTypeTestScenario {
       @NonNull List<String> inputSiteTypes;
       @NonNull String expectedSiteType;
+      @NonNull Boolean expectedDistributingSupplies;
     }
 
     @ParameterizedTest
     @MethodSource
     void siteType(SiteTypeTestScenario scenario) {
-      
+
       // INSERT CASE
       var input = sampleData.toBuilder().siteType(scenario.inputSiteTypes).build();
 
@@ -271,6 +269,8 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       String siteType = queryForSiteType(input.getAirtableId());
       assertThat(siteType).isEqualTo(scenario.expectedSiteType);
+      boolean distributingDonations = queryForDistributingDonations(input.getAirtableId());
+      assertThat(distributingDonations).isEqualTo(scenario.expectedDistributingSupplies);
 
       // UPDATE CASE
       input = updateSampleData.toBuilder().siteType(scenario.inputSiteTypes).build();
@@ -279,6 +279,8 @@ class SiteDataImportControllerTest {
       assertThat(response.getStatusCode().value()).isEqualTo(200);
       siteType = queryForSiteType(input.getAirtableId());
       assertThat(siteType).isEqualTo(scenario.expectedSiteType);
+      distributingDonations = queryForDistributingDonations(input.getAirtableId());
+      assertThat(distributingDonations).isEqualTo(scenario.expectedDistributingSupplies);
     }
 
     private static String queryForSiteType(long airtableId) {
@@ -294,6 +296,18 @@ class SiteDataImportControllerTest {
               handle.createQuery(query).bind("airtableId", airtableId).mapTo(String.class).one());
     }
 
+    private static boolean queryForDistributingDonations(long airtableId) {
+      String query =
+          """
+          select s.distributing_supplies
+          from site s
+          where airtable_id = :airtableId
+          """;
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle.createQuery(query).bind("airtableId", airtableId).mapTo(Boolean.class).one());
+    }
+
     /**
      * Variety of cases of incoming site types. Generally anything that has HUB in it, is just a HUB
      */
@@ -302,46 +316,64 @@ class SiteDataImportControllerTest {
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("HUB"))
               .expectedSiteType(SiteType.SUPPLY_HUB.getText())
+              .expectedDistributingSupplies(false)
               .build(),
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("POD"))
               .expectedSiteType(SiteType.DISTRIBUTION_CENTER.getText())
+              .expectedDistributingSupplies(true)
               .build(),
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("POD", "POC"))
               .expectedSiteType(SiteType.DISTRIBUTION_CENTER.getText())
+              .expectedDistributingSupplies(true)
               .build(),
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("HUB", "POD"))
               .expectedSiteType(SiteType.SUPPLY_HUB.getText())
+              .expectedDistributingSupplies(true)
               .build(),
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("HUB", "POC"))
               .expectedSiteType(SiteType.SUPPLY_HUB.getText())
+              .expectedDistributingSupplies(false)
               .build(),
           SiteTypeTestScenario.builder()
               .inputSiteTypes(List.of("HUB", "POD", "POC"))
               .expectedSiteType(SiteType.SUPPLY_HUB.getText())
+              .expectedDistributingSupplies(true)
               .build());
     }
 
+    /**
+     * Invalid site types should generally be ignored and default to not accepting donations &
+     * distribution site type
+     */
     @ParameterizedTest
-    @ValueSource(strings = {"", "POC", "DNE"})
+    @ValueSource(strings = {"", "NGO", "DNE"})
     void siteTypeIllegalValues(String illegalSiteType) {
       var input = sampleData.toBuilder().siteType(List.of(illegalSiteType)).build();
 
       var response = siteDataImportController.updateSiteData(input);
 
-      assertThat(response.getStatusCode().value()).isEqualTo(400);
+      assertThat(response.getStatusCode().value()).isEqualTo(200);
+      String siteType = queryForSiteType(input.getAirtableId());
+      assertThat(siteType).isEqualTo(SiteType.DISTRIBUTION_CENTER.getText());
+      boolean distributingDonations = queryForDistributingDonations(input.getAirtableId());
+      assertThat(distributingDonations).isEqualTo(false);
     }
 
     @Test
-    void siteTypeEmptyValueIsIllegal() {
+    void emptySiteType() {
       var input = sampleData.toBuilder().siteType(List.of()).build();
 
       var response = siteDataImportController.updateSiteData(input);
 
-      assertThat(response.getStatusCode().value()).isEqualTo(400);
+      assertThat(response.getStatusCode().value()).isEqualTo(200);
+      String siteType = queryForSiteType(input.getAirtableId());
+      assertThat(siteType).isEqualTo(SiteType.DISTRIBUTION_CENTER.getText());
+      boolean distributingDonations = queryForDistributingDonations(input.getAirtableId());
+      assertThat(distributingDonations).isEqualTo(false);
     }
 
     /**
