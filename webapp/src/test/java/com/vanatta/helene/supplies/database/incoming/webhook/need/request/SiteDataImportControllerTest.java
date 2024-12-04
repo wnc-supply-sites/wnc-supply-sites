@@ -32,6 +32,7 @@ class SiteDataImportControllerTest {
           .airtableId((long) (Math.random() * 100_000_000))
           .siteName("SiteName " + UUID.randomUUID())
           .streetAddress("Fake street")
+          .city("the city")
           .county("Ashe")
           .state("NC")
           .siteType(List.of("HUB"))

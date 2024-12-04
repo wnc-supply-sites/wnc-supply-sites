@@ -11,6 +11,8 @@ alter table site add column hours varchar(512);
 
 -- create a single sequence for generating all public facing (WSS) IDs
 create sequence wss_id;
+alter sequence wss_id owner to wnc_helene;
+
 
 -- use 'wss_id' as a public facing ID value for
 -- data integrations. This allows us to set up test

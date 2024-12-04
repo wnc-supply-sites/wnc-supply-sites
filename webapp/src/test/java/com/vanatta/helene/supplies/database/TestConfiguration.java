@@ -1,14 +1,24 @@
 package com.vanatta.helene.supplies.database;
 
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.util.List;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class TestConfiguration {
-  public static final Jdbi jdbiTest =
-      Jdbi.create("jdbc:postgresql://localhost:5432/wnc_helene_test", "wnc_helene", "wnc_helene")
-          .installPlugin(new SqlObjectPlugin());
+
+  public static final Jdbi jdbiTest;
+
+  static {
+    HikariConfig config = new HikariConfig();
+    config.setJdbcUrl("jdbc:postgresql://localhost:5432/wnc_helene_test");
+    config.setUsername("wnc_helene");
+    config.setPassword("wnc_helene");
+    config.addDataSourceProperty("maximumPoolSize", "16");
+    HikariDataSource ds = new HikariDataSource(config);
+    jdbiTest = Jdbi.create(ds);
+  }
 
   // public IDs of the dispatches that we will creaete in the test data setup
   public static final String SITE1_NEW_DISPATCH = "#1 site1";
