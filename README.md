@@ -182,7 +182,13 @@ sudo -u postgres psql
 create database wnc_helene;
 create user wnc_helene with password '....';
 alter database wnc_helene owner to wnc_helene;
+
+create database wnc_helene_test;
+create user wnc_helene_test with password '....';
+alter database wnc_helene_test owner to wnc_helene;
 ```
+
+
 
 ### DB dump (data seeding)
 
@@ -192,6 +198,14 @@ scp db-dump.sql root@wnc-supply-sites.com
 
 ssh root@wnc-supply-sites.com
 sudo -u postgres psql wnc_helene < db-dump.sql
+```
+
+DB dump from prod to staging:
+```
+# todo: likely need to recreate test database
+sudo -u postgres pg_dump -U postgres wnc_helene > db-dump.sql
+sudo -u postgres psql wnc_helene_test < db-dump.sql
+rm db-dump.sql
 ```
 
 ### HTTPS config (certbot)
