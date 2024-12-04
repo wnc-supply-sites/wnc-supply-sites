@@ -26,7 +26,7 @@ class SiteDataImportControllerTest {
     TestConfiguration.setupDatabase();
   }
 
-  private final SiteDataImportController.SiteUpdate sampleData =
+  private SiteDataImportController.SiteUpdate sampleData =
       SiteDataImportController.SiteUpdate.builder()
           .wssId(null) // wssId being null will make us insert data.
           .airtableId((long) (Math.random() * 100_000_000))
@@ -54,32 +54,33 @@ class SiteDataImportControllerTest {
           .wssId((long) (Math.random() * 100_000_000))
           .build();
 
+
   
-  /** Insert a site that we will later use for update testing. */
-  @BeforeEach
-  void setupSiteForUpdate() {
+  private static void insertData(SiteDataImportController.SiteUpdate input) {
     String insertSiteToUpdate =
         """
-        insert into site(name, address, city, county_id, site_type_id, airtable_id)
+        insert into site(name, address, city, county_id, site_type_id, airtable_id, wss_id)
         values(
-           :siteName,
-           :address,
-           :city,
-           (select id from county where name = :countyName),
-           (select id from site_type where name = :siteTypeName),
-           :airtableId
+          :siteName,
+          :address,
+          :city,
+          (select id from county where name = :countyName),
+          (select id from site_type where name = :siteTypeName),
+          :airtableId,
+          :wssId
         )
         """;
     TestConfiguration.jdbiTest.withHandle(
         handle ->
             handle
                 .createUpdate(insertSiteToUpdate)
-                .bind("siteName", updateSampleData.getSiteName())
-                .bind("address", updateSampleData.getStreetAddress())
-                .bind("city", updateSampleData.getCity())
-                .bind("countyName", updateSampleData.getCounty())
+                .bind("siteName", input.getSiteName())
+                .bind("address", input.getStreetAddress())
+                .bind("city", input.getCity())
+                .bind("countyName", input.getCounty())
                 .bind("siteTypeName", SiteType.DISTRIBUTION_CENTER.getText())
-                .bind("airtableId", updateSampleData.getAirtableId())
+                .bind("airtableId", input.getAirtableId())
+                .bind("wssId", input.getWssId())
                 .execute());
   }
 
@@ -179,7 +180,14 @@ class SiteDataImportControllerTest {
 
   @Nested
   class UpdateScenarios {
-
+    
+    
+    /** Insert a site that we will later use for update testing. */
+    @BeforeEach
+    void setupSiteForUpdate() {
+      insertData(updateSampleData);
+    }
+    
     @Test
     void updateMostEverything() {
       var input =
@@ -207,7 +215,22 @@ class SiteDataImportControllerTest {
 
     @Test
     void deleteMostData() {
-      throw new UnsupportedOperationException();
+      var input =
+          updateSampleData.toBuilder()
+              .siteName("SiteName " + UUID.randomUUID())
+              .facebook(null)
+              .phone(null)
+              .hours(null)
+              .email(null)
+              .website(null)
+              .pointOfContact(null)
+              .build();
+      
+      var response = siteDataImportController.updateSiteData(input);
+      
+      assertThat(response.getStatusCode().value()).isEqualTo(200);
+      Map<String, Object> results = querySite(input.getAirtableId());
+      validateDataMatches(results, input);
     }
   }
 
@@ -217,7 +240,18 @@ class SiteDataImportControllerTest {
    */
   @Nested
   class MultiValuedFieldScenarios {
-
+    
+    /** Insert a site that we will later use for update testing. */
+    @BeforeEach
+    void setupSiteForUpdate() {
+      insertData(updateSampleData);
+      sampleData = sampleData.toBuilder()
+          .siteName("SiteName " + UUID.randomUUID())
+          .airtableId((long) (Math.random() * 100_000_000))
+          .build();
+    }
+    
+    
     @Builder
     @Value
     static class SiteTypeTestScenario {
@@ -228,6 +262,7 @@ class SiteDataImportControllerTest {
     @ParameterizedTest
     @MethodSource
     void siteType(SiteTypeTestScenario scenario) {
+      
       // INSERT CASE
       var input = sampleData.toBuilder().siteType(scenario.inputSiteTypes).build();
 
@@ -380,7 +415,7 @@ class SiteDataImportControllerTest {
     static boolean queryForActiveStatus(long airtableId) {
       String query =
           """
-          select accepting_donations from site where airtable_id = :airtableId
+          select active from site where airtable_id = :airtableId
           """;
       return TestConfiguration.jdbiTest.withHandle(
           handle ->

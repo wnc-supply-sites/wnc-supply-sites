@@ -43,13 +43,27 @@ public class SiteDataImportController {
     String website;
     String facebook;
 
-    public boolean isMissingData() {
+    boolean isMissingData() {
       return airtableId == null
           || siteName == null
           || streetAddress == null
           || city == null
           || county == null
-          || state == null;
+          || state == null
+          || siteType == null;
+    }
+    
+    /**
+     * Returns true if the site type list contains one of 'HUB' or 'POD'
+     */
+    boolean checkSiteTypeIsValid() {
+      assert siteType != null;
+      
+      
+      // ensure we can parse each of the site types, if we cannot, we'll get an exception.
+      siteType.forEach(SiteType::parseSiteType);
+      
+      return false;
     }
   }
 
@@ -73,20 +87,24 @@ public class SiteDataImportController {
 
   @PostMapping("/import/update/site-data")
   ResponseEntity<String> updateSiteData(@RequestBody SiteUpdate siteUpdate) {
+    log.info("DATA IMPORT, received inventory site update: {}", siteUpdate);
     if (siteUpdate.isMissingData()) {
       log.warn("DATA IMPORT (INCOMPLETE DATA), received site update: {}", siteUpdate);
       return ResponseEntity.badRequest().body("Missing data");
     }
-    log.info("DATA IMPORT, received inventory site update: {}", siteUpdate);
+//    siteUpdate.assertSiteTypeDataIsValid();
 
     insertStateCountyIfDoesNotExist(jdbi, siteUpdate.county, siteUpdate.state);
 
     if (siteUpdate.getWssId() == null) {
       // this is an insert
       insert(jdbi, siteUpdate);
-      // now send update to Airtable to send our WSS ID
+      log.info("DATA IMPORT: successfully inserted data: {}", siteUpdate);
+      // now send update to Airtable to send Airtable our WSS ID
     } else {
       // this is an update
+      update(jdbi, siteUpdate);
+      log.info("DATA IMPORT: successfully updated data: {}", siteUpdate);
     }
 
     return ResponseEntity.ok().build();
@@ -117,6 +135,8 @@ public class SiteDataImportController {
   }
 
   private static void insert(Jdbi jdbi, SiteUpdate input) {
+    assert input.getWssId() == null;
+
     String insert =
         """
         insert into site(name, address, city, accepting_donations, active,
@@ -128,14 +148,39 @@ public class SiteDataImportController {
           :name, :address, :city, :acceptingDonations, :active,
           :contactNumber, :website, :airtableId, :hours, :contactName, :facebook,
           :contactEmail, :publiclyVisible,
-          (select id from county where name = :countyName and state = :state),
+          (select id from county where name = :county and state = :state),
           (select id from site_type where name = :siteType)
         )
         """;
 
+    jdbi.withHandle(handle -> doBindings(handle.createUpdate(insert), input).execute());
+  }
+
+  private static void update(Jdbi jdbi, SiteUpdate input) {
+    assert input.getWssId() != null;
+    String update =
+        """
+        update site set
+          name = :name,
+          address = :address,
+          city = :city,
+          accepting_donations = :acceptingDonations,
+          active = :active,
+          contact_number = :contactNumber,
+          website = :website,
+          hours = :hours,
+          contact_name = :contactName,
+          facebook = :facebook,
+          contact_email = :contactEmail,
+          publicly_visible = :publiclyVisible,
+          airtable_id = :airtableId,
+          county_id = (select id from county where name = :county and state = :state),
+          site_type_id = (select id from site_type where name = :siteType)
+        where wss_id = :wssId
+        """;
     jdbi.withHandle(
         handle -> {
-          Update statement = handle.createUpdate(insert).bind("airtableId", input.getAirtableId());
+          Update statement = handle.createUpdate(update).bind("wssId", input.getWssId());
           return doBindings(statement, input).execute();
         });
   }
@@ -144,6 +189,7 @@ public class SiteDataImportController {
     DonationStatus donationStatus = DonationStatus.fromText(input.getDonationStatus());
     SiteType siteType = SiteType.fromAirtableSiteTypes(input.getSiteType());
     return sqlStatement
+        .bind("airtableId", input.getAirtableId())
         .bind("name", input.getSiteName())
         .bind("address", input.getStreetAddress())
         .bind("city", input.getCity())
@@ -156,7 +202,7 @@ public class SiteDataImportController {
         .bind("facebook", input.getFacebook())
         .bind("contactEmail", input.getEmail())
         .bind("publiclyVisible", input.isPublicVisibility())
-        .bind("countyName", input.getCounty())
+        .bind("county", input.getCounty())
         .bind("state", input.getState())
         .bind("siteType", siteType.getText());
   }

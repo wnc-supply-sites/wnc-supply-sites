@@ -5,7 +5,7 @@ alter table site add column contact_email varchar(256);
 alter table site add column website varchar(256);
 alter table site add column facebook varchar(256);
 alter table site add column hours varchar(512);
-
+alter table site add column distributing_donations boolean not null default true;
 
 /** Add wss_id column */
 
@@ -26,4 +26,6 @@ alter table item add column wss_id integer not null unique
 alter table county add column state varchar(2) not null default 'NC';
 alter table site drop column state;
 
-create unique index conty_unique  on county(name, state);
+create unique index county_unique  on county(name, state);
+
+
