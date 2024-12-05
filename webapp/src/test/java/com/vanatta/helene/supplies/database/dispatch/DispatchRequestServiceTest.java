@@ -136,8 +136,6 @@ class DispatchRequestServiceTest {
         .isEqualTo(1);
     assertThat(DbTestHelper.DispatchRequest.getDispatchStatus(TEST_DISPATCH))
         .isEqualTo(DispatchRequestService.DispatchStatus.NEW.getDisplayText());
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
@@ -149,8 +147,6 @@ class DispatchRequestServiceTest {
     result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
     assertThat(DbTestHelper.DispatchRequest.countItemsInDispatchRequest(TEST_DISPATCH))
         .isEqualTo(2);
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
@@ -163,8 +159,6 @@ class DispatchRequestServiceTest {
     result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.AVAILABLE);
     assertThat(DbTestHelper.DispatchRequest.countItemsInDispatchRequest(TEST_DISPATCH))
         .isEqualTo(1);
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
@@ -188,8 +182,6 @@ class DispatchRequestServiceTest {
   @Test
   void site4_priorities() {
     var result = dispatchRequestService.computeDispatch("site4", "water", ItemStatus.NEEDED);
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P3_NORMAL.getDisplayText());
     assertThat(result.get().getStatus())
@@ -198,8 +190,6 @@ class DispatchRequestServiceTest {
     assertThat(result.get().getUrgentlyNeededItems()).isEmpty();
 
     result = dispatchRequestService.computeDispatch("site4", "gloves", ItemStatus.URGENTLY_NEEDED);
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())
@@ -209,8 +199,6 @@ class DispatchRequestServiceTest {
 
     /* Sending another 'needed' item should not reduce the priority */
     result = dispatchRequestService.computeDispatch("site4", "random stuff", ItemStatus.NEEDED);
-    assertThat(DbTestHelper.DispatchRequest.getDispatchPriority(TEST_DISPATCH))
-        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
     assertThat(result.get().getPriority())
         .isEqualTo(DispatchRequestService.DispatchPriority.P2_URGENT.getDisplayText());
     assertThat(result.get().getStatus())

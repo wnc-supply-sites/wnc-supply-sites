@@ -32,9 +32,9 @@ public class SiteDetailDao {
                               s.contact_number,
                               s.address,
                               s.city,
-                              s.state,
-                              s.website,
-                              c.name county
+                              c.state,
+                              c.name county,
+                              s.website
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id

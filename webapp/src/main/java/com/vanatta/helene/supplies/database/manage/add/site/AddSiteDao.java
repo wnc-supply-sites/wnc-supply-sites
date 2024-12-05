@@ -25,14 +25,13 @@ public class AddSiteDao {
         """
         insert into site(
             name, address, city,
-            county_id, state, contact_number,
+            county_id, contact_number,
             website, site_type_id, last_updated
         ) values(
           :siteName,
           :address,
           :city,
-          (select id from county where name = :countyName),
-          :state,
+          (select id from county where name = :countyName and state = :state),
           :contactNumber,
           :website,
           (select id from site_type where name = :siteType),

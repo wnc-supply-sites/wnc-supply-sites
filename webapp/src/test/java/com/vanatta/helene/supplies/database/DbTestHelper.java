@@ -54,16 +54,6 @@ public class DbTestHelper {
           handle -> handle.createQuery(query).bind("publicId", publicId).mapTo(Long.class).one());
     }
 
-    public static String getDispatchPriority(String publicId) {
-      String query =
-          """
-        select dr.priority from dispatch_request dr
-        where dr.public_id = :publicId
-      """;
-      return jdbiTest.withHandle(
-          handle -> handle.createQuery(query).bind("publicId", publicId).mapTo(String.class).one());
-    }
-
     @Nullable
     public static String getDispatchStatus(String publicId) {
       String query =

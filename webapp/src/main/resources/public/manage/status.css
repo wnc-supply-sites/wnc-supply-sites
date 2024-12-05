@@ -7,7 +7,7 @@
 }
 
 .statusControls {
-    /*width: 300px;*/
+    width: 300px;
 }
 
 .siteStatusUpdateButton {
@@ -15,7 +15,7 @@
 }
 
 .statusCaption {
-    padding-left: 150px;
+    padding-left: 50px;
 }
 
 .danger-fields {

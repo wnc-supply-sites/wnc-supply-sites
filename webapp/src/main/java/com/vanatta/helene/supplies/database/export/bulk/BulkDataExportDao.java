@@ -29,7 +29,7 @@ class BulkDataExportDao {
               s.contact_number,
               s.address,
               s.city,
-              s.state,
+              c.state,
               s.website,
               c.name county,
               case when not active
@@ -48,7 +48,7 @@ class BulkDataExportDao {
             left join item i on i.id = si.item_id
             left join item_status its on its.id = si.item_status_id
             group by s.name, siteType, s.contact_number, s.address, s.city,
-             s.state, s.website, county, donationStatus, s.active
+             c.state, s.website, county, donationStatus, s.active
             """;
 
     return jdbi
@@ -136,7 +136,6 @@ class BulkDataExportDao {
               dr.public_id needRequestId,
               s.name site,
               dr.status,
-              dr.priority,
               string_agg(i.name, ',') filter (where its.name in ('Needed')) suppliesNeeded,
               string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) suppliesUrgentlyNeeded
             from dispatch_request dr
@@ -144,7 +143,7 @@ class BulkDataExportDao {
             join item i on i.id = dri.item_id
             join item_status its on its.id = dri.item_status_id
             join site s on s.id = dr.site_id
-            group by dr.public_id, s.name, dr.status, dr.priority
+            group by dr.public_id, s.name, dr.status
             order by needRequestId;
             """;
     return jdbi
@@ -180,7 +179,6 @@ class BulkDataExportDao {
     String needRequestId;
     String site;
     String status;
-    String priority;
     List<String> suppliesNeeded;
     List<String> suppliesUrgentlyNeeded;
 
@@ -188,7 +186,6 @@ class BulkDataExportDao {
       this.needRequestId = dbResult.needRequestId;
       this.site = dbResult.site;
       this.status = dbResult.status;
-      this.priority = dbResult.priority;
       this.suppliesNeeded =
           dbResult.suppliesNeeded == null
               ? List.of()

@@ -100,6 +100,18 @@ html, table {
     display: none;
 }
 
+.required {
+    color: #b60808;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+.publicly-visible {
+    color: #08b608;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
 .login-indicator {
     font-style: italic;
     font-size: 0.8em;

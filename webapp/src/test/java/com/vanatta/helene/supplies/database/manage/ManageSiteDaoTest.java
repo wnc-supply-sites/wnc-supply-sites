@@ -61,7 +61,7 @@ class ManageSiteDaoTest {
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CITY, "new city");
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "new county");
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "Buncombe");
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.STREET_ADDRESS, "new address");
     ManageSiteDao.updateSiteField(
@@ -74,7 +74,7 @@ class ManageSiteDaoTest {
     assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCity())
         .isEqualTo("new city");
     assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCounty())
-        .isEqualTo("new county");
+        .isEqualTo("Buncombe");
     assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getAddress())
         .isEqualTo("new address");
     assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getWebsite())
