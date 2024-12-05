@@ -148,23 +148,9 @@ public class ManageSiteController {
     }
 
     var siteField = ManageSiteDao.SiteField.lookupField(field);
-
-    if (siteField == ManageSiteDao.SiteField.SITE_NAME) {
-      if (newValue == null || newValue.isBlank()) {
-        log.warn(
-            "Blank site name field sent to backend, invalid request! Params received: {}", params);
-        return ResponseEntity.badRequest()
-            .body("Invalid request, required field 'site name' cannot be blank.");
-      }
-      String oldName = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId)).getSiteName();
-      ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
-      log.info("Site updating (with name change), old name: {}, new data: {}", oldName, params);
-      sendSiteUpdate.sendWithNameUpdate(Long.parseLong(siteId), oldName);
-    } else {
-      ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
-      log.info("Site updated: {}", params);
-      sendSiteUpdate.send(Long.parseLong(siteId));
-    }
+    ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
+    log.info("Site updated: {}", params);
+    sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
 
     return ResponseEntity.ok().body("Updated");
   }
@@ -241,7 +227,7 @@ public class ManageSiteController {
       log.info("Updating site: {}, site type: {}", siteName, siteType);
       ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
     }
-    sendSiteUpdate.send(Long.parseLong(siteId));
+    sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
   }
 
@@ -368,7 +354,7 @@ public class ManageSiteController {
     }
     try {
       long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);
-      sendSiteUpdate.send(newSiteId);
+      sendSiteUpdate.sendFullUpdate(newSiteId);
       return ResponseEntity.ok(
           "{\"result\": \"success\", \"editSiteInventoryUrl\": \"/manage/inventory?siteId="
               + newSiteId

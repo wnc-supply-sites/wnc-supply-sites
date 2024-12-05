@@ -7,6 +7,8 @@ import com.vanatta.helene.supplies.database.data.SiteType;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -112,7 +114,8 @@ class SiteDataImportControllerTest {
   }
 
   private final SiteDataImportController siteDataImportController =
-      new SiteDataImportController(TestConfiguration.jdbiTest);
+      new SiteDataImportController(
+          TestConfiguration.jdbiTest, new SendSiteUpdate(TestConfiguration.jdbiTest, "", false));
 
   @Nested
   class InsertScenarios {

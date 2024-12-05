@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.incoming.webhook.need.request;
 
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SiteDataImportController {
 
   private final Jdbi jdbi;
+  private final SendSiteUpdate sendSiteUpdate;
 
   @Value
   @Builder(toBuilder = true)
@@ -67,7 +69,7 @@ public class SiteDataImportController {
   /** Models the donation statuses in Airtable. */
   @AllArgsConstructor
   @Getter
-  enum DonationStatus {
+  public enum DonationStatus {
     ACCEPTING_DONATIONS("Accepting Donations", true, true),
     ACCEPTING_REQUESTED_ONLY("Accepting Requested Donations Only", true, true),
     NOT_ACCEPTING_DONATIONS("Not Accepting Donations", false, true),
@@ -95,13 +97,13 @@ public class SiteDataImportController {
       // this is an insert
       insert(jdbi, siteUpdate);
       log.info("DATA IMPORT: successfully inserted data: {}", siteUpdate);
-      // now send update to Airtable to send Airtable our WSS ID
+      // now send update to Airtable so that we send the new WSS ID
+      sendSiteUpdate.sendIdsToAirtable(siteUpdate.airtableId);
     } else {
       // this is an update
       update(jdbi, siteUpdate);
       log.info("DATA IMPORT: successfully updated data: {}", siteUpdate);
     }
-
     return ResponseEntity.ok().build();
   }
 
