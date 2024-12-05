@@ -20,98 +20,98 @@
 
 <div id="data-entry">
   <div class="data-entry-div vertical">
-    <div class="data-entry-body">
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="Contact Number">Contact Number: </label>
-        </div>
-        <div class="horizontal">
-          <input id="Contact Number" type="text" class="shortTextField" value="" maxlength="24" placeholder="555-555-5555"/>
-        </div>
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Contact Number">Contact Number: </label>
       </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="website">Website: </label>
-        </div>
-        <div class="horizontal">
-          <input id="Website" type="text" class="shortTextField" value="" maxlength="128" placeholder="www.site-website.com"/>
-        </div>
+      <div class="horizontal">
+        <input id="Contact Number" type="text" class="shortTextField" value="" maxlength="24"
+               placeholder="555-555-5555"/>
       </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="Site Name">Site Name:</label>
-          <span class="required">*</span>
-        </div>
-
-        <div class="horizontal">
-          <input id="Site Name" type="text" class="shortTextField" value="" maxlength="128"/>
-        </div>
-      </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="Street Address">Street Address: </label>
-          <span class="required">*</span>
-        </div>
-
-        <div class="horizontal">
-          <input id="Street Address" type="text" class="shortTextField" value="" maxlength="64"/>
-        </div>
-      </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="City">City: </label>
-          <span class="required">*</span>
-        </div>
-        <div class="horizontal">
-          <input id="City" type="text" class="shortTextField" value="" maxlength="32"/>
-        </div>
-      </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="County">County: </label>
-          <span class="required">*</span>
-        </div>
-        <div class="horizontal">
-          <select id="County">
-            {{#countyList}}
-            <option value="{{.}}">{{.}}</option>
-            {{/countyList}}
-          </select>
-        </div>
-      </div>
-
-      <div class="data-field vertical">
-        <div class="horizontal">
-          <label for="State">State: </label>
-          <span class="required">*</span>
-        </div>
-        <div class="horizontal">
-          <input id="State" type="text" class="shortTextField" value="NC" maxlength="2"/>
-        </div>
-      </div>
-
-      <div class="data-field vertical">
-        <fieldset>
-          <legend>Site Type:</legend>
-          <div class="horizontal">
-            <input type="radio" name="siteType" id="distributionCenterRadio" checked />
-            <label for="distributionCenterRadio">Distribution Center</label>
-          </div>
-          <div class="horizontal">
-            <input type="radio" name="siteType" id="supplyHubRadio" />
-            <label for="supplyHubRadio">Supply Hub</label>
-          </div>
-        </fieldset>
-      </div>
-
-      <button onclick="saveNewSite()" id="saveButton">Save</button>
-
     </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="website">Website: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Website" type="text" class="shortTextField" value="" maxlength="128"
+               placeholder="www.site-website.com"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Site Name">Site Name:</label>
+        <span class="required">*</span>
+      </div>
+
+      <div class="horizontal">
+        <input id="Site Name" type="text" class="shortTextField" value="" maxlength="128"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Street Address">Street Address: </label>
+        <span class="required">*</span>
+      </div>
+
+      <div class="horizontal">
+        <input id="Street Address" type="text" class="shortTextField" value="" maxlength="64"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="City">City: </label>
+        <span class="required">*</span>
+      </div>
+      <div class="horizontal">
+        <input id="City" type="text" class="shortTextField" value="" maxlength="32"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="County">County: </label>
+        <span class="required">*</span>
+      </div>
+      <div class="horizontal">
+        <select id="County">
+          {{#countyList}}
+          <option value="{{.}}">{{.}}</option>
+          {{/countyList}}
+        </select>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="State">State: </label>
+        <span class="required">*</span>
+      </div>
+      <div class="horizontal">
+        <input id="State" type="text" class="shortTextField" value="NC" maxlength="2"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <fieldset>
+        <legend>Site Type:</legend>
+        <div class="horizontal">
+          <input type="radio" name="siteType" id="distributionCenterRadio" checked/>
+          <label for="distributionCenterRadio">Distribution Center</label>
+        </div>
+        <div class="horizontal">
+          <input type="radio" name="siteType" id="supplyHubRadio"/>
+          <label for="supplyHubRadio">Supply Hub</label>
+        </div>
+      </fieldset>
+    </div>
+
+    <button onclick="saveNewSite()" id="saveButton">Save</button>
+
   </div>
 </div>
 

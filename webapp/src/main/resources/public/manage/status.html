@@ -24,117 +24,113 @@
 <div id="data-entry">
   <div class="data-entry-div vertical">
 
-    <div class="data-entry-body">
-
-
-      <!-- ACCEPTING DONATIONS -->
-      <div class="statusArea">
-        <fieldset>
-          <legend>Accepting Donations from the Public:</legend>
-          <div class="horizontal">
-            <div class="statusControls">
-              <input type="radio" id="acceptingYes" name="acceptingDonations" {{#siteAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
-                for="acceptingYes">Yes</label>
-              <input type="radio" id="acceptingNo" name="acceptingDonations" {{^siteNotAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
-                for="acceptingNo">No</label>
-              <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
-            </div>
-            <span class="statusCaption larger">A site not accepting donations is still listed.</span>
+    <!-- ACCEPTING DONATIONS -->
+    <div class="statusArea">
+      <fieldset>
+        <legend>Accepting Donations from the Public:</legend>
+        <div class="horizontal">
+          <div class="statusControls">
+            <input type="radio" id="acceptingYes" name="acceptingDonations" {{#siteAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
+              for="acceptingYes">Yes</label>
+            <input type="radio" id="acceptingNo" name="acceptingDonations" {{^siteNotAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
+              for="acceptingNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
           </div>
-        </fieldset>
-      </div>
+          <span class="statusCaption larger">A site not accepting donations is still listed.</span>
+        </div>
+      </fieldset>
+    </div>
 
-      <!-- DISTRIBUTING DONATIONS -->
-      <div class="statusArea">
-        <fieldset>
-          <legend>Distributing Donations to the Public:</legend>
-          <div class="horizontal">
-            <div class="statusControls">
-              <input type="radio" id="distributingYes" name="distributingDonations"
-                     {{#siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
-                for="distributingYes">Yes</label>
-              <input type="radio" id="distributingNo" name="distributingDonations"
-                     {{^siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
-                for="distributingNo">No</label>
-              <button class="siteStatusUpdateButton" onclick="updateSiteDistributingDonations({{siteId}})">Update
-              </button>
-            </div>
-            <span class="statusCaption larger">
+    <!-- DISTRIBUTING DONATIONS -->
+    <div class="statusArea">
+      <fieldset>
+        <legend>Distributing Donations to the Public:</legend>
+        <div class="horizontal">
+          <div class="statusControls">
+            <input type="radio" id="distributingYes" name="distributingDonations"
+                   {{#siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
+              for="distributingYes">Yes</label>
+            <input type="radio" id="distributingNo" name="distributingDonations"
+                   {{^siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
+              for="distributingNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteDistributingDonations({{siteId}})">Update
+            </button>
+          </div>
+          <span class="statusCaption larger">
               A site is distributing donations if supplies are being provided to the local community and general public.
             </span>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- SITE TYPE (SUPPLY HUB) -->
+    <div class="statusArea">
+      <fieldset>
+        <legend>Site Type:</legend>
+        <div class="horizontal">
+
+          <div class="statusControls vertical">
+            <div class="horizontal radioButtonControl">
+              <input type="radio" id="distributionCenter" name="siteType" {{distributionSiteChecked}}/>
+              <label for="distributionCenter">Distribution Center</label>
+            </div>
+
+            <div class="horizontal radioButtonControl">
+              <input type="radio" id="supplyHub" name="siteType" {{supplyHubChecked}}/>
+              <label for="supplyHub">Supply Hub</label>
+            </div>
           </div>
-        </fieldset>
-      </div>
-
-      <!-- SITE TYPE (SUPPLY HUB) -->
-      <div class="statusArea">
-        <fieldset>
-          <legend>Site Type:</legend>
-          <div class="horizontal">
-
-            <div class="statusControls vertical">
-              <div class="horizontal radioButtonControl">
-                <input type="radio" id="distributionCenter" name="siteType" {{distributionSiteChecked}}/>
-                <label for="distributionCenter">Distribution Center</label>
-              </div>
-
-              <div class="horizontal radioButtonControl">
-                <input type="radio" id="supplyHub" name="siteType" {{supplyHubChecked}}/>
-                <label for="supplyHub">Supply Hub</label>
-              </div>
-            </div>
-            <div>
-              <button class="siteStatusUpdateButton" onclick="updateSiteSiteType({{siteId}})">Update</button>
-            </div>
-            <span class="statusCaption larger">
+          <div>
+            <button class="siteStatusUpdateButton" onclick="updateSiteSiteType({{siteId}})">Update</button>
+          </div>
+          <span class="statusCaption larger">
               Distribution sites supply items primarily to the community.<br>
               Supply hubs are large warehouses.
             </span>
-          </div>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
+    </div>
 
-      <!-- Publicly Visible -->
-      <div class="statusArea">
-        <fieldset class="danger-fields">
-          <legend>Publicly Visible:</legend>
-          <div class="horizontal">
-            <div class="statusControls">
-              <input type="radio" id="publicYes" name="public" {{#sitePublic}}selected{{/sitePublic}}><label
-                for="publicYes">Yes</label>
-              <input type="radio" id="publicNo" name="public" {{^sitePublic}}selected{{/sitePublic}}><label
-                for="publicNo">No</label>
-              <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
-            </div>
-            <span class="statusCaption larger">
+    <!-- Publicly Visible -->
+    <div class="statusArea">
+      <fieldset class="danger-fields">
+        <legend>Publicly Visible:</legend>
+        <div class="horizontal">
+          <div class="statusControls">
+            <input type="radio" id="publicYes" name="public" {{#sitePublic}}selected{{/sitePublic}}><label
+              for="publicYes">Yes</label>
+            <input type="radio" id="publicNo" name="public" {{^sitePublic}}selected{{/sitePublic}}><label
+              for="publicNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
+          </div>
+          <span class="statusCaption larger">
               Impacts search result display only.<br>
               A publicly visible site is shown in all search results to everyone.<br>
               A not publicly visible site is only shown to users that are logged in.<br>
               The backend dispatch systems and data sharing with partners will work the same whether
               a site is publicly listed or not.
             </span>
-          </div>
-        </fieldset>
-      </div>
-
-      <!-- SITE ACTIVE -->
-      <div class="statusArea">
-        <fieldset class="danger-fields">
-          <legend>Site is Active:</legend>
-          <div class="horizontal">
-            <div class="statusControls">
-              <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
-              <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
-              <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
-            </div>
-            <span class="statusCaption larger">An inactive site is no longer listed and is effectively removed from WNC-supply-sites.com</span>
-          </div>
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
     </div>
-    <div id="updateStatusConfirmation"></div>
-    <div id="status-update-error"></div>
+
+    <!-- SITE ACTIVE -->
+    <div class="statusArea">
+      <fieldset class="danger-fields">
+        <legend>Site is Active:</legend>
+        <div class="horizontal">
+          <div class="statusControls">
+            <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
+            <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
+            <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
+          </div>
+          <span class="statusCaption larger">An inactive site is no longer listed and is effectively removed from WNC-supply-sites.com</span>
+        </div>
+      </fieldset>
+    </div>
   </div>
+  <div id="updateStatusConfirmation"></div>
+  <div id="status-update-error"></div>
 </div>
 
 </body>

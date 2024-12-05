@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.data.CountyDao;
-import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
@@ -9,7 +8,6 @@ import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -47,6 +45,10 @@ public class ManageSiteController {
   /** User will be shown a page to select the site they want to manage. */
   @GetMapping("/manage/select-site")
   ModelAndView showSelectSitePage() {
+    return showSelectSitePage(jdbi);
+  }
+
+  public static ModelAndView showSelectSitePage(Jdbi jdbi) {
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("sites", ManageSiteDao.fetchSiteList(jdbi));
     return new ModelAndView("manage/select-site", pageParams);
@@ -87,7 +89,7 @@ public class ManageSiteController {
 
   /** Fetches data for the manage site page */
   @GetMapping("/manage/contact")
-  ModelAndView fetchSiteContact(String siteId) {
+  ModelAndView showSiteContactPage(String siteId) {
     Map<String, Object> pageParams = new HashMap<>();
 
     String siteName = fetchSiteName(siteId);
@@ -229,94 +231,6 @@ public class ManageSiteController {
     }
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
-  }
-
-  /** Display inventory listing for a site. */
-  @GetMapping("/manage/inventory")
-  ModelAndView fetchSiteInventoryListing(String siteId) {
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      return showSelectSitePage();
-    }
-
-    Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("siteName", siteName);
-    pageParams.put("siteId", siteId);
-
-    List<ItemInventoryDisplay> inventoryList =
-        ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
-            .map(ItemInventoryDisplay::new)
-            .sorted(
-                Comparator.comparing(
-                    d -> d.getItemName().toUpperCase())) // ItemInventoryDisplay::getItemName))
-            .toList();
-
-    pageParams.put("inventoryList", inventoryList);
-
-    return new ModelAndView("manage/inventory", pageParams);
-  }
-
-  @Data
-  @Builder
-  @AllArgsConstructor
-  static class ItemInventoryDisplay {
-    String itemName;
-
-    /** Should either be blank or "checked" */
-    @Builder.Default String itemChecked = "";
-
-    @Builder.Default String urgentChecked = "";
-    @Builder.Default String neededChecked = "";
-    @Builder.Default String availableChecked = "";
-    @Builder.Default String oversupplyChecked = "";
-
-    ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
-      itemName = siteInventory.getItemName();
-      itemChecked = siteInventory.isActive() ? "checked" : "";
-
-      urgentChecked =
-          ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
-              ? "checked"
-              : "";
-      neededChecked =
-          ItemStatus.NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
-              ? "checked"
-              : "";
-      oversupplyChecked =
-          ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus())
-              ? "checked"
-              : "";
-
-      // if none of the statuses are checked, then check 'available' by default.
-      availableChecked =
-          (urgentChecked.isEmpty() && neededChecked.isEmpty() && oversupplyChecked.isEmpty())
-              ? "checked"
-              : "";
-    }
-
-    @SuppressWarnings("unused")
-    public String getItemLabelClass() {
-      if (urgentChecked != null && !urgentChecked.isEmpty()) {
-        return ItemStatus.URGENTLY_NEEDED.getCssClass();
-      } else if (neededChecked != null && !neededChecked.isEmpty()) {
-        return ItemStatus.NEEDED.getCssClass();
-      } else if (availableChecked != null && !availableChecked.isEmpty()) {
-        return ItemStatus.AVAILABLE.getCssClass();
-      } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
-        return ItemStatus.OVERSUPPLY.getCssClass();
-      } else {
-        return ItemStatus.AVAILABLE.getCssClass();
-      }
-    }
-
-    @SuppressWarnings("unused")
-    public String getItemStatusDisabled() {
-      if (itemChecked == null || itemChecked.isEmpty()) {
-        return "disabled";
-      } else {
-        return "";
-      }
-    }
   }
 
   /** Shows the form for adding a brand new site */

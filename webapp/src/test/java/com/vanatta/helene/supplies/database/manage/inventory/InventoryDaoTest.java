@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.manage.item.management;
+package com.vanatta.helene.supplies.database.manage.inventory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class ItemManagemenetDaoTest {
+class InventoryDaoTest {
 
   @BeforeAll
   static void setup() {
@@ -28,7 +28,7 @@ class ItemManagemenetDaoTest {
     assertThat(gloves.isActive()).isFalse();
 
     // set gloves to back to 'active'
-    ItemManagemenetDao.updateSiteItemActive(
+    InventoryDao.updateSiteItemActive(
         TestConfiguration.jdbiTest, siteId, "gloves", "Oversupply");
 
     // verify gloves are active
@@ -37,7 +37,7 @@ class ItemManagemenetDaoTest {
     assertThat(gloves.isActive()).isTrue();
 
     // set gloves to back to 'inactive'
-    ItemManagemenetDao.updateSiteItemInactive(TestConfiguration.jdbiTest, siteId, "gloves");
+    InventoryDao.updateSiteItemInactive(TestConfiguration.jdbiTest, siteId, "gloves");
 
     // verify gloves are inactive
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
@@ -55,11 +55,11 @@ class ItemManagemenetDaoTest {
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.AVAILABLE.getText());
 
     // change gloves status to 'Urgent Need'
-    ItemManagemenetDao.updateItemStatus(
+    InventoryDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
 
     // validation (1)
-    var newStatus = ItemManagemenetDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    var newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.URGENTLY_NEEDED);
 
     // validation (2) water status is updated 'Urgent Need'
@@ -68,11 +68,11 @@ class ItemManagemenetDaoTest {
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
 
     // change water status to 'Oversupply'
-    ItemManagemenetDao.updateItemStatus(
+    InventoryDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.OVERSUPPLY.getText());
 
     // validate water status is updated 'Oversupply'
-    newStatus = ItemManagemenetDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.OVERSUPPLY);
 
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
@@ -80,11 +80,11 @@ class ItemManagemenetDaoTest {
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.OVERSUPPLY.getText());
 
     // change water status to 'Need'
-    ItemManagemenetDao.updateItemStatus(
+    InventoryDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.NEEDED.getText());
 
     // validate water status is updated 'Need'
-    newStatus = ItemManagemenetDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.NEEDED);
 
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
@@ -92,7 +92,7 @@ class ItemManagemenetDaoTest {
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.NEEDED.getText());
 
     // change gloves status back to 'Available'
-    ItemManagemenetDao.updateItemStatus(
+    InventoryDao.updateItemStatus(
         TestConfiguration.jdbiTest, siteId, "water", ItemStatus.AVAILABLE.getText());
 
     // validate gloves status is updated 'Need'
@@ -105,7 +105,7 @@ class ItemManagemenetDaoTest {
   void addItem() {
     int itemCountPreInsert = countItems();
 
-    boolean result = ItemManagemenetDao.addNewItem(TestConfiguration.jdbiTest, "new item");
+    boolean result = InventoryDao.addNewItem(TestConfiguration.jdbiTest, "new item");
     assertThat(result).isTrue();
 
     int itemCountPostInsert = countItems();
@@ -119,8 +119,8 @@ class ItemManagemenetDaoTest {
 
   @Test
   void duplicateItemIsNoOp() {
-    ItemManagemenetDao.addNewItem(TestConfiguration.jdbiTest, "some item");
-    boolean result = ItemManagemenetDao.addNewItem(TestConfiguration.jdbiTest, "SOME ITEM");
+    InventoryDao.addNewItem(TestConfiguration.jdbiTest, "some item");
+    boolean result = InventoryDao.addNewItem(TestConfiguration.jdbiTest, "SOME ITEM");
     assertThat(result).isFalse();
   }
 

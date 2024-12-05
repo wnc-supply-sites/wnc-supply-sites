@@ -3,15 +3,14 @@
   <title>WNC Supply Sites - Inventory Management</title>
   <script type="text/javascript" src="contact.js"></script>
   <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="../mobile.css"/>
   <link rel="stylesheet" href="manage.css"/>
   <link rel="stylesheet" href="contact.css"/>
-
-  <link rel="stylesheet" href="../mobile.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
-<h1><a href="../.." class="link-home">WNC Supply Sites - Site Management</a></h1>
+<h1><a href="/" class="link-home">WNC Supply Sites - Site Management</a></h1>
 
 <div class="back-link">
   <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
@@ -19,10 +18,7 @@
 
 <h2>{{siteName}} - Site Info & Contact</h2>
 
-
-
-<h3>Publicly Visible Data</h3>
-This data is visible to everyone that uses wnc-supply-sites.com
+<h3>Publicly Visible Data - data visible to everyone</h3>
 
 <div class="vertical">
   <div class="required">* Indicates Required Field</div>
@@ -118,12 +114,9 @@ This data is visible to everyone that uses wnc-supply-sites.com
 </div>
 
 
-<h3>Privately Visible Data</h3>
-This data is visible to only the logged-in users of wnc-supply-sites.com and dispatch partners.
+<h3>Privately Visible Data - visible to authenticated users & wnc-supply-sites.com dispatch partners</h3>
 
 <div class="data-entry-div vertical">
-  <div class="data-entry-body">
-
 
     <div class="data-field vertical">
       <label for="Contact Name">Contact Name: </label>
@@ -158,9 +151,6 @@ This data is visible to only the logged-in users of wnc-supply-sites.com and dis
       </div>
       <div id="Email Number-update-confirm" class="confirm-text"></div>
     </div>
-
-
-  </div>
 </div>
 
 </body>

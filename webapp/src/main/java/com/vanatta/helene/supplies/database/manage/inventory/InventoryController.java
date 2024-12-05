@@ -1,20 +1,31 @@
-package com.vanatta.helene.supplies.database.manage.item.management;
+package com.vanatta.helene.supplies.database.manage.inventory;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
+import com.vanatta.helene.supplies.database.manage.ManageSiteController;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for operations involving item updates at sites (item added to site, item removed from
@@ -22,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
-public class ItemManagementController {
+public class InventoryController {
 
   private final Jdbi jdbi;
   private final SendNewItemUpdate sendNewItemUpdate;
@@ -31,7 +42,7 @@ public class ItemManagementController {
   private final String dispatchRequestUrl;
   private final boolean makeEnabled;
 
-  public ItemManagementController(
+  public InventoryController(
       Jdbi jdbi,
       SendNewItemUpdate sendNewItemUpdate,
       SendInventoryUpdate sendInventoryUpdate,
@@ -58,14 +69,104 @@ public class ItemManagementController {
       return null;
     }
   }
-
+  
+  /** Display inventory listing for a site. */
+  @GetMapping("/manage/inventory")
+  ModelAndView fetchSiteInventoryListing(String siteId) {
+    String siteName = fetchSiteName(siteId);
+    if (siteName == null) {
+      return ManageSiteController.showSelectSitePage(jdbi);
+    }
+    
+    Map<String, Object> pageParams = new HashMap<>();
+    pageParams.put("siteName", siteName);
+    pageParams.put("siteId", siteId);
+    
+    List<ItemInventoryDisplay> inventoryList =
+        ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
+            .map(ItemInventoryDisplay::new)
+            .sorted(
+                Comparator.comparing(
+                    d -> d.getItemName().toUpperCase())) // ItemInventoryDisplay::getItemName))
+            .toList();
+    
+    pageParams.put("inventoryList", inventoryList);
+    
+    return new ModelAndView("manage/inventory", pageParams);
+  }
+  
+  @Data
+  @Builder
+  @AllArgsConstructor
+  static class ItemInventoryDisplay {
+    String itemName;
+    
+    /** Should either be blank or "checked" */
+    @Builder.Default String itemChecked = "";
+    
+    @Builder.Default String urgentChecked = "";
+    @Builder.Default String neededChecked = "";
+    @Builder.Default String availableChecked = "";
+    @Builder.Default String oversupplyChecked = "";
+    
+    ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
+      itemName = siteInventory.getItemName();
+      itemChecked = siteInventory.isActive() ? "checked" : "";
+      
+      urgentChecked =
+          ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
+      neededChecked =
+          ItemStatus.NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
+      oversupplyChecked =
+          ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus())
+              ? "checked"
+              : "";
+      
+      // if none of the statuses are checked, then check 'available' by default.
+      availableChecked =
+          (urgentChecked.isEmpty() && neededChecked.isEmpty() && oversupplyChecked.isEmpty())
+              ? "checked"
+              : "";
+    }
+    
+    @SuppressWarnings("unused")
+    public String getItemLabelClass() {
+      if (urgentChecked != null && !urgentChecked.isEmpty()) {
+        return ItemStatus.URGENTLY_NEEDED.getCssClass();
+      } else if (neededChecked != null && !neededChecked.isEmpty()) {
+        return ItemStatus.NEEDED.getCssClass();
+      } else if (availableChecked != null && !availableChecked.isEmpty()) {
+        return ItemStatus.AVAILABLE.getCssClass();
+      } else if (oversupplyChecked != null && !oversupplyChecked.isEmpty()) {
+        return ItemStatus.OVERSUPPLY.getCssClass();
+      } else {
+        return ItemStatus.AVAILABLE.getCssClass();
+      }
+    }
+    
+    @SuppressWarnings("unused")
+    public String getItemStatusDisabled() {
+      if (itemChecked == null || itemChecked.isEmpty()) {
+        return "disabled";
+      } else {
+        return "";
+      }
+    }
+  }
+  
+  
+  
   /** Creates a brand new item, and adds that item to a given site. */
   @PostMapping("/manage/add-site-item")
   @ResponseBody
   ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
     String itemName = params.get("itemName");
 
-    boolean itemAdded = ItemManagemenetDao.addNewItem(jdbi, itemName);
+    boolean itemAdded = InventoryDao.addNewItem(jdbi, itemName);
     if (!itemAdded) {
       log.warn("Failed to add item, already exists. Params: {}", params);
       return ResponseEntity.badRequest().body("Item not added, already exists");
@@ -106,7 +207,7 @@ public class ItemManagementController {
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
     }
 
-    ItemManagemenetDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
+    InventoryDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
 
     new Thread(
             () -> {
@@ -144,7 +245,7 @@ public class ItemManagementController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    ItemManagemenetDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
+    InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     new Thread(
             () -> {
               sendInventoryUpdate.send(Long.parseLong(siteId));
@@ -178,10 +279,10 @@ public class ItemManagementController {
     }
 
     ItemStatus oldStatus =
-        ItemManagemenetDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
+        InventoryDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
 
     if (oldStatus != ItemStatus.fromTextValue(newStatus)) {
-      ItemManagemenetDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
+      InventoryDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
       var latestStatus = ItemStatus.fromTextValue(newStatus);
       if (oldStatus != latestStatus) {
         new Thread(

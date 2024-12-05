@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.manage.item.management;
+package com.vanatta.helene.supplies.database.manage.inventory;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
 @Slf4j
-public class ItemManagemenetDao {
+public class InventoryDao {
 
   // TODO: handle null case (can be possible if a person is using multiple browser windows
   static ItemStatus fetchItemStatus(Jdbi jdbi, long siteId, String itemName) {

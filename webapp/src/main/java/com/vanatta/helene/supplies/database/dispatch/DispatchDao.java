@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.dispatch;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.manage.item.management.ItemManagemenetDao;
+import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
 import java.util.List;
 import java.util.Optional;
 import lombok.Data;
@@ -62,7 +62,7 @@ public class DispatchDao {
       Jdbi jdbi, long dispatchRequestId, String item, ItemStatus itemStatus) {
 
     // add the item first in case it does not exist.
-    ItemManagemenetDao.addNewItem(jdbi, item);
+    InventoryDao.addNewItem(jdbi, item);
 
     String insert =
         """
