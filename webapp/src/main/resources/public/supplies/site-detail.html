@@ -30,27 +30,63 @@
 
 <h2>{{siteName}}</h2>
 
-<dl>
-  {{#website}}
-  <dt>Website:</dt>
-  <dd><a href="{{href}}">{{title}}</a></dd>
-  {{/website}}
-  <dt>Address:</dt>
-  <dd>{{addressLine1}}<br>{{addressLine2}}</dd>
+<div class="mission-statement">
+  <dl>
+    {{#website}}
+    <dt>Website</dt>
+    <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
+    {{/website}}
 
-  {{#contactNumber}}
-  <dt>Contact:</dt>
-  <dd>
-    {{#href}}
-    <a href="{{.}}">
-    {{/href}}
-      {{title}}
-    {{#href}}
-    </a>
-    {{/href}}
-  </dd>
-  {{/contactNumber}}
-</dl>
+    {{#facebook}}
+    <dt>Facebook</dt>
+    <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
+    {{/facebook}}
+
+    <dt>Address</dt>
+    <dd class="detail-value">{{addressLine1}}<br>{{addressLine2}}</dd>
+
+
+    {{#loggedIn}}
+
+    {{#contactName}}
+    <dt>Contact<span class="privately-visible">*</span></dt>
+    <dd>{{.}}</dd>
+    {{/contactName}}
+
+    <dt>Number<span class="privately-visible">*</span></dt>
+    <dd class="detail-value">
+      {{^contactNumber}}
+      None listed
+      {{/contactNumber}}
+      {{#contactNumber}}
+      {{#href}}
+      <a href="{{.}}">
+        {{/href}}
+        {{title}}
+        {{#href}}
+      </a>
+      {{/href}}
+      {{/contactNumber}}
+    </dd>
+
+    {{#contactEmail}}
+    <dt>Email<span class="privately-visible">*</span></dt>
+    <dd class="detail-value">
+      {{#href}}
+      <a href="{{.}}">
+        {{/href}}
+        {{title}}
+        {{#href}}
+      </a>
+      {{/href}}
+    </dd>
+    {{/contactEmail}}
+
+    {{/loggedIn}}
+  </dl>
+</div>
+
+<div class="privately-visible">* Indicates field is visible because you are logged in</div>
 
 <div class="mapouter">
   <div class="gmap_canvas">

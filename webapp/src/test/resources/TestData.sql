@@ -4,28 +4,48 @@ delete from site_item;
 delete from item;
 delete from site;
 delete from county;
-insert into county(name, state) values('Ashe', 'NC');
-insert into county(name, state) values('Buncombe', 'NC');
-insert into county(name, state) values('Watauga', 'NC');
-
--- site1, in Watauga county            
 insert into site(
-   name, address, city,
-   county_id,
-   website,
-   site_type_id,
-   accepting_donations, active, contact_number, airtable_id,
-   hours, contact_name, facebook, contact_email,
-   wss_id, publicly_visible, distributing_supplies)
+  name,
+  contact_name,
+  contact_number,
+  contact_email,
+  address,
+  city,
+  county_id,
+  website,
+  site_type_id,
+  accepting_donations,
+  active,
+  airtable_id,
+  hours,
+  facebook,
+  wss_id,
+  publicly_visible,
+  distributing_supplies)
 values (
-  'site1', 'address1', 'city1',
+        'site1',
+        'contact me',
+        '111',
+        'email glorious',
+        'address1',
+        'city1',
         (select id from county where name = 'Watauga'),
         'site1website',
         (select id from site_type where name = 'Distribution Center'),
-        true, true, '111', -200,
-        'our hours', 'contact me', 'fb url', 'email glorious',
-        -10, true, true
- );
+        true,
+        true ,
+        -200,
+        'our hours',
+        'fb url',
+        -10,
+        true,
+        true
+       );
+insert into county(name, state) values('Ashe', 'NC');
+insert into county(name, state) values('Buncombe', 'NC');
+
+-- site1, in Watauga county            
+insert into county(name, state) values('Watauga', 'NC');
 
 -- site2, in Buncombe county, not accepting donations
 insert into site(name, address, city, county_id, accepting_donations, site_type_id) values(

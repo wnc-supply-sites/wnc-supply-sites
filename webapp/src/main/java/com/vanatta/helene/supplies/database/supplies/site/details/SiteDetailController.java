@@ -1,13 +1,13 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
+import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
+import com.vanatta.helene.supplies.database.supplies.SuppliesController;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
-import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
@@ -20,30 +20,51 @@ import org.springframework.web.servlet.ModelAndView;
 @AllArgsConstructor
 public class SiteDetailController {
 
+  static final String PATH_SITE_DETAIL = "/supplies/site-detail";
+
   private final Jdbi jdbi;
   private final CookieAuthenticator cookieAuthenticator;
 
-  @GetMapping("/supplies/site-detail")
-  public ModelAndView siteDetail(@RequestParam Long id, HttpServletRequest request) {
+  @GetMapping(PATH_SITE_DETAIL)
+  public ModelAndView siteDetail(
+      @RequestParam Long id, HttpServletRequest request, HttpServletResponse response) {
     if (id == null) {
-      throw new IllegalArgumentException("No site id specified, missing 'id' parameter");
+      return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
+    boolean isLoggedIn = cookieAuthenticator.isAuthenticated(request);
     SiteDetailDao.SiteDetailData siteDetailData = SiteDetailDao.lookupSiteById(jdbi, id);
+
+    // if site not found, not accessible, or for logged in only users, then redirect
+    if (siteDetailData == null
+        || !siteDetailData.isActive()
+        || (!isLoggedIn && !siteDetailData.isPubliclyVisible())) {
+      return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
+    }
 
     Map<String, Object> siteDetails = new HashMap<>();
 
     siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
-
     siteDetails.put("siteName", siteDetailData.getSiteName());
     siteDetails.put(
         "website",
-        Optional.ofNullable(siteDetailData.getWebsite()).map(WebsiteLink::new).orElse(null));
-    siteDetails.put("contactNumber", new ContactNumber(siteDetailData.getContactNumber()));
+        siteDetailData.getWebsite() == null || siteDetailData.getWebsite().isBlank()
+            ? null
+            : new WebsiteLink(siteDetailData.getWebsite()));
+    siteDetails.put(
+        "facebook",
+        siteDetailData.getFacebook() == null || siteDetailData.getFacebook().isBlank()
+            ? null
+            : new WebsiteLink(siteDetailData.getFacebook()));
+    siteDetails.put(
+        "hours",
+        siteDetailData.getHours() == null || siteDetailData.getHours().isBlank()
+            ? null
+            : new WebsiteLink(siteDetailData.getFacebook()));
+
     siteDetails.put("addressLine1", siteDetailData.getAddress());
     siteDetails.put(
         "addressLine2",
         String.format("%s, %s", siteDetailData.getCity(), siteDetailData.getState()));
-
     siteDetails.put(
         "googleMapsAddress",
         String.format(
@@ -52,6 +73,23 @@ public class SiteDetailController {
             urlEncode(siteDetailData.getCity()),
             urlEncode(siteDetailData.getState())));
 
+    if (isLoggedIn) {
+      siteDetails.put(
+          "contactName",
+          siteDetailData.getContactName() == null || siteDetailData.getContactName().isBlank()
+              ? null
+              : siteDetailData.getContactName());
+      siteDetails.put(
+          "contactNumber",
+          siteDetailData.getContactNumber() == null || siteDetailData.getContactNumber().isBlank()
+              ? null
+              : new ContactNumber(siteDetailData.getContactNumber()));
+      siteDetails.put(
+          "contactEmail",
+          siteDetailData.getContactEmail() == null
+              ? null
+              : new ContactEmail(siteDetailData.getContactEmail()));
+    }
     return new ModelAndView("supplies/site-detail", siteDetails);
   }
 
@@ -61,7 +99,7 @@ public class SiteDetailController {
     private final String title;
 
     WebsiteLink(String link) {
-      if(link.endsWith("/")) {
+      if (link.endsWith("/")) {
         link = link.substring(0, link.length() - 1);
       }
 
@@ -84,13 +122,19 @@ public class SiteDetailController {
     private final String title;
 
     ContactNumber(String number) {
-      if (number == null) {
-        href = null;
-        title = "None listed";
-      } else {
-        href = "tel:" + number;
-        title = number;
-      }
+      href = "tel:" + number;
+      title = number;
+    }
+  }
+
+  @Getter
+  static class ContactEmail {
+    private final String href;
+    private final String title;
+
+    ContactEmail(String email) {
+      href = "mailTo:" + email;
+      title = email;
     }
   }
 

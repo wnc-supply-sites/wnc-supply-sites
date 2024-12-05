@@ -106,10 +106,10 @@ html, table {
     font-size: 0.8em;
 }
 
-.publicly-visible {
+.privately-visible {
     color: #08b608;
     font-style: italic;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 .login-indicator {

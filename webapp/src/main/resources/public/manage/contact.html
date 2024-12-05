@@ -18,7 +18,7 @@
 
 <h2>{{siteName}} - Site Info & Contact</h2>
 
-<h3>Publicly Visible Data - data visible to everyone</h3>
+<h3>Publicly Visible Data - visible to everyone</h3>
 
 <div class="vertical">
   <div class="required">* Indicates Required Field</div>
@@ -92,7 +92,7 @@
       <label for="website">Website: </label>
       <div class="horizontal">
         <input id="Website" type="text" class="shortTextField" value="{{website}}" maxlength="128"
-               placeholder="www.your-website.com"/>
+               placeholder="your-website.com"/>
         <button onclick="showUpdateConfirmation({{siteId}}, 'Website')" class="update-button">Update</button>
         <div class="green-check hidden" id="Website-update-confirm-checkmark">&#10003;</div>
       </div>
@@ -100,10 +100,10 @@
     </div>
 
     <div class="data-field vertical">
-      <label for="website">Facebook: </label>
+      <label for="Facebook">Facebook: </label>
       <div class="horizontal">
         <input id="Facebook" type="text" class="shortTextField" value="{{facebook}}" maxlength="128"
-               placeholder="www.your-website.com"/>
+               placeholder="facebook.com/your-group"/>
         <button onclick="showUpdateConfirmation({{siteId}}, 'Facebook')" class="update-button">Update</button>
         <div class="green-check hidden" id="Facebook-update-confirm-checkmark">&#10003;</div>
       </div>
@@ -114,7 +114,7 @@
 </div>
 
 
-<h3>Privately Visible Data - visible to authenticated users & wnc-supply-sites.com dispatch partners</h3>
+<h3>Privately Visible Data - visible to authenticated users only</h3>
 
 <div class="data-entry-div vertical">
 

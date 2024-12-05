@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.Authenticator;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 @AllArgsConstructor
 public class SuppliesController {
+  public static final String PATH_SUPPLY_SEARCH = "/supplies/site-list";
 
   private final Jdbi jdbi;
   private final CookieAuthenticator cookieAuthenticator;
@@ -36,8 +36,9 @@ public class SuppliesController {
   }
 
   /** GET requests should be coming from the home page. */
-  @GetMapping("/supplies/site-list")
-  public ModelAndView supplies(@RequestParam(required = false) String mode, HttpServletRequest request) {
+  @GetMapping(PATH_SUPPLY_SEARCH)
+  public ModelAndView supplies(
+      @RequestParam(required = false) String mode, HttpServletRequest request) {
     if (mode == null) {
       mode = "view";
     }
@@ -60,7 +61,7 @@ public class SuppliesController {
     return getSuppliesData(SiteSupplyRequest.builder().build());
   }
 
-    /** POST requests should be coming from supplies page JS requests for donation site data */
+  /** POST requests should be coming from supplies page JS requests for donation site data */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
@@ -117,7 +118,8 @@ public class SuppliesController {
 
     StringWriter writer = new StringWriter();
     try (CsvWriter csv = CsvWriter.builder().build(writer)) {
-      csv.writeRecord("Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status", "Last Updated");
+      csv.writeRecord(
+          "Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status", "Last Updated");
 
       data.forEach(
           value ->

@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class ManageSiteController {
 
+  static final String PATH_SELECT_SITE = "/manage/select-site";
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
@@ -43,7 +44,7 @@ public class ManageSiteController {
   }
 
   /** User will be shown a page to select the site they want to manage. */
-  @GetMapping("/manage/select-site")
+  @GetMapping(PATH_SELECT_SITE)
   ModelAndView showSelectSitePage() {
     return showSelectSitePage(jdbi);
   }
@@ -98,13 +99,20 @@ public class ManageSiteController {
     }
 
     SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
+    if(data == null) {
+      return new ModelAndView("redirect:" + PATH_SELECT_SITE);
+    }
+
     pageParams.put("siteId", siteId);
     pageParams.put("siteName", data.getSiteName());
     pageParams.put("address", data.getAddress());
-    pageParams.put("siteContact", Optional.ofNullable(data.getContactNumber()).orElse(""));
-    pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
     pageParams.put("state", Optional.ofNullable(data.getState()).orElse(""));
+    pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
+    pageParams.put("facebook", Optional.ofNullable(data.getFacebook()).orElse(""));
+    pageParams.put("siteContactName", Optional.ofNullable(data.getContactName()).orElse(""));
+    pageParams.put("siteContactEmail", Optional.ofNullable(data.getContactEmail()).orElse(""));
+    pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));
 
     // fetch all counties, mark the county of this site as "selected"
     var countyListing =

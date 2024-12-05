@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.supplies.site.details;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -27,17 +26,25 @@ class SiteDetailDaoTest {
     var result = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, idToLookup);
 
     assertThat(result.getSiteName()).isEqualTo("site1");
+    assertThat(result.getContactName()).isEqualTo("contact me");
+    assertThat(result.getContactNumber()).isEqualTo("111");
+    assertThat(result.getContactEmail()).isEqualTo("email glorious");
     assertThat(result.getAddress()).isEqualTo("address1");
     assertThat(result.getCity()).isEqualTo("city1");
     assertThat(result.getState()).isEqualTo("NC");
-    assertThat(result.getWebsite()).isEqualTo("site1website");
     assertThat(result.getCounty()).isEqualTo("Watauga");
+    assertThat(result.getWebsite()).isEqualTo("site1website");
+    assertThat(result.getSiteType()).isEqualTo("Distribution Center");
+    assertThat(result.acceptingDonations).isTrue();
+    assertThat(result.isActive()).isTrue();
+    assertThat(result.getHours()).isEqualTo("our hours");
+    assertThat(result.getFacebook()).isEqualTo("fb url");
+    assertThat(result.isPubliclyVisible()).isTrue();
+    assertThat(result.isDistributingSupplies()).isTrue();
   }
 
   @Test
-  void nonExistentSiteThrows() {
-    org.junit.jupiter.api.Assertions.assertThrows(
-        IllegalArgumentException.class,
-        () -> SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, -1));
+  void nonExistentSiteIsNull() {
+    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, -1)).isNull();
   }
 }

@@ -53,3 +53,7 @@ dd {
         height: 400px !important;
     }
 }
+
+.detail-value {
+    font-weight: bold;
+}
