@@ -47,3 +47,7 @@ async function sendSiteUpdate(siteId, field, newValue) {
   return await response.text();
 }
 
+
+async function changeCounty() {
+
+}
