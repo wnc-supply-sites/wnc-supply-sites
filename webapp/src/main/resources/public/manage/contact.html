@@ -110,7 +110,7 @@
         <label for="Site Hours">Site Hours: </label>
       </div>
       <div class="horizontal">
-        <textarea id="Site Hours" rows="5" cols="20"></textarea>
+        <textarea id="Site Hours" rows="5" cols="20">{{hours}}</textarea>
         <div>
            <button onclick="showUpdateConfirmation({{siteId}}, 'Site Hours')" class="update-button">Update</button>
         </div>
@@ -161,9 +161,9 @@
     </div>
 
   <div class="data-field vertical">
-    <label for="Contact Name">Additional Contacts: </label>
+    <label for="Additional Contacts">Additional Contacts: </label>
     <div class="horizontal">
-      <textarea cols="4" rows="20" id="Additional Contacts" maxlength="256">{{additionalContacts}}</textarea>
+      <textarea cols="20" rows="4" id="Additional Contacts" maxlength="256">{{additionalContacts}}</textarea>
       <div>
         <button onclick="showUpdateConfirmation({{siteId}}, 'Additional Contacts')" class="update-button">Update</button>
       </div>

@@ -116,6 +116,7 @@ public class ManageSiteController {
     pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
     pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put("facebook", Optional.ofNullable(data.getFacebook()).orElse(""));
+    pageParams.put("hours", Optional.ofNullable(data.getHours()).orElse(""));
     pageParams.put("siteContactName", Optional.ofNullable(data.getContactName()).orElse(""));
     pageParams.put("siteContactEmail", Optional.ofNullable(data.getContactEmail()).orElse(""));
     pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));

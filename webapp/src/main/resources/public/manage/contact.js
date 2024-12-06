@@ -1,6 +1,12 @@
 async function showUpdateConfirmation(siteId, field) {
-  let newValue =
-      document.getElementById(field).value;
+  let newValue;
+
+  if(field === 'County' || field === 'State') {
+    newValue =
+        document.getElementById('County').value + ',' + document.getElementById('State').value;
+  } else {
+    newValue = document.getElementById(field).value;
+  }
 
   try {
     await sendSiteUpdate(siteId, field, newValue)
