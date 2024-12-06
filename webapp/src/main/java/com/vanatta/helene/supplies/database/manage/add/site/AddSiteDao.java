@@ -24,18 +24,31 @@ public class AddSiteDao {
     String insert =
         """
         insert into site(
-            name, address, city,
-            county_id, contact_number,
-            website, site_type_id, last_updated
+          name,
+          address,
+          city,
+          county_id,
+          website,
+          facebook,
+          site_type_id,
+          hours,
+          contact_name,
+          contact_number,
+          contact_email,
+          additional_contacts
         ) values(
           :siteName,
           :address,
           :city,
           (select id from county where name = :countyName and state = :state),
-          :contactNumber,
           :website,
+          :facebook,
           (select id from site_type where name = :siteType),
-          now()
+          :hours,
+          :contactName,
+          :contactNumber,
+          :contactEmail,
+          :additionalContacts
          )
         """;
 
@@ -49,9 +62,14 @@ public class AddSiteDao {
                   .bind("city", siteData.getCity())
                   .bind("countyName", siteData.getCounty())
                   .bind("state", siteData.getState())
-                  .bind("contactNumber", siteData.getContactNumber())
                   .bind("website", siteData.getWebsite())
+                  .bind("facebook", siteData.getFacebook())
                   .bind("siteType", siteData.getSiteType().getText())
+                  .bind("hours", siteData.getSiteHours())
+                  .bind("contactName", siteData.getContactName())
+                  .bind("contactNumber", siteData.getContactNumber())
+                  .bind("contactEmail", siteData.getContactEmail())
+                  .bind("additionalContacts", siteData.getAdditionalContacts())
                   .executeAndReturnGeneratedKeys("id")
                   .mapTo(Long.class)
                   .one());

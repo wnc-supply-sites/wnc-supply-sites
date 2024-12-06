@@ -48,14 +48,19 @@ public class AddSiteController {
     log.info("Received add new site data: {}", params);
     var addSiteData =
         AddSiteData.builder()
-            .contactNumber(params.get("contactNumber"))
-            .website(params.get("website"))
-            .siteType(SiteType.parseSiteType(params.get("siteType")))
             .siteName(params.get("siteName"))
             .streetAddress(params.get("streetAddress"))
             .city(params.get("city"))
-            .county(params.get("county"))
             .state(params.get("state"))
+            .county(params.get("county"))
+            .website(params.get("website"))
+            .facebook(params.get("facebook"))
+            .siteType(SiteType.parseSiteType(params.get("siteType")))
+            .siteHours(params.get("siteHours"))
+            .contactName(params.get("contactName"))
+            .contactNumber(params.get("contactNumber"))
+            .contactEmail(params.get("contactEmail"))
+            .additionalContacts(params.get("additionalContacts"))
             .build();
     if (addSiteData.isMissingRequiredData()) {
       log.warn(

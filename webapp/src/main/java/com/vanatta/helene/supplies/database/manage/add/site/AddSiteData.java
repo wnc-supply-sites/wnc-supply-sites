@@ -11,16 +11,20 @@ import lombok.Value;
 @Value
 public class AddSiteData {
 
-  String contactNumber;
-  String website;
-
-  @Nonnull SiteType siteType;
   @Nonnull String siteName;
   @Nonnull String streetAddress;
   @Nonnull String city;
-  @Nonnull String county;
   @Nonnull String state;
-
+  @Nonnull String county;
+  String website;
+  String facebook;
+  @Nonnull SiteType siteType;
+  String siteHours;
+  String contactName;
+  String contactNumber;
+  String contactEmail;
+  String additionalContacts;
+  
   @SuppressWarnings("ConstantValue")
   public boolean isMissingRequiredData() {
     return siteType == null

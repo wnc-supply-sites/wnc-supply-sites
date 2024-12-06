@@ -1,4 +1,11 @@
 alter table site add column additional_contacts varchar(1024);
+alter table site alter column last_updated set default now();
+
+alter table site add column inventory_last_updated timestamptz;
+update site set inventory_last_updated = last_updated;
+alter table site alter column inventory_last_updated set default now();
+alter table site alter column inventory_last_updated set not null;
+
 
 -- table to keep track of changes to supply site info
 -- eg: address, contact numbers
@@ -12,3 +19,5 @@ create table site_audit_trail (
 );
 
 alter table site_audit_trail owner to wnc_helene;
+
+
