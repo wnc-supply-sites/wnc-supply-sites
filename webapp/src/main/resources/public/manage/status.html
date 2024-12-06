@@ -24,15 +24,15 @@
 <div id="data-entry">
   <div class="data-entry-div vertical">
 
-    <!-- ACCEPTING DONATIONS -->
+    <!-- ACCEPTING SUPPLIES -->
     <div class="statusArea">
       <fieldset>
-        <legend>Accepting Donations from the Public:</legend>
+        <legend class="bold">Accepting Supplies from the Public:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="acceptingYes" name="acceptingDonations" {{#siteAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
+            <input type="radio" id="acceptingYes" name="acceptingDonations" {{#siteAcceptingDonations}}checked{{/siteAcceptingDonations}}><label
               for="acceptingYes">Yes</label>
-            <input type="radio" id="acceptingNo" name="acceptingDonations" {{^siteNotAcceptingDonations}}selected{{/siteAcceptingDonations}}><label
+            <input type="radio" id="acceptingNo" name="acceptingDonations" {{^siteAcceptingDonations}}checked{{/siteAcceptingDonations}}><label
               for="acceptingNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateSiteAcceptingDonations({{siteId}})">Update</button>
           </div>
@@ -41,17 +41,17 @@
       </fieldset>
     </div>
 
-    <!-- DISTRIBUTING DONATIONS -->
+    <!-- DISTRIBUTING SUPPLIES -->
     <div class="statusArea">
       <fieldset>
-        <legend>Distributing Donations to the Public:</legend>
+        <legend class="bold">Distributing Supplies to the Public:</legend>
         <div class="horizontal">
           <div class="statusControls">
             <input type="radio" id="distributingYes" name="distributingDonations"
-                   {{#siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
+                   {{#siteDistributingDonations}}checked{{/siteDistributingDonations}}><label
               for="distributingYes">Yes</label>
             <input type="radio" id="distributingNo" name="distributingDonations"
-                   {{^siteDistributingDonations}}selected{{/siteDistributingDonations}}><label
+                   {{^siteDistributingDonations}}checked{{/siteDistributingDonations}}><label
               for="distributingNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateSiteDistributingDonations({{siteId}})">Update
             </button>
@@ -66,7 +66,7 @@
     <!-- SITE TYPE (SUPPLY HUB) -->
     <div class="statusArea">
       <fieldset>
-        <legend>Site Type:</legend>
+        <legend class="bold">Site Type:</legend>
         <div class="horizontal">
 
           <div class="statusControls vertical">
@@ -94,14 +94,14 @@
     <!-- Publicly Visible -->
     <div class="statusArea">
       <fieldset class="danger-fields">
-        <legend>Publicly Visible:</legend>
+        <legend class="bold">Publicly Visible:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="publicYes" name="public" {{#sitePublic}}selected{{/sitePublic}}><label
+            <input type="radio" id="publicYes" name="public" {{#sitePublic}}checked{{/sitePublic}}><label
               for="publicYes">Yes</label>
-            <input type="radio" id="publicNo" name="public" {{^sitePublic}}selected{{/sitePublic}}><label
+            <input type="radio" id="publicNo" name="public" {{^sitePublic}}checked{{/sitePublic}}><label
               for="publicNo">No</label>
-            <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
+            <button class="siteStatusUpdateButton" onclick="updatePubliclyVisible({{siteId}})">Update</button>
           </div>
           <span class="statusCaption larger">
               Impacts search result display only.<br>
@@ -117,11 +117,11 @@
     <!-- SITE ACTIVE -->
     <div class="statusArea">
       <fieldset class="danger-fields">
-        <legend>Site is Active:</legend>
+        <legend class="bold">Site is Active:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="activeYes" name="activeSite" {{siteActive}}/><label for="activeYes">Yes</label>
-            <input type="radio" id="activeNo" name="activeSite" {{siteNotActive}}/><label for="activeNo">No</label>
+            <input type="radio" id="activeYes" name="activeSite" {{#siteActive}}checked{{/siteActive}}><label for="activeYes">Yes</label>
+            <input type="radio" id="activeNo" name="activeSite" {{^siteActive}}checked{{/siteActive}}/><label for="activeNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
           </div>
           <span class="statusCaption larger">An inactive site is no longer listed and is effectively removed from WNC-supply-sites.com</span>
@@ -130,7 +130,7 @@
     </div>
   </div>
   <div id="updateStatusConfirmation"></div>
-  <div id="status-update-error"></div>
+  <div class="errorMessage" id="status-update-error"></div>
 </div>
 
 </body>

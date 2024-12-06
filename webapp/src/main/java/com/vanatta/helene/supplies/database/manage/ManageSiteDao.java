@@ -184,6 +184,7 @@ public class ManageSiteDao {
   public static class SiteStatus {
     boolean active;
     boolean acceptingDonations;
+    boolean distributingDonations;
     String siteType;
 
     public SiteType getSiteTypeEnum() {
@@ -228,8 +229,24 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
-    updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
+  
+  public static void updateSiteDistributingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
+    int updateCount =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(
+                        "update site set distributing_supplies = :newValue, last_updated = now() where id = :siteId")
+                    .bind("newValue", newValue)
+                    .bind("siteId", siteId)
+                    .execute());
+    
+    if (updateCount == 0) {
+      throw new IllegalArgumentException("Invalid site id: " + siteId);
+    }
+  }
+  
 
   public static void updateSiteActiveFlag(Jdbi jdbi, long siteId, boolean newValue) {
     int updateCount =
@@ -245,7 +262,6 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
-    updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   /** Fetches all items, items requested/needed for a given site are listed as active. */

@@ -2,39 +2,67 @@ async function updateSiteActive(siteId) {
   const active = document.getElementById("activeYes").checked;
   try {
     await sendStatusUpdate(siteId, "active", active);
-    document.getElementById("updateStatusConfirmation")
-        .innerHTML =
-        `<span class="green-check" id="update-active-confirm">&#10003;</span>` +
-        "Site status set to " + (active ? "active" : "inactive");
+    showConfirmation("Site status set to " + (active ? "active" : "inactive"));
   } catch (error) {
-    console.log(error);
-    document.getElementById("status-update-error")
-        .innerHTML = "An error occurred, site status was not updated.";
+    showError(error, "site 'active' was not updated.")
   }
+}
+
+function showConfirmation(text) {
+  document.getElementById("updateStatusConfirmation")
+      .innerHTML =
+      `<span class="green-check" id="update-active-confirm">&#10003;</span> ${text}`;
+  document.getElementById("status-update-error").innerHTML = "";
+}
+
+function showError(error, messageText) {
+  console.log(error);
+  document.getElementById("updateStatusConfirmation")
+      .innerHTML = "";
+  document.getElementById("status-update-error")
+      .innerHTML = "An error occurred, " + messageText;
 }
 
 async function updateSiteAcceptingDonations(siteId) {
   const accepting = document.getElementById("acceptingYes").checked;
   try {
     await sendStatusUpdate(siteId, "acceptingDonations", accepting);
-    document.getElementById("updateStatusConfirmation")
-        .innerHTML =
-        `<span class="green-check" id="update-active-confirm">&#10003;</span>` +
-        "Site status set to " + (accepting ? "" : "NOT ") + "accepting donations";
+    showConfirmation("Site status set to " + (accepting ? "" : "NOT ") + "accepting supplies");
   } catch (error) {
-    console.log(error);
-    document.getElementById("status-update-error")
-        .innerHTML = "An error occurred, site status was not updated.";
+    showError(error, "accepting supplies was not updated.");
   }
 }
 
+async function updateSiteDistributingDonations(siteId) {
+  const distributing = document.getElementById("distributingYes").checked;
+  try {
+    await sendStatusUpdate(siteId, "distributingDonations", distributing);
+    showConfirmation("Site status set to " + (distributing ? "" : "NOT ") + "distributing supplies");
+  } catch (error) {
+    showError(error, "distributing supplies was not updated");
+  }
+}
+
+
 async function updateSiteSiteType(siteId) {
   const isDistSite = document.getElementById("distributionCenter").checked;
-  await sendStatusUpdate(siteId, "distSite", isDistSite);
-  document.getElementById("updateStatusConfirmation")
-      .innerHTML =
-      `<span class="green-check" id="update-active-confirm">&#10003;</span>` +
-      "Site type set to " + (isDistSite ? "distribution site" : "supply hub");
+  try {
+    await sendStatusUpdate(siteId, "distSite", isDistSite);
+    showConfirmation("Site type set to " + (isDistSite ? "distribution site" : "supply hub"));
+  } catch (error) {
+    showError(error, "site type was not updated");
+  }
+}
+
+
+async function updatePubliclyVisible(siteId) {
+  const publicVisible = document.getElementById("publicYes").checked;
+  try {
+    await sendStatusUpdate(siteId, "publiclyVisible", publicVisible);
+    showConfirmation("Site set to " + (publicVisible ? "publicly visible" : "visible to logged in users only"));
+  } catch (error) {
+    showError(error, "publicly visible was not updated");
+  }
 }
 
 async function sendStatusUpdate(siteId, statusFlag, newValue) {

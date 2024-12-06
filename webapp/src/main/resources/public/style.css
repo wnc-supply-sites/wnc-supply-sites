@@ -104,6 +104,15 @@ html, table {
     display: none;
 }
 
+.bold {
+    font-weight: bold;
+}
+
+.errorMessage {
+    color: #b60808;
+    font-style: italic;
+}
+
 .required {
     color: #b60808;
     font-style: italic;

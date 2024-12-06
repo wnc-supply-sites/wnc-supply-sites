@@ -3,8 +3,6 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
-import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
-import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Collection;
 import java.util.Comparator;
@@ -62,7 +60,6 @@ public class ManageSiteController {
    */
   @GetMapping("/manage/site-selected")
   ModelAndView showSiteSelectedPage(
-      //      @CookieValue(value = "auth") String auth,
       @RequestParam String siteId) {
 
     String siteName = fetchSiteName(siteId);
@@ -193,11 +190,9 @@ public class ManageSiteController {
 
     ManageSiteDao.SiteStatus siteStatus =
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
-    pageParams.put("siteActive", siteStatus.isActive() ? "checked" : "");
-    pageParams.put("siteNotActive", siteStatus.isActive() ? "" : "checked");
-
-    pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "checked" : "");
-    pageParams.put("siteNotAcceptingDonations", siteStatus.isAcceptingDonations() ? "" : "checked");
+    pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
+    pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "true" : null);
+    pageParams.put("siteDistributingDonations", siteStatus.isDistributingDonations() ? "true" : null);
 
     pageParams.put(
         "distributionSiteChecked",
