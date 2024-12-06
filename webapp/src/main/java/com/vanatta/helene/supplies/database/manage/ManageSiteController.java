@@ -200,10 +200,10 @@ public class ManageSiteController {
 
     pageParams.put(
         "distributionSiteChecked",
-        siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.DISTRIBUTION_SITE ? "checked" : "");
+        siteStatus.getSiteTypeEnum() == SiteType.DISTRIBUTION_CENTER ? "checked" : "");
     pageParams.put(
         "supplyHubChecked",
-        siteStatus.getSiteTypeEnum() == ManageSiteDao.SiteType.SUPPLY_HUB ? "checked" : "");
+        siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
 
     return new ModelAndView("manage/status", pageParams);
   }
@@ -245,8 +245,8 @@ public class ManageSiteController {
     } else {
       var siteType =
           Boolean.parseBoolean(newValue)
-              ? ManageSiteDao.SiteType.DISTRIBUTION_SITE
-              : ManageSiteDao.SiteType.SUPPLY_HUB;
+              ? SiteType.DISTRIBUTION_CENTER
+              : SiteType.SUPPLY_HUB;
       log.info("Updating site: {}, site type: {}", siteName, siteType);
       ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
     }

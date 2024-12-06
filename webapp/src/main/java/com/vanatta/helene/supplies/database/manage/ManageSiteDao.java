@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
@@ -187,7 +188,7 @@ public class ManageSiteDao {
 
     public SiteType getSiteTypeEnum() {
       return Arrays.stream(SiteType.values())
-          .filter(s -> s.siteTypeName.equals(siteType))
+          .filter(s -> s.getText().equals(siteType))
           .findAny()
           .orElseThrow(() -> new IllegalArgumentException("Unknown site type: " + siteType));
     }
@@ -296,14 +297,6 @@ public class ManageSiteDao {
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
 
-  @AllArgsConstructor
-  public enum SiteType {
-    DISTRIBUTION_SITE("Distribution Center"),
-    SUPPLY_HUB("Supply Hub"),
-    ;
-    final String siteTypeName;
-  }
-
   static void updateSiteType(Jdbi jdbi, long siteId, SiteType siteType) {
     String update =
         """
@@ -315,7 +308,7 @@ public class ManageSiteDao {
             handle
                 .createUpdate(update)
                 .bind("siteId", siteId)
-                .bind("siteTypeName", siteType.siteTypeName)
+                .bind("siteTypeName", siteType.getText())
                 .execute());
   }
 }

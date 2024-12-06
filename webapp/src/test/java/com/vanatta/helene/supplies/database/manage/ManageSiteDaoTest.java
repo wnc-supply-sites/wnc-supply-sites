@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -257,17 +258,15 @@ class ManageSiteDaoTest {
       long siteId = Helper.getSiteId("site1");
 
       ManageSiteDao.updateSiteType(
-          TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteType.DISTRIBUTION_SITE);
+          TestConfiguration.jdbiTest, siteId, SiteType.DISTRIBUTION_CENTER);
 
       var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-      assertThat(details.getSiteType())
-          .isEqualTo(ManageSiteDao.SiteType.DISTRIBUTION_SITE.siteTypeName);
+      assertThat(details.getSiteType()).isEqualTo(SiteType.DISTRIBUTION_CENTER.getText());
 
-      ManageSiteDao.updateSiteType(
-          TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteType.SUPPLY_HUB);
+      ManageSiteDao.updateSiteType(TestConfiguration.jdbiTest, siteId, SiteType.SUPPLY_HUB);
 
       details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-      assertThat(details.getSiteType()).isEqualTo(ManageSiteDao.SiteType.SUPPLY_HUB.siteTypeName);
+      assertThat(details.getSiteType()).isEqualTo(SiteType.SUPPLY_HUB.getText());
     }
   }
 

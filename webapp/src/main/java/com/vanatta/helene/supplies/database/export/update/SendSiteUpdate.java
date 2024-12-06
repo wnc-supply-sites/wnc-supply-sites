@@ -25,6 +25,12 @@ public class SendSiteUpdate {
   private final String webhookUrl;
   private final boolean enabled;
 
+  
+  // @VisibleForTesting
+  public static SendSiteUpdate newDisabled() {
+    return new SendSiteUpdate(null, null, false);
+  }
+  
   @Data
   @Builder
   static class SendWssIdJson {

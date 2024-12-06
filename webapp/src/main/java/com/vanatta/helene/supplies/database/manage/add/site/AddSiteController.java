@@ -44,7 +44,7 @@ public class AddSiteController {
   /** REST endpoint to create a new site */
   @PostMapping("/manage/add-site")
   @ResponseBody
-  ResponseEntity<?> postNewSite(@RequestBody Map<String, String> params) {
+  ResponseEntity<String> postNewSite(@RequestBody Map<String, String> params) {
     log.info("Received add new site data: {}", params);
     var addSiteData =
         AddSiteData.builder()
