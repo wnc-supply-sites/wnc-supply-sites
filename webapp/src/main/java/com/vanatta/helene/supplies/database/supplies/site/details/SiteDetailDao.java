@@ -15,6 +15,7 @@ public class SiteDetailDao {
     String contactName;
     String contactNumber;
     String contactEmail;
+    String additionalContacts;
     String address;
     String city;
     String state;
@@ -41,13 +42,14 @@ public class SiteDetailDao {
                               s.contact_name,
                               s.contact_number,
                               s.contact_email,
+                              s.additional_contacts,
                               s.address,
                               s.city,
                               c.state,
                               c.name county,
                               s.website,
                               s.facebook,
-                              s.public_visibility,
+                              s.publicly_visible,
                               s.active,
                               s.distributing_supplies,
                               s.accepting_donations,

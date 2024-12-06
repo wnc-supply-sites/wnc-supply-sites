@@ -16,36 +16,15 @@
 <div class="back-link">
   <a href="/manage/select-site">[&larr; Go Back]</a>
 </div>
-<div class="required" id="requiredText">* Indicates Required Field</div>
 
 <div id="data-entry">
   <div class="data-entry-div vertical">
-    <div class="data-field vertical">
-      <div class="horizontal">
-        <label for="Contact Number">Contact Number: </label>
-      </div>
-      <div class="horizontal">
-        <input id="Contact Number" type="text" class="shortTextField" value="" maxlength="24"
-               placeholder="555-555-5555"/>
-      </div>
-    </div>
-
-    <div class="data-field vertical">
-      <div class="horizontal">
-        <label for="website">Website: </label>
-      </div>
-      <div class="horizontal">
-        <input id="Website" type="text" class="shortTextField" value="" maxlength="128"
-               placeholder="www.site-website.com"/>
-      </div>
-    </div>
 
     <div class="data-field vertical">
       <div class="horizontal">
         <label for="Site Name">Site Name:</label>
         <span class="required">*</span>
       </div>
-
       <div class="horizontal">
         <input id="Site Name" type="text" class="shortTextField" value="" maxlength="128"/>
       </div>
@@ -101,6 +80,26 @@
     </div>
 
     <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="website">Website: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Website" type="text" class="shortTextField" value="" maxlength="128"
+               placeholder="site-website.com"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="website">Facebook: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Facebook" type="text" class="shortTextField" value="" maxlength="128"
+               placeholder="facebook.com/site"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
       <fieldset>
         <legend>Site Type:</legend>
         <div class="horizontal">
@@ -112,6 +111,58 @@
           <label for="supplyHubRadio">Supply Hub</label>
         </div>
       </fieldset>
+    </div>
+
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Site Hours">Site Hours: </label>
+      </div>
+      <div class="horizontal">
+        <textarea id="Site Hours" rows="7" cols="20"></textarea>
+      </div>
+    </div>
+
+
+    <h4>Privately Visible Data - visible to authenticated users only</h4>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Contact Name">Contact Name: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Contact Name" type="text" class="shortTextField" value="" maxlength="24"
+               placeholder="Person Name"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Contact Number">Contact Number: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Contact Number" type="text" class="shortTextField" value="" maxlength="24"
+               placeholder="555-555-5555"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Contact Email">Contact Email: </label>
+      </div>
+      <div class="horizontal">
+        <input id="Contact Email" type="text" class="shortTextField" value="" maxlength="24"
+               placeholder="email@domain.com"/>
+      </div>
+    </div>
+
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Additional Contacts">Additional Contacts: </label>
+      </div>
+      <div class="horizontal">
+        <textarea rows="5" cols="20" maxlength="256" id="Additional Contacts"></textarea>
+      </div>
     </div>
 
     <button onclick="saveNewSite()" id="saveButton">Save</button>

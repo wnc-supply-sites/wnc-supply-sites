@@ -114,12 +114,13 @@ public class ManageSiteController {
     pageParams.put("siteContactName", Optional.ofNullable(data.getContactName()).orElse(""));
     pageParams.put("siteContactEmail", Optional.ofNullable(data.getContactEmail()).orElse(""));
     pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));
+    pageParams.put("additionalContacts", Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     pageParams.put("fullCountyList", counties);
     pageParams.put("stateList", createItemListing(data.getState(), counties.keySet()));
     pageParams.put("countyList", createItemListing(data.getState(), counties.get(data.getState())));
-
+    
     return new ModelAndView("manage/contact", pageParams);
   }
 

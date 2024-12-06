@@ -105,6 +105,20 @@
       <div id="Facebook-update-confirm" class="confirm-text"></div>
     </div>
 
+    <div class="data-field vertical">
+      <div class="horizontal">
+        <label for="Site Hours">Site Hours: </label>
+      </div>
+      <div class="horizontal">
+        <textarea id="Site Hours" rows="5" cols="20"></textarea>
+        <div>
+           <button onclick="showUpdateConfirmation({{siteId}}, 'Site Hours')" class="update-button">Update</button>
+        </div>
+        <div class="green-check hidden" id="Site Hours-update-confirm-checkmark">&#10003;</div>
+      </div>
+      <div id="Site Hours-update-confirm" class="confirm-text"></div>
+    </div>
+
   </div>
 </div>
 
@@ -123,7 +137,6 @@
       </div>
       <div id="Contact Name-update-confirm" class="confirm-text"></div>
     </div>
-
 
     <div class="data-field vertical">
       <label for="Contact Number">Contact Number: </label>
@@ -146,6 +159,19 @@
       </div>
       <div id="Email Number-update-confirm" class="confirm-text"></div>
     </div>
+
+  <div class="data-field vertical">
+    <label for="Contact Name">Additional Contacts: </label>
+    <div class="horizontal">
+      <textarea cols="4" rows="20" id="Additional Contacts" maxlength="256">{{additionalContacts}}</textarea>
+      <div>
+        <button onclick="showUpdateConfirmation({{siteId}}, 'Additional Contacts')" class="update-button">Update</button>
+      </div>
+      <div class="green-check hidden" id="Secondary Contact Name-update-confirm-checkmark">&#10003;</div>
+    </div>
+    <div id="Secondary Contact Name-update-confirm" class="confirm-text"></div>
+  </div>
+
 </div>
 
 <script>
