@@ -1,21 +1,29 @@
 async function saveNewSite() {
-  const contactNumber = document.getElementById("Contact Number");
-  const website = document.getElementById("Website");
-  const siteType = document.getElementById("distributionCenterRadio")
-      .checked ? "Distribution Center" : "Supply Hub";
 
+  /* Required Fields */
   const siteName = document.getElementById("Site Name");
   const streetAddress = document.getElementById("Street Address");
   const cityField = document.getElementById("City");
-  const countyField = document.getElementById("County");
-  const stateField = document.getElementById("State");
 
   let validData = true;
   validData = checkField(siteName) && validData;
   validData = checkField(streetAddress) && validData;
   validData = checkField(cityField) && validData;
-  validData = checkField(countyField) && validData;
-  validData = checkField(stateField) && validData;
+
+  /* Drop Down Selection Fields */
+  const stateField = document.getElementById("State");
+  const countyField = document.getElementById("County");
+
+  const website = document.getElementById("Website");
+  const facebook = document.getElementById("Facebook");
+  const siteType = document.getElementById("distributionCenterRadio")
+      .checked ? "Distribution Center" : "Supply Hub";
+  const siteHours = document.getElementById("Site Hours");
+  const contactName = document.getElementById("Contact Name");
+  const contactNumber = document.getElementById("Contact Number");
+  const contactEmail = document.getElementById("Contact Email");
+  const additionalContacts = document.getElementById("Additional Contacts");
+
 
   if (!validData) {
     showError("Missing required fields")
@@ -30,14 +38,19 @@ async function saveNewSite() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      contactNumber: contactNumber.value.trim(),
-      website: website.value.trim(),
-      siteType: siteType.trim(),
       siteName: siteName.value.trim(),
       streetAddress: streetAddress.value.trim(),
       city: cityField.value.trim(),
+      state: stateField.value.trim(),
       county: countyField.value.trim(),
-      state: stateField.value.trim()
+      website: website.value.trim(),
+      facebook: facebook.value.trim(),
+      siteType: siteType.trim(),
+      siteHours: siteHours.value.trim(),
+      contactName: contactName.value.trim(),
+      contactNumber: contactNumber.value.trim(),
+      contactEmail: contactEmail.value.trim(),
+      additionalContacts: additionalContacts.value.trim()
     })
   })
   .then(
@@ -80,11 +93,16 @@ function showSuccess(editSiteUrl, siteName) {
   confirmation.innerHTML = `${siteName} saved. <a href=${editSiteUrl}>Click to set up inventory</a>`
 
   /** Clear data entry fields to facilitate adding more sites. */
-  document.getElementById("Contact Number").value = "";
-  document.getElementById("Website").value = "";
   document.getElementById("Site Name").value = "";
   document.getElementById("Street Address").value = "";
   document.getElementById("City").value = "";
+  document.getElementById("Website").value = "";
+  document.getElementById("Facebook").value = "";
+  document.getElementById("Site Hours").value = "";
+  document.getElementById("Contact Name").value = "";
+  document.getElementById("Contact Number").value = "";
+  document.getElementById("Contact Email").value = "";
+  document.getElementById("Additional Contacts").value = "";
 }
 
 /** Returns false if field is not set, true if field is set */

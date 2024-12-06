@@ -1,11 +1,9 @@
 package com.vanatta.helene.supplies.database.manage;
 
-import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -29,12 +27,17 @@ public class ManageSiteDao {
   @Getter
   public enum SiteField {
     SITE_NAME("name", "Site Name", true),
-    CONTACT_NUMBER("contact_number", "Contact Number", false),
-    WEBSITE("website", "Website", false),
     STREET_ADDRESS("address", "Street Address", true),
     CITY("city", "City", true),
-    COUNTY("county", "County", true),
     STATE("state", "State", true),
+    COUNTY("county", "County", true),
+    WEBSITE("website", "Website", false),
+    FACEBOOK("facebook", "Facebook", false),
+    SITE_HOURS("hours", "Site Hours", false),
+    CONTACT_NAME("contact_name", "Contact Name", false),
+    CONTACT_NUMBER("contact_number", "Contact Number", false),
+    CONTACT_EMAIL("contact_email", "Contact Email", false),
+    ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false),
     ;
 
     private final String columnName;
@@ -62,53 +65,104 @@ public class ManageSiteDao {
       throw new RequiredFieldException(field.frontEndName);
     }
 
-    if (field == SiteField.COUNTY) {
-      updateCounty(jdbi, siteId, Optional.ofNullable(newValue).orElse(""));
+    @Nullable final String oldValue;
+    if (field == SiteField.COUNTY || field == SiteField.STATE) {
+      if (!newValue.contains(",")) {
+        throw new IllegalStateException(
+            "New county value must be encoded as 'COUNTY,STATE'; Illegal value: " + newValue);
+      }
+      String[] split = newValue.split(",");
+      String county = split[0];
+      String state = split[1];
+      oldValue = updateCounty(jdbi, siteId, county, state);
     } else {
-      updateSiteColumn(jdbi, siteId, field.getColumnName(), newValue);
+      oldValue = updateSiteColumn(jdbi, siteId, field, newValue);
     }
+    addToAuditTrail(jdbi, siteId, field, oldValue, newValue);
   }
 
-  /** Updating a county potentially requires us to create the county first, before updating it. */
-  private static void updateCounty(Jdbi jdbi, long siteId, String newValue) {
-    String selectCounty =
+  /**
+   * Returns old value and then updates. Old value is encoded as "COUNTY,STATE" (single string,
+   * comma delimited)
+   */
+  //  @VisibleForTesting
+  static String updateCounty(Jdbi jdbi, long siteId, String newCounty, String newState) {
+    // first lookup the old value from database before we change it.
+    String oldValueQuery =
         """
-          select id from county where name = :name
+        select c.name || ',' || c.state
+        from site s
+        join county c on c.id = s.county_id
+        where s.id = :siteId
         """;
-    final Long countyId =
+    String oldValue =
         jdbi.withHandle(
             handle ->
                 handle
-                    .createQuery(selectCounty)
-                    .bind("name", newValue)
-                    .mapTo(Long.class)
-                    .findOne()
-                    .orElse(null));
-    if (countyId == null) {
-      log.warn("Failed to update county for site id: {}, county value: {}", siteId, newValue);
-      throw new IllegalArgumentException("Invalid county: " + newValue);
-    }
+                    .createQuery(oldValueQuery) //
+                    .bind("siteId", siteId)
+                    .mapTo(String.class)
+                    .one());
 
+    // now actually update the county value
     String updateCounty =
         """
-        update site set county_id = :countyId where id = :id
+        update site
+        set
+          county_id = (select id from county where name = :name and state = :state)
+        where id = :id
         """;
     jdbi.withHandle(
         handle ->
             handle
                 .createUpdate(updateCounty)
-                .bind("countyId", countyId)
+                .bind("name", newCounty)
+                .bind("state", newState)
                 .bind("id", siteId)
                 .execute());
+    return oldValue;
   }
 
-  private static void updateSiteColumn(Jdbi jdbi, long siteId, String column, String newValue) {
+  /** Returns old value and then updates. */
+  //  @VisibleForTesting
+  static String updateSiteColumn(Jdbi jdbi, long siteId, SiteField column, String newValue) {
+
+    String oldValueQuery =
+        String.format("select s.%s from site s where s.id = :siteId", column.getColumnName());
+    String oldValue =
+        jdbi.withHandle(
+            handle ->
+                handle.createQuery(oldValueQuery).bind("siteId", siteId).mapTo(String.class).one());
+
     jdbi.withHandle(
         handle ->
             handle
-                .createUpdate("update site set " + column + " = :newValue where id = :siteId")
+                .createUpdate(
+                    "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
                 .bind("newValue", newValue)
                 .bind("siteId", siteId)
+                .execute());
+    return oldValue;
+  }
+
+  private static void addToAuditTrail(
+      Jdbi jdbi, long siteId, SiteField field, String oldValue, String newValue) {
+    String insert =
+        """
+    insert into site_audit_trail(site_id, field_name, old_value, new_value)
+    values(
+       :siteId, :fieldName, :oldValue, :newValue
+    )
+    """;
+
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(insert)
+                .bind("siteId", siteId)
+                .bind("fieldName", field.getColumnName())
+                .bind("oldValue", oldValue)
+                .bind("newValue", newValue)
                 .execute());
   }
 
@@ -242,13 +296,12 @@ public class ManageSiteDao {
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
 
-
   @AllArgsConstructor
-  enum SiteType {
+  public enum SiteType {
     DISTRIBUTION_SITE("Distribution Center"),
     SUPPLY_HUB("Supply Hub"),
     ;
-    String siteTypeName;
+    final String siteTypeName;
   }
 
   static void updateSiteType(Jdbi jdbi, long siteId, SiteType siteType) {

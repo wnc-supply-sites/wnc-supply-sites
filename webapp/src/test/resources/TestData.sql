@@ -2,8 +2,18 @@ delete from dispatch_request_item;
 delete from dispatch_request;
 delete from site_item;
 delete from item;
+delete from site_audit_trail;
 delete from site;
 delete from county;
+
+insert into county(name, state) values('Ashe', 'NC');
+insert into county(name, state) values('Buncombe', 'NC');
+
+insert into county(name, state) values('Watauga', 'NC');
+insert into county(name, state) values('Sevier', 'TN');
+insert into county(name, state) values('Halifax', 'VA');
+
+
 insert into site(
   name,
   contact_name,
@@ -29,7 +39,7 @@ values (
         'email glorious',
         'address1',
         'city1',
-        (select id from county where name = 'Watauga'),
+        (select id from county where name = 'Watauga' and state = 'NC'),
         'site1website',
         (select id from site_type where name = 'Distribution Center'),
         true,
@@ -41,13 +51,6 @@ values (
         true,
         true
        );
-insert into county(name, state) values('Ashe', 'NC');
-insert into county(name, state) values('Buncombe', 'NC');
-
--- site1, in Watauga county            
-insert into county(name, state) values('Watauga', 'NC');
-insert into county(name, state) values('Sevier', 'TN');
-insert into county(name, state) values('Halifax', 'VA');
 
 -- site2, in Buncombe county, not accepting donations
 insert into site(name, address, city, county_id, accepting_donations, site_type_id) values(

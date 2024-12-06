@@ -57,28 +57,48 @@ class ManageSiteDaoTest {
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.SITE_NAME, "new site name");
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "999-596-111");
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.STREET_ADDRESS, "new address");
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CITY, "new city");
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "Buncombe");
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "Buncombe,NC");
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.STREET_ADDRESS, "new address");
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.STATE, "Buncombe,NC");
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.WEBSITE, "new website");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.FACEBOOK, "new facebook");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.SITE_HOURS, "M-F 9-5pm");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NAME, "Smith Williams");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "999-596-111");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest,
+        siteId,
+        ManageSiteDao.SiteField.CONTACT_EMAIL,
+        "smith@awesome.org");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest,
+        siteId,
+        ManageSiteDao.SiteField.ADDITIONAL_CONTACTS,
+        "More: 22-333");
 
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getSiteName())
-        .isEqualTo("new site name");
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getContactNumber())
-        .isEqualTo("999-596-111");
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCity())
-        .isEqualTo("new city");
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getCounty())
-        .isEqualTo("Buncombe");
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getAddress())
-        .isEqualTo("new address");
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getWebsite())
-        .isEqualTo("new website");
+    var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    ;
+    assertThat(dataLookup.getSiteName()).isEqualTo("new site name");
+    assertThat(dataLookup.getAddress()).isEqualTo("new address");
+    assertThat(dataLookup.getCity()).isEqualTo("new city");
+    assertThat(dataLookup.getCounty()).isEqualTo("Buncombe");
+    assertThat(dataLookup.getState()).isEqualTo("NC");
+    assertThat(dataLookup.getWebsite()).isEqualTo("new website");
+    assertThat(dataLookup.getFacebook()).isEqualTo("new facebook");
+    assertThat(dataLookup.getHours()).isEqualTo("M-F 9-5pm");
+    assertThat(dataLookup.getContactName()).isEqualTo("Smith Williams");
+    assertThat(dataLookup.getContactNumber()).isEqualTo("999-596-111");
+    assertThat(dataLookup.getContactEmail()).isEqualTo("smith@awesome.org");
+    assertThat(dataLookup.getAdditionalContacts()).isEqualTo("More: 22-333");
   }
 
   @Test
@@ -106,6 +126,67 @@ class ManageSiteDaoTest {
     String result = ManageSiteDao.fetchSiteName(TestConfiguration.jdbiTest, siteId);
 
     assertThat(result).isEqualTo("site1");
+  }
+
+  /**
+   * Validate we get the behavior of returning the old value when we update a field. This way we can
+   * keep an audit log of what has changed.
+   */
+  @Test
+  void updatesReturnOldValue() {
+    // setup: get a site, validate the old value is not what we will change it to.
+    // remember the old value
+    long siteId = Helper.getSiteId("site4");
+    var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    assertThat(dataLookup.getHours()).isNotEqualTo("evening");
+    String oldValue = dataLookup.getHours();
+
+    // update the value.
+    String oldValueResult =
+        ManageSiteDao.updateSiteColumn(
+            TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.SITE_HOURS, "evening");
+
+    assertThat(oldValueResult).isEqualTo(oldValue);
+  }
+
+  @Test
+  void updateCountyReturnsOldValue() {
+    // setup: get a site, validate the old value is not what we will change it to.
+    // remember the old value
+    long siteId = Helper.getSiteId("site4");
+    var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    assertThat(dataLookup.getCounty()).isNotEqualTo("Halifax");
+    assertThat(dataLookup.getCounty()).isNotEqualTo("VA");
+    String oldCounty = dataLookup.getCounty();
+    String oldState = dataLookup.getState();
+
+    String oldValueResult =
+        ManageSiteDao.updateCounty(TestConfiguration.jdbiTest, siteId, "Halifax", "VA");
+
+    assertThat(oldValueResult).isEqualTo(String.format("%s,%s", oldCounty, oldState));
+  }
+
+  @Test
+  void updatingFieldValuesAddToAuditLog() {
+    int startingCount = auditLogCount();
+
+    // trigger an update
+    long siteId = Helper.getSiteId("site2");
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest,
+        siteId,
+        ManageSiteDao.SiteField.CONTACT_NAME,
+        "updated site2 contact name");
+
+    // get the new count of how many audit logs we have, count should be incremented by one.
+    int endingCount = auditLogCount();
+    assertThat(endingCount).isEqualTo(startingCount + 1);
+  }
+
+  private static int auditLogCount() {
+    String query = "select count(*) from site_audit_trail";
+    return TestConfiguration.jdbiTest.withHandle(
+        handle -> handle.createQuery(query).mapTo(Integer.class).one());
   }
 
   @Nested
