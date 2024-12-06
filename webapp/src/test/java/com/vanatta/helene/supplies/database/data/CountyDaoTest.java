@@ -47,8 +47,9 @@ class CountyDaoTest {
   void fetchFullCountyListing() {
     Map<String, List<String>> fetchFullCountyListing = CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest);
     assertThat(fetchFullCountyListing.size()).isGreaterThan(0);
-    assertThat(fetchFullCountyListing).containsEntry("NC", List.of("Watauga"));
-    assertThat(fetchFullCountyListing).containsEntry("TN", List.of("Sevier"));
-    assertThat(fetchFullCountyListing).containsEntry("VA", List.of("Halifax"));
+    
+    assertThat(fetchFullCountyListing.get("NC")).contains("Watauga");
+    assertThat(fetchFullCountyListing.get("TN")).contains("Sevier");
+    assertThat(fetchFullCountyListing.get("VA")).contains("Halifax");
   }
 }

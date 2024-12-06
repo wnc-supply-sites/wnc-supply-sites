@@ -24,7 +24,7 @@ class ManageSiteControllerTest {
     ModelAndView result = manageSiteController.showSiteContactPage(String.valueOf(siteId));
 
     List<ItemListing> countyListResult =
-        (List<ItemListing>) result.getModelMap().get("countyList");
+        (List<ItemListing>) result.getModelMap().get(ManageSiteController.COUNTY_LIST);
 
     // validate that all listings are populated with non-null data
     countyListResult.forEach(
@@ -49,4 +49,40 @@ class ManageSiteControllerTest {
         .filter(f -> !f.getName().equals(siteDetailData.getCounty()))
         .forEach(r -> assertThat(r.getSelected()).isEmpty());
   }
+  
+  @Test
+  void manageContactSelectsCorrectState() {
+    long siteId = TestConfiguration.getSiteId();
+    SiteDetailData siteDetailData =
+        SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    
+    ModelAndView result = manageSiteController.showSiteContactPage(String.valueOf(siteId));
+    
+    List<ItemListing> stateListing =
+        (List<ItemListing>) result.getModelMap().get(ManageSiteController.STATE_LIST);
+    
+    // validate that all listings are populated with non-null data
+    stateListing.forEach(
+        listing -> {
+          assertThat(listing.getName()).isNotNull();
+          assertThat(listing.getName()).isNotBlank();
+          // all values for 'selected' should eitehr be blank or 'selected'
+          assertThat(listing.getSelected()).isNotNull();
+          assertThat(listing.getSelected()).isIn("", "selected");
+        });
+    
+    // find the listing for the state of the site, it should be selected
+    var listing =
+        stateListing.stream()
+            .filter(f -> f.getName().equals(siteDetailData.getState()))
+            .findAny()
+            .orElseThrow();
+    assertThat(listing.getSelected()).isEqualTo("selected");
+    
+    // find all other county listings, they should not be selected.
+    stateListing.stream()
+        .filter(f -> !f.getName().equals(siteDetailData.getState()))
+        .forEach(r -> assertThat(r.getSelected()).isEmpty());
+  }
+  
 }

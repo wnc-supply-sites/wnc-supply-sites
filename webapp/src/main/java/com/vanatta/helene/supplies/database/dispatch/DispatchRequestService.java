@@ -78,7 +78,7 @@ public class DispatchRequestService {
       // is this item no longer needed? -> remove it
       DispatchDao.deleteItemFromRequest(jdbi, dispatchRequestId, item);
     }
-    DispatchDao.updateRequestStatusAndPriority(jdbi, dispatchRequestId);
+    DispatchDao.updateRequestStatus(jdbi, dispatchRequestId);
     var updated = DispatchDao.lookupDispatchDetails(jdbi, dispatchRequestId);
     log.info(
         "Dispatch update computed, site: {}, item: {}, status: {}, end result: {}",

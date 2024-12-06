@@ -90,6 +90,11 @@ public class ManageSiteController {
     }
   }
 
+  static final String COUNTY_LIST = "countyList";
+  static final String STATE_LIST = "stateList";
+  
+  
+  
   /** Fetches data for the manage site page */
   @GetMapping("/manage/contact")
   ModelAndView showSiteContactPage(String siteId) {
@@ -118,8 +123,8 @@ public class ManageSiteController {
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     pageParams.put("fullCountyList", counties);
-    pageParams.put("stateList", createItemListing(data.getState(), counties.keySet()));
-    pageParams.put("countyList", createItemListing(data.getState(), counties.get(data.getState())));
+    pageParams.put(STATE_LIST, createItemListing(data.getState(), counties.keySet()));
+    pageParams.put(COUNTY_LIST, createItemListing(data.getCounty(), counties.get(data.getState())));
     
     return new ModelAndView("manage/contact", pageParams);
   }

@@ -83,12 +83,12 @@ public class SiteDetailController {
           "contactNumber",
           siteDetailData.getContactNumber() == null || siteDetailData.getContactNumber().isBlank()
               ? null
-              : new ContactNumber(siteDetailData.getContactNumber()));
+              : ContactHref.newTelephone(siteDetailData.getContactNumber()));
       siteDetails.put(
           "contactEmail",
           siteDetailData.getContactEmail() == null
               ? null
-              : new ContactEmail(siteDetailData.getContactEmail()));
+              : ContactHref.newMailTo(siteDetailData.getContactEmail()));
     }
     return new ModelAndView("supplies/site-detail", siteDetails);
   }
@@ -117,24 +117,25 @@ public class SiteDetailController {
   }
 
   @Getter
-  static class ContactNumber {
+  static class ContactHref {
     private final String href;
     private final String title;
 
-    ContactNumber(String number) {
-      href = "tel:" + number;
-      title = number;
+    static ContactHref newTelephone(String number) {
+      return new ContactHref(number, "tel");
     }
-  }
 
-  @Getter
-  static class ContactEmail {
-    private final String href;
-    private final String title;
+    static ContactHref newMailTo(String email) {
+      return new ContactHref(email, "mailTo");
+    }
 
-    ContactEmail(String email) {
-      href = "mailTo:" + email;
-      title = email;
+    private ContactHref(String number, String contactType) {
+      if (number == null) {
+        throw new NullPointerException(
+            "number should not be null, do not create this object with null data.");
+      }
+      href = contactType + ":" + number;
+      title = number;
     }
   }
 

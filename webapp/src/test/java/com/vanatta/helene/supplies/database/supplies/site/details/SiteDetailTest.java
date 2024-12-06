@@ -2,7 +2,6 @@ package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailController;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -57,21 +56,21 @@ public class SiteDetailTest {
   }
 
   @Nested
-  class ContactNumber {
+  class ContactHref {
     @Test
-    void nullContactNumber() {
-      String input = null;
-      var output = new SiteDetailController.ContactNumber(input);
-      assertThat(output.getHref()).isNull();
-      assertThat(output.getTitle()).isEqualTo("None listed");
+    void email() {
+      String input = "email@domain.com";
+      var output = SiteDetailController.ContactHref.newMailTo(input);
+      assertThat(output.getHref()).isEqualTo("mailTo:email@domain.com");
+      assertThat(output.getTitle()).isEqualTo("email@domain.com");
     }
 
     @Test
-    void nonNullContactNumber() {
+    void phoneNumber() {
       String input = "555-555-5555";
-      var output = new SiteDetailController.ContactNumber(input);
-      assertThat(output.getHref()).isEqualTo("tel:" + input);
-      assertThat(output.getTitle()).isEqualTo(input);
+      var output = SiteDetailController.ContactHref.newTelephone(input);
+      assertThat(output.getHref()).isEqualTo("tel:555-555-5555");
+      assertThat(output.getTitle()).isEqualTo("555-555-5555");
     }
   }
 }

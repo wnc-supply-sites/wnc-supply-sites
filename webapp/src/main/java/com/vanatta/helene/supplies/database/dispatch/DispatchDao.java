@@ -120,7 +120,7 @@ public class DispatchDao {
    * 'dispatch_request' to match the max priority. If there are no items in the request, then the
    * request status is set to cancelled.
    */
-  public static void updateRequestStatusAndPriority(Jdbi jdbi, long dispatchRequestId) {
+  public static void updateRequestStatus(Jdbi jdbi, long dispatchRequestId) {
 
     String query =
         """
@@ -151,24 +151,6 @@ public class DispatchDao {
                   .bind(
                       "cancelledStatus",
                       DispatchRequestService.DispatchStatus.CANCELLED.getDisplayText())
-                  .bind("dispatchRequestId", dispatchRequestId)
-                  .execute());
-    } else {
-
-      String priority =
-          priorities.contains(ItemStatus.URGENTLY_NEEDED.getText())
-              ? ItemStatus.URGENTLY_NEEDED.getText()
-              : ItemStatus.NEEDED.getText();
-      String updateStatus =
-          """
-          update dispatch_request set priority = :priority, last_updated = now() where id = :dispatchRequestId
-          """;
-
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(updateStatus)
-                  .bind("priority", priority)
                   .bind("dispatchRequestId", dispatchRequestId)
                   .execute());
     }

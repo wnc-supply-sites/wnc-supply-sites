@@ -62,6 +62,6 @@ public class SiteDetailDao {
                 .bind("siteId", idToLookup)
                 .mapToBean(SiteDetailData.class)
                 .findOne()
-                .orElseThrow(null));
+                .orElse(null));
   }
 }
