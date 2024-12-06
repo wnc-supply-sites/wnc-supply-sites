@@ -62,7 +62,7 @@ async function updateData() {
                     ${r.county}
                   </td>
                   <td>${formatItems(r.items)}</td>
-                  <td class="date-column">${r.lastUpdated}</td>
+                  <td class="date-column">${r.inventoryLastUpdated}</td>
               </tr>`)
         .join("\n");
     document.getElementById('result-count').innerHTML = `${data.resultCount} results`;

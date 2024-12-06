@@ -20,7 +20,7 @@ public class SuppliesDao {
     String county;
     String item;
     String itemStatus;
-    LocalDate lastUpdated;
+    LocalDate inventoryLastUpdated;
   }
 
   static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
@@ -35,7 +35,7 @@ public class SuppliesDao {
         c.name county,
         i.name item,
         ist.name itemStatus,
-        s.last_updated lastUpdated
+        s.inventory_last_updated inventoryLastUpdated
       from site s
       join site_type st on st.id = s.site_type_id
       join county c on c.id = s.county_id

@@ -153,3 +153,6 @@ table.results-table tbody tr:nth-child(even) {
     margin-left: 360px;
 }
 
+.inventoryLastUpdatedColumn {
+    width: 125px;
+}

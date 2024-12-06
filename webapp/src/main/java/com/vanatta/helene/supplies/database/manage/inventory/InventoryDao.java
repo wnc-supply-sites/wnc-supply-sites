@@ -62,7 +62,7 @@ public class InventoryDao {
         throw e;
       }
     }
-    ManageSiteDao.updateSiteLastUpdatedToNow(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   static void updateSiteItemInactive(Jdbi jdbi, long siteId, String itemName) {
@@ -79,7 +79,7 @@ public class InventoryDao {
                 .bind("siteId", siteId)
                 .bind("itemName", itemName)
                 .execute());
-    ManageSiteDao.updateSiteLastUpdatedToNow(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   public static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
@@ -108,7 +108,7 @@ public class InventoryDao {
     if (updateCount != 1) {
       throw new IllegalArgumentException(String.format("Invalid item name: %s", itemName));
     }
-    ManageSiteDao.updateSiteLastUpdatedToNow(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   /**

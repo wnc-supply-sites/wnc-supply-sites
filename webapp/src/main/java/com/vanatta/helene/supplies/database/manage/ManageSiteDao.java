@@ -228,7 +228,7 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
-    updateSiteLastUpdatedToNow(jdbi, siteId);
+    updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   public static void updateSiteActiveFlag(Jdbi jdbi, long siteId, boolean newValue) {
@@ -245,7 +245,7 @@ public class ManageSiteDao {
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
-    updateSiteLastUpdatedToNow(jdbi, siteId);
+    updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
   /** Fetches all items, items requested/needed for a given site are listed as active. */
@@ -291,8 +291,8 @@ public class ManageSiteDao {
     boolean active;
   }
 
-  public static void updateSiteLastUpdatedToNow(Jdbi jdbi, long siteId) {
-    String updateSiteLastUpdated = "update site set last_updated = now() where id = :siteId";
+  public static void updateSiteInventoryLastUpdatedToNow(Jdbi jdbi, long siteId) {
+    String updateSiteLastUpdated = "update site set inventory_last_updated = now() where id = :siteId";
     jdbi.withHandle(
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
