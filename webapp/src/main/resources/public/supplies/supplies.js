@@ -36,13 +36,6 @@ function readSelections(selectionElement) {
   return [...selectionsDiv.querySelectorAll(".selected-value")].map(v => v.innerHTML);
 }
 
-function selectAll(selectionElement) {
-  const selectElement = document.querySelector('[id=' + selectionElement + '-select]');
-  [...selectElement.options].map(o => o.value).forEach(v => addSelection(selectionElement, v));
-  document.getElementById(selectionElement + "-select").selectedIndex = 0;
-  updateData();
-}
-
 function clearSelections(selectionElement) {
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
