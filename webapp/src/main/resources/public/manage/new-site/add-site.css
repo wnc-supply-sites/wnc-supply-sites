@@ -28,3 +28,7 @@
     color: #b60808;
     font-style: italic;
 }
+
+div.data-field label {
+    font-weight: bold;
+}
