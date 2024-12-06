@@ -15,6 +15,10 @@ html, table {
     flex-direction: row;
 }
 
+.header {
+    width: 500px;
+}
+
 .link-home {
     color: inherit;
     text-decoration: inherit;
@@ -115,7 +119,7 @@ html, table {
 .login-indicator {
     font-style: italic;
     font-size: 0.8em;
-    margin-left: 300px;
+    margin-left: 100px;
     margin-top: 10px;
 }
 

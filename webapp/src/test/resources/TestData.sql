@@ -46,6 +46,8 @@ insert into county(name, state) values('Buncombe', 'NC');
 
 -- site1, in Watauga county            
 insert into county(name, state) values('Watauga', 'NC');
+insert into county(name, state) values('Sevier', 'TN');
+insert into county(name, state) values('Halifax', 'VA');
 
 -- site2, in Buncombe county, not accepting donations
 insert into site(name, address, city, county_id, accepting_donations, site_type_id) values(

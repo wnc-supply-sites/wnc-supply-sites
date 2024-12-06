@@ -3,10 +3,11 @@ package com.vanatta.helene.supplies.database.data;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 class CountyDaoTest {
 
@@ -16,10 +17,14 @@ class CountyDaoTest {
   }
 
   @Test
-  void fetchFullCountyList() {
-    List<String> fullCountyList = CountyDao.fetchFullCountyList(TestConfiguration.jdbiTest);
-    assertThat(fullCountyList).isNotEmpty();
-    assertThat(fullCountyList).contains("dummy");
+  void fetchFullCountyListByState() {
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC"))
+        .contains("dummy", "Watauga");
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "TN"))
+        .doesNotContain("Watauga");
+
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "TN")).contains("Sevier");
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "VA")).contains("Halifax");
   }
 
   /**
@@ -28,13 +33,22 @@ class CountyDaoTest {
    */
   @Test
   void fetchActiveCountyList() {
-    int fullCountyCount =  CountyDao.fetchFullCountyList(TestConfiguration.jdbiTest).size();
-    List<String> activeCounties =  CountyDao.fetchActiveCountyList(TestConfiguration.jdbiTest);
+    int fullCountyCount = CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC").size();
+    List<String> activeCounties = CountyDao.fetchActiveCountyList(TestConfiguration.jdbiTest);
 
     assertThat(activeCounties.size()).isGreaterThan(0);
     assertThat(fullCountyCount).isGreaterThan(activeCounties.size());
 
     assertThat(activeCounties).contains("Watauga");
     assertThat(activeCounties).doesNotContain("dummy");
+  }
+  
+  @Test
+  void fetchFullCountyListing() {
+    Map<String, List<String>> fetchFullCountyListing = CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest);
+    assertThat(fetchFullCountyListing.size()).isGreaterThan(0);
+    assertThat(fetchFullCountyListing).containsEntry("NC", List.of("Watauga"));
+    assertThat(fetchFullCountyListing).containsEntry("TN", List.of("Sevier"));
+    assertThat(fetchFullCountyListing).containsEntry("VA", List.of("Halifax"));
   }
 }

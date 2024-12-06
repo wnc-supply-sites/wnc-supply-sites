@@ -2,6 +2,7 @@
 <head>
   <title>WNC Supply Sites - Add New Site</title>
   <script type="text/javascript" src="add-site.js"></script>
+  <script type="text/javascript" src="../common.js"></script>
   <link rel="stylesheet" href="add-site.css"/>
   <link rel="stylesheet" href="../manage.css"/>
   <link rel="stylesheet" href="../../style.css"/>
@@ -16,7 +17,6 @@
   <a href="/manage/select-site">[&larr; Go Back]</a>
 </div>
 <div class="required" id="requiredText">* Indicates Required Field</div>
-
 
 <div id="data-entry">
   <div class="data-entry-div vertical">
@@ -74,25 +74,29 @@
 
     <div class="data-field vertical">
       <div class="horizontal">
-        <label for="County">County: </label>
+        <label for="State">State: </label>
         <span class="required">*</span>
       </div>
       <div class="horizontal">
-        <select id="County">
-          {{#countyList}}
-          <option value="{{.}}">{{.}}</option>
-          {{/countyList}}
+        <select id="State" onchange="changeCounty()">
+          {{#stateList}}
+          <option value="{{name}}" {{selected}}>{{name}}</option>
+          {{/stateList}}
         </select>
       </div>
     </div>
 
     <div class="data-field vertical">
       <div class="horizontal">
-        <label for="State">State: </label>
+        <label for="County">County: </label>
         <span class="required">*</span>
       </div>
       <div class="horizontal">
-        <input id="State" type="text" class="shortTextField" value="NC" maxlength="2"/>
+        <select id="County">
+          {{#countyList}}
+          <option value="{{name}}" {{selected}}>{{name}}</option>
+          {{/countyList}}
+        </select>
       </div>
     </div>
 
@@ -120,6 +124,18 @@
   <div id="red-x" class="hidden">&#x274c;</div>
   <div id="save-site-confirm" class="confirm-text"></div>
 </div>
+
+<script>
+  const countyMapByState = new Map();
+  {{#fullCountyList}}
+  {{#entrySet}}
+  countyMapByState['{{key}}']  = countyMapByState['{{key}}'] || [];
+  {{#value}}
+  countyMapByState['{{key}}'].push('{{.}}');
+  {{/value}}
+  {{/entrySet}}
+  {{/fullCountyList}}
+</script>
 
 </body>
 </html>

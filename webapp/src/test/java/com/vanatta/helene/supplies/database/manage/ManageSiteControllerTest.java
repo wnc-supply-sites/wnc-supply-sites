@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.manage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.manage.ManageSiteController.CountyListing;
+import com.vanatta.helene.supplies.database.manage.ManageSiteController.ItemListing;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao.SiteDetailData;
 import java.util.List;
@@ -23,8 +23,8 @@ class ManageSiteControllerTest {
 
     ModelAndView result = manageSiteController.showSiteContactPage(String.valueOf(siteId));
 
-    List<CountyListing> countyListResult =
-        (List<CountyListing>) result.getModelMap().get("countyList");
+    List<ItemListing> countyListResult =
+        (List<ItemListing>) result.getModelMap().get("countyList");
 
     // validate that all listings are populated with non-null data
     countyListResult.forEach(
