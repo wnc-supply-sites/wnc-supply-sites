@@ -95,7 +95,8 @@ public class SendSiteUpdate {
               s.distributing_supplies,
               s.active,
               s.publicly_visible,
-              s.hours
+              s.hours,
+              s.additional_contacts
             from site s
             join county c on c.id = s.county_id
             join site_type st on st.id = s.site_type_id
@@ -132,6 +133,7 @@ public class SendSiteUpdate {
     String contactEmail;
     String contactNumber;
     String contactName;
+    String additionalContacts;
     String website;
     String facebook;
     String hours;
@@ -154,6 +156,7 @@ public class SendSiteUpdate {
     String contactNumber;
     String contactEmail;
     String contactName;
+    String additionalContacts;
     String address;
     String city;
     String state;
@@ -183,6 +186,7 @@ public class SendSiteUpdate {
       this.contactNumber = result.getContactNumber();
       this.contactEmail = result.getContactEmail();
       this.contactName = result.getContactName();
+      this.additionalContacts = result.getAdditionalContacts();
       this.address = result.getAddress();
       this.city = result.getCity();
       this.state = result.getState();

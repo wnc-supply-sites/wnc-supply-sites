@@ -26,6 +26,7 @@ async function showUpdateConfirmation(siteId, field) {
           `${field} updated to: ${newValue}`;
     }
   } catch (error) {
+    console.log(error);
     document.getElementById(field + "-update-confirm").innerHTML =
         `An error occurred, ${field} was not updated`;
   }
