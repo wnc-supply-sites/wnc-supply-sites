@@ -110,6 +110,11 @@ insert into site_item(site_id, item_id, item_status_id) values(
     (select id from item where name = 'used clothes'),
     (select id from item_status where name = 'Oversupply')
    );
+insert into site_item(site_id, item_id, item_status_id) values(
+    (select id from site where name = 'site2'),
+    (select id from item where name = 'new clothes'),
+    (select id from item_status where name = 'Oversupply')
+  );
  insert into site_item(site_id, item_id, item_status_id) values(
     (select id from site where name = 'site2'),
     (select id from item where name = 'water'),
