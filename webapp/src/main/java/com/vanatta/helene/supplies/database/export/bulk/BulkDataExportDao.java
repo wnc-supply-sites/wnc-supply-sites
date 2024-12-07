@@ -25,6 +25,7 @@ class BulkDataExportDao {
         """
             select
               s.name siteName,
+              s.wss_id wssId,
               case when st.name = 'Distribution Center' then 'POD,POC' else 'POD,POC,HUB' end siteType,
               s.contact_number,
               s.address,
@@ -47,7 +48,7 @@ class BulkDataExportDao {
             left join site_item si on s.id = si.site_id
             left join item i on i.id = si.item_id
             left join item_status its on its.id = si.item_status_id
-            group by s.name, siteType, s.contact_number, s.address, s.city,
+            group by s.name, s.wss_id, siteType, s.contact_number, s.address, s.city,
              c.state, s.website, county, donationStatus, s.active
             """;
 
@@ -60,10 +61,10 @@ class BulkDataExportDao {
   }
 
   /** Data that can be sent as JSON to sevice. */
-  @Data
-  @NoArgsConstructor
+  @Value
   public static class SiteExportJson {
     String siteName;
+    long wssId;
     String oldName;
     List<String> siteType;
     String contactNumber;
@@ -82,6 +83,7 @@ class BulkDataExportDao {
     SiteExportJson(SiteDataResult result) {
       this.siteName = result.getSiteName();
       oldName = this.siteName;
+      this.wssId = result.getWssId();
       this.siteType = Arrays.asList(result.getSiteType().split(","));
       this.contactNumber = result.getContactNumber();
       this.address = result.getAddress();
@@ -110,6 +112,7 @@ class BulkDataExportDao {
   @NoArgsConstructor
   public static class SiteDataResult {
     String siteName;
+    long wssId;
     String siteType;
     String contactNumber;
     String address;
