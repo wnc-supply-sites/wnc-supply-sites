@@ -707,11 +707,13 @@ class NeedRequestImportControllerTest {
      * </pre>
      *
      * Send update:
+     *
      * <pre>
      * dispatch_request (1): {status: Cancelled, items: [gloves]}
      * </pre>
      *
      * Result should be:
+     *
      * <pre>
      * dispatch_request (1): {status: Cancelled, items: [gloves]}
      * dispatch_request (2): {status: NEW, items: [gloves]}
@@ -726,7 +728,7 @@ class NeedRequestImportControllerTest {
           delete from dispatch_request_item;
           delete from dispatch_request;
           delete from site_item;
-  
+
           insert into site_item(site_id, item_id, item_status_id)
           values(
             (select id from site where name = 'site1'),
@@ -783,9 +785,6 @@ class NeedRequestImportControllerTest {
       assertThat(newDispatchDetails.getNeededItems()).hasSize(1);
     }
 
-
-
-
     /**
      * Cancel adds items to an existing new request
      *
@@ -797,11 +796,13 @@ class NeedRequestImportControllerTest {
      * </pre>
      *
      * Send update:
+     *
      * <pre>
      * dispatch_request (1): {status: Cancelled, items: [gloves]}
      * </pre>
      *
      * Result should be:
+     *
      * <pre>
      * dispatch_request (1): {status: Cancelled, items: [gloves]}
      * dispatch_request (2): {status: NEW, items: [water, gloves]}
@@ -816,7 +817,7 @@ class NeedRequestImportControllerTest {
           delete from dispatch_request_item;
           delete from dispatch_request;
           delete from site_item;
-  
+
           insert into site_item(site_id, item_id, item_status_id)
           values(
             (select id from site where name = 'site1'),
@@ -894,7 +895,6 @@ class NeedRequestImportControllerTest {
     }
   }
 
-
   @Nested
   class Completed {
     /**
@@ -907,11 +907,13 @@ class NeedRequestImportControllerTest {
      * </pre>
      *
      * Send update:
+     *
      * <pre>
      * dispatch_request (1): {status: Completed, items: [gloves]}
      * </pre>
      *
      * Result should be:
+     *
      * <pre>
      * dispatch_request (1): {status: Completed, items: [gloves]}
      * Item status of 'gloves' @ site1, changed to 'available'
@@ -926,7 +928,7 @@ class NeedRequestImportControllerTest {
           delete from dispatch_request_item;
           delete from dispatch_request;
           delete from site_item;
-  
+
           insert into site_item(site_id, item_id, item_status_id)
           values(
             (select id from site where name = 'site1'),
@@ -972,7 +974,8 @@ class NeedRequestImportControllerTest {
       assertThat(pendingDispatchDetails.getUrgentlyNeededItems()).hasSize(1);
 
       // confirm item status at site1 is now 'available'
-      String query = """
+      String query =
+          """
           select
              its.name
           from site_item si

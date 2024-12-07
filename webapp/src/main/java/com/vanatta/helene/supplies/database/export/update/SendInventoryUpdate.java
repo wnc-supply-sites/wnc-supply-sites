@@ -28,7 +28,6 @@ public class SendInventoryUpdate {
     }
   }
 
-
   static SiteItemExportJson fetchAllItemsForSite(Jdbi jdbi, long siteId) {
     String query =
         """
@@ -65,11 +64,11 @@ public class SendInventoryUpdate {
 
     /** Items are encoded as a comma delimited list */
     String urgentlyNeeded;
+
     String needed;
     String available;
     String overSupply;
   }
-
 
   /**
    * Class that can be converted to a JSON. Input are results from DB, which have comma delimited
@@ -87,16 +86,14 @@ public class SendInventoryUpdate {
 
     SiteItemExportJson(SiteDataResult result) {
       this.siteName = result.getSiteName();
-      this.urgentlyNeeded =
-          extractField(result, SiteDataResult::getUrgentlyNeeded);
+      this.urgentlyNeeded = extractField(result, SiteDataResult::getUrgentlyNeeded);
       this.needed = extractField(result, SiteDataResult::getNeeded);
       this.available = extractField(result, SiteDataResult::getAvailable);
       this.oversupply = extractField(result, SiteDataResult::getOverSupply);
     }
 
     private static List<String> extractField(
-        SiteDataResult result,
-        Function<SiteDataResult, String> mapping) {
+        SiteDataResult result, Function<SiteDataResult, String> mapping) {
       String value = mapping.apply(result);
       return value == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(value.split(",")));
     }

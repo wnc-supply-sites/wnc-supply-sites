@@ -6,7 +6,6 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,6 @@ class InventoryDaoTest {
   static void setup() {
     TestConfiguration.setupDatabase();
   }
-
 
   @Test
   void updateSiteItemActive() {
@@ -28,8 +26,7 @@ class InventoryDaoTest {
     assertThat(gloves.isActive()).isFalse();
 
     // set gloves to back to 'active'
-    InventoryDao.updateSiteItemActive(
-        TestConfiguration.jdbiTest, siteId, "gloves", "Oversupply");
+    InventoryDao.updateSiteItemActive(TestConfiguration.jdbiTest, siteId, "gloves", "Oversupply");
 
     // verify gloves are active
     result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);

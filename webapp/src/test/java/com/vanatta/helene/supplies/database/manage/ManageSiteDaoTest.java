@@ -238,23 +238,23 @@ class ManageSiteDaoTest {
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isAcceptingDonations()).isTrue();
     }
-    
+
     @Test
     void setStatusDistributingDonations() {
       long siteId = Helper.getSiteId("site1");
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
       var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isDistributingDonations()).isTrue();
-      
+
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, false);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isDistributingDonations()).isFalse();
-      
+
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isDistributingDonations()).isTrue();
     }
-    
+
     @Test
     void fetchSiteStatus_SiteType() {
       long siteId = Helper.getSiteId("site1");

@@ -2,17 +2,15 @@ package com.vanatta.helene.supplies.database.manage.inventory;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
-import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
+import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -69,7 +67,7 @@ public class InventoryController {
       return null;
     }
   }
-  
+
   /** Display inventory listing for a site. */
   @GetMapping("/manage/inventory")
   ModelAndView fetchSiteInventoryListing(String siteId) {
@@ -77,11 +75,11 @@ public class InventoryController {
     if (siteName == null) {
       return ManageSiteController.showSelectSitePage(jdbi);
     }
-    
+
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("siteName", siteName);
     pageParams.put("siteId", siteId);
-    
+
     List<ItemInventoryDisplay> inventoryList =
         ManageSiteDao.fetchSiteInventory(jdbi, Long.parseLong(siteId)).stream()
             .map(ItemInventoryDisplay::new)
@@ -89,30 +87,30 @@ public class InventoryController {
                 Comparator.comparing(
                     d -> d.getItemName().toUpperCase())) // ItemInventoryDisplay::getItemName))
             .toList();
-    
+
     pageParams.put("inventoryList", inventoryList);
-    
+
     return new ModelAndView("manage/inventory", pageParams);
   }
-  
+
   @Data
   @Builder
   @AllArgsConstructor
   static class ItemInventoryDisplay {
     String itemName;
-    
+
     /** Should either be blank or "checked" */
     @Builder.Default String itemChecked = "";
-    
+
     @Builder.Default String urgentChecked = "";
     @Builder.Default String neededChecked = "";
     @Builder.Default String availableChecked = "";
     @Builder.Default String oversupplyChecked = "";
-    
+
     ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
       itemName = siteInventory.getItemName();
       itemChecked = siteInventory.isActive() ? "checked" : "";
-      
+
       urgentChecked =
           ItemStatus.URGENTLY_NEEDED.getText().equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
@@ -125,14 +123,14 @@ public class InventoryController {
           ItemStatus.OVERSUPPLY.getText().equalsIgnoreCase(siteInventory.getItemStatus())
               ? "checked"
               : "";
-      
+
       // if none of the statuses are checked, then check 'available' by default.
       availableChecked =
           (urgentChecked.isEmpty() && neededChecked.isEmpty() && oversupplyChecked.isEmpty())
               ? "checked"
               : "";
     }
-    
+
     @SuppressWarnings("unused")
     public String getItemLabelClass() {
       if (urgentChecked != null && !urgentChecked.isEmpty()) {
@@ -147,7 +145,7 @@ public class InventoryController {
         return ItemStatus.AVAILABLE.getCssClass();
       }
     }
-    
+
     @SuppressWarnings("unused")
     public String getItemStatusDisabled() {
       if (itemChecked == null || itemChecked.isEmpty()) {
@@ -157,9 +155,7 @@ public class InventoryController {
       }
     }
   }
-  
-  
-  
+
   /** Creates a brand new item, and adds that item to a given site. */
   @PostMapping("/manage/add-site-item")
   @ResponseBody
@@ -278,8 +274,7 @@ public class InventoryController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
-    ItemStatus oldStatus =
-        InventoryDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
+    ItemStatus oldStatus = InventoryDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
 
     if (oldStatus != ItemStatus.fromTextValue(newStatus)) {
       InventoryDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);

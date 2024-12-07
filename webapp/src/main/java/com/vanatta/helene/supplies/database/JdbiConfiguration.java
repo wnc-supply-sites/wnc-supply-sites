@@ -24,7 +24,8 @@ public class JdbiConfiguration {
     config.setUsername(user);
     config.setPassword(password);
 
-    // config values docs: https://github.com/brettwooldridge/HikariCP?tab=readme-ov-file#gear-configuration-knobs-baby
+    // config values docs:
+    // https://github.com/brettwooldridge/HikariCP?tab=readme-ov-file#gear-configuration-knobs-baby
 
     // timeout DB connections at 10s instead of default of 30s
     config.addDataSourceProperty("connectionTimeout", 10_000);

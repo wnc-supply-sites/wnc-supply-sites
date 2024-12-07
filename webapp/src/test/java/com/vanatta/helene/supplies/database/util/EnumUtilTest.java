@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 class EnumUtilTest {

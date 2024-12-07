@@ -139,8 +139,7 @@ public class SuppliesDao {
         order by lower(s.name), lower(i.name);
         """;
 
-    return jdbi.withHandle(handle -> handle.createQuery(query)
-        .mapToBean(SupplyDataCsvBean.class)
-        .list());
+    return jdbi.withHandle(
+        handle -> handle.createQuery(query).mapToBean(SupplyDataCsvBean.class).list());
   }
 }

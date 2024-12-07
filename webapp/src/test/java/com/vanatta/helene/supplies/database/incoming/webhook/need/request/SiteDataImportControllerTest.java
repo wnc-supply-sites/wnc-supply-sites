@@ -4,11 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

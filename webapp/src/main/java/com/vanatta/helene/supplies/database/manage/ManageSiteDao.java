@@ -230,7 +230,7 @@ public class ManageSiteDao {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-  
+
   public static void updateSiteDistributingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
     int updateCount =
         jdbi.withHandle(
@@ -241,12 +241,11 @@ public class ManageSiteDao {
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
-    
+
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-  
 
   public static void updateSiteActiveFlag(Jdbi jdbi, long siteId, boolean newValue) {
     int updateCount =
@@ -308,7 +307,8 @@ public class ManageSiteDao {
   }
 
   public static void updateSiteInventoryLastUpdatedToNow(Jdbi jdbi, long siteId) {
-    String updateSiteLastUpdated = "update site set inventory_last_updated = now() where id = :siteId";
+    String updateSiteLastUpdated =
+        "update site set inventory_last_updated = now() where id = :siteId";
     jdbi.withHandle(
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }

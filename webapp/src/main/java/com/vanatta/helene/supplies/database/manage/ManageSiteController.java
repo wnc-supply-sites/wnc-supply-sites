@@ -4,14 +4,13 @@ import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.vanatta.helene.supplies.database.util.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -62,8 +61,7 @@ public class ManageSiteController {
    * After a site is selected, user selects which aspect they want to manage (eg: inventory, status)
    */
   @GetMapping("/manage/site-selected")
-  ModelAndView showSiteSelectedPage(
-      @RequestParam String siteId) {
+  ModelAndView showSiteSelectedPage(@RequestParam String siteId) {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
@@ -92,9 +90,7 @@ public class ManageSiteController {
 
   static final String COUNTY_LIST = "countyList";
   static final String STATE_LIST = "stateList";
-  
-  
-  
+
   /** Fetches data for the manage site page */
   @GetMapping("/manage/contact")
   ModelAndView showSiteContactPage(String siteId) {
@@ -120,13 +116,14 @@ public class ManageSiteController {
     pageParams.put("siteContactName", Optional.ofNullable(data.getContactName()).orElse(""));
     pageParams.put("siteContactEmail", Optional.ofNullable(data.getContactEmail()).orElse(""));
     pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));
-    pageParams.put("additionalContacts", Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
+    pageParams.put(
+        "additionalContacts", Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     pageParams.put("fullCountyList", counties);
     pageParams.put(STATE_LIST, createItemListing(data.getState(), counties.keySet()));
     pageParams.put(COUNTY_LIST, createItemListing(data.getCounty(), counties.get(data.getState())));
-    
+
     return new ModelAndView("manage/contact", pageParams);
   }
 
@@ -195,18 +192,18 @@ public class ManageSiteController {
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "true" : null);
-    pageParams.put("siteDistributingDonations", siteStatus.isDistributingDonations() ? "true" : null);
+    pageParams.put(
+        "siteDistributingDonations", siteStatus.isDistributingDonations() ? "true" : null);
 
     pageParams.put(
         "distributionSiteChecked",
         siteStatus.getSiteTypeEnum() == SiteType.DISTRIBUTION_CENTER ? "checked" : "");
     pageParams.put(
-        "supplyHubChecked",
-        siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
+        "supplyHubChecked", siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
 
     return new ModelAndView("manage/status", pageParams);
   }
-  
+
   @AllArgsConstructor
   @Getter
   public enum EnumStatusUpdateFlag {
@@ -217,7 +214,7 @@ public class ManageSiteController {
     PUBLICLY_VISIBLE("publiclyVisible"),
     ;
     final String text;
-    
+
     static Optional<EnumStatusUpdateFlag> fromText(String input) {
       return EnumUtil.mapText(values(), EnumStatusUpdateFlag::getText, input);
     }
@@ -237,35 +234,33 @@ public class ManageSiteController {
     if (siteName == null) {
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
-    
+
     if (newValue == null
         || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
       return ResponseEntity.badRequest().body("Invalid new value: " + newValue);
     }
-    
+
     log.info("Site update received, site name: {}, params; {}", siteName, params);
-    
+
     var flag = EnumStatusUpdateFlag.fromText(statusFlag).orElse(null);
-    if(flag == null) {
-      log.warn("Status page, invalid status flag received. Params: {}" ,params);
+    if (flag == null) {
+      log.warn("Status page, invalid status flag received. Params: {}", params);
       return ResponseEntity.badRequest().body("Invalid status flag: " + statusFlag);
     }
-    
+
     switch (flag) {
       case ACCEPTING_SUPPLIES:
         ManageSiteDao.updateSiteAcceptingDonationsFlag(
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-        
+
         break;
       case DISTRIBUTING_SUPPLIES:
         break;
       case SITE_TYPE:
         var siteType =
-            Boolean.parseBoolean(newValue)
-                ? SiteType.DISTRIBUTION_CENTER
-                : SiteType.SUPPLY_HUB;
+            Boolean.parseBoolean(newValue) ? SiteType.DISTRIBUTION_CENTER : SiteType.SUPPLY_HUB;
         ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
-        
+
         break;
       case PUBLICLY_VISIBLE:
         break;
@@ -276,7 +271,7 @@ public class ManageSiteController {
       default:
         throw new IllegalArgumentException("Unmapped status flag: " + statusFlag);
     }
-    
+
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
   }

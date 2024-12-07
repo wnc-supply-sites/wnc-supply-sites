@@ -18,7 +18,6 @@ public class DispatchUpdatesWebhook {
   private final Jdbi jdbi;
   private final IncomingJsonParser incomingJsonParser;
 
-
   @PostMapping("/webhook/needs-request-update")
   ResponseEntity<String> updateNeedsRequest(@RequestBody String body) {
     log.info("Webhook, received data: {}", body);

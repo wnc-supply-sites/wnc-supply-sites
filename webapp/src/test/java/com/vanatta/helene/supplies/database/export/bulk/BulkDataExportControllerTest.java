@@ -11,15 +11,15 @@ class BulkDataExportControllerTest {
   @BeforeAll
   static void dbSetup() {
     TestConfiguration.setupDatabase();
-    }
-  
-    @Test
-    void bulkDataExport() {
-      var responseData =
-          new BulkDataExportController(TestConfiguration.jdbiTest).exportData().getBody();
-  
-      assertThat(responseData.getItems()).isNotEmpty();
-      assertThat(responseData.getSites()).isNotEmpty();
-      assertThat(responseData.getNeedRequests()).isNotEmpty();
-    }
   }
+
+  @Test
+  void bulkDataExport() {
+    var responseData =
+        new BulkDataExportController(TestConfiguration.jdbiTest).exportData().getBody();
+
+    assertThat(responseData.getItems()).isNotEmpty();
+    assertThat(responseData.getSites()).isNotEmpty();
+    assertThat(responseData.getNeedRequests()).isNotEmpty();
+  }
+}

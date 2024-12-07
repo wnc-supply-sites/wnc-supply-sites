@@ -29,7 +29,13 @@ public class DbTestHelper {
         where dr.public_id = :publicId
       """;
       return jdbiTest.withHandle(
-          handle -> handle.createQuery(query).bind("publicId", publicId).mapTo(Long.class).findOne().orElse(null));
+          handle ->
+              handle
+                  .createQuery(query)
+                  .bind("publicId", publicId)
+                  .mapTo(Long.class)
+                  .findOne()
+                  .orElse(null));
     }
 
     @Nullable
@@ -41,7 +47,12 @@ public class DbTestHelper {
               """;
       return jdbiTest.withHandle(
           handle ->
-              handle.createQuery(query).bind("airtable_id", airtableId).mapTo(String.class).findOne().orElse(null));
+              handle
+                  .createQuery(query)
+                  .bind("airtable_id", airtableId)
+                  .mapTo(String.class)
+                  .findOne()
+                  .orElse(null));
     }
 
     public static Long getDispatchIdByPublicId(String publicId) {

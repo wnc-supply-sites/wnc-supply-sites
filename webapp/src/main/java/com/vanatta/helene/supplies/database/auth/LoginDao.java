@@ -1,8 +1,7 @@
 package com.vanatta.helene.supplies.database.auth;
 
-import org.jdbi.v3.core.Jdbi;
-
 import java.util.UUID;
+import org.jdbi.v3.core.Jdbi;
 
 public class LoginDao {
 
@@ -30,10 +29,11 @@ public class LoginDao {
     // select auth key
     String authKeyFetch = "select cookie_key from auth_key";
     String authKey =
-        jdbi.withHandle(handle -> handle.createQuery(authKeyFetch).mapTo(String.class).findOne().orElse(null));
+        jdbi.withHandle(
+            handle -> handle.createQuery(authKeyFetch).mapTo(String.class).findOne().orElse(null));
 
     // if auth key is null, then generate it
-    if(authKey == null) {
+    if (authKey == null) {
       authKey = UUID.randomUUID().toString();
 
       // insert the generated auth key

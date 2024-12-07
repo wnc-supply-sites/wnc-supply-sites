@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +22,10 @@ class CountyDaoTest {
     assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "TN"))
         .doesNotContain("Watauga");
 
-    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "TN")).contains("Sevier");
-    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "VA")).contains("Halifax");
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "TN"))
+        .contains("Sevier");
+    assertThat(CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "VA"))
+        .contains("Halifax");
   }
 
   /**
@@ -33,7 +34,8 @@ class CountyDaoTest {
    */
   @Test
   void fetchActiveCountyList() {
-    int fullCountyCount = CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC").size();
+    int fullCountyCount =
+        CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC").size();
     List<String> activeCounties = CountyDao.fetchActiveCountyList(TestConfiguration.jdbiTest);
 
     assertThat(activeCounties.size()).isGreaterThan(0);
@@ -42,12 +44,13 @@ class CountyDaoTest {
     assertThat(activeCounties).contains("Watauga");
     assertThat(activeCounties).doesNotContain("dummy");
   }
-  
+
   @Test
   void fetchFullCountyListing() {
-    Map<String, List<String>> fetchFullCountyListing = CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest);
+    Map<String, List<String>> fetchFullCountyListing =
+        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest);
     assertThat(fetchFullCountyListing.size()).isGreaterThan(0);
-    
+
     assertThat(fetchFullCountyListing.get("NC")).contains("Watauga");
     assertThat(fetchFullCountyListing.get("TN")).contains("Sevier");
     assertThat(fetchFullCountyListing.get("VA")).contains("Halifax");

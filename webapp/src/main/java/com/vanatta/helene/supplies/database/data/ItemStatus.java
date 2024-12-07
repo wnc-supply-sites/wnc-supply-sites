@@ -1,9 +1,8 @@
 package com.vanatta.helene.supplies.database.data;
 
+import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.Arrays;
 import java.util.List;
-
-import com.vanatta.helene.supplies.database.util.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

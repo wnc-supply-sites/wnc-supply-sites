@@ -145,7 +145,7 @@ class ManageSiteControllerTest {
       toggleFlag(ManageSiteController.EnumStatusUpdateFlag.PUBLICLY_VISIBLE, false);
       var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.isPubliclyVisible()).isFalse();
-      
+
       toggleFlag(ManageSiteController.EnumStatusUpdateFlag.PUBLICLY_VISIBLE, true);
       details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.isPubliclyVisible()).isTrue();
@@ -156,7 +156,7 @@ class ManageSiteControllerTest {
       toggleFlag(ManageSiteController.EnumStatusUpdateFlag.ACTIVE, false);
       var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.isActive()).isFalse();
-      
+
       toggleFlag(ManageSiteController.EnumStatusUpdateFlag.ACTIVE, true);
       details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.isActive()).isTrue();

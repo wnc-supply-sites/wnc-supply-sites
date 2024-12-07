@@ -93,7 +93,8 @@ public class AddSiteDaoTest {
           IllegalArgumentException.class,
           () ->
               AddSiteDao.addSite(
-                  TestConfiguration.jdbiTest, siteData2.toBuilder().county("invalid-county").build()));
+                  TestConfiguration.jdbiTest,
+                  siteData2.toBuilder().county("invalid-county").build()));
     }
   }
 }

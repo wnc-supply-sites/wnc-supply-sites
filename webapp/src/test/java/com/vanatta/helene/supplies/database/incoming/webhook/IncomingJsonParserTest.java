@@ -93,7 +93,6 @@ class IncomingJsonParserTest {
           """
         { "needsRequestId":"Supply#313 - z\\"Test", "status":"Pending", "authSecret":"open-sesame"}""";
       assertThat(output).isEqualTo(expectedOutput);
-
     }
 
     @Test

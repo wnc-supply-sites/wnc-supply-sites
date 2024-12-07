@@ -76,7 +76,6 @@ public class NeedRequestImportController {
     // (1) is this an existing record? Lookup its ID
     Long existingRecordId = findDispatchRecord(needRequestUpdate).orElse(null);
 
-
     // this is a new dispatch request - create the dispatch request & add items
     if (existingRecordId == null) {
       long newDispatch = createNewDispatchRequest(jdbi, needRequestUpdate);
