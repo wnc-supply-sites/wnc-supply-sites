@@ -191,6 +191,8 @@ public class ManageSiteController {
     ManageSiteDao.SiteStatus siteStatus =
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
+    pageParams.put("sitePublic", siteStatus.publiclyVisible ? "true" : null);
+
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "true" : null);
     pageParams.put(
         "siteDistributingDonations", siteStatus.isDistributingSupplies() ? "true" : null);

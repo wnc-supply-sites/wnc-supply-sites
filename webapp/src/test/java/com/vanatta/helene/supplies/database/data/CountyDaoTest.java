@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.data;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.supplies.filters.AuthenticatedMode;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +37,9 @@ class CountyDaoTest {
   void fetchActiveCountyList() {
     int fullCountyCount =
         CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC").size();
-    List<String> activeCounties = CountyDao.fetchActiveCountyList(TestConfiguration.jdbiTest);
+    List<String> activeCounties =
+        CountyDao.fetchActiveCountyList(
+            TestConfiguration.jdbiTest, AuthenticatedMode.NOT_AUTHENTICATED);
 
     assertThat(activeCounties.size()).isGreaterThan(0);
     assertThat(fullCountyCount).isGreaterThan(activeCounties.size());

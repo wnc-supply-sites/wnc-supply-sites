@@ -12,14 +12,22 @@ public class FilterDataDao {
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
 
-  public static List<String> getAllActiveSites(Jdbi jdbi) {
+  public static List<String> getAllActiveSites(Jdbi jdbi, AuthenticatedMode authenticatedMode) {
+    String authenticatedFilter =
+        authenticatedMode == AuthenticatedMode.AUTHENTICATED
+            ? ""
+            : "and site.publicly_visible = true";
+
     String query =
-        """
+        String.format(
+            """
         select site.name
         from site
-        where site.active = true
+        where site.active = true %s
         order by lower(site.name)
-        """;
+        """,
+            authenticatedFilter);
+
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
 }

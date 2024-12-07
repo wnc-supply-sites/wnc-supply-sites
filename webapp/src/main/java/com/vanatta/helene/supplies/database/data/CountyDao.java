@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.data;
 
+import com.vanatta.helene.supplies.database.supplies.filters.AuthenticatedMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +15,17 @@ public class CountyDao {
         handle -> handle.createQuery(query).bind("state", state).mapTo(String.class).list());
   }
 
-  public static List<String> fetchActiveCountyList(Jdbi jdbi) {
+  public static List<String> fetchActiveCountyList(Jdbi jdbi, AuthenticatedMode authenticatedMode) {
+    String authenticatedFilter =
+        authenticatedMode == AuthenticatedMode.AUTHENTICATED ? "" : " and publicly_visible = true";
     String query =
-        """
+        String.format(
+            """
         select c.name from county c
-        where exists (select 1 from site where county_id = c.id)
+        where exists (select 1 from site where county_id = c.id %s)
         order by c.name;
-        """;
+        """,
+            authenticatedFilter);
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
 
