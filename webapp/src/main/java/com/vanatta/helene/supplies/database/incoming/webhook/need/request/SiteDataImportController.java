@@ -40,6 +40,7 @@ public class SiteDataImportController {
     String state;
     String county;
     String pointOfContact;
+    String additionalContacts;
     String email;
     String phone;
     String website;
@@ -140,13 +141,15 @@ public class SiteDataImportController {
           contact_number, website, airtable_id, hours, contact_name, facebook,
           contact_email, publicly_visible, distributing_supplies,
           county_id,
-          site_type_id)
+          site_type_id,
+          additional_contacts )
         values(
           :name, :address, :city, :acceptingDonations, :active,
           :contactNumber, :website, :airtableId, :hours, :contactName, :facebook,
           :contactEmail, :publiclyVisible, :distributingSupplies,
           (select id from county where name = :county and state = :state),
-          (select id from site_type where name = :siteType)
+          (select id from site_type where name = :siteType),
+          :additionalContacts
         )
         """;
 
@@ -173,7 +176,8 @@ public class SiteDataImportController {
           publicly_visible = :publiclyVisible,
           airtable_id = :airtableId,
           county_id = (select id from county where name = :county and state = :state),
-          site_type_id = (select id from site_type where name = :siteType)
+          site_type_id = (select id from site_type where name = :siteType),
+          additional_contacts = :additionalContacts
         where wss_id = :wssId
         """;
     jdbi.withHandle(
@@ -202,6 +206,7 @@ public class SiteDataImportController {
         .bind("publiclyVisible", input.isPublicVisibility())
         .bind("county", input.getCounty())
         .bind("state", input.getState())
-        .bind("siteType", input.getSiteType().getText());
+        .bind("siteType", input.getSiteType().getText())
+        .bind("additionalContacts", input.getAdditionalContacts());
   }
 }
