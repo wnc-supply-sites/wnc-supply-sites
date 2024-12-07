@@ -226,19 +226,19 @@ public class ManageSiteController {
   @PostMapping("/manage/update-status")
   @ResponseBody
   ResponseEntity<?> updateStatus(@RequestBody Map<String, String> params) {
-    log.info("Update site status request received: {}", params);
-
     String siteId = params.get("siteId");
     String statusFlag = params.get("statusFlag");
     String newValue = params.get("newValue");
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
+      log.warn("Invalid site update value received, invalid site id (not found), params: {}", params);
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
 
     if (newValue == null
         || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
+      log.warn("Invalid site update value received (not true or false), params: {}", params);
       return ResponseEntity.badRequest().body("Invalid new value: " + newValue);
     }
 
