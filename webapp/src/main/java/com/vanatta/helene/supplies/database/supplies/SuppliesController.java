@@ -61,7 +61,12 @@ public class SuppliesController {
     return getSuppliesData(SiteSupplyRequest.builder().build());
   }
 
-  /** POST requests should be coming from supplies page JS requests for donation site data */
+  /**
+   * POST requests should be coming from supplies page JS requests for donation site data
+   *
+   * <p>Returns a JSON object that lists sites and their supply inventory levels filtered by the
+   * incoming request.
+   */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
@@ -81,7 +86,8 @@ public class SuppliesController {
                           .siteType(result.getSiteType())
                           .county(result.getCounty())
                           .acceptingDonations(result.isAcceptingDonations())
-                          .inventoryLastUpdated(result.getInventoryLastUpdated().format(dateTimeFormatter))
+                          .inventoryLastUpdated(
+                              result.getInventoryLastUpdated().format(dateTimeFormatter))
                           .build());
           if (result.getItem() != null) {
             siteSupplyData

@@ -26,7 +26,7 @@ function showError(error, messageText) {
 async function updateSiteAcceptingDonations(siteId) {
   const accepting = document.getElementById("acceptingYes").checked;
   try {
-    await sendStatusUpdate(siteId, "acceptingDonations", accepting);
+    await sendStatusUpdate(siteId, "acceptingSupplies", accepting);
     showConfirmation("Site status set to " + (accepting ? "" : "NOT ") + "accepting supplies");
   } catch (error) {
     showError(error, "accepting supplies was not updated.");
@@ -36,7 +36,7 @@ async function updateSiteAcceptingDonations(siteId) {
 async function updateSiteDistributingDonations(siteId) {
   const distributing = document.getElementById("distributingYes").checked;
   try {
-    await sendStatusUpdate(siteId, "distributingDonations", distributing);
+    await sendStatusUpdate(siteId, "distributingSupplies", distributing);
     showConfirmation("Site status set to " + (distributing ? "" : "NOT ") + "distributing supplies");
   } catch (error) {
     showError(error, "distributing supplies was not updated");

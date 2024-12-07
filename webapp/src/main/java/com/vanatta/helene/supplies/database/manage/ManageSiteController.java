@@ -10,9 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.util.EnumUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -203,6 +206,22 @@ public class ManageSiteController {
 
     return new ModelAndView("manage/status", pageParams);
   }
+  
+  @AllArgsConstructor
+  @Getter
+  public enum EnumStatusUpdateFlag {
+    ACTIVE("active"),
+    SITE_TYPE("distSite"),
+    ACCEPTING_SUPPLIES("acceptingSupplies"),
+    DISTRIBUTING_SUPPLIES("distributingSupplies"),
+    PUBLICLY_VISIBLE("publiclyVisible"),
+    ;
+    final String text;
+    
+    static Optional<EnumStatusUpdateFlag> fromText(String input) {
+      return EnumUtil.mapText(values(), EnumStatusUpdateFlag::getText, input);
+    }
+  }
 
   /** REST endpoint to toggle the status of sites (active/accepting donations). */
   @PostMapping("/manage/update-status")
@@ -218,34 +237,46 @@ public class ManageSiteController {
     if (siteName == null) {
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
-    if (statusFlag == null
-        || !(statusFlag.equals("active")
-            || statusFlag.equals("acceptingDonations")
-            || statusFlag.equals("distSite"))) {
-      return ResponseEntity.badRequest().body("Invalid status flag: " + statusFlag);
-    }
-
+    
     if (newValue == null
         || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
       return ResponseEntity.badRequest().body("Invalid new value: " + newValue);
     }
-
-    if (statusFlag.equalsIgnoreCase("active")) {
-      log.info("Updating site: {}, active = {}", siteName, newValue);
-      ManageSiteDao.updateSiteActiveFlag(
-          jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-    } else if (statusFlag.equalsIgnoreCase("acceptingDonations")) {
-      log.info("Updating site: {}, accepting donations = {}", siteName, newValue);
-      ManageSiteDao.updateSiteAcceptingDonationsFlag(
-          jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-    } else {
-      var siteType =
-          Boolean.parseBoolean(newValue)
-              ? SiteType.DISTRIBUTION_CENTER
-              : SiteType.SUPPLY_HUB;
-      log.info("Updating site: {}, site type: {}", siteName, siteType);
-      ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
+    
+    log.info("Site update received, site name: {}, params; {}", siteName, params);
+    
+    var flag = EnumStatusUpdateFlag.fromText(statusFlag).orElse(null);
+    if(flag == null) {
+      log.warn("Status page, invalid status flag received. Params: {}" ,params);
+      return ResponseEntity.badRequest().body("Invalid status flag: " + statusFlag);
     }
+    
+    switch (flag) {
+      case ACCEPTING_SUPPLIES:
+        ManageSiteDao.updateSiteAcceptingDonationsFlag(
+            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+        
+        break;
+      case DISTRIBUTING_SUPPLIES:
+        break;
+      case SITE_TYPE:
+        var siteType =
+            Boolean.parseBoolean(newValue)
+                ? SiteType.DISTRIBUTION_CENTER
+                : SiteType.SUPPLY_HUB;
+        ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
+        
+        break;
+      case PUBLICLY_VISIBLE:
+        break;
+      case ACTIVE:
+        ManageSiteDao.updateSiteActiveFlag(
+            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+        break;
+      default:
+        throw new IllegalArgumentException("Unmapped status flag: " + statusFlag);
+    }
+    
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
     return ResponseEntity.ok().body("Updated");
   }
