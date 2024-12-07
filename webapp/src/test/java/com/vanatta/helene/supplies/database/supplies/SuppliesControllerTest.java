@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import java.util.List;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
@@ -325,5 +326,36 @@ class SuppliesControllerTest {
     // site3 is not active, site4 does not have any items
     assertThat(result).doesNotContain("site3", "site4");
     assertThat(result).contains("water,Available");
+  }
+
+  @Test
+  void privateSitesAreFiltered() {
+    String newSiteName = TestConfiguration.addSite();
+    long siteId = TestConfiguration.getSiteId(newSiteName);
+
+    // validate we can find the new site without being authenticated
+
+    boolean authenticated = false;
+    List<String> siteNames = doSearch(authenticated);
+    assertThat(siteNames).contains(newSiteName);
+
+    // now hide the site & repeat the search
+    ManageSiteDao.updateSitePubliclyVisible(TestConfiguration.jdbiTest, siteId, false);
+    siteNames = doSearch(authenticated);
+    assertThat(siteNames).doesNotContain(newSiteName);
+
+    // repeat the search again, but this time authenticated
+    authenticated = true;
+    siteNames = doSearch(authenticated);
+    assertThat(siteNames).contains(newSiteName);
+  }
+
+  private List<String> doSearch(boolean authenticated) {
+    return suppliesController
+        .getSuppliesData(SiteSupplyRequest.builder().build(), authenticated)
+        .getResults()
+        .stream()
+        .map(SiteSupplyResponse.SiteSupplyData::getSite)
+        .toList();
   }
 }

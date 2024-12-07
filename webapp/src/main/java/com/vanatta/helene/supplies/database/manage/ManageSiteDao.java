@@ -23,7 +23,8 @@ public class ManageSiteDao {
                 .mapToBean(SiteSelection.class)
                 .list());
   }
-
+  
+  
   @AllArgsConstructor
   @Getter
   public enum SiteField {
@@ -183,8 +184,9 @@ public class ManageSiteDao {
   @NoArgsConstructor
   public static class SiteStatus {
     boolean active;
+    boolean publiclyVisible;
     boolean acceptingDonations;
-    boolean distributingDonations;
+    boolean distributingSupplies;
     String siteType;
 
     public SiteType getSiteTypeEnum() {
@@ -198,7 +200,12 @@ public class ManageSiteDao {
   public static SiteStatus fetchSiteStatus(Jdbi jdbi, long siteId) {
     String query =
         """
-        select s.active, s.accepting_donations, st.name siteType
+        select
+          s.active,
+          s.accepting_donations,
+          st.name siteType,
+          s.publicly_visible,
+          s.distributing_supplies
         from site s
         join site_type st on st.id = s.site_type_id
         where s.id = :siteId
@@ -262,7 +269,23 @@ public class ManageSiteDao {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-
+  
+  public static void updateSitePubliclyVisible(Jdbi jdbi, long siteId, boolean newValue) {
+    int updateCount =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(
+                        "update site set publicly_visible = :newValue, last_updated = now() where id = :siteId")
+                    .bind("newValue", newValue)
+                    .bind("siteId", siteId)
+                    .execute());
+    
+    if (updateCount == 0) {
+      throw new IllegalArgumentException("Invalid site id: " + siteId);
+    }
+  }
+  
   /** Fetches all items, items requested/needed for a given site are listed as active. */
   public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =

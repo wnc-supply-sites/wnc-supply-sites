@@ -69,12 +69,21 @@ public class SuppliesController {
    */
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
-  public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
-    // TODO: actually check auth
+  public SiteSupplyResponse getSuppliesData(
+      HttpServletRequest httpRequest, @RequestBody SiteSupplyRequest request) {
+    boolean authenticated = cookieAuthenticator.isAuthenticated(httpRequest);
+    return getSuppliesData(request, authenticated);
+  }
+
+  // @VisibleForTesting
+  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request) {
     return getSuppliesData(request, false);
   }
 
+  // @VisibleForTesting
   SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, boolean isAuthenticated) {
+    request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
+
     var results = SuppliesDao.getSupplyResults(jdbi, request);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();

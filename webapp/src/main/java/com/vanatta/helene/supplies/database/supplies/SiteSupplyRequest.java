@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class SiteSupplyRequest {
@@ -23,4 +23,5 @@ public class SiteSupplyRequest {
   @Builder.Default List<String> siteType = new ArrayList<>();
   @Builder.Default Boolean acceptingDonations = true;
   @Builder.Default Boolean notAcceptingDonations = true;
+  @Builder.Default Boolean isAuthenticatedUser = false;
 }

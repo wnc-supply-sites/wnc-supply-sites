@@ -244,17 +244,30 @@ class ManageSiteDaoTest {
       long siteId = Helper.getSiteId("site1");
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
       var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-      assertThat(result.isDistributingDonations()).isTrue();
+      assertThat(result.isDistributingSupplies()).isTrue();
 
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, false);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-      assertThat(result.isDistributingDonations()).isFalse();
+      assertThat(result.isDistributingSupplies()).isFalse();
 
       ManageSiteDao.updateSiteDistributingDonationsFlag(TestConfiguration.jdbiTest, siteId, true);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-      assertThat(result.isDistributingDonations()).isTrue();
+      assertThat(result.isDistributingSupplies()).isTrue();
     }
 
+    @Test
+    void sitePubliclyVisible() {
+      long siteId = Helper.getSiteId("site1");
+      
+      ManageSiteDao.updateSitePubliclyVisible(TestConfiguration.jdbiTest, siteId, false);
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isPubliclyVisible()).isFalse();
+      
+      ManageSiteDao.updateSitePubliclyVisible(TestConfiguration.jdbiTest, siteId, true);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isPubliclyVisible()).isTrue();
+    }
+    
     @Test
     void fetchSiteStatus_SiteType() {
       long siteId = Helper.getSiteId("site1");

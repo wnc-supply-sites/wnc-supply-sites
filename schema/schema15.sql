@@ -1,5 +1,5 @@
 /** add additional data fields to site table */
-alter table site add column publicly_visible boolean not null default false;
+alter table site add column publicly_visible boolean not null default true;
 alter table site add column contact_name varchar(256);
 alter table site add column contact_email varchar(256);
 alter table site add column website varchar(256);

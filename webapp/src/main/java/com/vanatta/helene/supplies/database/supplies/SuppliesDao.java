@@ -70,8 +70,14 @@ public class SuppliesDao {
 
     if (request.getAcceptingDonations() != request.getNotAcceptingDonations()) {
       query
-          .append("and accepting_donations = ")
+          .append("and s.accepting_donations = ")
           .append(request.getAcceptingDonations())
+          .append("\n");
+    }
+    
+    if(!request.getIsAuthenticatedUser()){
+      query
+          .append("and s.publicly_visible = true")
           .append("\n");
     }
 

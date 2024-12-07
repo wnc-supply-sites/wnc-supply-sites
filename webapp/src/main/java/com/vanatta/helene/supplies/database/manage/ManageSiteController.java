@@ -193,7 +193,7 @@ public class ManageSiteController {
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "true" : null);
     pageParams.put(
-        "siteDistributingDonations", siteStatus.isDistributingDonations() ? "true" : null);
+        "siteDistributingDonations", siteStatus.isDistributingSupplies() ? "true" : null);
 
     pageParams.put(
         "distributionSiteChecked",
@@ -252,17 +252,19 @@ public class ManageSiteController {
       case ACCEPTING_SUPPLIES:
         ManageSiteDao.updateSiteAcceptingDonationsFlag(
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-
         break;
       case DISTRIBUTING_SUPPLIES:
+        ManageSiteDao.updateSiteDistributingDonationsFlag(
+            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
         break;
       case SITE_TYPE:
         var siteType =
             Boolean.parseBoolean(newValue) ? SiteType.DISTRIBUTION_CENTER : SiteType.SUPPLY_HUB;
         ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
-
         break;
       case PUBLICLY_VISIBLE:
+        ManageSiteDao.updateSitePubliclyVisible(
+            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
         break;
       case ACTIVE:
         ManageSiteDao.updateSiteActiveFlag(

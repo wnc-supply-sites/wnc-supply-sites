@@ -1,9 +1,13 @@
 package com.vanatta.helene.supplies.database;
 
+import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
+import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.List;
+import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 
 public class TestConfiguration {
@@ -36,6 +40,22 @@ public class TestConfiguration {
     }
   }
 
+  /** Adds a new site with a random name, returns the name of the site. */
+  public static String addSite() {
+    String name = "test-name " + UUID.randomUUID().toString();
+    AddSiteDao.addSite(
+        jdbiTest,
+        AddSiteData.builder()
+            .siteName(name)
+            .county("Watauga")
+            .state("NC")
+            .city("city " + name)
+            .streetAddress("address of " + name)
+            .siteType(SiteType.DISTRIBUTION_CENTER)
+            .build());
+    return name;
+  }
+
   public static long getSiteId() {
     return getSiteId("site1");
   }
@@ -58,7 +78,7 @@ public class TestConfiguration {
     // site3: has a NEW & PENDING dispatch request
     // site4: no dispatch requests
     List.of(
-            String.format(
+            java.lang.String.format(
                 """
         insert into dispatch_request(public_id, status, site_id)
         values(
@@ -68,7 +88,7 @@ public class TestConfiguration {
         )
         """,
                 SITE1_NEW_DISPATCH),
-            String.format(
+            java.lang.String.format(
                 """
             insert into dispatch_request(public_id, status, site_id)
             values(
@@ -78,7 +98,7 @@ public class TestConfiguration {
             )
             """,
                 SITE2_PENDING_DISPATCH),
-            String.format(
+            java.lang.String.format(
                 """
             insert into dispatch_request(public_id, status, site_id)
             values(
@@ -88,7 +108,7 @@ public class TestConfiguration {
             )
             """,
                 SITE3_NEW_DISPATCH),
-            String.format(
+            java.lang.String.format(
                 """
                 insert into dispatch_request(public_id, status, site_id)
                 values(
