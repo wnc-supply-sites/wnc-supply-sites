@@ -70,6 +70,11 @@ public class SuppliesController {
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(@RequestBody SiteSupplyRequest request) {
+    // TODO: actually check auth
+   return getSuppliesData(request, false);
+  }
+  
+  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, boolean isAuthenticated) {
     var results = SuppliesDao.getSupplyResults(jdbi, request);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
