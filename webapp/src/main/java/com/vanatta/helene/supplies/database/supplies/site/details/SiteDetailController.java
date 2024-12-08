@@ -74,12 +74,6 @@ public class SiteDetailController {
 
     Map<String, Object> siteDetails = new HashMap<>();
 
-    if (isLoggedIn) {
-      List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
-          NeedsMatchingDao.executeByInternalId(jdbi, id);
-      siteDetails.put("needsMatching", needsMatching);
-    }
-
     siteDetails.put("editContactLink", ManageSiteController.buildManageContactsPath(id));
     siteDetails.put("editInventoryLink", InventoryController.buildInventoryPath(id));
 
@@ -132,6 +126,11 @@ public class SiteDetailController {
               : ContactHref.newMailTo(siteDetailData.getContactEmail()));
 
       siteDetails.put("additionalContacts", siteDetailData.getAdditionalContacts());
+
+      List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
+          NeedsMatchingDao.executeByInternalId(jdbi, id);
+      siteDetails.put("needsMatching", needsMatching);
+      siteDetails.put("matchCount", needsMatching.size());
     }
     return new ModelAndView("supplies/site-detail", siteDetails);
   }
