@@ -29,7 +29,11 @@
 </div>
 
 <h2>{{siteName}}</h2>
+{{#loggedIn}}
+<div class="privately-visible">* Indicates field is visible because you are logged in</div>
+{{/loggedIn}}
 
+<h3>Site Address</h3>
 <div class="mission-statement">
   <dl>
     {{#website}}
@@ -45,9 +49,17 @@
     <dt>Address</dt>
     <dd class="detail-value">{{addressLine1}}<br>{{addressLine2}}</dd>
 
+    {{#hours}}
+    <dt>Hours</dt>
+    <dd class="detail-value"><textarea rows="5" cols=20" readonly>{{.}}</textarea></dd>
+    {{/hours}}
+  </dl>
+</div>
 
-    {{#loggedIn}}
-
+{{#loggedIn}}
+<h3>Contact</h3>
+<div class="mission-statement">
+  <dl>
     {{#contactName}}
     <dt>Contact<span class="privately-visible">*</span></dt>
     <dd>{{.}}</dd>
@@ -81,12 +93,16 @@
       {{/href}}
     </dd>
     {{/contactEmail}}
-
-    {{/loggedIn}}
   </dl>
+
+  {{#additionalContacts}}
+  <pre>
+    {{.}}
+  </pre>
+  {{/additionalContacts}}
 </div>
 
-<div class="privately-visible">* Indicates field is visible because you are logged in</div>
+{{/loggedIn}}
 
 <div class="mapouter">
   <div class="gmap_canvas">
@@ -101,6 +117,36 @@
   </div>
 </div>
 
+{{#loggedIn}}
+<h3>Needs Matching</h3>
+
+<table>
+  <thead>
+  <tr>
+    <th>Site Name</th>
+    <th>Site Address</th>
+    <th>Site City</th>
+    <th>Site County</th>
+    <th>State</th>
+    <th>Item</th>
+    <th>Overlap Count</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#needsMatching}}
+  <tr>
+    <td>{{siteName}}</td>
+    <td>{{siteAddress}}</td>
+    <td>{{city}}</td>
+    <td>{{county}}</td>
+    <td>{{state}}</td>
+    <td>{{itemName}}</td>
+    <td>{{overlapCount}}</td>
+  </tr>
+  {{/needsMatching}}
+  </tbody>
+</table>
+{{/loggedIn}}
 
 </body>
 </html>

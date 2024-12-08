@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,8 +44,15 @@ public class SiteDetailController {
 
     Map<String, Object> siteDetails = new HashMap<>();
 
+    if (isLoggedIn) {
+      List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
+          NeedsMatchingDao.executeByInternalId(jdbi, id);
+      siteDetails.put("needsMatching", needsMatching);
+    }
+
     siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
     siteDetails.put("siteName", siteDetailData.getSiteName());
+
     siteDetails.put(
         "website",
         siteDetailData.getWebsite() == null || siteDetailData.getWebsite().isBlank()
@@ -89,6 +97,8 @@ public class SiteDetailController {
           siteDetailData.getContactEmail() == null
               ? null
               : ContactHref.newMailTo(siteDetailData.getContactEmail()));
+
+      siteDetails.put("additionalContacts", siteDetailData.getAdditionalContacts());
     }
     return new ModelAndView("supplies/site-detail", siteDetails);
   }
