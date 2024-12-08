@@ -28,6 +28,10 @@ public class SiteDetailController {
   private final Jdbi jdbi;
   private final CookieAuthenticator cookieAuthenticator;
 
+  public static String buildSiteLink(long siteId) {
+    return PATH_SITE_DETAIL + "?id=" + siteId;
+  }
+
   @GetMapping(PATH_SITE_DETAIL)
   public ModelAndView siteDetail(
       @RequestParam Long id, HttpServletRequest request, HttpServletResponse response) {

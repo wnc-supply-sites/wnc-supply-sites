@@ -13,6 +13,7 @@ public class NeedsMatchingDao {
   @Value
   public static class NeedsMatchingResult {
     String siteName;
+    String siteLink;
     String siteAddress;
     String city;
     String county;
@@ -22,6 +23,7 @@ public class NeedsMatchingDao {
 
     NeedsMatchingResult(NeedsMatchingDbResult dbResult) {
       this.siteName = dbResult.siteName;
+      this.siteLink = SiteDetailController.buildSiteLink(dbResult.siteId);
       this.siteAddress = dbResult.siteAddress;
       this.city = dbResult.city;
       this.county = dbResult.county;
@@ -36,6 +38,7 @@ public class NeedsMatchingDao {
   @NoArgsConstructor
   public static class NeedsMatchingDbResult {
     String siteName;
+    long siteId;
     String siteAddress;
     String city;
     String county;
@@ -76,6 +79,7 @@ public class NeedsMatchingDao {
         ), need_match AS (
             SELECT
                 s.name AS siteName,
+                s.id AS siteId,
                 s.address AS siteAddress,
                 s.city as city,
                 c.name as county,
@@ -96,6 +100,7 @@ public class NeedsMatchingDao {
         )
         select
           A.siteName,
+          A.siteId,
           A.siteAddress,
           A.city, county,
           state, string_agg(A.itemName, ',') as itemName,
@@ -103,6 +108,7 @@ public class NeedsMatchingDao {
         from need_match A
         group by
             A.siteName,
+            A.siteId,
             A.siteAddress,
             A.city ,
             A.county,
