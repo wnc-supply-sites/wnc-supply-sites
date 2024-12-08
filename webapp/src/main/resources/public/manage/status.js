@@ -48,7 +48,7 @@ async function updateSiteSiteType(siteId) {
   const isDistSite = document.getElementById("distributionCenter").checked;
   try {
     await sendStatusUpdate(siteId, "distSite", isDistSite);
-    showConfirmation("Site type set to " + (isDistSite ? "distribution site" : "supply hub"));
+    showConfirmation("Site type set to " + (isDistSite ? "distribution site" : "supply warehouse"));
   } catch (error) {
     showError(error, "site type was not updated");
   }
