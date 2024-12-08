@@ -32,6 +32,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @Slf4j
 public class InventoryController {
+  public static final String PATH_INVENTORY = "/manage/inventory";
+
+  public static String buildInventoryPath(long siteId) {
+    return PATH_INVENTORY + "?siteId=" + siteId;
+  }
 
   private final Jdbi jdbi;
   private final SendNewItemUpdate sendNewItemUpdate;
@@ -69,7 +74,7 @@ public class InventoryController {
   }
 
   /** Display inventory listing for a site. */
-  @GetMapping("/manage/inventory")
+  @GetMapping(PATH_INVENTORY)
   ModelAndView fetchSiteInventoryListing(String siteId) {
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {

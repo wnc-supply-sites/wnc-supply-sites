@@ -26,34 +26,50 @@ dd {
 .mapouter {
     position: relative;
     text-align: right;
-    width: 600px;
-    height: 500px;
+    width: 500px;
+    height: 300px;
 }
 
 .gmap_canvas {
     overflow: hidden;
     background: none !important;
-    width: 600px;
-    height: 500px;
+    width: 500px;
+    height: 300px;
 }
 
 .gmap_iframe {
-    width: 600px !important;
-    height: 500px !important;
+    width: 500px !important;
+    height: 300px !important;
 }
 
 @media only screen and (max-width:632px) {
     .gmap_canvas {
-        width: 400px;
-        height: 400px;
+        width: 500px;
+        height: 300px;
     }
 
     .gmap_iframe {
-        width: 400px !important;
-        height: 400px !important;
+        width: 500px !important;
+        height: 300px !important;
     }
 }
 
 .detail-value {
     font-weight: bold;
+}
+
+.edit-link {
+    font-size: 0.8em;
+}
+
+table.needs-matching tr {
+    border: solid 1px gray;
+    border-spacing: 0;
+    border-collapse: collapse;
+    padding: 3px;
+    outline: solid;
+}
+
+.wider-column {
+    width: 200px;
 }

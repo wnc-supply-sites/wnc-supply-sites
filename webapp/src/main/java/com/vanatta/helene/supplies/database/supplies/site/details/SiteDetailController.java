@@ -1,6 +1,8 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
+import com.vanatta.helene.supplies.database.manage.ManageSiteController;
+import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,6 +51,9 @@ public class SiteDetailController {
           NeedsMatchingDao.executeByInternalId(jdbi, id);
       siteDetails.put("needsMatching", needsMatching);
     }
+
+    siteDetails.put("editContactLink", ManageSiteController.buildManageContactsPath(id));
+    siteDetails.put("editInventoryLink", InventoryController.buildInventoryPath(id));
 
     siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
     siteDetails.put("siteName", siteDetailData.getSiteName());

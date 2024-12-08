@@ -90,9 +90,14 @@ public class ManageSiteController {
 
   static final String COUNTY_LIST = "countyList";
   static final String STATE_LIST = "stateList";
+  public static final String PATH_MANAGE_CONTACTS = "/manage/contacts";
+
+  public static String buildManageContactsPath(long siteId) {
+    return PATH_MANAGE_CONTACTS + "?siteId=" + siteId;
+  }
 
   /** Fetches data for the manage site page */
-  @GetMapping("/manage/contact")
+  @GetMapping(PATH_MANAGE_CONTACTS)
   ModelAndView showSiteContactPage(String siteId) {
     Map<String, Object> pageParams = new HashMap<>();
 

@@ -1,26 +1,47 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
+import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
 
 public class NeedsMatchingDao {
 
+  @Value
+  public static class NeedsMatchingResult {
+    String siteName;
+    String siteAddress;
+    String city;
+    String county;
+    String state;
+    List<String> items;
+    int itemCount;
+
+    NeedsMatchingResult(NeedsMatchingDbResult dbResult) {
+      this.siteName = dbResult.siteName;
+      this.siteAddress = dbResult.siteAddress;
+      this.city = dbResult.city;
+      this.county = dbResult.county;
+      this.state = dbResult.state;
+      this.items = Arrays.asList(dbResult.itemName.split(","));
+      this.itemCount = dbResult.itemCount;
+    }
+  }
+
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class NeedsMatchingResult {
-    long airtableId;
-    long wssId;
+  public static class NeedsMatchingDbResult {
     String siteName;
     String siteAddress;
     String city;
     String county;
     String state;
     String itemName;
-    int overlapCount;
+    int itemCount;
   }
 
   public static List<NeedsMatchingResult> execute(Jdbi jdbi, long airtableId) {
@@ -52,32 +73,54 @@ public class NeedsMatchingDao {
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             WHERE ist.name = 'Oversupply'
+        ), need_match AS (
+            SELECT
+                s.name AS siteName,
+                s.address AS siteAddress,
+                s.city as city,
+                c.name as county,
+                c.state as state,
+                i.name AS itemName,
+                COUNT(os.item_id) OVER (PARTITION BY s.id) AS itemCount
+            FROM
+                oversupply_sites os
+            JOIN
+                needy_items ni ON os.item_id = ni.item_id
+            JOIN
+                site s ON os.site_id = s.id
+            JOIN
+                county c on c.id = s.county_id
+            JOIN
+                item i ON os.item_id = i.id
+            order by lower(i.name)
         )
-        SELECT
-            s.airtable_id airtableId,
-            s.wss_id AS wssId,
-            s.name AS siteName,
-            s.address AS siteAddress,
-            s.city as city,
-            c.name as county,
-            c.state as state,
-            i.name AS itemName,
-            COUNT(os.item_id) OVER (PARTITION BY s.id) AS overlap_count
-        FROM
-            oversupply_sites os
-        JOIN
-            needy_items ni ON os.item_id = ni.item_id
-        JOIN
-            site s ON os.site_id = s.id
-        JOIN
-            county c on c.id = s.county_id
-        JOIN
-            item i ON os.item_id = i.id
+        select
+          A.siteName,
+          A.siteAddress,
+          A.city, county,
+          state, string_agg(A.itemName, ',') as itemName,
+          A.itemCount
+        from need_match A
+        group by
+            A.siteName,
+            A.siteAddress,
+            A.city ,
+            A.county,
+            A.state,
+            A.itemCount
         ORDER BY
-            s.id, overlap_count DESC, i.name;
+            A.itemCount desc, A.siteName
         """;
-    return jdbi.withHandle(
-        handle ->
-            handle.createQuery(query).bind("id", dbId).mapToBean(NeedsMatchingResult.class).list());
+    return jdbi
+        .withHandle(
+            handle ->
+                handle
+                    .createQuery(query)
+                    .bind("id", dbId)
+                    .mapToBean(NeedsMatchingDbResult.class)
+                    .list())
+        .stream()
+        .map(NeedsMatchingResult::new)
+        .toList();
   }
 }
