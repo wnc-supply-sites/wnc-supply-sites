@@ -31,6 +31,9 @@ public class TestConfiguration {
   public static final String SITE3_PENDING_DISPATCH = "#33 site3 pending";
   public static final String SITE4_NO_DISPATCH = "#4 site4";
 
+  public static final long SITE1_AIRTABLE_ID = -200;
+  public static final long SITE1_WSS_ID = -10;
+
   public static void setupDatabase() {
     try {
       var sql = TestDataFile.TEST_DATA_SCHEMA.readData();

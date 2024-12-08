@@ -80,12 +80,12 @@
 <div class="mission-statement">
   <dl>
     {{#contactName}}
-    <dt>Contact</dt>
-    <dd>{{.}}</dd>
+    <dt>Contact:</dt>
+    <dd class="bold">{{.}}</dd>
     {{/contactName}}
 
-    <dt>Number</dt>
-    <dd class="detail-value">
+    <dt>Number:</dt>
+    <dd class="detail-value bold">
       {{^contactNumber}}
       None listed
       {{/contactNumber}}
@@ -101,8 +101,8 @@
     </dd>
 
     {{#contactEmail}}
-    <dt>Email</dt>
-    <dd class="detail-value">
+    <dt>Email:</dt>
+    <dd class="detail-value bold">
       {{#href}}
       <a href="{{.}}">
         {{/href}}
@@ -115,12 +115,14 @@
   </dl>
 
   {{#additionalContacts}}
-  <pre>
-    {{.}}
-  </pre>
+  <dt>Additional Site Contacts:</dt>
+  <dd>
+    <pre>
+      {{.}}
+    </pre>
+  </dd>
   {{/additionalContacts}}
 </div>
-
 
 <h2>Inventory<span class="privately-visible">*</span>
   <a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>

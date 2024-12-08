@@ -8,9 +8,30 @@ import org.junit.jupiter.api.Test;
 
 class SiteDetailDaoTest {
 
+  static long site1Id;
+
   @BeforeAll
   static void setUp() {
     TestConfiguration.setupDatabase();
+    site1Id = TestConfiguration.getSiteId("site1");
+  }
+
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void lookupIdByAirtableId() {
+    long result =
+        SiteDetailDao.lookupSiteIdByAirtableId(
+            TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
+    assertThat(result).isEqualTo(site1Id);
+  }
+
+  @Test
+  @SuppressWarnings("DataFlowIssue")
+  void lookupIdByWssId() {
+    long result =
+        SiteDetailDao.lookupSiteIdByWssId(
+            TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
+    assertThat(result).isEqualTo(site1Id);
   }
 
   @Test

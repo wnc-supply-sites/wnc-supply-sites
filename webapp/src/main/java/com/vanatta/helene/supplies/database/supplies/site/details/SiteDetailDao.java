@@ -7,6 +7,23 @@ import org.jdbi.v3.core.Jdbi;
 
 public class SiteDetailDao {
 
+  @Nullable
+  public static Long lookupSiteIdByAirtableId(Jdbi jdbi, long airtableId) {
+    return lookupIdentifier(jdbi, "airtable_id", airtableId);
+  }
+
+  @Nullable
+  public static Long lookupSiteIdByWssId(Jdbi jdbi, long wssId) {
+    return lookupIdentifier(jdbi, "wss_id", wssId);
+  }
+
+  private static Long lookupIdentifier(Jdbi jdbi, String lookupColumn, long idValue) {
+    String query = String.format("select id from site where %s = :id", lookupColumn);
+    return jdbi.withHandle(
+            handle -> handle.createQuery(query).bind("id", idValue).mapTo(Long.class).findOne())
+        .orElse(null);
+  }
+
   @Data
   @NoArgsConstructor
   public static class SiteDetailData {

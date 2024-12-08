@@ -21,7 +21,7 @@ class SendInventoryUpdateTest {
 
     assertThat(result.getItemName()).isEqualTo("new clothes");
     assertThat(result.getSiteName()).isEqualTo("site1");
-    assertThat(result.getItemNeedWssId()).isEqualTo(-10);
+    assertThat(result.getItemNeedWssId()).isEqualTo(TestConfiguration.SITE1_WSS_ID);
     assertThat(result.getItemStatus()).isEqualTo("Urgently Needed");
   }
 }

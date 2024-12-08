@@ -214,10 +214,12 @@ public class InventoryController {
             () -> {
               sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
 
-//              dispatchRequestService
-//                  .computeDispatch(siteName, itemName, ItemStatus.fromTextValue(itemStatus))
-//                  .filter(_ -> makeEnabled)
-//                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
+              //              dispatchRequestService
+              //                  .computeDispatch(siteName, itemName,
+              // ItemStatus.fromTextValue(itemStatus))
+              //                  .filter(_ -> makeEnabled)
+              //                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl,
+              // json));
             })
         .start();
 
@@ -290,10 +292,11 @@ public class InventoryController {
                   // if data is stale, or multiple browser windows, then the status
                   // might not have actually changed. In which case, no-op.
                   sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
-//                  dispatchRequestService
-//                      .computeDispatch(siteName, itemName, latestStatus)
-//                      .filter(_ -> makeEnabled)
-//                      .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
+                  //                  dispatchRequestService
+                  //                      .computeDispatch(siteName, itemName, latestStatus)
+                  //                      .filter(_ -> makeEnabled)
+                  //                      .ifPresent(json ->
+                  // HttpPostSender.sendAsJson(dispatchRequestUrl, json));
                 })
             .start();
       }

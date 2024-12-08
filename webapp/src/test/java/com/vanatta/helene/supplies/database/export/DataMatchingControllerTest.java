@@ -16,7 +16,8 @@ class DataMatchingControllerTest {
 
   @Test
   void runQuery() {
-    var result = NeedsMatchingDao.execute(TestConfiguration.jdbiTest, -200);
+    var result =
+        NeedsMatchingDao.execute(TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
 
     assertThat(result).isNotNull();
 

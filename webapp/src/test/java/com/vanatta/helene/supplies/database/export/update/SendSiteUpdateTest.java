@@ -24,8 +24,10 @@ class SendSiteUpdateTest {
   @Test
   void fetchWssId() {
     // should fetch the wss ID of 'site1', based on data inserted in 'TestData.sql'
-    var result = SendSiteUpdate.fetchWssIdByAirtableId(TestConfiguration.jdbiTest, -200L);
-    assertThat(result).isEqualTo(-10L);
+    var result =
+        SendSiteUpdate.fetchWssIdByAirtableId(
+            TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
+    assertThat(result).isEqualTo(TestConfiguration.SITE1_WSS_ID);
   }
 
   /**

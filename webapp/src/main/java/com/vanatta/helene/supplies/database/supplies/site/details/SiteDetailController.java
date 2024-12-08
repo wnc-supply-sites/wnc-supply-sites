@@ -5,7 +5,6 @@ import com.vanatta.helene.supplies.database.manage.ManageSiteController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class SiteDetailController {
 
   static final String PATH_SITE_DETAIL = "/supplies/site-detail";
@@ -34,10 +35,33 @@ public class SiteDetailController {
 
   @GetMapping(PATH_SITE_DETAIL)
   public ModelAndView siteDetail(
-      @RequestParam Long id, HttpServletRequest request, HttpServletResponse response) {
-    if (id == null) {
+      @RequestParam(required = false) Long id,
+      @RequestParam(required = false) Long airtableId,
+      @RequestParam(required = false) Long wssId,
+      HttpServletRequest request) {
+    if (id == null && airtableId == null && wssId == null) {
       return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
+
+    if (id == null) {
+      if (airtableId != null) {
+        id = SiteDetailDao.lookupSiteIdByAirtableId(jdbi, airtableId);
+        if (id == null) {
+          log.warn("Invalid airtable id received for site detail lookup: {}", airtableId);
+          return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
+        }
+      }
+
+      if (wssId != null) {
+        id = SiteDetailDao.lookupSiteIdByWssId(jdbi, wssId);
+        if (id == null) {
+          log.warn("Invalid wss id received for site detail lookup: {}", wssId);
+          return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
+        }
+      }
+    }
+    assert id != null;
+
     boolean isLoggedIn = cookieAuthenticator.isAuthenticated(request);
     SiteDetailDao.SiteDetailData siteDetailData = SiteDetailDao.lookupSiteById(jdbi, id);
 
@@ -76,7 +100,7 @@ public class SiteDetailController {
         "hours",
         siteDetailData.getHours() == null || siteDetailData.getHours().isBlank()
             ? null
-            : new WebsiteLink(siteDetailData.getFacebook()));
+            : siteDetailData.getHours());
 
     siteDetails.put("addressLine1", siteDetailData.getAddress());
     siteDetails.put(
