@@ -104,7 +104,7 @@ src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364
 
 - Tail application logs
 ```bash
-docker log -f webapp
+docker logs -f webapp
 ```
 
 - Tail nginx access logs (can be used to gauge if there are active users in the system)
@@ -112,13 +112,11 @@ docker log -f webapp
 sudo tail -f /var/log/nginx/access.log
 ```
 
-### Adding SSH user with sudo
+### Linux User setup: Adding SSH user with sudo
 
 * Requires a public SSH key
 * Requires pre-existing access to the server
 * Access granted provides full sudo
-
-
 
 ```bash
 # Set these two variables:
