@@ -212,7 +212,7 @@ public class InventoryController {
 
     new Thread(
             () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId));
+              sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
 
               dispatchRequestService
                   .computeDispatch(siteName, itemName, ItemStatus.fromTextValue(itemStatus))
@@ -249,7 +249,7 @@ public class InventoryController {
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     new Thread(
             () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId));
+              sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
               // removing item from site: send dispatch update if needed
               dispatchRequestService
                   .removeItemFromDispatch(siteName, itemName)
@@ -289,7 +289,7 @@ public class InventoryController {
                 () -> {
                   // if data is stale, or multiple browser windows, then the status
                   // might not have actually changed. In which case, no-op.
-                  sendInventoryUpdate.send(Long.parseLong(siteId));
+                  sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
                   dispatchRequestService
                       .computeDispatch(siteName, itemName, latestStatus)
                       .filter(_ -> makeEnabled)

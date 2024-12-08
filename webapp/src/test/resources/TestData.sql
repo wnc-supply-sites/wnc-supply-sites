@@ -95,10 +95,11 @@ insert into site_item(site_id, item_id, item_status_id) values(
     (select id from item where name = 'water'),
     (select id from item_status where name = 'Available')
    );
-insert into site_item(site_id, item_id, item_status_id) values(
+insert into site_item(site_id, item_id, item_status_id, wss_id) values(
     (select id from site where name = 'site1'),
     (select id from item where name = 'new clothes'),
-    (select id from item_status where name = 'Urgently Needed')
+    (select id from item_status where name = 'Urgently Needed'),
+    -10
    );
 insert into site_item(site_id, item_id, item_status_id) values(
     (select id from site where name = 'site1'),

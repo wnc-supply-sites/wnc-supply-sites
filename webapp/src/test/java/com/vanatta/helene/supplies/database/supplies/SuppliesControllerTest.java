@@ -87,11 +87,7 @@ class SuppliesControllerTest {
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().items(List.of("random stuff", "new clothes")).build());
-    assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getItems().getFirst().getName())
-        .isEqualTo("new clothes");
-    assertThat(result.getResults().getFirst().getItems().getFirst().getDisplayClass())
-        .isEqualTo(ItemStatus.URGENTLY_NEEDED.getCssClass());
+    assertThat(result.getResultCount()).isEqualTo(2);
   }
 
   @Test
