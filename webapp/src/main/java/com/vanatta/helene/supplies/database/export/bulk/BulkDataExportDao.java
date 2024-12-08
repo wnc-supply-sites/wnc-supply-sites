@@ -59,8 +59,7 @@ class BulkDataExportDao {
         .map(SiteExportJson::new)
         .toList();
   }
-  
-  
+
   /** Data that can be sent as JSON to sevice. */
   @Value
   public static class SiteExportJson {

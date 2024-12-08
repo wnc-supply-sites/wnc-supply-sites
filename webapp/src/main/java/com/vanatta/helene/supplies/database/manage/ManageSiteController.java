@@ -232,7 +232,8 @@ public class ManageSiteController {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      log.warn("Invalid site update value received, invalid site id (not found), params: {}", params);
+      log.warn(
+          "Invalid site update value received, invalid site id (not found), params: {}", params);
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
     }
 

@@ -46,13 +46,16 @@ public class BulkDataExportController {
     List<BulkDataExportDao.NeedRequest> needRequests;
   }
 
+  @Data
   @Builder
-  public static class NeedsResponse {
-    private final List<NeedsJson> needs;
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class NeedsResponseJson {
+    private List<NeedsDbResult> needs;
   }
 
   @Data
-  public static class NeedsJson {
+  public static class NeedsDbResult {
     long wssId;
     String siteName;
     String needPriority;
@@ -60,13 +63,13 @@ public class BulkDataExportController {
   }
 
   @GetMapping("/export/needs")
-  ResponseEntity<String> exportNeeds() {
+  ResponseEntity<NeedsResponseJson> exportNeeds() {
 
-    List<NeedsResponse> needs = fetchAllNeeds();
-    return ResponseEntity.ok(NeedsResponse.builder().needs(needs).build());
+    List<NeedsDbResult> needs = fetchAllNeeds(jdbi);
+    return ResponseEntity.ok(NeedsResponseJson.builder().needs(needs).build());
   }
 
-  public static List<NeedsResponse> fetchAllNeeds(Jdbi jdbi) {
+  public static List<NeedsDbResult> fetchAllNeeds(Jdbi jdbi) {
     String query =
         """
           select
@@ -81,6 +84,6 @@ public class BulkDataExportController {
         """;
 
     return jdbi.withHandle(
-        handle -> handle.createQuery(query).mapToBean(NeedsResponse.class).list());
+        handle -> handle.createQuery(query).mapToBean(NeedsDbResult.class).list());
   }
 }

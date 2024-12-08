@@ -74,11 +74,9 @@ public class SuppliesDao {
           .append(request.getAcceptingDonations())
           .append("\n");
     }
-    
-    if(!request.getIsAuthenticatedUser()){
-      query
-          .append("and s.publicly_visible = true")
-          .append("\n");
+
+    if (!request.getIsAuthenticatedUser()) {
+      query.append("and s.publicly_visible = true").append("\n");
     }
 
     query.append("\norder by c.name, s.name, ist.sort_order, i.name");

@@ -55,13 +55,11 @@ public class TestConfiguration {
             .build());
     return name;
   }
-  
+
   public static void addCounty(String county, String state) {
     String insert = "insert into county(name, state) values (:name, :state)";
-    jdbiTest.withHandle(handle -> handle.createUpdate(insert)
-        .bind("name", county)
-        .bind("state", state)
-        .execute());
+    jdbiTest.withHandle(
+        handle -> handle.createUpdate(insert).bind("name", county).bind("state", state).execute());
   }
 
   public static long getSiteId() {

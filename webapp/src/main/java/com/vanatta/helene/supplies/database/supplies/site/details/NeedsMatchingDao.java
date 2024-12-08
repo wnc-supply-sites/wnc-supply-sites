@@ -78,10 +78,6 @@ public class NeedsMatchingDao {
         """;
     return jdbi.withHandle(
         handle ->
-            handle
-                .createQuery(query)
-                .bind("id", dbId)
-                .mapToBean(NeedsMatchingResult.class)
-                .list());
+            handle.createQuery(query).bind("id", dbId).mapToBean(NeedsMatchingResult.class).list());
   }
 }

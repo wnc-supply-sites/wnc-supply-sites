@@ -6,20 +6,20 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class DataMatchingControllerTest
-{
-  
+class DataMatchingControllerTest {
+
   @BeforeAll
   static void setup() {
-    TestConfiguration.setupDatabase();;
+    TestConfiguration.setupDatabase();
+    ;
   }
-  
+
   @Test
   void runQuery() {
     var result = DataMatchingController.execute(TestConfiguration.jdbiTest, -200);
-    
+
     assertThat(result).isNotNull();
-    
+
     var firstResult = result.getFirst();
     assertThat(firstResult.getAirtableId()).isNotNull();
     assertThat(firstResult.getWssId()).isNotNull();
@@ -31,5 +31,4 @@ class DataMatchingControllerTest
     assertThat(firstResult.getItemName()).isNotNull();
     assertThat(firstResult.getOverlapCount()).isNotNull();
   }
-  
 }

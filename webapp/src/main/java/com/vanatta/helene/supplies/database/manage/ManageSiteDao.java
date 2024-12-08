@@ -23,8 +23,7 @@ public class ManageSiteDao {
                 .mapToBean(SiteSelection.class)
                 .list());
   }
-  
-  
+
   @AllArgsConstructor
   @Getter
   public enum SiteField {
@@ -269,7 +268,7 @@ public class ManageSiteDao {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-  
+
   public static void updateSitePubliclyVisible(Jdbi jdbi, long siteId, boolean newValue) {
     int updateCount =
         jdbi.withHandle(
@@ -280,12 +279,12 @@ public class ManageSiteDao {
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
-    
+
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-  
+
   /** Fetches all items, items requested/needed for a given site are listed as active. */
   public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =
