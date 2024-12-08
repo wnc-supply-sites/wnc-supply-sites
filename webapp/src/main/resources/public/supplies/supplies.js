@@ -47,7 +47,7 @@ async function updateData() {
     document.getElementById("error-div").innerHTML = "";
     startLoaderAnimation();
     const data = await fetchSupplyData();
-    const supplyHubHtml = "<br><span class='supply-hub'>(Supply Hub)</span>";
+    const supplyHubHtml = "<br><span class='supply-hub'>(Supply Warehouse)</span>";
     const notAcceptingDonationsHtml = "<br><span class='not-accepting-donations'>(Not Accepting Donations)</span>";
     // write data to the results table
     document.getElementById('results-table').querySelector("tbody").innerHTML =

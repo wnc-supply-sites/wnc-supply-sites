@@ -63,7 +63,7 @@
       </fieldset>
     </div>
 
-    <!-- SITE TYPE (SUPPLY HUB) -->
+    <!-- SITE TYPE (SUPPLY WAREHOUSE) -->
     <div class="statusArea">
       <fieldset>
         <legend class="bold">Site Type:</legend>
@@ -85,6 +85,7 @@
           </div>
           <span class="statusCaption larger">
               Distribution sites supply items primarily to the community.<br>
+              Supply warehouses may supply the community, but primarily receive and send supplies to other distribution sites.
             </span>
         </div>
       </fieldset>
@@ -119,8 +120,10 @@
         <legend class="bold">Site is Active:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="activeYes" name="activeSite" {{#siteActive}}checked{{/siteActive}}><label for="activeYes">Yes</label>
-            <input type="radio" id="activeNo" name="activeSite" {{^siteActive}}checked{{/siteActive}}/><label for="activeNo">No</label>
+            <input type="radio" id="activeYes" name="activeSite" {{#siteActive}}checked{{/siteActive}}><label
+              for="activeYes">Yes</label>
+            <input type="radio" id="activeNo" name="activeSite" {{^siteActive}}checked{{/siteActive}}/><label
+              for="activeNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
           </div>
           <span class="statusCaption larger">An inactive site is no longer listed and is effectively removed from WNC-supply-sites.com</span>
