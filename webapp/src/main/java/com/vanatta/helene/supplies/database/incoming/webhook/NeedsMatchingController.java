@@ -45,23 +45,27 @@ public class NeedsMatchingController {
    * Invoke make job to update the target delivery id with the computed needs.
    */
   @PostMapping(PATH_ADD_NEEDS)
-  ResponseEntity<String> addSuppliesToDelivery(@RequestBody Map<String, String> body) {
-    long deliveryId = Long.parseLong(body.get("deliveryId"));
-    long fromWssId = Long.parseLong(body.get("fromSiteWssId"));
-    long toSiteWssId = Long.parseLong(body.get("toSiteWssId"));
-
+  ResponseEntity<String> addSuppliesToDelivery(@RequestBody String body) {//Map<String, String> body) {
+    log.info("RECEIVED: " + body);
     
-    
-    List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
-    log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
-
-    if (!needsIds.isEmpty()) {
-      var computedNeed =
-          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
-      HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
-    }
-    return ResponseEntity.ok("Matches: " + needsIds.size());
+//    long deliveryId = Long.parseLong(body.get("deliveryId"));
+//    long fromWssId = Long.parseLong(body.get("fromSiteWssId"));
+//    long toSiteWssId = Long.parseLong(body.get("toSiteWssId"));
+//
+//
+//
+//    List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
+//    log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
+//
+//    if (!needsIds.isEmpty()) {
+//      var computedNeed =
+//          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
+//      HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
+//    }
+//    return ResponseEntity.ok("Matches: " + needsIds.size());
+    return ResponseEntity.ok("");
   }
+  
 
   // @VisibleForTesting
   static List<Long> computeNeedsMatch(Jdbi jdbi, long fromSiteWssId, long toSiteWssId) {
