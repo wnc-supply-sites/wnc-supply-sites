@@ -90,7 +90,7 @@ public class ManageSiteController {
 
   static final String COUNTY_LIST = "countyList";
   static final String STATE_LIST = "stateList";
-  public static final String PATH_MANAGE_CONTACTS = "/manage/contacts";
+  public static final String PATH_MANAGE_CONTACTS = "/manage/contact";
 
   public static String buildManageContactsPath(long siteId) {
     return PATH_MANAGE_CONTACTS + "?siteId=" + siteId;
