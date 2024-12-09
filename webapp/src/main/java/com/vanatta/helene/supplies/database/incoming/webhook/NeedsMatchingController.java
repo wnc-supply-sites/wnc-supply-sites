@@ -55,10 +55,11 @@ public class NeedsMatchingController {
     List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
     log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
 
-    var computedNeed =
-        ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
-    HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
-
+    if (!needsIds.isEmpty()) {
+      var computedNeed =
+          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
+      HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
+    }
     return ResponseEntity.ok("Matches: " + needsIds.size());
   }
 
