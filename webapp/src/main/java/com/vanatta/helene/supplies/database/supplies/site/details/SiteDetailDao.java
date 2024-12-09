@@ -44,6 +44,7 @@ public class SiteDetailDao {
     boolean distributingSupplies;
     boolean acceptingDonations;
     String hours;
+    long wssId;
   }
 
   @Nullable
@@ -70,7 +71,8 @@ public class SiteDetailDao {
                               s.active,
                               s.distributing_supplies,
                               s.accepting_donations,
-                              s.hours
+                              s.hours,
+                              s.wss_id
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id

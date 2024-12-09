@@ -89,6 +89,8 @@ insert into item(name) values('gloves');
 insert into item(name) values('used clothes');
 insert into item(name) values('new clothes');
 insert into item(name) values('random stuff');
+insert into item(name) values('heater');
+insert into item(name) values('batteries');
 
 insert into site_item(site_id, item_id, item_status_id) values(
     (select id from site where name = 'site1'),

@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database;
 
+import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
@@ -45,6 +46,10 @@ public class TestConfiguration {
 
   /** Adds a new site with a random name, returns the name of the site. */
   public static String addSite() {
+    return addSite(SiteType.DISTRIBUTION_CENTER);
+  }
+
+  public static String addSite(SiteType siteType) {
     String name = "test-name " + UUID.randomUUID().toString();
     AddSiteDao.addSite(
         jdbiTest,
@@ -54,7 +59,7 @@ public class TestConfiguration {
             .state("NC")
             .city("city " + name)
             .streetAddress("address of " + name)
-            .siteType(SiteType.DISTRIBUTION_CENTER)
+            .siteType(siteType)
             .build());
     return name;
   }
@@ -77,6 +82,28 @@ public class TestConfiguration {
                 .bind("siteName", siteName)
                 .mapTo(Long.class)
                 .one());
+  }
+  
+  public static void addItemToSite(long siteId, ItemStatus itemStatus, String itemName, long wssId) {
+    String insert =
+        """
+        insert into site_item(site_id, item_id, item_status_id, wss_id)
+        values(
+          :siteId,
+          (select id from item where name = :itemName),
+          (select id from item_status where name = :itemStatus),
+          :wssId
+        )
+        """;
+    TestConfiguration.jdbiTest.withHandle(
+        handle ->
+            handle
+                .createUpdate(insert)
+                .bind("siteId", siteId)
+                .bind("itemStatus", itemStatus.getText())
+                .bind("itemName", itemName)
+                .bind("wssId", wssId)
+                .execute());
   }
 
   /** Sets up additional data in DB for dispatch requests. */

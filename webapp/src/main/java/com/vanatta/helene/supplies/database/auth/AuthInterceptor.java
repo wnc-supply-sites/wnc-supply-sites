@@ -69,7 +69,7 @@ public class AuthInterceptor implements WebMvcConfigurer {
           response.sendRedirect("/login?redirectUri=" + requestUri);
           return false;
         }
-      } else if (requestUri.startsWith("/import/")) {
+      } else if (requestUri.startsWith("/import/") || requestUri.startsWith("/webhook/")) {
         if (webhookAuthenticator.hasCorrectSecret(request)) {
           return true;
         } else {
