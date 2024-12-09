@@ -1,9 +1,10 @@
 package com.vanatta.helene.supplies.database.incoming.webhook;
 
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -23,11 +24,15 @@ public class NeedsMatchingController {
 
   private static final String PATH_ADD_NEEDS = "/webhook/add-supplies-to-delivery";
   private final String addToDeliveryWebhook;
+  private final boolean makeEnabled;
   private final Jdbi jdbi;
 
   NeedsMatchingController(
-      Jdbi jdbi, @Value("${make.webhoook.addToDelivery}") String addToDeliveryWebhook) {
+      Jdbi jdbi,
+      @Value("${make.enabled}") boolean makeEnabled,
+      @Value("${make.webhoook.addToDelivery}") String addToDeliveryWebhook) {
     this.jdbi = jdbi;
+    this.makeEnabled = makeEnabled;
     this.addToDeliveryWebhook = addToDeliveryWebhook;
   }
 
@@ -45,27 +50,24 @@ public class NeedsMatchingController {
    * Invoke make job to update the target delivery id with the computed needs.
    */
   @PostMapping(PATH_ADD_NEEDS)
-  ResponseEntity<String> addSuppliesToDelivery(@RequestBody String body) {//Map<String, String> body) {
-    log.info("RECEIVED: " + body);
-    
-//    long deliveryId = Long.parseLong(body.get("deliveryId"));
-//    long fromWssId = Long.parseLong(body.get("fromSiteWssId"));
-//    long toSiteWssId = Long.parseLong(body.get("toSiteWssId"));
-//
-//
-//
-//    List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
-//    log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
-//
-//    if (!needsIds.isEmpty()) {
-//      var computedNeed =
-//          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
-//      HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
-//    }
-//    return ResponseEntity.ok("Matches: " + needsIds.size());
-    return ResponseEntity.ok("");
+  ResponseEntity<String> addSuppliesToDelivery(
+      @RequestBody String body) { // Map<String, String> body) {
+    log.info("{}, received data: {}", PATH_ADD_NEEDS, body);
+    LinkedTreeMap json = new Gson().fromJson(body, LinkedTreeMap.class);
+    long deliveryId = ((Double) json.get("deliveryId")).longValue();
+    long fromWssId = ((List<Double>) json.get("fromSiteWssId")).getFirst().longValue();
+    long toSiteWssId = ((List<Double>) json.get("toSiteWssId")).getFirst().longValue();
+
+    List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
+    log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
+
+    if (!needsIds.isEmpty() && makeEnabled) {
+      var computedNeed =
+          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
+      HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
+    }
+    return ResponseEntity.ok("Matches: " + needsIds.size());
   }
-  
 
   // @VisibleForTesting
   static List<Long> computeNeedsMatch(Jdbi jdbi, long fromSiteWssId, long toSiteWssId) {

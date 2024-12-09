@@ -83,8 +83,9 @@ public class TestConfiguration {
                 .mapTo(Long.class)
                 .one());
   }
-  
-  public static void addItemToSite(long siteId, ItemStatus itemStatus, String itemName, long wssId) {
+
+  public static void addItemToSite(
+      long siteId, ItemStatus itemStatus, String itemName, long wssId) {
     String insert =
         """
         insert into site_item(site_id, item_id, item_status_id, wss_id)

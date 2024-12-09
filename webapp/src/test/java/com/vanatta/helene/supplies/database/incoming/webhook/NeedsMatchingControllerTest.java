@@ -7,19 +7,36 @@ import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
 class NeedsMatchingControllerTest {
 
+  @Nested
+  class ControllerParsing {
+    @Test
+    void controller() {
+      String input =
+          """
+          {"deliveryId":35,"fromSiteWssId":[337],"toSiteWssId":[115]}
+          """;
+      NeedsMatchingController controller =
+          new NeedsMatchingController(TestConfiguration.jdbiTest, false, "");
+      ResponseEntity<String> response = controller.addSuppliesToDelivery(input);
+      assertThat(response.getStatusCode().value()).isEqualTo(200);
+    }
+  }
+
   private static long supplySiteId;
   private static long supplySiteWssId;
-  
+
   private static long warehouseSiteId;
   private static long warehouseSiteWssId;
-  
+
   private static long toSiteId;
   private static long toSiteWssId;
-  
+
   private static long toSiteIdNoOverlap;
   private static long toSiteWssIdNoOverlap;
 
@@ -49,7 +66,8 @@ class NeedsMatchingControllerTest {
     TestConfiguration.setupDatabase();
 
     warehouseSiteId = TestConfiguration.getSiteId(TestConfiguration.addSite(SiteType.SUPPLY_HUB));
-    warehouseSiteWssId = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, warehouseSiteId).getWssId();
+    warehouseSiteWssId =
+        SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, warehouseSiteId).getWssId();
     TestConfiguration.addItemToSite(warehouseSiteId, ItemStatus.NEEDED, "new clothes", -200);
     TestConfiguration.addItemToSite(warehouseSiteId, ItemStatus.AVAILABLE, "water", -201);
     TestConfiguration.addItemToSite(warehouseSiteId, ItemStatus.AVAILABLE, "gloves", -202);
@@ -58,8 +76,9 @@ class NeedsMatchingControllerTest {
 
     supplySiteId =
         TestConfiguration.getSiteId(TestConfiguration.addSite(SiteType.DISTRIBUTION_CENTER));
-    supplySiteWssId = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, supplySiteId).getWssId();
-    
+    supplySiteWssId =
+        SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, supplySiteId).getWssId();
+
     TestConfiguration.addItemToSite(supplySiteId, ItemStatus.AVAILABLE, "gloves", -214);
     TestConfiguration.addItemToSite(supplySiteId, ItemStatus.OVERSUPPLY, "batteries", -215);
     TestConfiguration.addItemToSite(supplySiteId, ItemStatus.OVERSUPPLY, "heater", -216);
@@ -75,7 +94,8 @@ class NeedsMatchingControllerTest {
 
     toSiteIdNoOverlap =
         TestConfiguration.getSiteId(TestConfiguration.addSite(SiteType.DISTRIBUTION_CENTER));
-    toSiteWssIdNoOverlap = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, toSiteIdNoOverlap).getWssId();
+    toSiteWssIdNoOverlap =
+        SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, toSiteIdNoOverlap).getWssId();
     TestConfiguration.addItemToSite(toSiteId, ItemStatus.NEEDED, "used clothes", -230);
   }
 
