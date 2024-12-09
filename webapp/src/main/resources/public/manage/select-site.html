@@ -10,13 +10,12 @@
 </head>
 
 <body>
-<h1><a href="../.." class="link-home">WNC Supply Sites - Site Management</a></h1>
+<h1><a href="/" class="link-home">WNC Supply Sites - Site Management</a></h1>
 
 <div class="back-link">
   <a href="/">[&larr; Go Back]</a>
 </div>
 
-<h2>Site Managers</h2>
 <form action="/manage/site-selected" method="get">
   <div id="site-select-div" class="vertical">
 
@@ -33,18 +32,33 @@
         {{/sites}}
       </select>
     </div>
-    <button type="submit" id="select-site-button">Select</button>
+  </div>
+  <div class="nav-button-container">
+    <button type="submit" class="nav-button very-wide-button">Manage Selected Site</button>
   </div>
 </form>
 
 <hr>
 
-<h2>Site & Data Admins</h2>
 <div class="nav-button-container">
   <a href="/manage/new-site/add-site">
     <button type="button" class="nav-button very-wide-button">Add New Site</button>
   </a>
 </div>
+
+<hr>
+
+<!--<div class="nav-button-container">-->
+<!--  <a href="/manage/behind-the-scenes/index.html">-->
+<!--    <button type="button" class="nav-button very-wide-button">How Supplies Move</button>-->
+<!--  </a>-->
+<!--</div>-->
+
+<!--<div class="larger button-blurb">-->
+<!--  Learn how wnc-supply-sites.com works with R4 to help move supplies-->
+<!--</div>-->
+
+
 
 <!--<div class="nav-button-container">-->
 <!--  <a href="/manage/items/">-->

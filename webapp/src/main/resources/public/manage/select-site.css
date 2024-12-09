@@ -9,18 +9,15 @@
 
 #site-select-div {
     padding-top: 20px;
-    padding-left: 30px;
+    padding-left: 60px;
 }
 
-#select-site-button {
-    margin-top: 40px;
-    width: 120px;
-    height: 30px;
-    font-size: 1.1em;
-    margin-bottom: 80px;
-}
 
 #select-label {
     font-size: 1.4em;
 }
 
+.button-blurb {
+    padding-left: 20px;
+    padding-bottom: 5px;
+}
