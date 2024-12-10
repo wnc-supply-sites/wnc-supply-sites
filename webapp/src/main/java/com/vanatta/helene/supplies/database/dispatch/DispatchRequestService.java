@@ -21,24 +21,7 @@ public class DispatchRequestService {
   private final Jdbi jdbi;
   private Function<String, String> dispatchNumberGenerator;
 
-  public static DispatchRequestService create(Jdbi jdbi) {
-    return DispatchRequestService.builder()
-        .jdbi(jdbi)
-        .dispatchNumberGenerator(siteName -> buildDispatchPublicId(jdbi, siteName))
-        .build();
-  }
-
-  public static String buildDispatchPublicId(Jdbi jdbi, String siteName) {
-    return String.format("Supply#%s - %s", DispatchDao.nextDispatchNumber(jdbi), siteName);
-  }
-
-  public Optional<DispatchRequestJson> removeItemFromDispatch(String siteName, String itemName) {
-    // while we *are* removing the item, setting its status to 'available' will remove it
-    // from a dispatch request. This is a clever way to re-use code and re-use the computeDispatch
-    // method.
-    return computeDispatch(siteName, itemName, ItemStatus.AVAILABLE);
-  }
-
+  
   /**
    * Updates any open dispatch requests with the new item, creating one if needed. If item status is
    * 'not needed', then any open dispatch requests are updated to delete that item. If this results

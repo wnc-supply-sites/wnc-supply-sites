@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.export.update;
 
+import com.vanatta.helene.supplies.database.data.DonationStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.incoming.webhook.need.request.SiteDataImportController;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.ArrayList;
 import java.util.List;
@@ -198,13 +198,11 @@ public class SendSiteUpdate {
       this.hours = result.getHours();
 
       if (!result.isActive()) {
-        this.donationStatus = SiteDataImportController.DonationStatus.CLOSED.getTextValue();
+        this.donationStatus = DonationStatus.CLOSED.getTextValue();
       } else if (result.isAcceptingDonations()) {
-        this.donationStatus =
-            SiteDataImportController.DonationStatus.ACCEPTING_DONATIONS.getTextValue();
+        this.donationStatus = DonationStatus.ACCEPTING_DONATIONS.getTextValue();
       } else {
-        this.donationStatus =
-            SiteDataImportController.DonationStatus.NOT_ACCEPTING_DONATIONS.getTextValue();
+        this.donationStatus = DonationStatus.NOT_ACCEPTING_DONATIONS.getTextValue();
       }
     }
   }

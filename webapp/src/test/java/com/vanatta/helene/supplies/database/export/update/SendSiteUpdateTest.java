@@ -3,8 +3,8 @@ package com.vanatta.helene.supplies.database.export.update;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.data.DonationStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.incoming.webhook.need.request.SiteDataImportController;
 import java.util.List;
 import lombok.Builder;
 import lombok.Value;
@@ -158,7 +158,7 @@ class SendSiteUpdateTest {
   @Value
   static class DonationStatusScenario {
     SendSiteUpdate.SiteExportDataResult input;
-    SiteDataImportController.DonationStatus expectedStatus;
+    DonationStatus expectedStatus;
   }
 
   @ParameterizedTest
@@ -176,7 +176,7 @@ class SendSiteUpdateTest {
                     .active(true)
                     .acceptingDonations(true)
                     .build())
-            .expectedStatus(SiteDataImportController.DonationStatus.ACCEPTING_DONATIONS)
+            .expectedStatus(DonationStatus.ACCEPTING_DONATIONS)
             .build(),
         DonationStatusScenario.builder()
             .input(
@@ -184,14 +184,14 @@ class SendSiteUpdateTest {
                     .active(true)
                     .acceptingDonations(false)
                     .build())
-            .expectedStatus(SiteDataImportController.DonationStatus.NOT_ACCEPTING_DONATIONS)
+            .expectedStatus(DonationStatus.NOT_ACCEPTING_DONATIONS)
             .build(),
         DonationStatusScenario.builder()
             .input(
                 dbDataSample.toBuilder() //
                     .active(false)
                     .build())
-            .expectedStatus(SiteDataImportController.DonationStatus.CLOSED)
+            .expectedStatus(DonationStatus.CLOSED)
             .build());
   }
 }

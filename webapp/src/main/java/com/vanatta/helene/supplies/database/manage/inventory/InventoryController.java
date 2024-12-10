@@ -1,12 +1,10 @@
 package com.vanatta.helene.supplies.database.manage.inventory;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.dispatch.DispatchRequestService;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteController;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
-import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +15,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,22 +39,12 @@ public class InventoryController {
   private final Jdbi jdbi;
   private final SendNewItemUpdate sendNewItemUpdate;
   private final SendInventoryUpdate sendInventoryUpdate;
-  private final DispatchRequestService dispatchRequestService;
-  private final String dispatchRequestUrl;
-  private final boolean makeEnabled;
 
   public InventoryController(
-      Jdbi jdbi,
-      SendNewItemUpdate sendNewItemUpdate,
-      SendInventoryUpdate sendInventoryUpdate,
-      @Value("${make.webhook.dispatch.new}") String webhook,
-      @Value("${make.enabled}") boolean makeEnabled) {
+      Jdbi jdbi, SendNewItemUpdate sendNewItemUpdate, SendInventoryUpdate sendInventoryUpdate) {
     this.jdbi = jdbi;
     this.sendNewItemUpdate = sendNewItemUpdate;
     this.sendInventoryUpdate = sendInventoryUpdate;
-    this.dispatchRequestService = DispatchRequestService.create(jdbi);
-    this.dispatchRequestUrl = webhook;
-    this.makeEnabled = makeEnabled;
   }
 
   /** Returns null if ID is not valid or DNE. */
@@ -260,16 +247,7 @@ public class InventoryController {
     }
 
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
-    new Thread(
-            () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
-              // removing item from site: send dispatch update if needed
-              dispatchRequestService
-                  .removeItemFromDispatch(siteName, itemName)
-                  .filter(_ -> makeEnabled)
-                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl, json));
-            })
-        .start();
+    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
     return ResponseEntity.ok("Updated");
   }
 
