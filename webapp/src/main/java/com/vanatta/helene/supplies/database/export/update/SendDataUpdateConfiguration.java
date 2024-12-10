@@ -19,9 +19,10 @@ public class SendDataUpdateConfiguration {
 
   @Bean
   SendNewItemUpdate newItemUpdate(
+      Jdbi jdbi,
       @Value("${make.enabled}") boolean enabled,
       @Value("${make.webhook.newItem}") String newItemWebhook) {
-    return new SendNewItemUpdate(newItemWebhook, enabled);
+    return new SendNewItemUpdate(jdbi, newItemWebhook, enabled);
   }
 
   @Bean

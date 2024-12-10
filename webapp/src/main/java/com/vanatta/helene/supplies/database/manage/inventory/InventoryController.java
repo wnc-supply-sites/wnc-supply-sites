@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -165,8 +166,15 @@ public class InventoryController {
   @PostMapping("/manage/add-site-item")
   @ResponseBody
   ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
-    String itemName = params.get("itemName");
+    String itemName =
+        Optional.ofNullable(params.get("itemName"))
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException(
+                        "addNewSiteItem:: missing item name in params: " + params))
+            .trim();
 
+    log.info("Creating brand new item: {}", params);
     boolean itemAdded = InventoryDao.addNewItem(jdbi, itemName);
     if (!itemAdded) {
       log.warn("Failed to add item, already exists. Params: {}", params);
@@ -181,17 +189,20 @@ public class InventoryController {
   @ResponseBody
   ResponseEntity<String> updateSiteItemActive(@RequestBody Map<String, String> params) {
     String siteId = params.get("siteId");
-    String itemName = params.get("itemName");
+    String itemName =
+        Optional.ofNullable(params.get("itemName"))
+            .orElseThrow(
+                () ->
+                    new IllegalArgumentException(
+                        "Failed to activate item for site, item name missing in params: " + params))
+            .trim();
     String itemStatus = params.get("itemStatus");
     log.info("Activating item: {}, siteId: {}, status: {}", itemName, siteId, itemStatus);
     if (siteId == null) {
       log.warn("Failed to activate item. No site id. Params: {}", params);
       return ResponseEntity.badRequest().body("Invalid site id, none specified.");
     }
-    if (itemName == null) {
-      log.warn("Failed to activate item. No item name. Params: {}", params);
-      return ResponseEntity.badRequest().body("Invalid item name, none specified.");
-    }
+
     if (itemStatus == null) {
       log.warn("Failed to activate item. No item name. No item status: {}", params);
       return ResponseEntity.badRequest().body("Invalid item status, none specified.");
