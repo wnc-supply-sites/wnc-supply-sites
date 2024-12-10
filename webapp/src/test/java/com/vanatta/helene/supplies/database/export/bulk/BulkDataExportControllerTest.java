@@ -20,6 +20,5 @@ class BulkDataExportControllerTest {
 
     assertThat(responseData.getItems()).isNotEmpty();
     assertThat(responseData.getSites()).isNotEmpty();
-    assertThat(responseData.getNeedRequests()).isNotEmpty();
   }
 }

@@ -130,37 +130,7 @@ class BulkDataExportDao {
     String available;
     String overSupply;
   }
-
-  /** Fetche all needs requests (dispatch_requests) */
-  public static List<NeedRequest> getAllNeedsRequests(Jdbi jdbi) {
-    String query =
-        """
-            select
-              dr.public_id needRequestId,
-              s.name site,
-              dr.status,
-              string_agg(i.name, ',') filter (where its.name in ('Needed')) suppliesNeeded,
-              string_agg(i.name, ',') filter (where its.name in ('Urgently Needed')) suppliesUrgentlyNeeded
-            from dispatch_request dr
-            join dispatch_request_item dri on dri.dispatch_request_id = dr.id
-            join item i on i.id = dri.item_id
-            join item_status its on its.id = dri.item_status_id
-            join site s on s.id = dr.site_id
-            group by dr.public_id, s.name, dr.status
-            order by needRequestId;
-            """;
-    return jdbi
-        .withHandle(
-            handle ->
-                handle
-                    .createQuery(query) //
-                    .mapToBean(NeedRequestDbResult.class)
-                    .list())
-        .stream()
-        .map(NeedRequest::new)
-        .toList();
-  }
-
+  
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -185,18 +155,6 @@ class BulkDataExportDao {
     List<String> suppliesNeeded;
     List<String> suppliesUrgentlyNeeded;
 
-    NeedRequest(NeedRequestDbResult dbResult) {
-      this.needRequestId = dbResult.needRequestId;
-      this.site = dbResult.site;
-      this.status = dbResult.status;
-      this.suppliesNeeded =
-          dbResult.suppliesNeeded == null
-              ? List.of()
-              : Arrays.asList(dbResult.suppliesNeeded.split(","));
-      this.suppliesUrgentlyNeeded =
-          dbResult.suppliesUrgentlyNeeded == null
-              ? List.of()
-              : Arrays.asList(dbResult.suppliesUrgentlyNeeded.split(","));
-    }
+
   }
 }

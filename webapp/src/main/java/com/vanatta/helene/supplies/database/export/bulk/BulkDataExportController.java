@@ -26,13 +26,11 @@ public class BulkDataExportController {
   ResponseEntity<ExportDataJson> exportData() {
     List<String> items = BulkDataExportDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
-    List<BulkDataExportDao.NeedRequest> needRequests = BulkDataExportDao.getAllNeedsRequests(jdbi);
 
     return ResponseEntity.ok(
         ExportDataJson.builder() //
             .items(items)
             .sites(sites)
-            .needRequests(needRequests)
             .build());
   }
 
@@ -43,7 +41,6 @@ public class BulkDataExportController {
   public static class ExportDataJson {
     List<String> items;
     List<BulkDataExportDao.SiteExportJson> sites;
-    List<BulkDataExportDao.NeedRequest> needRequests;
   }
 
   @Data
@@ -60,30 +57,5 @@ public class BulkDataExportController {
     String siteName;
     String needPriority;
     String itemName;
-  }
-
-  @GetMapping("/export/needs")
-  ResponseEntity<NeedsResponseJson> exportNeeds() {
-
-    List<NeedsDbResult> needs = fetchAllNeeds(jdbi);
-    return ResponseEntity.ok(NeedsResponseJson.builder().needs(needs).build());
-  }
-
-  public static List<NeedsDbResult> fetchAllNeeds(Jdbi jdbi) {
-    String query =
-        """
-          select
-            si.wss_id wssId,
-            s.name siteName,
-            ist.name needPriority,
-            i.name itemName
-          from site s
-          join site_item si on si.site_id = s.id
-          join item i on i.id = si.item_id
-          join item_status ist on ist.id = si.item_status_id
-        """;
-
-    return jdbi.withHandle(
-        handle -> handle.createQuery(query).mapToBean(NeedsDbResult.class).list());
   }
 }

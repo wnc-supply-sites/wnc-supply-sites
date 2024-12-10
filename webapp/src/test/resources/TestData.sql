@@ -1,5 +1,3 @@
-delete from dispatch_request_item;
-delete from dispatch_request;
 delete from site_item;
 delete from item;
 delete from site_audit_trail;
@@ -12,7 +10,7 @@ insert into county(name, state) values('Buncombe', 'NC');
 insert into county(name, state) values('Watauga', 'NC');
 insert into county(name, state) values('Sevier', 'TN');
 insert into county(name, state) values('Halifax', 'VA');
-
+insert into county(name) values('dummy') on conflict do nothing;
 
 insert into site(
   name,
@@ -133,28 +131,4 @@ insert into site_item(site_id, item_id, item_status_id) values(
 -- insert a "dummy" county, where no site is in that county (this county is considered
 -- 'not active')
 
-insert into county(name) values('dummy') on conflict do nothing;
 
-insert into dispatch_request(id, public_id, site_id)
-values( -1, '#1', (select id from site where name = 'site6'));
-
-insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
-values(
-  -1,
-  (select id from item where name = 'water'),
-  (select id from item_status where name = 'Needed')
-);
-
-insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
-values(
-  -1,
-  (select id from item where name = 'used clothes'),
-  (select id from item_status where name = 'Needed')
-);
-
-insert into dispatch_request_item(dispatch_request_id, item_id, item_status_id)
-values(
-  -1,
-  (select id from item where name = 'gloves'),
-  (select id from item_status where name = 'Urgently Needed')
-);
