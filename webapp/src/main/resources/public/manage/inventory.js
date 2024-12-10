@@ -259,7 +259,7 @@ async function addItem(siteId) {
               <span class="${labelStyle}" id="${itemNameEncoded}Label">${itemNameEncoded}</span>
             </div>
             <div class="horizontal update-confirm-div" id="${itemNameEncoded}UpdateConfirm">
-              <span class="green-check" id="update-confirm">&#10003;</span>
+              <span class="green-check" id="${itemNameEncoded}update-confirm">&#10003;</span>
               <span>Updated</span>
             </div>
           </td>
