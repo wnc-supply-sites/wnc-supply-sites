@@ -24,7 +24,7 @@ public class BulkDataExportController {
 
   @GetMapping("/export/data")
   ResponseEntity<ExportDataJson> exportData() {
-    List<String> items = BulkDataExportDao.getAllItems(jdbi);
+    List<BulkDataExportDao.ItemExportDbEntry> items = BulkDataExportDao.getAllItems(jdbi);
     List<BulkDataExportDao.SiteExportJson> sites = BulkDataExportDao.fetchAllSites(jdbi);
 
     return ResponseEntity.ok(
@@ -39,7 +39,7 @@ public class BulkDataExportController {
   @AllArgsConstructor
   @NoArgsConstructor
   public static class ExportDataJson {
-    List<String> items;
+    List<BulkDataExportDao.ItemExportDbEntry> items;
     List<BulkDataExportDao.SiteExportJson> sites;
   }
 

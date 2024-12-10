@@ -12,12 +12,20 @@ import org.jdbi.v3.core.Jdbi;
 
 class BulkDataExportDao {
 
-  static List<String> getAllItems(Jdbi jdbi) {
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ItemExportDbEntry {
+    String name;
+    long wssId;
+  }
+  
+  static List<ItemExportDbEntry> getAllItems(Jdbi jdbi) {
     String query =
         """
-          select name from item order by lower(name)
+          select name, wss_id from item order by lower(name)
         """;
-    return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
+    return jdbi.withHandle(handle -> handle.createQuery(query).mapToBean(ItemExportDbEntry.class).list());
   }
 
   static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
