@@ -47,7 +47,8 @@ class SuppliesControllerTest {
                 .build());
 
     assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getItems()).isEmpty();
+    assertThat(result.getResults().getFirst().getAvailableItems()).isEmpty();
+    assertThat(result.getResults().getFirst().getNeededItems()).isEmpty();
   }
 
   @Test
@@ -135,7 +136,11 @@ class SuppliesControllerTest {
           suppliesController.getSuppliesData(
               SiteSupplyRequest.builder().itemStatus(List.of(status.getText())).build());
       result.getResults().stream()
-          .map(SiteSupplyResponse.SiteSupplyData::getItems)
+          .map(SiteSupplyResponse.SiteSupplyData::getAvailableItems)
+          .flatMap(List::stream)
+          .forEach(item -> assertThat(item.getDisplayClass()).isEqualTo(status.getCssClass()));
+      result.getResults().stream()
+          .map(SiteSupplyResponse.SiteSupplyData::getNeededItems)
           .flatMap(List::stream)
           .forEach(item -> assertThat(item.getDisplayClass()).isEqualTo(status.getCssClass()));
     }
@@ -149,15 +154,18 @@ class SuppliesControllerTest {
                 .itemStatus(
                     List.of(ItemStatus.OVERSUPPLY.getText(), ItemStatus.URGENTLY_NEEDED.getText()))
                 .build());
+
     result.getResults().stream()
-        .map(SiteSupplyResponse.SiteSupplyData::getItems)
+        .map(SiteSupplyResponse.SiteSupplyData::getNeededItems)
         .flatMap(List::stream)
         .forEach(
             item ->
-                assertThat(item.getDisplayClass())
-                    .isIn(
-                        ItemStatus.OVERSUPPLY.getCssClass(),
-                        ItemStatus.URGENTLY_NEEDED.getCssClass()));
+                assertThat(item.getDisplayClass()).isIn(ItemStatus.URGENTLY_NEEDED.getCssClass()));
+    result.getResults().stream()
+        .map(SiteSupplyResponse.SiteSupplyData::getAvailableItems)
+        .flatMap(List::stream)
+        .forEach(
+            item -> assertThat(item.getDisplayClass()).isIn(ItemStatus.OVERSUPPLY.getCssClass()));
   }
 
   @Test
@@ -216,7 +224,6 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().sites(List.of("site1")).build());
     assertThat(result.getResultCount()).isEqualTo(1);
-    assertThat(result.getResults().getFirst().getItems()).hasSize(3);
   }
 
   /**

@@ -103,14 +103,19 @@ public class SuppliesController {
                           .inventoryLastUpdated(
                               result.getInventoryLastUpdated().format(dateTimeFormatter))
                           .build());
+          // add items to the corresponding needed or available lists
           if (result.getItem() != null) {
-            siteSupplyData
-                .getItems()
-                .add(
-                    SiteItem.builder()
-                        .name(result.getItem())
-                        .displayClass(ItemStatus.convertToDisplayClass(result.getItemStatus()))
-                        .build());
+            var itemStatus = ItemStatus.fromTextValue(result.getItemStatus());
+            var item =
+                SiteItem.builder()
+                    .name(result.getItem())
+                    .displayClass(itemStatus.getCssClass())
+                    .build();
+            if (itemStatus == ItemStatus.AVAILABLE || itemStatus == ItemStatus.OVERSUPPLY) {
+              siteSupplyData.getAvailableItems().add(item);
+            } else {
+              siteSupplyData.getNeededItems().add(item);
+            }
           }
         });
     List<SiteSupplyData> resultData =

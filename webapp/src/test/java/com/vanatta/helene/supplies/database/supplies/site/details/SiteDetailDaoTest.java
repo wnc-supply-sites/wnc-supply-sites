@@ -30,7 +30,7 @@ class SiteDetailDaoTest {
   void lookupIdByWssId() {
     long result =
         SiteDetailDao.lookupSiteIdByWssId(
-            TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
+            TestConfiguration.jdbiTest, TestConfiguration.SITE1_WSS_ID);
     assertThat(result).isEqualTo(site1Id);
   }
 

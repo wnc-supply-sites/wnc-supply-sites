@@ -61,7 +61,8 @@ async function updateData() {
                   <td>
                     ${r.county}
                   </td>
-                  <td>${formatItems(r.items)}</td>
+                  <td>${formatItems(r.neededItems)}</td>
+                  <td>${formatItems(r.availableItems)}</td>
                   <td class="date-column">${r.inventoryLastUpdated}</td>
               </tr>`)
         .join("\n");
@@ -127,14 +128,16 @@ async function fetchSupplyData() {
   // var data = JSON.parse(`{
   //   "resultCount": 2,
   //   "results": [
-  //     {"site": "site1", "county": "Ashe", "items": [
+  //     {"site": "site1", "county": "Ashe", "neededItems": [
   //         {"name": "heater", "status": "urgent"}
-  //         {"name": "bread", "status": "need"},
+  //         {"name": "bread", "status": "need"}
+  //       ], "availableItems": [
   //         {"name": "butter", "status": "available"},
   //         {"name": "water", "status": "oversupply"},
   //       ]},
   //     {"site": "site2", "county": "Watauga", "items": [
-  //         {"name": "water", "status": "need"},
+  //         {"name": "water", "status": "need"}
+  //       ], "availableItems": [
   //         {"name": "bread", "status": "available"}
   //       ]}
   //   ]

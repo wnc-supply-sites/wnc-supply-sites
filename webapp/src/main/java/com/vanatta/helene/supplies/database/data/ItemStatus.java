@@ -22,14 +22,6 @@ public enum ItemStatus {
     return Arrays.stream(values()).map(s -> s.text).toList();
   }
 
-  /** Converts human readable status name to CSS class name. */
-  public static String convertToDisplayClass(String itemStatusText) {
-    return EnumUtil.mapText(values(), ItemStatus::getText, itemStatusText)
-        .orElseThrow(
-            () -> new IllegalArgumentException("Invalid item status text: " + itemStatusText))
-        .cssClass;
-  }
-
   public static ItemStatus fromTextValue(String textValue) {
     return EnumUtil.mapText(values(), ItemStatus::getText, textValue)
         .orElseThrow(() -> new IllegalArgumentException("Invalid item status text: " + textValue));

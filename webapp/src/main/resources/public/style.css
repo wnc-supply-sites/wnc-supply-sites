@@ -27,13 +27,11 @@ html, table {
 
 .urgent {
     font-weight: bold;
-    color: #b60808;
+    color: #F11;
 }
 
 .needed {
-    font-weight: bold;
-    /*color: #edbd41;*/
-    /*color: #A90;*/
+    color: #805
 }
 
 .available {
