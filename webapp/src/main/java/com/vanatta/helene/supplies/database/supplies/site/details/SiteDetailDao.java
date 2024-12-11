@@ -45,6 +45,8 @@ public class SiteDetailDao {
     boolean acceptingDonations;
     String hours;
     long wssId;
+    boolean onboarded;
+    String badNumbers;
   }
 
   @Nullable

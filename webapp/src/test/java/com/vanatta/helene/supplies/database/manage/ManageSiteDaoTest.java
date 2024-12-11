@@ -85,7 +85,15 @@ class ManageSiteDaoTest {
         siteId,
         ManageSiteDao.SiteField.ADDITIONAL_CONTACTS,
         "More: 22-333");
-
+    
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest,
+        siteId,
+        ManageSiteDao.SiteField.BAD_NUMBERS,
+        "123 not working");
+    
+    
+    
     var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
     ;
     assertThat(dataLookup.getSiteName()).isEqualTo("new site name");
@@ -100,6 +108,7 @@ class ManageSiteDaoTest {
     assertThat(dataLookup.getContactNumber()).isEqualTo("999-596-111");
     assertThat(dataLookup.getContactEmail()).isEqualTo("smith@awesome.org");
     assertThat(dataLookup.getAdditionalContacts()).isEqualTo("More: 22-333");
+    assertThat(dataLookup.getBadNumbers()).isEqualTo("123 not working");
   }
 
   @Test
@@ -267,7 +276,21 @@ class ManageSiteDaoTest {
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isPubliclyVisible()).isTrue();
     }
-
+    
+    @Test
+    void siteOnboarded() {
+      long siteId = Helper.getSiteId("site1");
+      
+      ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, false);
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isOnboarded()).isFalse();
+      
+      ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, true);
+      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.isOnboarded()).isTrue();
+    }
+    
+    
     @Test
     void fetchSiteStatus_SiteType() {
       long siteId = Helper.getSiteId("site1");

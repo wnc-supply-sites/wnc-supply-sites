@@ -173,6 +173,18 @@
     <div id="Additional Contacts-update-confirm" class="confirm-text"></div>
   </div>
 
+  {{^onboarded}}
+  <div class="data-field vertical">
+    <label for="Additional Contacts">Bad Phone Numbers (do not call these numbers, they do not work)</label>
+    <div class="horizontal">
+      <textarea cols="20" rows="4" id="Bad Numbers" maxlength="256">{{badNumbers}}</textarea>
+      <div>
+        <button onclick="showUpdateConfirmation({{siteId}}, 'Bad Numbers')" class="update-button">Update</button>
+      </div>
+      <div class="green-check hidden" id="Bad Numbers-update-confirm-checkmark">&#10003;</div>
+    </div>
+  </div>
+  {{/onboarded}}
 </div>
 
 <script>

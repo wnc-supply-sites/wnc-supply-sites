@@ -129,6 +129,7 @@ public class ManageSiteController {
     pageParams.put(STATE_LIST, createItemListing(data.getState(), counties.keySet()));
     pageParams.put(COUNTY_LIST, createItemListing(data.getCounty(), counties.get(data.getState())));
 
+    
     return new ModelAndView("manage/contact", pageParams);
   }
 
@@ -219,6 +220,7 @@ public class ManageSiteController {
     ACCEPTING_SUPPLIES("acceptingSupplies"),
     DISTRIBUTING_SUPPLIES("distributingSupplies"),
     PUBLICLY_VISIBLE("publiclyVisible"),
+    ONBOARDED("onboarded")
     ;
     final String text;
 
@@ -276,6 +278,10 @@ public class ManageSiteController {
         break;
       case ACTIVE:
         ManageSiteDao.updateSiteActiveFlag(
+            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+        break;
+      case ONBOARDED:
+        ManageSiteDao.updateSiteOnboarded(
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
         break;
       default:

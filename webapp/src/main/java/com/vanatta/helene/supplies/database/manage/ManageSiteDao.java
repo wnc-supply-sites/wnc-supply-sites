@@ -23,7 +23,9 @@ public class ManageSiteDao {
                 .mapToBean(SiteSelection.class)
                 .list());
   }
+  
 
+  
   @AllArgsConstructor
   @Getter
   public enum SiteField {
@@ -220,71 +222,46 @@ public class ManageSiteDao {
       return siteStatus;
     }
   }
-
+  
+  public static void updateSiteOnboarded(Jdbi jdbi, long siteId, boolean newValue) {
+    updateSiteFlag(jdbi, siteId, "onboarded", newValue);
+  }
+  
   public static void updateSiteAcceptingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
-    int updateCount =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createUpdate(
-                        "update site set accepting_donations = :newValue, last_updated = now() where id = :siteId")
-                    .bind("newValue", newValue)
-                    .bind("siteId", siteId)
-                    .execute());
-
-    if (updateCount == 0) {
-      throw new IllegalArgumentException("Invalid site id: " + siteId);
-    }
+    updateSiteFlag(jdbi, siteId, "accepting_donations", newValue);
   }
 
   public static void updateSiteDistributingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
-    int updateCount =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createUpdate(
-                        "update site set distributing_supplies = :newValue, last_updated = now() where id = :siteId")
-                    .bind("newValue", newValue)
-                    .bind("siteId", siteId)
-                    .execute());
-
-    if (updateCount == 0) {
-      throw new IllegalArgumentException("Invalid site id: " + siteId);
-    }
+    updateSiteFlag(jdbi, siteId, "distributing_supplies", newValue);
   }
 
   public static void updateSiteActiveFlag(Jdbi jdbi, long siteId, boolean newValue) {
-    int updateCount =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createUpdate(
-                        "update site set active = :newValue, last_updated = now() where id = :siteId")
-                    .bind("newValue", newValue)
-                    .bind("siteId", siteId)
-                    .execute());
-
-    if (updateCount == 0) {
-      throw new IllegalArgumentException("Invalid site id: " + siteId);
-    }
+    updateSiteFlag(jdbi, siteId, "active", newValue);
   }
 
   public static void updateSitePubliclyVisible(Jdbi jdbi, long siteId, boolean newValue) {
+    updateSiteFlag(jdbi, siteId, "publicly_visible", newValue);
+  }
+  
+  private static void updateSiteFlag(Jdbi jdbi, long siteId, String column, boolean newValue ) {
+    String update =
+        String.format(
+            "update site set %s = :newValue, last_updated = now() where id = :siteId", column);
+    
     int updateCount =
         jdbi.withHandle(
             handle ->
                 handle
-                    .createUpdate(
-                        "update site set publicly_visible = :newValue, last_updated = now() where id = :siteId")
+                    .createUpdate(update)
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
-
+    
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-
+  
   /** Fetches all items, items requested/needed for a given site are listed as active. */
   public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =
