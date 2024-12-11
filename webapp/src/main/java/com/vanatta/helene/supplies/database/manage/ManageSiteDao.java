@@ -131,7 +131,7 @@ public class ManageSiteDao {
   static String updateSiteColumn(Jdbi jdbi, long siteId, SiteField column, String newValue) {
 
     String oldValueQuery =
-        String.format("select s.%s from site s where s.id = :siteId", column.getColumnName());
+        java.lang.String.format("select s.%s from site s where s.id = :siteId", column.getColumnName());
     String oldValue =
         jdbi.withHandle(
             handle ->
@@ -168,7 +168,22 @@ public class ManageSiteDao {
                 .bind("newValue", newValue)
                 .execute());
   }
-
+  
+  
+  /** Returns null if ID is not valid or DNE. */
+  static String fetchSiteName(Jdbi jdbi, String siteId) {
+    if (siteId == null || siteId.isBlank()) {
+      return null;
+    }
+    
+    try {
+      long id = Long.parseLong(siteId);
+      return ManageSiteDao.fetchSiteName(jdbi, id);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+  }
+  
   @Nullable
   public static String fetchSiteName(Jdbi jdbi, long siteId) {
     return jdbi.withHandle(
@@ -245,7 +260,7 @@ public class ManageSiteDao {
   
   private static void updateSiteFlag(Jdbi jdbi, long siteId, String column, boolean newValue ) {
     String update =
-        String.format(
+        java.lang.String.format(
             "update site set %s = :newValue, last_updated = now() where id = :siteId", column);
     
     int updateCount =
