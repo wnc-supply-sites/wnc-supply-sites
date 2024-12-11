@@ -104,11 +104,7 @@ class NeedsMatchingControllerTest {
     var results =
         NeedsMatchingController.computeNeedsMatch(
             TestConfiguration.jdbiTest, warehouseSiteWssId, toSiteWssId);
-    // expected matches:
-    // -220 water
-    // -222 heater
-    // -223 batteries
-    assertThat(results).containsExactly(-220L, -222L, -223L);
+    assertThat(results).containsExactly("batteries", "gloves", "heater");
   }
 
   @Test
@@ -116,11 +112,8 @@ class NeedsMatchingControllerTest {
     var results =
         NeedsMatchingController.computeNeedsMatch(
             TestConfiguration.jdbiTest, supplySiteWssId, toSiteWssId);
-    // expected matches
-    // -222 heater
-    // -223 batteries
     // expected nonmatch: -220 gloves  (gloves are available at a dist site, and are not oversupply)
-    assertThat(results).containsExactly(-222L, -223L);
+    assertThat(results).containsExactly("batteries", "heater");
   }
 
   /**

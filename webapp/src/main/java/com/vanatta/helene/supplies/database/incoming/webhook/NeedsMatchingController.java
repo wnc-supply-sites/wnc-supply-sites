@@ -37,11 +37,10 @@ public class NeedsMatchingController {
   }
 
   @Builder
-  //  @AllArgsConstructor
   @lombok.Value
   public static class ComputedNeeds {
     long deliveryId;
-    List<Long> wssIdsNeedList;
+    List<String> itemList;
   }
 
   /**
@@ -58,20 +57,19 @@ public class NeedsMatchingController {
     long fromWssId = ((List<Double>) json.get("fromSiteWssId")).getFirst().longValue();
     long toSiteWssId = ((List<Double>) json.get("toSiteWssId")).getFirst().longValue();
 
-    List<Long> needsIds = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
-    log.info("Received needs computation request: {}, matched with needs: {}", body, needsIds);
+    List<String> neededItems = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
+    log.info("Received needs computation request: {}, matched with needs: {}", body, neededItems);
 
-    if (!needsIds.isEmpty() && makeEnabled) {
+    if (!neededItems.isEmpty() && makeEnabled) {
       var computedNeed =
-          ComputedNeeds.builder().deliveryId(deliveryId).wssIdsNeedList(needsIds).build();
+          ComputedNeeds.builder().deliveryId(deliveryId).itemList(neededItems).build();
       HttpPostSender.sendAsJson(addToDeliveryWebhook, computedNeed);
     }
-    return ResponseEntity.ok("Matches: " + needsIds.size());
+    return ResponseEntity.ok("Matches: " + neededItems.size());
   }
 
   // @VisibleForTesting
-  static List<Long> computeNeedsMatch(Jdbi jdbi, long fromSiteWssId, long toSiteWssId) {
-
+  static List<String> computeNeedsMatch(Jdbi jdbi, long fromSiteWssId, long toSiteWssId) {
     String availableItemsQuery =
         """
         select
@@ -129,12 +127,13 @@ public class NeedsMatchingController {
     String queryNeedIds =
         """
         select
-          wss_id
-        from site_item
+          i.name
+        from site_item si
+        join item i on i.id = si.item_id
         where
-          site_id = (select id from site where wss_id = :siteWssId)
-          and item_id in (<itemIds>)
-        order by wss_id desc;
+          si.site_id = (select id from site where wss_id = :siteWssId)
+          and si.item_id in (<itemIds>)
+        order by i.name asc;
         """;
     return jdbi.withHandle(
         handle ->
@@ -142,7 +141,7 @@ public class NeedsMatchingController {
                 .createQuery(queryNeedIds)
                 .bind("siteWssId", toSiteWssId)
                 .bindList("itemIds", eligibleItemIds)
-                .mapTo(Long.class)
+                .mapTo(String.class)
                 .list());
   }
 }
