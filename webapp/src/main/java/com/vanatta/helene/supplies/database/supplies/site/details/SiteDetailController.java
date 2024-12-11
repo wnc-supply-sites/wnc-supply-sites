@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
-import com.vanatta.helene.supplies.database.manage.ManageSiteController;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,7 +74,7 @@ public class SiteDetailController {
 
     Map<String, Object> siteDetails = new HashMap<>();
 
-    siteDetails.put("editContactLink", ManageSiteController.buildManageContactsPath(id));
+    siteDetails.put("editContactLink", SelectSiteController.buildManageContactsPath(id));
     siteDetails.put("editInventoryLink", InventoryController.buildInventoryPath(id));
 
     siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));

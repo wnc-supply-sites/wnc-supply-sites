@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.data.SiteType;
-import com.vanatta.helene.supplies.database.manage.ManageSiteController.SiteSelection;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController.SiteSelection;
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;

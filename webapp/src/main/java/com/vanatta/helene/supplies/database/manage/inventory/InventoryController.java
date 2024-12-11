@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.manage.inventory;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
-import com.vanatta.helene.supplies.database.manage.ManageSiteController;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class InventoryController {
   ModelAndView fetchSiteInventoryListing(String siteId) {
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return ManageSiteController.showSelectSitePage(jdbi);
+      return SelectSiteController.showSelectSitePage(jdbi);
     }
 
     Map<String, Object> pageParams = new HashMap<>();

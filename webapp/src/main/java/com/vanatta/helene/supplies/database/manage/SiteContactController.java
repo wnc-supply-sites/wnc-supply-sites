@@ -45,12 +45,12 @@ public class SiteContactController {
 
     String siteName = ManageSiteDao.fetchSiteName(jdbi, siteId);
     if (siteName == null) {
-      return ManageSiteController.showSelectSitePage(jdbi);
+      return SelectSiteController.showSelectSitePage(jdbi);
     }
 
     SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
     if (data == null) {
-      return new ModelAndView("redirect:" + ManageSiteController.PATH_SELECT_SITE);
+      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
     pageParams.put("siteId", siteId);

@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.manage.add.site;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
-import com.vanatta.helene.supplies.database.manage.ManageSiteController;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +33,10 @@ public class AddSiteController {
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     model.put("fullCountyList", counties);
-    model.put("stateList", ManageSiteController.createItemListing("NC", counties.keySet()));
+    model.put("stateList", SelectSiteController.createItemListing("NC", counties.keySet()));
     model.put(
         "countyList",
-        ManageSiteController.createItemListing(counties.get("NC").getFirst(), counties.get("NC")));
+        SelectSiteController.createItemListing(counties.get("NC").getFirst(), counties.get("NC")));
 
     return new ModelAndView("manage/new-site/add-site", model);
   }

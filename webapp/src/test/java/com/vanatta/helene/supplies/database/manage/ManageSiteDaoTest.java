@@ -37,7 +37,7 @@ class ManageSiteDaoTest {
     results.forEach(result -> assertThat(result.getId()).isNotEqualTo(0L));
     var names =
         results.stream()
-            .map(ManageSiteController.SiteSelection::getName)
+            .map(SelectSiteController.SiteSelection::getName)
             .collect(Collectors.toList());
     assertThat(names).contains("site1");
     names.forEach(name -> assertThat(name).isNotNull());

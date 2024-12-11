@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @AllArgsConstructor
 @Slf4j
-public class ManageSiteController {
+public class SelectSiteController {
 
   static final String PATH_SELECT_SITE = "/manage/select-site";
   private final Jdbi jdbi;
