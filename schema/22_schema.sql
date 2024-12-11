@@ -8,6 +8,7 @@ create table delivery(
   dispatcher_number varchar(24),
   driver_name varchar(64),
   driver_number varchar(24),
+  driver_license_plates varchar(128),
   last_updated timestamptz not null default now(),
   date_created timestamptz not null default now()
 );

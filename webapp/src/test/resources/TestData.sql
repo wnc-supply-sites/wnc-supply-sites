@@ -52,9 +52,9 @@ values (
        );
 
 -- site2, in Buncombe county, not accepting donations
-insert into site(name, address, city, county_id, accepting_donations, site_type_id) values(
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id) values(
 'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center')
+(select id from site_type where name = 'Distribution Center'), -20
 );
 
 -- site3, in Buncombe county, not active
@@ -82,9 +82,9 @@ insert into site(name, address, city, county_id, website, site_type_id) values(
 );
 
 
-insert into item(name) values('water');
+insert into item(name, wss_id) values('water', -40);
 insert into item(name) values('soap');
-insert into item(name) values('gloves');
+insert into item(name, wss_id) values('gloves', -50);
 insert into item(name) values('used clothes');
 insert into item(name) values('new clothes');
 insert into item(name) values('random stuff');
