@@ -7,7 +7,6 @@ import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.util.List;
 import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 
@@ -24,13 +23,6 @@ public class TestConfiguration {
     HikariDataSource ds = new HikariDataSource(config);
     jdbiTest = Jdbi.create(ds);
   }
-
-  // public IDs of the dispatches that we will creaete in the test data setup
-  public static final String SITE1_NEW_DISPATCH = "#1 site1";
-  public static final String SITE2_PENDING_DISPATCH = "#2 site2";
-  public static final String SITE3_NEW_DISPATCH = "#30 site3 new";
-  public static final String SITE3_PENDING_DISPATCH = "#33 site3 pending";
-  public static final String SITE4_NO_DISPATCH = "#4 site4";
 
   public static final long SITE1_AIRTABLE_ID = -200;
   public static final long SITE1_WSS_ID = -10;

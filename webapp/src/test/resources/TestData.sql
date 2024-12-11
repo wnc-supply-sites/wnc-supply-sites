@@ -1,3 +1,4 @@
+delete from site_item_audit;
 delete from site_item;
 delete from item;
 delete from site_audit_trail;

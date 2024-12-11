@@ -19,4 +19,6 @@ echo "create database $database" | psql -U postgres
 echo "alter database $database owner to wnc_helene" | psql -U postgres
 
 export PGPASSWORD=wnc_helene
-psql -U wnc_helene -d "$database" -f schema.sql
+for i in $(ls schema | sort -n); do
+  psql -U wnc_helene -d "$database" -f schema/$i
+done

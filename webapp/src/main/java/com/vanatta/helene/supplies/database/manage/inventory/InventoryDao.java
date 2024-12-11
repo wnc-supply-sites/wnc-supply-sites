@@ -50,6 +50,7 @@ public class InventoryDao {
                   .bind("itemName", itemName)
                   .bind("itemStatus", itemStatus)
                   .execute());
+      updateSiteItemAudit(jdbi, siteId, itemName, "inactive", "active");
     } catch (Exception e) {
       if (e.getMessage().contains("already exists.")
           || (e.getCause() != null && e.getCause().getMessage().contains("duplicate key value"))) {
@@ -65,6 +66,36 @@ public class InventoryDao {
     ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
+  /** Adds a record to the site item change table. */
+  // @VisibleForTesting
+  static void updateSiteItemAudit(
+      Jdbi jdbi, long siteId, String itemName, String oldValue, String newValue) {
+
+    String insertIntoAudit =
+        """
+        insert into site_item_audit(
+          site_id,
+          item_id,
+          old_value,
+          new_value
+        ) values (
+          :siteId,
+          (select id from item where name = :itemName),
+          :oldValue,
+          :newValue
+        );
+        """;
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(insertIntoAudit)
+                .bind("siteId", siteId)
+                .bind("itemName", itemName)
+                .bind("oldValue", oldValue)
+                .bind("newValue", newValue)
+                .execute());
+  }
+
   static void updateSiteItemInactive(Jdbi jdbi, long siteId, String itemName) {
     String delete =
         """
@@ -72,13 +103,17 @@ public class InventoryDao {
             where site_id = :siteId
               and item_id = (select id from item where name = :itemName)
             """;
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate(delete)
-                .bind("siteId", siteId)
-                .bind("itemName", itemName)
-                .execute());
+    int deleteCount =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(delete)
+                    .bind("siteId", siteId)
+                    .bind("itemName", itemName)
+                    .execute());
+    if (deleteCount > 0) {
+      updateSiteItemAudit(jdbi, siteId, itemName, "active", "inactive");
+    }
     ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 
@@ -86,6 +121,23 @@ public class InventoryDao {
     if (!ItemStatus.allItemStatus().contains(itemStatus)) {
       throw new IllegalArgumentException("Invalid item status: " + itemStatus);
     }
+    String oldStatusQuery =
+        """
+        select its.name
+        from site_item si
+        join item_status its on its.id = si.item_status_id
+        where si.site_id = :siteId
+          and si.item_id = (select id from item where name = :itemName)
+        """;
+    String oldStatus =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(oldStatusQuery)
+                    .bind("siteId", siteId)
+                    .bind("itemName", itemName)
+                    .mapTo(String.class)
+                    .one());
 
     String update =
         """
@@ -108,6 +160,7 @@ public class InventoryDao {
     if (updateCount != 1) {
       throw new IllegalArgumentException(String.format("Invalid item name: %s", itemName));
     }
+    updateSiteItemAudit(jdbi, siteId, itemName, oldStatus, itemStatus);
     ManageSiteDao.updateSiteInventoryLastUpdatedToNow(jdbi, siteId);
   }
 

@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -127,5 +128,37 @@ class InventoryDaoTest {
         .filter(r -> r.getItemName().equalsIgnoreCase(itemName))
         .findAny()
         .orElseThrow();
+  }
+
+  @Test
+  void validateSiteAuditChanges() {
+    String name = UUID.randomUUID().toString();
+    int startCount = countSiteItemAuditRecords();
+
+    InventoryDao.addNewItem(TestConfiguration.jdbiTest, name);
+
+    // adding a new item should not change the site_item_audit count
+    assertThat(countSiteItemAuditRecords()).isEqualTo(startCount);
+
+    long site1Id = TestConfiguration.getSiteId("site1");
+    InventoryDao.updateSiteItemActive(
+        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.AVAILABLE.getText());
+    assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 1);
+
+    InventoryDao.updateItemStatus(
+        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.URGENTLY_NEEDED.getText());
+    assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 2);
+    InventoryDao.updateItemStatus(
+        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.NEEDED.getText());
+    assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 3);
+
+    InventoryDao.updateSiteItemInactive(TestConfiguration.jdbiTest, site1Id, name);
+    assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 4);
+  }
+
+  private static int countSiteItemAuditRecords() {
+    return TestConfiguration.jdbiTest.withHandle(
+        handle ->
+            handle.createQuery("select count(*) from site_item_audit").mapTo(Integer.class).one());
   }
 }
