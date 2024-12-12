@@ -71,11 +71,20 @@ sudo -u postgres psql
 - aspectJ (for testing)
 - gradle
 
+### Tech Stack Non-Choices
+
+Do not bring these frameworks in, these frameworks are intentionally rejected:
+- spring security (if we do integration with a system that uses OAuth2 tokens, like
+  FB, or google, then perhaps yes)
+- JPA
+- guava (just avoid, favor to copy/paste their implementations into a Util class)
+
+
 ### Project Layout
 
-- webapp
+- `webapp/`
   - This is the interesting part that is the webapp.
-- schema
+- `schema/`
   - contains DB migration files
 
 ### Env Variables
@@ -88,6 +97,45 @@ launch configuration. It will look something like this:
 src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364c821">
 
 
+### Code Organization - DAO's and Controllers
+
+Controller classes are classic spring webserver endpoints. Controller
+methods should handle control flow and ideally get actions done
+by calling functional private static methods or DAO methods.
+
+Controller's and packages are organized by functionality. 
+
+If a controller is 'tight', pretty small and straight forward,
+then the DB access methods might sometimes be directly in the controller.
+Otherwise usually DB access code will be in an adjacent "DAO" class.
+
+
+### Writing unit tests
+
+- all DB queries should be tested in isolation.
+- controller logic is ideally tested end-to-end, invoke the controller
+  endpoint with a JSON or Map payload and then validate you
+  get the right response and/or that the DB changes appropriately
+- it's okay to write simple DB queries in the test code to validate
+  the system behavior.
+
+### System Authentication
+
+A user is logged in if they have an auth cookie that contains
+the correct secret value. There is a RequestInterceptor that
+checks a requested URLs prefix and then checks for that cookie
+if the URL requires authentication.
+
+The magic cookie value is set by environment variable on startup.
+If the cookie value matches, it is valid, otherwise there is
+a redirect to the login page.
+
+-----
+
+In the future, it is intended to have individual logins. In which
+case the correct cookie value will be a value stored in database.
+After a user logs in, we would store a token value in DB,
+then we'd check the DB for this token value.
 
 ## Deployment
 
