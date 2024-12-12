@@ -338,9 +338,13 @@ public class ManageSiteDao {
     boolean active;
   }
 
-  public static void updateSiteInventoryLastUpdatedToNow(Jdbi jdbi, long siteId) {
+  /**
+   * Updates that the site inventory was last updated now, and because the site inventory was
+   * updated, mark the site as onboarded.
+   */
+  public static void updateSiteInventoryLastUpdatedAndOnboardedFlag(Jdbi jdbi, long siteId) {
     String updateSiteLastUpdated =
-        "update site set inventory_last_updated = now() where id = :siteId";
+        "update site set inventory_last_updated = now(), onboarded = true where id = :siteId";
     jdbi.withHandle(
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
