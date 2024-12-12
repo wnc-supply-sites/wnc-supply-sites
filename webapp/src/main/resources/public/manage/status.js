@@ -1,8 +1,18 @@
 async function updateSiteActive(siteId) {
   const active = document.getElementById("activeYes").checked;
+
+
+
   try {
     await sendStatusUpdate(siteId, "active", active);
-    showConfirmation("Site status set to " + (active ? "active" : "inactive"));
+    if(active) {
+      await sendStatusUpdate(siteId, "inactiveReason", "");
+      showConfirmation("Site status set to active");
+    } else {
+      const inactiveReason = document.getElementById("inactive-reason").value.trim();
+      await sendStatusUpdate(siteId, "inactiveReason", inactiveReason);
+      showConfirmation("Site status set to inactive" + (inactiveReason !== "" ? " with reason " + inactiveReason : ""));
+    }
   } catch (error) {
     showError(error, "site 'active' was not updated.")
   }
@@ -95,4 +105,13 @@ async function sendStatusUpdate(siteId, statusFlag, newValue) {
     throw new Error(`Response status: ${response.status}, ${response}`);
   }
   return await response.text();
+}
+
+
+function hideInactiveReason() {
+  document.getElementById('inactive-div').classList.add("hidden");
+}
+function showInactiveReason() {
+  document.getElementById('inactive-div').classList.remove("hidden");
+  window.scrollTo(0, document.body.scrollHeight);
 }

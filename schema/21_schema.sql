@@ -7,4 +7,4 @@ create table site_item_audit(
   new_value varchar(512) not null,
   changed_date timestamptz not null default now()
 );
-
+alter table site_item_audit owner to wnc_helene;

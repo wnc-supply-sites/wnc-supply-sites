@@ -21,3 +21,16 @@
 .danger-fields {
     border: 1px solid red;
 }
+
+h2 {
+    /*padding-left: 20px;*/
+    margin-bottom: 5px;
+}
+
+.data-entry-div {
+    padding-left: 20px;
+}
+
+.very-wide-button {
+    width: 350px;
+}

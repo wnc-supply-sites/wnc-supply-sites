@@ -4,14 +4,13 @@
   <script type="text/javascript" src="status.js"></script>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
-  <link rel="stylesheet" href="manage.css"/>
   <link rel="stylesheet" href="status.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
 
 <body>
-<h1><a href="../.." class="link-home">WNC Supply Sites - Site Management</a></h1>
+<h1><a href="/public" class="link-home">WNC Supply Sites - Site Management</a></h1>
 
 <div class="back-link">
   <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
@@ -96,9 +95,9 @@
         <legend class="bold">Site is Onboarded:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="onboardedYes" name="public" {{#onboarded}}checked{{/onboarded}}><label
+            <input type="radio" id="onboardedYes" name="onboarded" {{#onboarded}}checked{{/onboarded}}><label
               for="onboardedYes">Yes</label>
-            <input type="radio" id="onboardedNo" name="public" {{^onboarded}}checked{{/onboarded}}><label
+            <input type="radio" id="onboardedNo" name="onboarded" {{^onboarded}}checked{{/onboarded}}><label
               for="onboardedNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateOnboarded({{siteId}})">Update</button>
           </div>
@@ -136,34 +135,40 @@
     </div>
 
     <!-- SITE ACTIVE -->
-    <div class="statusArea danger-fields">
+    <div class="statusArea">
       <fieldset class="danger-fields">
+
+
         <legend class="bold">Site is Active:</legend>
         <div class="horizontal">
           <div class="statusControls">
-            <input type="radio" id="activeYes" name="activeSite" {{#siteActive}}checked{{/siteActive}}><label
+            <input onclick="hideInactiveReason()" type="radio" id="activeYes" name="activeSite" {{#siteActive}}checked{{/siteActive}}><label
               for="activeYes">Yes</label>
-            <input type="radio" id="activeNo" name="activeSite" {{^siteActive}}checked{{/siteActive}}/><label
+            <input onclick="showInactiveReason()" type="radio" id="activeNo" name="activeSite" {{^siteActive}}checked{{/siteActive}}/><label
               for="activeNo">No</label>
             <button class="siteStatusUpdateButton" onclick="updateSiteActive({{siteId}})">Update</button>
           </div>
           <span class="statusCaption larger">An inactive site is no longer listed and is effectively removed from WNC-supply-sites.com</span>
         </div>
-        {{^siteActive}}
-        <div>
+
+        <div id="inactive-div" class="{{#siteActive}}hidden{{/siteActive}}">
           <dl>
             <dt>Inactive Reason:</dt>
-            <dd><textarea cols="50" rows="3"></textarea></dd>
+            <dd><textarea
+                id="inactive-reason" cols="50" rows="3" placeholder="Example: Site is closed
+Example: Site never onboarded
+Example: Temporary closure">{{inactiveReason}}</textarea>
+            </dd>
           </dl>
         </div>
-        {{/siteActive}}
-
       </fieldset>
     </div>
   </div>
   <div id="updateStatusConfirmation"></div>
   <div class="errorMessage" id="status-update-error"></div>
 </div>
+
+<div style="margin-top: 30px"></div>
 
 </body>
 </html>

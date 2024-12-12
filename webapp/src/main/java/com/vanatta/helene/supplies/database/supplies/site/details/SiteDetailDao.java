@@ -47,6 +47,7 @@ public class SiteDetailDao {
     long wssId;
     boolean onboarded;
     String badNumbers;
+    String inactiveReason;
   }
 
   @Nullable
@@ -74,7 +75,10 @@ public class SiteDetailDao {
                               s.distributing_supplies,
                               s.accepting_donations,
                               s.hours,
-                              s.wss_id
+                              s.wss_id,
+                              s.onboarded,
+                              s.bad_numbers,
+                              s.inactive_reason
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id

@@ -92,10 +92,7 @@ class ManageSiteDaoTest {
         ManageSiteDao.SiteField.BAD_NUMBERS,
         "123 not working");
     
-    
-    
     var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-    ;
     assertThat(dataLookup.getSiteName()).isEqualTo("new site name");
     assertThat(dataLookup.getAddress()).isEqualTo("new address");
     assertThat(dataLookup.getCity()).isEqualTo("new city");
@@ -290,6 +287,13 @@ class ManageSiteDaoTest {
       assertThat(result.isOnboarded()).isTrue();
     }
     
+    @Test
+    void updateInactiveReason() {
+      long siteId = Helper.getSiteId("site3");
+      ManageSiteDao.updateInactiveReason(TestConfiguration.jdbiTest, siteId, "some reasons");
+      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
+      assertThat(result.getInactiveReason()).isEqualTo("some reasons");
+    }
     
     @Test
     void fetchSiteStatus_SiteType() {

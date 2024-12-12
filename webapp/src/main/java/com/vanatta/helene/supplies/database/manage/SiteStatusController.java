@@ -74,6 +74,9 @@ public class SiteStatusController {
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
     pageParams.put("sitePublic", siteStatus.publiclyVisible ? "true" : null);
+    pageParams.put("onboarded", siteStatus.onboarded ? "true" : null);
+    pageParams.put(
+        "inactiveReason", Optional.ofNullable(siteStatus.getInactiveReason()).orElse(""));
 
     pageParams.put("siteAcceptingDonations", siteStatus.isAcceptingDonations() ? "true" : null);
     pageParams.put(
@@ -96,7 +99,9 @@ public class SiteStatusController {
     ACCEPTING_SUPPLIES("acceptingSupplies"),
     DISTRIBUTING_SUPPLIES("distributingSupplies"),
     PUBLICLY_VISIBLE("publiclyVisible"),
-    ONBOARDED("onboarded");
+    ONBOARDED("onboarded"),
+    INACTIVE_REASON("inactiveReason"),
+    ;
     final String text;
 
     static Optional<EnumStatusUpdateFlag> fromText(String input) {
@@ -117,12 +122,6 @@ public class SiteStatusController {
       log.warn(
           "Invalid site update value received, invalid site id (not found), params: {}", params);
       return ResponseEntity.badRequest().body("Invalid site id: " + siteId);
-    }
-
-    if (newValue == null
-        || !(newValue.equalsIgnoreCase("true") || newValue.equalsIgnoreCase("false"))) {
-      log.warn("Invalid site update value received (not true or false), params: {}", params);
-      return ResponseEntity.badRequest().body("Invalid new value: " + newValue);
     }
 
     log.info("Site update received, site name: {}, params; {}", siteName, params);
@@ -158,6 +157,9 @@ public class SiteStatusController {
       case ONBOARDED:
         ManageSiteDao.updateSiteOnboarded(
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
+        break;
+      case INACTIVE_REASON:
+        ManageSiteDao.updateInactiveReason(jdbi, Long.parseLong(siteId), newValue);
         break;
       default:
         throw new IllegalArgumentException("Unmapped status flag: " + statusFlag);

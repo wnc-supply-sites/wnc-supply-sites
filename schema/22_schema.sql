@@ -12,7 +12,7 @@ create table delivery(
   last_updated timestamptz not null default now(),
   date_created timestamptz not null default now()
 );
-
+alter table delivery owner to wnc_helene;
 
 create table delivery_item(
   id serial primary key,
@@ -21,5 +21,5 @@ create table delivery_item(
   last_updated timestamptz not null default now(),
   date_created timestamptz not null default now()
 );
-
+alter table delivery_item owner to wnc_helene;
 alter table delivery_item add constraint delivery_item_uk unique(delivery_id, item_id);

@@ -23,9 +23,7 @@ public class ManageSiteDao {
                 .mapToBean(SiteSelection.class)
                 .list());
   }
-  
 
-  
   @AllArgsConstructor
   @Getter
   public enum SiteField {
@@ -41,6 +39,7 @@ public class ManageSiteDao {
     CONTACT_NUMBER("contact_number", "Contact Number", false),
     CONTACT_EMAIL("contact_email", "Contact Email", false),
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false),
+    BAD_NUMBERS("bad_numbers", "Bad Numbers", false),
     ;
 
     private final String columnName;
@@ -131,7 +130,8 @@ public class ManageSiteDao {
   static String updateSiteColumn(Jdbi jdbi, long siteId, SiteField column, String newValue) {
 
     String oldValueQuery =
-        java.lang.String.format("select s.%s from site s where s.id = :siteId", column.getColumnName());
+        java.lang.String.format(
+            "select s.%s from site s where s.id = :siteId", column.getColumnName());
     String oldValue =
         jdbi.withHandle(
             handle ->
@@ -168,14 +168,13 @@ public class ManageSiteDao {
                 .bind("newValue", newValue)
                 .execute());
   }
-  
-  
+
   /** Returns null if ID is not valid or DNE. */
   static String fetchSiteName(Jdbi jdbi, String siteId) {
     if (siteId == null || siteId.isBlank()) {
       return null;
     }
-    
+
     try {
       long id = Long.parseLong(siteId);
       return ManageSiteDao.fetchSiteName(jdbi, id);
@@ -183,7 +182,7 @@ public class ManageSiteDao {
       return null;
     }
   }
-  
+
   @Nullable
   public static String fetchSiteName(Jdbi jdbi, long siteId) {
     return jdbi.withHandle(
@@ -203,6 +202,8 @@ public class ManageSiteDao {
     boolean publiclyVisible;
     boolean acceptingDonations;
     boolean distributingSupplies;
+    boolean onboarded;
+    String inactiveReason;
     String siteType;
 
     public SiteType getSiteTypeEnum() {
@@ -219,9 +220,11 @@ public class ManageSiteDao {
         select
           s.active,
           s.accepting_donations,
-          st.name siteType,
           s.publicly_visible,
-          s.distributing_supplies
+          s.distributing_supplies,
+          s.onboarded,
+          s.inactive_reason,
+          st.name siteType
         from site s
         join site_type st on st.id = s.site_type_id
         where s.id = :siteId
@@ -237,11 +240,11 @@ public class ManageSiteDao {
       return siteStatus;
     }
   }
-  
+
   public static void updateSiteOnboarded(Jdbi jdbi, long siteId, boolean newValue) {
     updateSiteFlag(jdbi, siteId, "onboarded", newValue);
   }
-  
+
   public static void updateSiteAcceptingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
     updateSiteFlag(jdbi, siteId, "accepting_donations", newValue);
   }
@@ -257,12 +260,12 @@ public class ManageSiteDao {
   public static void updateSitePubliclyVisible(Jdbi jdbi, long siteId, boolean newValue) {
     updateSiteFlag(jdbi, siteId, "publicly_visible", newValue);
   }
-  
-  private static void updateSiteFlag(Jdbi jdbi, long siteId, String column, boolean newValue ) {
+
+  private static void updateSiteFlag(Jdbi jdbi, long siteId, String column, boolean newValue) {
     String update =
         java.lang.String.format(
             "update site set %s = :newValue, last_updated = now() where id = :siteId", column);
-    
+
     int updateCount =
         jdbi.withHandle(
             handle ->
@@ -271,12 +274,27 @@ public class ManageSiteDao {
                     .bind("newValue", newValue)
                     .bind("siteId", siteId)
                     .execute());
-    
+
     if (updateCount == 0) {
       throw new IllegalArgumentException("Invalid site id: " + siteId);
     }
   }
-  
+
+  public static void updateInactiveReason(Jdbi jdbi, long siteId, String inactiveReason) {
+    String update =
+        """
+        update site set inactive_reason = :inactiveReason where id = :siteId
+        """;
+
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(update)
+                .bind("inactiveReason", inactiveReason)
+                .bind("siteId", siteId)
+                .execute());
+  }
+
   /** Fetches all items, items requested/needed for a given site are listed as active. */
   public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =
