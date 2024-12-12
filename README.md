@@ -37,17 +37,17 @@ create user wnc_helene_test with password 'wnc_helene';
 alter database wnc_helene_test owner to wnc_helene;
 ```
 
-- Run the schema migration files found in the 'schema/' folder (schema1.sql and on, in order)
-   - ideally this would be executed via flyway
-   - needs to be done for both database
+- Run the schema migration files found in the 'schema/'
+  - The script `./recreate-db.sh` will drop the local test database & run all
+    of the migration files. The script can be altered to set up the `wnc_helene`
 
+#### Access local DB
 ```bash
 sudo -u postgres psql
 \c wnc_helene
-# [now copy paste contents of each schema file]
 ```
 
-- The databases will have empty data. Example data can be found in `TestConfiguration.java`
+- The databases will have empty data. Example data can be found in `src/test/resources/TestData.sql`
 
 - Finally, the app can be launched via Intellj IDE, main class is `SuppliesDatabaseApplication.java`
   - The app can also be likely be run via gradle `./gradlew bootRun` (not well tested/vetted, but should work)
@@ -100,6 +100,19 @@ src="https://github.com/user-attachments/assets/5237ac05-a0f9-4fc0-aaa2-98944364
 
 ## Prod Ops
 
+Applications are running in docker containers. 'webapp' is prod, 'staging' is test.
+Whether they are connected to airtable is controlled by environment variables.
+Staging connects to DB `wnc_helene_test` while webapp connects to the DB `wnc_helene`
+All environment variables are in the redeploy sripts in `/root`
+
+### DB Access
+```
+sudo -u postgres psql
+\c wnc_helene
+\c wnc_helene_test
+```
+
+
 ### Logs
 
 - Tail application logs
@@ -111,6 +124,21 @@ docker logs -f webapp
 ```bash
 sudo tail -f /var/log/nginx/access.log
 ```
+
+### IP address blocking
+
+If scrapers are putting too much load on the system (or generally doing their scraping thing),
+as can be observed from the NGINX access log - they can be blocked by running:
+
+```
+sudo /root/block-ip.sh [IP]
+```
+EG:
+```
+sudo /root/block-ip.sh 123.10.0.0
+```
+
+
 
 ### Linux User setup: Adding SSH user with sudo
 
