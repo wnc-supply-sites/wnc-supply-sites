@@ -123,11 +123,33 @@
   </div>
 </div>
 
-
-<h4>Privately Visible Data - visible to authenticated users only</h4>
+<h4>Supply Receiving Capabilities - visible to authenticated users only</h4>
 
 <div class="data-entry-div vertical">
+  <div class="data-field vertical">
+    <div class="horizontal">
+      <input type="checkbox" id="haveForklift" /><label for="haveForklift">Have Forklift</label>
+    </div>
+    <div class="horizontal">
+      <input type="checkbox" id="haveLoadingDock" /><label for="haveLoadingDock">Have Loading Dock</label>
+    </div>
+    <div class="horizontal">
+      <input type="checkbox" id="haveIndoorStorage" /><label for="haveIndoorStorage">Have Indoor Storage</label>
+    </div>
 
+    <div>
+      <button onclick="showUpdateConfirmation({{siteId}}, 'receiving capabilities')" class="update-button">Update</button>
+      <div class="green-check hidden" id="receiving capabilities-update-confirm-checkmark">&#10003;</div>
+    </div>
+    <div id="receiving capabilities-update-confirm" class="confirm-text"></div>
+
+  </div>
+</div>
+
+
+<h4>Contact Info - visible to authenticated users only</h4>
+
+<div class="data-entry-div vertical">
     <div class="data-field vertical">
       <label for="Contact Name">Contact Name: </label>
       <div class="horizontal">
