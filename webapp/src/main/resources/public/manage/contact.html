@@ -19,7 +19,18 @@
 </div>
 
 <h2>{{siteName}}</h2>
-<h3>Site Info & Contact</h3>
+
+<div class="larger">
+  <ul>
+    <li><a href="#address">Site Name & Address</a></li>
+    <li><a href="#receiving">Receiving Capabilities</a></li>
+    <li><a href="#contactInfo">Contact Numbers</a></li>
+  </ul>
+</div>
+
+
+<a id="address"></a>
+<h3>Site Info & Contact - publicly visible</h3>
 
 <div id="data-entry">
   <div class="data-entry-div vertical">
@@ -113,7 +124,7 @@
       <div class="horizontal">
         <textarea id="Site Hours" rows="5" cols="20">{{hours}}</textarea>
         <div>
-           <button onclick="showUpdateConfirmation({{siteId}}, 'Site Hours')" class="update-button">Update</button>
+          <button onclick="showUpdateConfirmation({{siteId}}, 'Site Hours')" class="update-button">Update</button>
         </div>
         <div class="green-check hidden" id="Site Hours-update-confirm-checkmark">&#10003;</div>
       </div>
@@ -123,54 +134,96 @@
   </div>
 </div>
 
-<h4>Supply Receiving Capabilities - visible to authenticated users only</h4>
+
+<a id="receiving"></a>
+<h3>Supply Receiving Capabilities - visible to authenticated users only</h3>
 
 <div class="data-entry-div vertical">
+
   <div class="data-field vertical">
     <div class="horizontal">
-      <input type="checkbox" id="haveForklift" /><label for="haveForklift">Have Forklift</label>
+      <input type="checkbox" id="haveForklift"/><label for="haveForklift">Have Forklift</label>
     </div>
     <div class="horizontal">
-      <input type="checkbox" id="haveLoadingDock" /><label for="haveLoadingDock">Have Loading Dock</label>
+      <input type="checkbox" id="haveLoadingDock"/><label for="haveLoadingDock">Have Loading Dock</label>
     </div>
     <div class="horizontal">
-      <input type="checkbox" id="haveIndoorStorage" /><label for="haveIndoorStorage">Have Indoor Storage</label>
+      <input type="checkbox" id="haveIndoorStorage"/><label for="haveIndoorStorage">Have Indoor Storage</label>
     </div>
 
     <div>
-      <button onclick="showUpdateConfirmation({{siteId}}, 'receiving capabilities')" class="update-button">Update</button>
+      <button onclick="updateReceivingCapabilities({{siteId}})" class="update-button">Update
+      </button>
       <div class="green-check hidden" id="receiving capabilities-update-confirm-checkmark">&#10003;</div>
     </div>
     <div id="receiving capabilities-update-confirm" class="confirm-text"></div>
+  </div>
 
+  <div class="data-field vertical">
+    <div>
+      <dl>
+        <dt>Max Supply Load</dt>
+        <dd>
+          <select id="max supply load">
+            {{#maxSupplyDeliveryOptions}}
+            <option value="{{name}}" {{#selected}}selected{{
+            /selected}}>{{name}}</option>
+            {{/maxSupplyDeliveryOptions}}
+          </select>
+        </dd>
+      </dl>
+    </div>
+    <div>
+      <button onclick="updateMaxSupplyLoad({{siteId}})" class="update-button">Update
+      </button>
+      <div class="green-check hidden" id="max supply load-update-confirm-checkmark">&#10003;</div>
+    </div>
+    <div id="max supply load-update-confirm" class="confirm-text"></div>
+  </div>
+
+
+  <div class="data-field vertical">
+    <div>
+      <dl>
+        <dt>Receiving Notes/Instructions</dt>
+        <dd><textarea cols="20" rows="3" id="receiving-notes"></textarea></dd>
+      </dl>
+    </div>
+
+    <div>
+      <button onclick="updateReceivingCapabilities({{siteId}})" class="update-button">Update
+      </button>
+      <div class="green-check hidden" id="receiving notes-update-confirm-checkmark">&#10003;</div>
+    </div>
+    <div id="receiving notes-update-confirm" class="confirm-text"></div>
   </div>
 </div>
 
-
-<h4>Contact Info - visible to authenticated users only</h4>
+<a id="contactInfo"></a>
+<h3>Contact Info - visible to authenticated users only</h3>
 
 <div class="data-entry-div vertical">
-    <div class="data-field vertical">
-      <label for="Contact Name">Contact Name: </label>
-      <div class="horizontal">
-        <input id="Contact Name" type="text" class="shortTextField" value="{{siteContactName}}" maxlength="24"
-               placeholder="Contact person name"/>
-        <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Name')" class="update-button">Update</button>
-        <div class="green-check hidden" id="Contact Name-update-confirm-checkmark">&#10003;</div>
-      </div>
-      <div id="Contact Name-update-confirm" class="confirm-text"></div>
+  <div class="data-field vertical">
+    <label for="Contact Name">Contact Name: </label>
+    <div class="horizontal">
+      <input id="Contact Name" type="text" class="shortTextField" value="{{siteContactName}}" maxlength="24"
+             placeholder="Contact person name"/>
+      <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Name')" class="update-button">Update</button>
+      <div class="green-check hidden" id="Contact Name-update-confirm-checkmark">&#10003;</div>
     </div>
+    <div id="Contact Name-update-confirm" class="confirm-text"></div>
+  </div>
 
-    <div class="data-field vertical">
-      <label for="Contact Number">Contact Number: </label>
-      <div class="horizontal">
-        <input id="Contact Number" type="text" class="shortTextField" value="{{siteContactNumber}}" maxlength="24"
-               placeholder="555-555-5555"/>
-        <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Number')" class="update-button">Update</button>
-        <div class="green-check hidden" id="Contact Number-update-confirm-checkmark">&#10003;</div>
-      </div>
-      <div id="Contact Number-update-confirm" class="confirm-text"></div>
+  <div class="data-field vertical">
+    <label for="Contact Number">Contact Number: </label>
+    <div class="horizontal">
+      <input id="Contact Number" type="text" class="shortTextField" value="{{siteContactNumber}}" maxlength="24"
+             placeholder="555-555-5555"/>
+      <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Number')" class="update-button">Update</button>
+      <div class="green-check hidden" id="Contact Number-update-confirm-checkmark">&#10003;</div>
     </div>
+    <div id="Contact Number-update-confirm" class="confirm-text"></div>
+  </div>
 
   {{^onboarded}}
   <div class="data-field vertical">
@@ -187,22 +240,23 @@
   {{/onboarded}}
 
   <div class="data-field vertical">
-      <label for="Contact Number">Contact Email: </label>
-      <div class="horizontal">
-        <input id="Contact Email" type="text" class="shortTextField" value="{{siteContactEmail}}" maxlength="24"
-               placeholder="your-email@domain.com"/>
-        <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Email')" class="update-button">Update</button>
-        <div class="green-check hidden" id="Contact Email-update-confirm-checkmark">&#10003;</div>
-      </div>
-      <div id="Contact Email-update-confirm" class="confirm-text"></div>
+    <label for="Contact Number">Contact Email: </label>
+    <div class="horizontal">
+      <input id="Contact Email" type="text" class="shortTextField" value="{{siteContactEmail}}" maxlength="24"
+             placeholder="your-email@domain.com"/>
+      <button onclick="showUpdateConfirmation({{siteId}}, 'Contact Email')" class="update-button">Update</button>
+      <div class="green-check hidden" id="Contact Email-update-confirm-checkmark">&#10003;</div>
     </div>
+    <div id="Contact Email-update-confirm" class="confirm-text"></div>
+  </div>
 
   <div class="data-field vertical">
     <label for="Additional Contacts">Additional Contacts: </label>
     <div class="horizontal">
       <textarea cols="20" rows="4" id="Additional Contacts" maxlength="256">{{additionalContacts}}</textarea>
       <div>
-        <button onclick="showUpdateConfirmation({{siteId}}, 'Additional Contacts')" class="update-button">Update</button>
+        <button onclick="showUpdateConfirmation({{siteId}}, 'Additional Contacts')" class="update-button">Update
+        </button>
       </div>
       <div class="green-check hidden" id="Additional Contacts-update-confirm-checkmark">&#10003;</div>
     </div>
@@ -210,16 +264,35 @@
   </div>
 </div>
 
+
 <script>
   const countyMapByState = new Map();
-  {{#fullCountyList}}
-  {{#entrySet}}
-  countyMapByState['{{key}}']  = countyMapByState['{{key}}'] || [];
-  {{#value}}
+  {
+    {
+      #fullCountyList
+    }
+  }
+  {
+    {
+      #entrySet
+    }
+  }
+  countyMapByState['{{key}}'] = countyMapByState['{{key}}'] || [];
+  {
+    {
+      #value
+    }
+  }
   countyMapByState['{{key}}'].push('{{.}}');
-  {{/value}}
-  {{/entrySet}}
-  {{/fullCountyList}}
+  {
+    {
+      /value}}
+      {
+        {
+          /entrySet}}
+          {
+            {
+              /fullCountyList}}
 </script>
 </body>
 </html>
