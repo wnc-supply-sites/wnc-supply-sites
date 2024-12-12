@@ -31,32 +31,6 @@ public class SiteStatusController {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
 
-  /** Info update for a site, eg: site-rename, site contact info changed. */
-  @PostMapping("/manage/update-site")
-  @ResponseBody
-  ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
-    log.info("Update site data request received: {}", params);
-
-    String siteId = params.get("siteId");
-    String field = params.get("field");
-    String newValue = params.get("newValue");
-
-    if (newValue != null) {
-      newValue = newValue.trim();
-    }
-
-    if (fetchSiteName(siteId) == null) {
-      log.warn("invalid site id: {}, request: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    var siteField = ManageSiteDao.SiteField.lookupField(field);
-    ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
-    log.info("Site updated: {}", params);
-    sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
-
-    return ResponseEntity.ok().body("Updated");
-  }
 
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status")
