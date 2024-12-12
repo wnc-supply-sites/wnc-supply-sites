@@ -140,6 +140,37 @@ sudo /root/block-ip.sh 123.10.0.0
 
 
 
+### DB Updates
+
+Check for the  'schema/' folder
+https://github.com/DanVanAtta/wnc-supply-sites/tree/master/schema
+
+Create a new file in there and put the SQL commands in there.
+
+Then run the SQL by connecting to each DB and copy/pasting in the commands.
+Do this 4 times:
+- first on localhost: wnc_helene_test. (unit tests use this DB)
+- second on localhost: wnc_helene (building app locally will use this)
+- then on the server: wnc_helene_test (for the staging environment)
+  - there is a chance to reboot staging app and do testing
+- then on server for prod: wnc_helene-> then reboot the app
+
+It is assumed that any SQL migrations will all be applied before
+we roll any application updates. Make sure SQL updates get applied!
+
+Ideally Flyway would be part of the build process, we would package
+up a flyway with the scheme migration files and could simply
+run  migrations that way.. One day maybe..
+
+
+### How to Rollback:
+
+Do a revert to rollback commits. Push to master. Repeat the deployment
+process. Document any rollback SQL updates in a new schema migration
+file (`/schem`a` folder)
+
+
+
 ### Linux User setup: Adding SSH user with sudo
 
 * Requires a public SSH key
