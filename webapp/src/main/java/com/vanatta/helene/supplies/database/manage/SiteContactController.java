@@ -61,7 +61,9 @@ public class SiteContactController {
     pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));
     pageParams.put(
         "additionalContacts", Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
-        
+    pageParams.put("onboarded", data.isOnboarded());
+    pageParams.put("badNumbers", Optional.ofNullable(data.getBadNumbers()).orElse(""));
+    
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     pageParams.put("fullCountyList", counties);
     pageParams.put(STATE_LIST, createItemListing(data.getState(), counties.keySet()));
