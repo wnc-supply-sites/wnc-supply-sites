@@ -13,6 +13,7 @@ class SiteContactControllerTest {
   SiteContactController siteContactController =
       new SiteContactController(TestConfiguration.jdbiTest, SendSiteUpdate.newDisabled());
 
+  /** Make sure that the county listing displayed has the correct county selected for a given site */
   @Test
   void manageContactSelectsCorrectCounty() {
     long siteId = TestConfiguration.getSiteId();
@@ -21,9 +22,9 @@ class SiteContactControllerTest {
 
     ModelAndView result = siteContactController.showSiteContactPage(String.valueOf(siteId));
 
-    List<SelectSiteController.ItemListing> countyListResult =
-        (List<SelectSiteController.ItemListing>)
-            result.getModelMap().get(SelectSiteController.COUNTY_LIST);
+    List<SiteContactController.ItemListing> countyListResult =
+        (List<SiteContactController.ItemListing>)
+            result.getModelMap().get(SiteContactController.COUNTY_LIST);
 
     // validate that all listings are populated with non-null data
     countyListResult.forEach(
@@ -49,6 +50,7 @@ class SiteContactControllerTest {
         .forEach(r -> assertThat(r.getSelected()).isEmpty());
   }
 
+  /** Make sure state list has the correct state selected for a given site */
   @Test
   void manageContactSelectsCorrectState() {
     long siteId = TestConfiguration.getSiteId();
@@ -57,9 +59,9 @@ class SiteContactControllerTest {
 
     ModelAndView result = siteContactController.showSiteContactPage(String.valueOf(siteId));
 
-    List<SelectSiteController.ItemListing> stateListing =
-        (List<SelectSiteController.ItemListing>)
-            result.getModelMap().get(SelectSiteController.STATE_LIST);
+    List<SiteContactController.ItemListing> stateListing =
+        (List<SiteContactController.ItemListing>)
+            result.getModelMap().get(SiteContactController.STATE_LIST);
 
     // validate that all listings are populated with non-null data
     stateListing.forEach(

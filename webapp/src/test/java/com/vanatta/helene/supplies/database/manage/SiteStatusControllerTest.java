@@ -91,11 +91,11 @@ class SiteStatusControllerTest {
 
     @Test
     void updateSiteInactiveReasons() {
-      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.INACTIVE_REASON, false);
+      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.INACTIVE_REASON, "site is inactive");
       var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-      assertThat(details.getInactiveReason()).isEqualTo("");
+      assertThat(details.getInactiveReason()).isEqualTo("site is inactive");
 
-      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.INACTIVE_REASON, true);
+      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.INACTIVE_REASON, "");
       details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.getInactiveReason()).isEqualTo("");
     }

@@ -69,8 +69,6 @@ public class SelectSiteController {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
 
-  static final String COUNTY_LIST = "countyList";
-  static final String STATE_LIST = "stateList";
 
   public static List<ItemListing> createItemListing(
       String selectedValue, Collection<String> allValues) {
