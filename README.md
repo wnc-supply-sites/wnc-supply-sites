@@ -2,6 +2,8 @@
 
 Live URL: [https://wnc-supply-sites.com]
 
+Staging: [https://staging.wnc-supply-sites.com]
+
 Webapp for Hurricane Helene disaster relief. The website provides
 a search and simple inventory management interface for supply sites.
 This allows supply sites to indicate their needs, urgent & surplus
