@@ -34,7 +34,9 @@ insert into site(
   distributing_supplies,
   has_forklift,
   has_indoor_storage,
-  has_loading_dock)
+  has_loading_dock,
+  max_supply_load_id,
+  inactive_reason)
 values (
         'site1',
         'contact me',
@@ -55,7 +57,9 @@ values (
         true,
         true,
         true,
-        true
+        true,
+        (select id from max_supply_load where name = 'Car'),
+        'inactive reason text'
        );
 
 -- site2, in Buncombe county, not accepting donations

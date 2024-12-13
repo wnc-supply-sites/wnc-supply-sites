@@ -96,10 +96,17 @@ public class SendSiteUpdate {
               s.active,
               s.publicly_visible,
               s.hours,
-              s.additional_contacts
+              s.additional_contacts,
+              msl.name maxSupplyTruckSize,
+              s.has_forklift,
+              s.has_indoor_storage,
+              s.has_loading_dock,
+              s.onboarded,
+              s.inactive_reason
             from site s
             join county c on c.id = s.county_id
             join site_type st on st.id = s.site_type_id
+            left join max_supply_load msl on msl.id = s.max_supply_load_id
             where s.id = :siteId
             """;
 
@@ -142,6 +149,14 @@ public class SendSiteUpdate {
     boolean publiclyVisible;
     boolean acceptingDonations;
     boolean distributingSupplies;
+
+    String maxSupplyTruckSize;
+    boolean hasForkLift;
+    boolean hasIndoorStorage;
+    boolean hasLoadingDock;
+
+    boolean onboarded;
+    String inactiveReason;
   }
 
   /** JSON representation, to be sent externally. */
@@ -167,6 +182,13 @@ public class SendSiteUpdate {
     String hours;
     boolean active;
     boolean publiclyVisible;
+
+    String maxSupplyTruckSize;
+    boolean hasForkLift;
+    boolean hasIndoorStorage;
+    boolean hasLoadingDock;
+    boolean onboarded;
+    String inactiveReason;
 
     SiteExportJson(SiteExportDataResult result) {
       this.wssId = result.wssId;
@@ -204,6 +226,14 @@ public class SendSiteUpdate {
       } else {
         this.donationStatus = DonationStatus.NOT_ACCEPTING_DONATIONS.getTextValue();
       }
+
+      this.maxSupplyTruckSize = result.getMaxSupplyTruckSize();
+      this.hasForkLift = result.hasForkLift;
+      this.hasIndoorStorage = result.hasIndoorStorage;
+      this.hasLoadingDock = result.hasLoadingDock;
+
+      this.onboarded = result.onboarded;
+      this.inactiveReason = result.getInactiveReason();
     }
   }
 }

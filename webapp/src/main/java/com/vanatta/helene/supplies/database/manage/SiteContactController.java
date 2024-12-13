@@ -94,7 +94,7 @@ public class SiteContactController {
     pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
     pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
 
-    List<ItemListing> maxSupplyOptions = new ArrayList();
+    List<ItemListing> maxSupplyOptions = new ArrayList<>();
     maxSupplyOptions.add(
         ItemListing.builder()
             .name("")
@@ -233,6 +233,7 @@ public class SiteContactController {
     
     ManageSiteDao.updateReceivingCapabilities(jdbi, siteId, capabilities);
     
+    sendSiteUpdate.sendFullUpdate(siteId);
     return ResponseEntity.ok().body("updated");
   }
 }
