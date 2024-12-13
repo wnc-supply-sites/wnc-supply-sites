@@ -16,7 +16,7 @@ async function showUpdateConfirmation(siteId, field) {
 
   try {
     await sendSiteUpdate(siteId, field, newValue)
-    showConfirmations(field);
+    showConfirmations(field, newValue);
   } catch (error) {
     showError(field, error);
   }
@@ -25,7 +25,7 @@ async function showUpdateConfirmation(siteId, field) {
 /** Invoke this when we have done the update to webserver and need
  * to show confirmation messaging to the user.
  */
-function showConfirmations(field) {
+function showConfirmations(field, newValue) {
   document.getElementById(field + "-update-confirm-checkmark").style.display = 'block';
 
   setTimeout(function () {
@@ -36,6 +36,9 @@ function showConfirmations(field) {
   if (newValue === "") {
     document.getElementById(field + "-update-confirm").innerHTML =
         `${field} was deleted`;
+  } else if (newValue === "Updated") {
+    document.getElementById(field + "-update-confirm").innerHTML =
+        `${field} was successfully updated`;
   } else {
     document.getElementById(field + "-update-confirm").innerHTML =
         `${field} updated to: ${newValue}`;
@@ -82,16 +85,16 @@ async function updateReceivingCapabilities(siteId) {
 
   try {
     await sendSiteReceivingUpdates(siteId);
-    showConfirmations('receiving capabilities')
+    showConfirmations('receiving capabilities', 'Updated')
   } catch (error) {
     showError('receiving capabilities', error);
   }
 }
 
 async function sendSiteReceivingUpdates(siteId) {
-  const hasForklift = document.getElementById("hasForklift");
-  const hasLoadingDock = document.getElementById("hasLoadingDock");
-  const hasIndoorStorage = document.getElementById("hasIndoorStorage");
+  const hasForklift = document.getElementById("hasForklift").checked;
+  const hasLoadingDock = document.getElementById("hasLoadingDock").checked;
+  const hasIndoorStorage = document.getElementById("hasIndoorStorage").checked;
 
   const url = "/manage/update-site-receiving";
 
@@ -103,7 +106,7 @@ async function sendSiteReceivingUpdates(siteId) {
     },
     body: JSON.stringify({
       siteId: siteId,
-      hasForkList: hasForklift,
+      hasForkLift: hasForklift,
       hasLoadingDock: hasLoadingDock,
       hasIndoorStorage: hasIndoorStorage
     })

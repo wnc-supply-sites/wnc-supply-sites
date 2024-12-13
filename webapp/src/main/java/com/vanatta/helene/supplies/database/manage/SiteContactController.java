@@ -3,6 +3,8 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -55,38 +57,89 @@ public class SiteContactController {
     SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, siteId);
     if (data == null) {
       return Optional.empty();
-      //      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
-
-    /*
-    String siteName = ManageSiteDao.fetchSiteName(jdbi, siteId);
-    if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi);
-    }
-    */
 
     Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("siteId", siteId);
-    pageParams.put("siteName", data.getSiteName());
-    pageParams.put("address", data.getAddress());
-    pageParams.put("city", Optional.ofNullable(data.getCity()).orElse(""));
-    pageParams.put("website", Optional.ofNullable(data.getWebsite()).orElse(""));
-    pageParams.put("facebook", Optional.ofNullable(data.getFacebook()).orElse(""));
-    pageParams.put("hours", Optional.ofNullable(data.getHours()).orElse(""));
-    pageParams.put("siteContactName", Optional.ofNullable(data.getContactName()).orElse(""));
-    pageParams.put("siteContactEmail", Optional.ofNullable(data.getContactEmail()).orElse(""));
-    pageParams.put("siteContactNumber", Optional.ofNullable(data.getContactNumber()).orElse(""));
+    pageParams.put(PageParam.SITE_ID.text, siteId);
+    pageParams.put(PageParam.SITE_NAME.text, data.getSiteName());
+    pageParams.put(PageParam.ADDRESS.text, data.getAddress());
+    pageParams.put(PageParam.CITY.text, Optional.ofNullable(data.getCity()).orElse(""));
+    pageParams.put(PageParam.WEBSITE.text, Optional.ofNullable(data.getWebsite()).orElse(""));
+    pageParams.put(PageParam.FACEBOOK.text, Optional.ofNullable(data.getFacebook()).orElse(""));
+    pageParams.put(PageParam.HOURS.text, Optional.ofNullable(data.getHours()).orElse(""));
     pageParams.put(
-        "additionalContacts", Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
-    pageParams.put("onboarded", data.isOnboarded());
-    pageParams.put("badNumbers", Optional.ofNullable(data.getBadNumbers()).orElse(""));
+        PageParam.SITE_CONTACT_NAME.text, Optional.ofNullable(data.getContactName()).orElse(""));
+    pageParams.put(
+        PageParam.SITE_CONTACT_EMAIL.text, Optional.ofNullable(data.getContactEmail()).orElse(""));
+    pageParams.put(
+        PageParam.SITE_CONTACT_NUMBER.text,
+        Optional.ofNullable(data.getContactNumber()).orElse(""));
+    pageParams.put(
+        PageParam.ADDITIONAL_CONTACTS.text,
+        Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
+    pageParams.put(PageParam.ONBOARDED.text, data.isOnboarded());
+    pageParams.put(
+        PageParam.BAD_NUMBERS.text, Optional.ofNullable(data.getBadNumbers()).orElse(""));
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
-    pageParams.put("fullCountyList", counties);
-    pageParams.put(STATE_LIST, createItemListing(data.getState(), counties.keySet()));
-    pageParams.put(COUNTY_LIST, createItemListing(data.getCounty(), counties.get(data.getState())));
+    pageParams.put(PageParam.FULL_COUNTY_LIST.text, counties);
+    pageParams.put(
+        PageParam.STATE_LIST.text, createItemListing(data.getState(), counties.keySet()));
+    pageParams.put(
+        PageParam.COUNTY_LIST.text,
+        createItemListing(data.getCounty(), counties.get(data.getState())));
+
+    pageParams.put(PageParam.HAS_FORKLIST.text, data.isHasForklift());
+    pageParams.put(PageParam.HAS_INDOOR_STORAGE.text, data.isHasIndoorStorage());
+    pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
+    pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
+
+    List<ItemListing> maxSupplyOptions = new ArrayList();
+    maxSupplyOptions.add(
+        ItemListing.builder()
+            .name("")
+            .selected(data.getMaxSupply() == null ? "selected" : null)
+            .build());
+
+    maxSupplyOptions.addAll(
+        ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
+            .map(
+                v ->
+                    ItemListing.builder()
+                        .name(v)
+                        .selected(v.equals(data.getMaxSupply()) ? "selected" : null)
+                        .build())
+            .toList());
+    pageParams.put(PageParam.MAX_SUPPLY_OPTIONS.text, maxSupplyOptions);
 
     return Optional.of(pageParams);
+  }
+
+  @AllArgsConstructor
+  enum PageParam {
+    SITE_ID("siteId"),
+    SITE_NAME("siteName"),
+    ADDRESS("address"),
+    CITY("city"),
+    WEBSITE("website"),
+    FACEBOOK("facebook"),
+    HOURS("hours"),
+    SITE_CONTACT_NAME("siteContactName"),
+    SITE_CONTACT_EMAIL("siteContactEmail"),
+    SITE_CONTACT_NUMBER("siteContactNumber"),
+    ADDITIONAL_CONTACTS("additionalContacts"),
+    ONBOARDED("onboarded"),
+    BAD_NUMBERS("badNumbers"),
+    FULL_COUNTY_LIST("fullCountyList"),
+    STATE_LIST("stateList"),
+    COUNTY_LIST("countyList"),
+    MAX_SUPPLY_OPTIONS("maxSupplyDeliveryOptions"),
+    HAS_FORKLIST("hasForklift"),
+    HAS_LOADING_DOCK("hasLoadingDock"),
+    HAS_INDOOR_STORAGE("hasIndoorStorage"),
+    RECEIVING_NOTES("receivingNotes"),
+    ;
+    final String text;
   }
 
   public static List<ItemListing> createItemListing(
@@ -110,38 +163,76 @@ public class SiteContactController {
     /** Should either be blank, or "selected" */
     String selected;
   }
-  
-  
+
   /** Info update for a site, eg: site-rename, site contact info changed. */
   @PostMapping("/manage/update-site")
   @ResponseBody
   ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
     log.info("Update site data request received: {}", params);
-    
+
     String siteId = params.get("siteId");
     String field = params.get("field");
     String newValue = params.get("newValue");
-    
+
     if (newValue != null) {
       newValue = newValue.trim();
     }
-    
+
     if (fetchSiteName(siteId) == null) {
-      log.warn("invalid site id: {}, request: {}", siteId, params);
+      log.warn("invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
-    
-    var siteField = ManageSiteDao.SiteField.lookupField(field);
+
+    var siteField = ManageSiteDao.SiteField.lookupField(field).orElse(null);
+    if (siteField == null) {
+      log.warn("Invalid field requested for update: {}, params: {}", field, params);
+      return ResponseEntity.badRequest().body("Invalid field: " + field);
+    }
     ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
     log.info("Site updated: {}", params);
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
-    
+
     return ResponseEntity.ok().body("Updated");
   }
-  
+
   /** Returns null if ID is not valid or DNE. */
   private String fetchSiteName(String siteId) {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
   
+  
+  @AllArgsConstructor
+  enum SiteReceivingParam {
+    SITE_ID("siteId"),
+    HAS_FORKLIFT("hasForkLift"),
+    HAS_LOADING_DOCK("hasLoadingDock"),
+    HAS_INDOOR_STORAGE("hasIndoorStorage")
+    ;
+    
+    final String text;
+  }
+  
+  @PostMapping("/manage/update-site-receiving")
+  ResponseEntity<?> updateSiteReceiving(@RequestBody Map<String, String> params) {
+    log.info("Update site receiving request received: {}", params);
+    boolean hasAllData = params
+        .keySet()
+        .containsAll(Arrays.stream(SiteReceivingParam.values()).map(v -> v.text).toList());
+    if(!hasAllData) {
+      log.warn("Bad request received to update site data, missing input. Received: {}", params);
+      return ResponseEntity.badRequest().body("Bad request - missing data");
+    }
+    
+    long siteId = Long.parseLong(params.get(SiteReceivingParam.SITE_ID.text));
+    
+    var capabilities = ManageSiteDao.ReceivingCapabilities.builder()
+        .forklift(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_FORKLIFT.text)))
+        .loadingDock(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_LOADING_DOCK.text)))
+        .indoorStorage(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_INDOOR_STORAGE.text)))
+        .build();
+    
+    ManageSiteDao.updateReceivingCapabilities(jdbi, siteId, capabilities);
+    
+    return ResponseEntity.ok().body("updated");
+  }
 }

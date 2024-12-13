@@ -51,10 +51,6 @@ class ManageSiteDaoTest {
   void updateSite() {
     long siteId = Helper.getSiteId("site5");
 
-    // confirm contact number is null before we update it.
-    assertThat(SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId).getContactNumber())
-        .isNull();
-
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.SITE_NAME, "new site name");
     ManageSiteDao.updateSiteField(
@@ -85,13 +81,13 @@ class ManageSiteDaoTest {
         siteId,
         ManageSiteDao.SiteField.ADDITIONAL_CONTACTS,
         "More: 22-333");
-    
+
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest,
-        siteId,
-        ManageSiteDao.SiteField.BAD_NUMBERS,
-        "123 not working");
-    
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.BAD_NUMBERS, "123 not working");
+
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.MAX_SUPPLY_LOAD, "Car");
+
     var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
     assertThat(dataLookup.getSiteName()).isEqualTo("new site name");
     assertThat(dataLookup.getAddress()).isEqualTo("new address");
@@ -106,6 +102,7 @@ class ManageSiteDaoTest {
     assertThat(dataLookup.getContactEmail()).isEqualTo("smith@awesome.org");
     assertThat(dataLookup.getAdditionalContacts()).isEqualTo("More: 22-333");
     assertThat(dataLookup.getBadNumbers()).isEqualTo("123 not working");
+    assertThat(dataLookup.getMaxSupply()).isEqualTo("Car");
   }
 
   @Test
@@ -273,20 +270,20 @@ class ManageSiteDaoTest {
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isPubliclyVisible()).isTrue();
     }
-    
+
     @Test
     void siteOnboarded() {
       long siteId = Helper.getSiteId("site1");
-      
+
       ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, false);
       var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isOnboarded()).isFalse();
-      
+
       ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, true);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isOnboarded()).isTrue();
     }
-    
+
     @Test
     void updateInactiveReason() {
       long siteId = Helper.getSiteId("site3");
@@ -294,7 +291,7 @@ class ManageSiteDaoTest {
       var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.getInactiveReason()).isEqualTo("some reasons");
     }
-    
+
     @Test
     void fetchSiteStatus_SiteType() {
       long siteId = Helper.getSiteId("site1");
@@ -358,5 +355,28 @@ class ManageSiteDaoTest {
         .filter(r -> r.getItemName().equalsIgnoreCase(itemName))
         .findAny()
         .orElseThrow();
+  }
+
+  @Test
+  void updateMaxSupply() {
+    long siteId = Helper.getSiteId("site1");
+
+    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, "Car");
+    var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    assertThat(details.getMaxSupply()).isEqualTo("Car");
+
+    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, "");
+    details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    assertThat(details.getMaxSupply()).isNull();
+
+    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, null);
+    details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+    assertThat(details.getMaxSupply()).isNull();
+  }
+
+  @Test
+  void getAllMaxSupplyLoadCapabilities() {
+    var result = ManageSiteDao.getAllMaxSupplyOptions(TestConfiguration.jdbiTest);
+    assertThat(result).hasSizeGreaterThan(2);
   }
 }

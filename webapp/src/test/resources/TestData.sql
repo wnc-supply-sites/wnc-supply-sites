@@ -1,3 +1,4 @@
+
 delete from site_item_audit;
 delete from site_item;
 delete from item;
@@ -30,7 +31,10 @@ insert into site(
   facebook,
   wss_id,
   publicly_visible,
-  distributing_supplies)
+  distributing_supplies,
+  has_forklift,
+  has_indoor_storage,
+  has_loading_dock)
 values (
         'site1',
         'contact me',
@@ -47,6 +51,9 @@ values (
         'our hours',
         'fb url',
         -10,
+        true,
+        true,
+        true,
         true,
         true
        );

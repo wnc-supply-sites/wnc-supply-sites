@@ -48,6 +48,11 @@ public class SiteDetailDao {
     boolean onboarded;
     String badNumbers;
     String inactiveReason;
+    String maxSupply;
+    boolean hasForklift;
+    boolean hasLoadingDock;
+    boolean hasIndoorStorage;
+    String receivingNotes;
   }
 
   @Nullable
@@ -78,10 +83,16 @@ public class SiteDetailDao {
                               s.wss_id,
                               s.onboarded,
                               s.bad_numbers,
-                              s.inactive_reason
+                              s.inactive_reason,
+                              msl.name maxSupply,
+                              s.has_forklift,
+                              s.has_loading_dock,
+                              s.has_indoor_storage,
+                              s.receiving_notes
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id
+                            left join max_supply_load msl on msl.id = s.max_supply_load_id
                             where s.id = :siteId
                             """)
                 .bind("siteId", idToLookup)

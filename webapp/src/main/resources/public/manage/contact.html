@@ -142,16 +142,19 @@
 
   <div class="data-field vertical">
     <div class="horizontal">
-      <input type="checkbox" id="haveForklift"/><label for="haveForklift">Have Forklift</label>
+      <input type="checkbox" id="hasForklift" {{#hasForklift}}checked{{/hasForklift}}>
+      <label for="hasForklift">Have Forklift</label>
     </div>
     <div class="horizontal">
-      <input type="checkbox" id="haveLoadingDock"/><label for="haveLoadingDock">Have Loading Dock</label>
+      <input type="checkbox" id="hasLoadingDock" {{#hasLoadingDock}}checked{{/hasLoadingDock}}>
+      <label for="hasLoadingDock">Have Loading Dock</label>
     </div>
     <div class="horizontal">
-      <input type="checkbox" id="haveIndoorStorage"/><label for="haveIndoorStorage">Have Indoor Storage</label>
+      <input type="checkbox" id="hasIndoorStorage" {{#hasIndoorStorage}}checked{{/hasIndoorStorage}}>
+      <label for="hasIndoorStorage">Have Indoor Storage</label>
     </div>
 
-    <div>
+    <div class="horizontal">
       <button onclick="updateReceivingCapabilities({{siteId}})" class="update-button">Update
       </button>
       <div class="green-check hidden" id="receiving capabilities-update-confirm-checkmark">&#10003;</div>
@@ -166,14 +169,14 @@
         <dd>
           <select id="max supply load">
             {{#maxSupplyDeliveryOptions}}
-            <option value="{{name}}" {{#selected}}selected{{
-            /selected}}>{{name}}</option>
+            <option value="{{name}}"
+                    {{#selected}}selected{{/selected}}>{{name}}</option>
             {{/maxSupplyDeliveryOptions}}
           </select>
         </dd>
       </dl>
     </div>
-    <div>
+    <div class="horizontal">
       <button onclick="showUpdateConfirmation({{siteId}}, 'max supply load')" class="update-button">Update
       </button>
       <div class="green-check hidden" id="max supply load-update-confirm-checkmark">&#10003;</div>
@@ -186,11 +189,11 @@
     <div>
       <dl>
         <dt>Receiving Notes/Instructions</dt>
-        <dd><textarea cols="20" rows="3" maxlength="1024" id="receiving notes"></textarea></dd>
+        <dd><textarea cols="20" rows="3" maxlength="1024" id="receiving notes">{{receivingNotes}}</textarea></dd>
       </dl>
     </div>
 
-    <div>
+    <div class="horizontal">
       <button onclick="showUpdateConfirmation({{siteId}}, 'receiving notes')" class="update-button">Update
       </button>
       <div class="green-check hidden" id="receiving notes-update-confirm-checkmark">&#10003;</div>
@@ -267,32 +270,16 @@
 
 <script>
   const countyMapByState = new Map();
-  {
-    {
-      #fullCountyList
-    }
-  }
-  {
-    {
-      #entrySet
-    }
-  }
-  countyMapByState['{{key}}'] = countyMapByState['{{key}}'] || [];
-  {
-    {
-      #value
-    }
-  }
-  countyMapByState['{{key}}'].push('{{.}}');
-  {
-    {
-      /value}}
-      {
-        {
-          /entrySet}}
-          {
-            {
-              /fullCountyList}}
+  {{#fullCountyList}}
+    // loop over each state
+    {{#entrySet}}
+      countyMapByState['{{key}}'] = countyMapByState['{{key}}'] || [];
+      // add counties
+      {{#value}}
+      countyMapByState['{{key}}'].push('{{.}}');
+      {{/value}}
+    {{/entrySet}}
+  {{/fullCountyList}}
 </script>
 </body>
 </html>

@@ -5,10 +5,13 @@ import com.vanatta.helene.supplies.database.manage.SelectSiteController.SiteSele
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
@@ -21,6 +24,15 @@ public class ManageSiteDao {
             handle
                 .createQuery("select id, name from site order by lower(name)")
                 .mapToBean(SiteSelection.class)
+                .list());
+  }
+
+  public static List<String> getAllMaxSupplyOptions(Jdbi jdbi) {
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery("select name from max_supply_load order by sort_order")
+                .mapTo(String.class)
                 .list());
   }
 
@@ -40,17 +52,16 @@ public class ManageSiteDao {
     CONTACT_EMAIL("contact_email", "Contact Email", false),
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false),
     BAD_NUMBERS("bad_numbers", "Bad Numbers", false),
+    MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false),
+    RECEIVING_NOTES("receiving_notes", "receiving notes", false),
     ;
 
     private final String columnName;
     private final String frontEndName;
     private final boolean required;
 
-    static SiteField lookupField(String name) {
-      return Arrays.stream(SiteField.values())
-          .filter(f -> f.frontEndName.equals(name))
-          .findAny()
-          .orElseThrow(() -> new IllegalArgumentException("Invalid field name: " + name));
+    static Optional<SiteField> lookupField(String name) {
+      return Arrays.stream(SiteField.values()).filter(f -> f.frontEndName.equals(name)).findAny();
     }
   }
 
@@ -77,10 +88,13 @@ public class ManageSiteDao {
       String county = split[0];
       String state = split[1];
       oldValue = updateCounty(jdbi, siteId, county, state);
+    } else if (field == SiteField.MAX_SUPPLY_LOAD) {
+      oldValue = updateMaxSupply(jdbi, siteId, newValue);
     } else {
       oldValue = updateSiteColumn(jdbi, siteId, field, newValue);
     }
-    addToAuditTrail(jdbi, siteId, field, oldValue, newValue);
+    addToAuditTrail(
+        jdbi, siteId, field, oldValue, newValue == null || newValue.isBlank() ? "-" : newValue);
   }
 
   /**
@@ -125,8 +139,61 @@ public class ManageSiteDao {
     return oldValue;
   }
 
+  static String updateMaxSupply(Jdbi jdbi, long siteId, @Nullable String newMaxSupply) {
+
+    String oldValueQuery =
+        """
+        select msl.name
+        from max_supply_load msl
+        join site s on s.max_supply_load_id = msl.id
+        where s.id = :siteId
+        """;
+    String oldValue =
+        jdbi.withHandle(
+                handle ->
+                    handle
+                        .createQuery(oldValueQuery)
+                        .bind("siteId", siteId)
+                        .mapTo(String.class)
+                        .findOne())
+            .orElse("-");
+
+    if (newMaxSupply != null && newMaxSupply.isBlank()) {
+      newMaxSupply = null;
+    }
+    assert newMaxSupply == null || !newMaxSupply.isBlank();
+
+    if (newMaxSupply == null) {
+      // delete case
+      String deleteQuery = "update site set max_supply_load_id = null where id = :siteId";
+      jdbi.withHandle(handle -> handle.createUpdate(deleteQuery).bind("siteId", siteId).execute());
+    } else {
+
+      String update =
+          """
+          update site
+          set max_supply_load_id = (select id from max_supply_load where name = :max)
+          where id = :siteId
+          """;
+      final String maxSupplyValue = newMaxSupply;
+      int updateCount =
+          jdbi.withHandle(
+              handle ->
+                  handle
+                      .createUpdate(update)
+                      .bind("max", maxSupplyValue)
+                      .bind("siteId", siteId)
+                      .execute());
+      if (updateCount == 0) {
+        log.error("Received bad value for max supply load update: {}", newMaxSupply);
+        throw new IllegalArgumentException("Invalid max supply value received: " + newMaxSupply);
+      }
+    }
+
+    return oldValue;
+  }
+
   /** Returns old value and then updates. */
-  //  @VisibleForTesting
   static String updateSiteColumn(Jdbi jdbi, long siteId, SiteField column, String newValue) {
 
     String oldValueQuery =
@@ -362,5 +429,32 @@ public class ManageSiteDao {
                 .bind("siteId", siteId)
                 .bind("siteTypeName", siteType.getText())
                 .execute());
+  }
+  
+  @Builder
+  @Value
+  static class ReceivingCapabilities {
+    boolean forklift;
+    boolean loadingDock;
+    boolean indoorStorage;
+  }
+  
+  static void updateReceivingCapabilities(Jdbi jdbi, long siteId, ReceivingCapabilities receivingCapabilities) {
+    String update =
+        """
+        update site
+        set
+          has_forklift = :forklift,
+          has_loading_dock = :loadingDock,
+          has_indoor_storage = :indoorStorage
+        where id = :siteId
+        """;
+    
+    jdbi.withHandle(handle -> handle.createUpdate(update)
+        .bind("forklift", receivingCapabilities.forklift)
+        .bind("loadingDock", receivingCapabilities.loadingDock)
+        .bind("indoorStorage", receivingCapabilities.indoorStorage)
+        .bind("siteId", siteId)
+        .execute());
   }
 }
