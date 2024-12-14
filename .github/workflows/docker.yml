@@ -31,6 +31,10 @@ jobs:
         if: ${{ env.IS_MASTER_BUILD }}
         run: |
           cd webapp;
+
+          docker build schema/ --tag ghcr.io/danvanatta/wnc-supply-sites/flyway:latest
+          docker push ghcr.io/danvanatta/wnc-supply-sites/flyway:latest
+
           ./gradlew clean bootJar
           docker build . --tag ghcr.io/danvanatta/wnc-supply-sites/webapp:latest
           docker push ghcr.io/danvanatta/wnc-supply-sites/webapp:latest
