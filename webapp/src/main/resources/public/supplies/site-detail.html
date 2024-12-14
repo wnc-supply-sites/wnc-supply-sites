@@ -30,8 +30,6 @@
 
 <h2>{{siteName}}</h2>
 
-<h3>Site Address</h3>
-
 <div class="mission-statement">
   <dl>
     {{#website}}
@@ -52,18 +50,19 @@
     <dd class="detail-value"><textarea rows="5" cols=20" readonly>{{.}}</textarea></dd>
     {{/hours}}
   </dl>
-</div>
 
-<div class="mapouter">
-  <div class="gmap_canvas">
-    <iframe
-        class="gmap_iframe"
-        frameborder="0"
-        scrolling="no"
-        marginheight="0"
-        marginwidth="0"
-        src="https://maps.google.com/maps?width=600&amp;height=500&amp;hl=en&amp;q={{googleMapsAddress}}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-    </iframe>
+  <hr>
+  <div class="mapouter">
+    <div class="gmap_canvas">
+      <iframe
+          class="gmap_iframe"
+          frameborder="0"
+          scrolling="no"
+          marginheight="0"
+          marginwidth="0"
+          src="https://maps.google.com/maps?width=600&amp;height=500&amp;hl=en&amp;q={{googleMapsAddress}}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+      </iframe>
+    </div>
   </div>
 </div>
 
