@@ -73,3 +73,7 @@ table.needs-matching tr {
 .wider-column {
     width: 200px;
 }
+
+.small-right-margin {
+    margin-right: 5px;
+}

@@ -110,6 +110,10 @@ public class SiteDetailController {
             urlEncode(siteDetailData.getState())));
 
     if (isLoggedIn) {
+      siteDetails.put("hasForklift", siteDetailData.isHasForklift());
+      siteDetails.put("hasLoadingDock", siteDetailData.isHasLoadingDock());
+      siteDetails.put("hasIndoorStorage", siteDetailData.isHasIndoorStorage());
+
       siteDetails.put(
           "contactName",
           siteDetailData.getContactName() == null || siteDetailData.getContactName().isBlank()

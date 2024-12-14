@@ -27,3 +27,8 @@
 div.data-field label {
     font-weight: bold;
 }
+
+.checkbox-option {
+    width: 200px;
+    margin-bottom: 5px;
+}

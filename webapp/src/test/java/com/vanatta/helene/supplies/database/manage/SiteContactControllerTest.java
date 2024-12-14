@@ -37,7 +37,11 @@ class SiteContactControllerTest {
             "siteId", String.valueOf(TestConfiguration.getSiteId()), //
             "field", field.getFrontEndName(),
             "newValue",
-                field.getFrontEndName() + " " + UUID.randomUUID().toString().substring(0, 10));
+                field == ManageSiteDao.SiteField.MAX_SUPPLY_LOAD
+                    ? "Car"
+                    : field.getFrontEndName()
+                        + " "
+                        + UUID.randomUUID().toString().substring(0, 10));
 
     var response = siteContactController.updateSiteData(params);
     assertThat(response.getStatusCode().value()).isEqualTo(200);
@@ -179,36 +183,34 @@ class SiteContactControllerTest {
     assertThat(items)
         .contains(
             SiteContactController.ItemListing.builder().name("Car").selected("selected").build());
-    assertThat(items)
-        .contains(SiteContactController.ItemListing.builder().name("").selected(null).build());
   }
-  
+
   @Test
   void updateSiteReceiving() {
     long siteId = TestConfiguration.getSiteId();
-    
-    Map<String,String> yesToAll = Map.of(
-        SiteContactController.SiteReceivingParam.SITE_ID.text, String.valueOf(siteId),
-        SiteContactController.SiteReceivingParam.HAS_FORKLIFT.text, String.valueOf(true),
-        SiteContactController.SiteReceivingParam.HAS_LOADING_DOCK.text, String.valueOf(true),
-        SiteContactController.SiteReceivingParam.HAS_INDOOR_STORAGE.text, String.valueOf(true)
-    );
-    
+
+    Map<String, String> yesToAll =
+        Map.of(
+            SiteContactController.SiteReceivingParam.SITE_ID.text, String.valueOf(siteId),
+            SiteContactController.SiteReceivingParam.HAS_FORKLIFT.text, String.valueOf(true),
+            SiteContactController.SiteReceivingParam.HAS_LOADING_DOCK.text, String.valueOf(true),
+            SiteContactController.SiteReceivingParam.HAS_INDOOR_STORAGE.text, String.valueOf(true));
+
     var response = siteContactController.updateSiteReceiving(yesToAll);
     assertThat(response.getStatusCode().value()).isEqualTo(200);
     var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
     assertThat(details.isHasForklift()).isTrue();
     assertThat(details.isHasLoadingDock()).isTrue();
     assertThat(details.isHasIndoorStorage()).isTrue();
-    
-    
-    Map<String,String> noToAll = Map.of(
-        SiteContactController.SiteReceivingParam.SITE_ID.text, String.valueOf(siteId),
-        SiteContactController.SiteReceivingParam.HAS_FORKLIFT.text, String.valueOf(false),
-        SiteContactController.SiteReceivingParam.HAS_LOADING_DOCK.text, String.valueOf(false),
-        SiteContactController.SiteReceivingParam.HAS_INDOOR_STORAGE.text, String.valueOf(false)
-        );
-    
+
+    Map<String, String> noToAll =
+        Map.of(
+            SiteContactController.SiteReceivingParam.SITE_ID.text, String.valueOf(siteId),
+            SiteContactController.SiteReceivingParam.HAS_FORKLIFT.text, String.valueOf(false),
+            SiteContactController.SiteReceivingParam.HAS_LOADING_DOCK.text, String.valueOf(false),
+            SiteContactController.SiteReceivingParam.HAS_INDOOR_STORAGE.text,
+                String.valueOf(false));
+
     response = siteContactController.updateSiteReceiving(noToAll);
     details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
     assertThat(response.getStatusCode().value()).isEqualTo(200);

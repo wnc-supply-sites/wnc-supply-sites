@@ -35,7 +35,12 @@ public class AddSiteDao {
           contact_name,
           contact_number,
           contact_email,
-          additional_contacts
+          additional_contacts,
+          max_supply_load_id,
+          has_forklift,
+          has_indoor_storage,
+          has_loading_dock,
+          receiving_notes
         ) values(
           :siteName,
           :address,
@@ -48,7 +53,12 @@ public class AddSiteDao {
           :contactName,
           :contactNumber,
           :contactEmail,
-          :additionalContacts
+          :additionalContacts,
+          (select id from max_supply_load where name = :maxSupplyLoadName),
+          :hasForklift,
+          :hasIndoorStorage,
+          :hasLoadingDock,
+          :receivingNotes
          )
         """;
 
@@ -70,7 +80,15 @@ public class AddSiteDao {
                   .bind("contactNumber", siteData.getContactNumber())
                   .bind("contactEmail", siteData.getContactEmail())
                   .bind("additionalContacts", siteData.getAdditionalContacts())
-                  .executeAndReturnGeneratedKeys("id")
+                  .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
+                  
+                  .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
+                  .bind("hasForklift", siteData.isHasForklift())
+                  .bind("hasIndoorStorage", siteData.isHasIndoorStorage())
+                  .bind("hasLoadingDock", siteData.isHasLoadingDock())
+                  .bind("receivingNotes", siteData.getReceivingNotes())
+          
+          .executeAndReturnGeneratedKeys("id")
                   .mapTo(Long.class)
                   .one());
     } catch (UnableToExecuteStatementException e) {

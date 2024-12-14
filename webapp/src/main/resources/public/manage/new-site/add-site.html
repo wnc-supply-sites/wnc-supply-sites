@@ -18,6 +18,8 @@
   <a href="/manage/select-site">[&larr; Go Back]</a>
 </div>
 
+<h3>Site Info & Contact - publicly visible</h3>
+
 <div id="data-entry">
   <div class="data-entry-div vertical">
 
@@ -92,7 +94,7 @@
 
     <div class="data-field vertical">
       <div class="horizontal">
-        <label for="website">Facebook: </label>
+        <label for="Facebook">Facebook: </label>
       </div>
       <div class="horizontal">
         <input id="Facebook" type="text" class="shortTextField" value="" maxlength="128"
@@ -124,8 +126,52 @@
       </div>
     </div>
 
+    <h3>Supply Receiving Capabilities - visible to authenticated users only</h3>
 
-    <h4>Privately Visible Data - visible to authenticated users only</h4>
+    <div class="data-entry-div vertical">
+
+      <div class="data-field vertical">
+        <div class="horizontal checkbox-option">
+          <input type="checkbox" id="hasForklift"/>
+          <label for="hasForklift">Have Forklift</label>
+        </div>
+        <div class="horizontal checkbox-option">
+          <input type="checkbox" id="hasLoadingDock"/>
+          <label for="hasLoadingDock">Have Loading Dock</label>
+        </div>
+        <div class="horizontal checkbox-option">
+          <input type="checkbox" id="hasIndoorStorage"/>
+          <label for="hasIndoorStorage">Have Indoor Storage</label>
+        </div>
+      </div>
+
+      <div class="data-field vertical">
+        <div>
+          <dl>
+            <dt>Max Supply Load</dt>
+            <dd>
+              <select id="maxSupplyLoad">
+                {{#maxSupplyDeliveryOptions}}
+                <option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/maxSupplyDeliveryOptions}}
+              </select>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="data-field vertical">
+        <div>
+          <dl>
+            <dt>Receiving Notes/Instructions</dt>
+            <dd><textarea cols="20" rows="3" maxlength="1024" id="receivingNotes"></textarea></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+
+    <h3>Privately Visible Data - visible to authenticated users only</h3>
 
     <div class="data-field vertical">
       <div class="horizontal">

@@ -111,6 +111,12 @@ If a controller is 'tight', pretty small and straight forward,
 then the DB access methods might sometimes be directly in the controller.
 Otherwise usually DB access code will be in an adjacent "DAO" class.
 
+### Code Formatting
+
+Use google-java-format Intellij plugin.
+
+Formatting can be applied with gradle 'spotless' plugin: `./gradlew spotlessApply`
+
 
 ### Writing unit tests
 

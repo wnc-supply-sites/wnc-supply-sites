@@ -19,6 +19,13 @@ async function saveNewSite() {
   const siteType = document.getElementById("distributionCenterRadio")
       .checked ? "Distribution Center" : "Supply Hub";
   const siteHours = document.getElementById("Site Hours");
+
+  const hasForkLift = document.getElementById('hasForklift');
+  const hasLoadingDock = document.getElementById('hasLoadingDock');
+  const hasIndoorStorage = document.getElementById('hasIndoorStorage');
+  const maxSupplyLoad = document.getElementById('maxSupplyLoad');
+  const receivingNotes = document.getElementById('receivingNotes');
+
   const contactName = document.getElementById("Contact Name");
   const contactNumber = document.getElementById("Contact Number");
   const contactEmail = document.getElementById("Contact Email");
@@ -47,6 +54,13 @@ async function saveNewSite() {
       facebook: facebook.value.trim(),
       siteType: siteType.trim(),
       siteHours: siteHours.value.trim(),
+
+      hasForklift: hasForkLift.checked,
+      hasLoadingDock: hasLoadingDock.checked,
+      hasIndoorStorage: hasIndoorStorage.checked,
+      maxSupplyLoad: maxSupplyLoad.value,
+      receivingNotes: receivingNotes.value.trim(),
+
       contactName: contactName.value.trim(),
       contactNumber: contactNumber.value.trim(),
       contactEmail: contactEmail.value.trim(),
@@ -63,9 +77,11 @@ async function saveNewSite() {
           const responseJson = await response.json();
           showError("Failed to save: " + responseJson.error);
         }
+        window.scrollTo(0, document.body.scrollHeight);
       },
       function (error) {
         showError("Failed to save, server not available.");
+        window.scrollTo(0, document.body.scrollHeight);
       });
 }
 
@@ -99,6 +115,12 @@ function showSuccess(editSiteUrl, siteName) {
   document.getElementById("Website").value = "";
   document.getElementById("Facebook").value = "";
   document.getElementById("Site Hours").value = "";
+
+  document.getElementById('hasForklift').checked = false;
+  document.getElementById('hasLoadingDock').checked = false;
+  document.getElementById('hasIndoorStorage').checked = false;
+  document.getElementById('receivingNotes').value = "";
+
   document.getElementById("Contact Name").value = "";
   document.getElementById("Contact Number").value = "";
   document.getElementById("Contact Email").value = "";

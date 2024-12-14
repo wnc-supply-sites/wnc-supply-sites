@@ -102,8 +102,10 @@ public class NeedsMatchingDao {
           A.siteName,
           A.siteId,
           A.siteAddress,
-          A.city, county,
-          state, string_agg(A.itemName, ',') as itemName,
+          A.city,
+          county,
+          state,
+          string_agg(A.itemName, ',') as itemName,
           A.itemCount
         from need_match A
         group by
@@ -115,7 +117,7 @@ public class NeedsMatchingDao {
             A.state,
             A.itemCount
         ORDER BY
-            A.itemCount desc, A.siteName
+            A.itemCount desc, A.siteName, itemName
         """;
     return jdbi
         .withHandle(

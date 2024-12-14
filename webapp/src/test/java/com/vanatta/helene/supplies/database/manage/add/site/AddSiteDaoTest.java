@@ -28,6 +28,7 @@ public class AddSiteDaoTest {
           .city("data 1 city")
           .county("Ashe")
           .state("NC")
+          .maxSupplyLoad("Car")
           .build();
 
   private static final AddSiteData siteData2 =
@@ -38,6 +39,7 @@ public class AddSiteDaoTest {
           .city("data 2 city")
           .county("Ashe")
           .state("NC")
+          .maxSupplyLoad("Car")
           .build();
 
   @Test

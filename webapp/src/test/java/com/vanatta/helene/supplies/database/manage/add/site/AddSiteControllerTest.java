@@ -31,6 +31,13 @@ class AddSiteControllerTest {
     newSiteParams.put("facebook", "facebook");
     newSiteParams.put("siteType", SiteType.SUPPLY_HUB.getText());
     newSiteParams.put("siteHours", "siteHours");
+    
+    newSiteParams.put("hasForklift", "true");
+    newSiteParams.put("hasLoadingDock", "true");
+    newSiteParams.put("hasIndoorStorage", "true");
+    newSiteParams.put("maxSupplyLoad", "Car");
+    newSiteParams.put("receivingNotes", "notes");
+    
     newSiteParams.put("contactName", "contactName");
     newSiteParams.put("contactNumber", "contactNumber");
     newSiteParams.put("contactEmail", "contactEmail");
@@ -54,6 +61,13 @@ class AddSiteControllerTest {
     assertThat(data.getFacebook()).isEqualTo("facebook");
     assertThat(data.getSiteType()).isEqualTo(SiteType.SUPPLY_HUB.getText());
     assertThat(data.getHours()).isEqualTo("siteHours");
+    
+    assertThat(data.isHasForklift()).isTrue();
+    assertThat(data.isHasLoadingDock()).isTrue();
+    assertThat(data.isHasIndoorStorage()).isTrue();
+    assertThat(data.getMaxSupply()).isEqualTo("Car");
+    assertThat(data.getReceivingNotes()).isEqualTo("notes");
+    
     assertThat(data.getContactName()).isEqualTo("contactName");
     assertThat(data.getContactNumber()).isEqualTo("contactNumber");
     assertThat(data.getContactEmail()).isEqualTo("contactEmail");

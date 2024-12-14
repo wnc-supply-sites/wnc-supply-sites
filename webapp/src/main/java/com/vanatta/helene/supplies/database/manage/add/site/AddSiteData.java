@@ -20,10 +20,18 @@ public class AddSiteData {
   String facebook;
   @Nonnull SiteType siteType;
   String siteHours;
+  
+  boolean hasForklift;
+  boolean hasLoadingDock;
+  boolean hasIndoorStorage;
+  @Nonnull String maxSupplyLoad;
+  String receivingNotes;
+  
   String contactName;
   String contactNumber;
   String contactEmail;
   String additionalContacts;
+  
 
   @SuppressWarnings("ConstantValue")
   public boolean isMissingRequiredData() {

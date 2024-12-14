@@ -27,12 +27,19 @@ public class ManageSiteDao {
                 .list());
   }
 
-  public static List<String> getAllMaxSupplyOptions(Jdbi jdbi) {
+  @Data
+  public static class MaxSupplyOption {
+    String name;
+    boolean defaultSelection;
+  }
+
+  public static List<MaxSupplyOption> getAllMaxSupplyOptions(Jdbi jdbi) {
     return jdbi.withHandle(
         handle ->
             handle
-                .createQuery("select name from max_supply_load order by sort_order")
-                .mapTo(String.class)
+                .createQuery(
+                    "select name, default_selection from max_supply_load order by sort_order")
+                .mapToBean(MaxSupplyOption.class)
                 .list());
   }
 
@@ -139,8 +146,10 @@ public class ManageSiteDao {
     return oldValue;
   }
 
-  static String updateMaxSupply(Jdbi jdbi, long siteId, @Nullable String newMaxSupply) {
-
+  static String updateMaxSupply(Jdbi jdbi, long siteId, String newMaxSupply) {
+    if (newMaxSupply == null || newMaxSupply.isBlank()) {
+      throw new IllegalArgumentException("Illegal null value for max supply, siteId: " + siteId);
+    }
     String oldValueQuery =
         """
         select msl.name
@@ -158,36 +167,24 @@ public class ManageSiteDao {
                         .findOne())
             .orElse("-");
 
-    if (newMaxSupply != null && newMaxSupply.isBlank()) {
-      newMaxSupply = null;
-    }
-    assert newMaxSupply == null || !newMaxSupply.isBlank();
-
-    if (newMaxSupply == null) {
-      // delete case
-      String deleteQuery = "update site set max_supply_load_id = null where id = :siteId";
-      jdbi.withHandle(handle -> handle.createUpdate(deleteQuery).bind("siteId", siteId).execute());
-    } else {
-
-      String update =
-          """
+    String update =
+        """
           update site
           set max_supply_load_id = (select id from max_supply_load where name = :max)
           where id = :siteId
           """;
-      final String maxSupplyValue = newMaxSupply;
-      int updateCount =
-          jdbi.withHandle(
-              handle ->
-                  handle
-                      .createUpdate(update)
-                      .bind("max", maxSupplyValue)
-                      .bind("siteId", siteId)
-                      .execute());
-      if (updateCount == 0) {
-        log.error("Received bad value for max supply load update: {}", newMaxSupply);
-        throw new IllegalArgumentException("Invalid max supply value received: " + newMaxSupply);
-      }
+    final String maxSupplyValue = newMaxSupply;
+    int updateCount =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(update)
+                    .bind("max", maxSupplyValue)
+                    .bind("siteId", siteId)
+                    .execute());
+    if (updateCount == 0) {
+      log.error("Received bad value for max supply load update: {}", newMaxSupply);
+      throw new IllegalArgumentException("Invalid max supply value received: " + newMaxSupply);
     }
 
     return oldValue;
@@ -430,7 +427,7 @@ public class ManageSiteDao {
                 .bind("siteTypeName", siteType.getText())
                 .execute());
   }
-  
+
   @Builder
   @Value
   static class ReceivingCapabilities {
@@ -438,8 +435,9 @@ public class ManageSiteDao {
     boolean loadingDock;
     boolean indoorStorage;
   }
-  
-  static void updateReceivingCapabilities(Jdbi jdbi, long siteId, ReceivingCapabilities receivingCapabilities) {
+
+  static void updateReceivingCapabilities(
+      Jdbi jdbi, long siteId, ReceivingCapabilities receivingCapabilities) {
     String update =
         """
         update site
@@ -449,12 +447,15 @@ public class ManageSiteDao {
           has_indoor_storage = :indoorStorage
         where id = :siteId
         """;
-    
-    jdbi.withHandle(handle -> handle.createUpdate(update)
-        .bind("forklift", receivingCapabilities.forklift)
-        .bind("loadingDock", receivingCapabilities.loadingDock)
-        .bind("indoorStorage", receivingCapabilities.indoorStorage)
-        .bind("siteId", siteId)
-        .execute());
+
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(update)
+                .bind("forklift", receivingCapabilities.forklift)
+                .bind("loadingDock", receivingCapabilities.loadingDock)
+                .bind("indoorStorage", receivingCapabilities.indoorStorage)
+                .bind("siteId", siteId)
+                .execute());
   }
 }

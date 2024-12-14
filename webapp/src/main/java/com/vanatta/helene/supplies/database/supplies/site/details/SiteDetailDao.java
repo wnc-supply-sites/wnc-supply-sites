@@ -92,7 +92,7 @@ public class SiteDetailDao {
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id
-                            left join max_supply_load msl on msl.id = s.max_supply_load_id
+                            join max_supply_load msl on msl.id = s.max_supply_load_id
                             where s.id = :siteId
                             """)
                 .bind("siteId", idToLookup)

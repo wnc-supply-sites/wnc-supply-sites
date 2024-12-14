@@ -73,9 +73,7 @@
   <span class="privately-visible">*</span>
   <a class="edit-link" href="{{{editContactLink}}}">[edit]</a>
 </h2>
-{{#loggedIn}}
 <div class="privately-visible">* Indicates field is visible because you are logged in</div>
-{{/loggedIn}}
 
 <div class="mission-statement">
   <dl>
@@ -124,6 +122,33 @@
     </dd>
   </dl>
   {{/additionalContacts}}
+</div>
+
+<h2>
+  Receiving Capabilities
+  <span class="privately-visible">*</span>
+  <a class="edit-link" href="{{{editContactLink}}}">[edit]</a>
+</h2>
+
+<div class="mission-statement">
+
+  <div class="data-field vertical">
+    <div class="horizontal checkbox-option">
+      {{^hasForklift}}<span class="red small-right-margin">&times;</span>{{/hasForklift}}
+      {{#hasForklift}}<span class="green small-right-margin">&#10003;</span>{{/hasForklift}}
+      <span>Have Forklift</span>
+    </div>
+    <div class="horizontal checkbox-option">
+      {{^hasLoadingDock}}<span class="red small-right-margin">&times;</span>{{/hasLoadingDock}}
+      {{#hasLoadingDock}}<span class="green small-right-margin">&#10003;</span>{{/hasLoadingDock}}
+      <span>Have Loading Dock</span>
+    </div>
+    <div class="horizontal checkbox-option">
+      {{^hasIndoorStorage}}<span class="red small-right-margin">&times;</span>{{/hasIndoorStorage}}
+      {{#hasIndoorStorage}}<span class="green small-right-margin">&#10003;</span>{{/hasIndoorStorage}}
+      <span>Have Indoor Storage</span>
+    </div>
+  </div>
 </div>
 
 <h2>Inventory<span class="privately-visible">*</span>

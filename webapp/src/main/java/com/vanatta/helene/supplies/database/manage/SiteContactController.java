@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.manage;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -94,22 +93,15 @@ public class SiteContactController {
     pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
     pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
 
-    List<ItemListing> maxSupplyOptions = new ArrayList<>();
-    maxSupplyOptions.add(
-        ItemListing.builder()
-            .name("")
-            .selected(data.getMaxSupply() == null ? "selected" : null)
-            .build());
-
-    maxSupplyOptions.addAll(
+    List<ItemListing> maxSupplyOptions =
         ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
             .map(
                 v ->
                     ItemListing.builder()
-                        .name(v)
-                        .selected(v.equals(data.getMaxSupply()) ? "selected" : null)
+                        .name(v.getName())
+                        .selected(v.getName().equals(data.getMaxSupply()) ? "selected" : null)
                         .build())
-            .toList());
+            .toList();
     pageParams.put(PageParam.MAX_SUPPLY_OPTIONS.text, maxSupplyOptions);
 
     return Optional.of(pageParams);
@@ -199,40 +191,41 @@ public class SiteContactController {
   private String fetchSiteName(String siteId) {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
-  
-  
+
   @AllArgsConstructor
   enum SiteReceivingParam {
     SITE_ID("siteId"),
     HAS_FORKLIFT("hasForkLift"),
     HAS_LOADING_DOCK("hasLoadingDock"),
-    HAS_INDOOR_STORAGE("hasIndoorStorage")
-    ;
-    
+    HAS_INDOOR_STORAGE("hasIndoorStorage");
+
     final String text;
   }
-  
+
   @PostMapping("/manage/update-site-receiving")
   ResponseEntity<?> updateSiteReceiving(@RequestBody Map<String, String> params) {
     log.info("Update site receiving request received: {}", params);
-    boolean hasAllData = params
-        .keySet()
-        .containsAll(Arrays.stream(SiteReceivingParam.values()).map(v -> v.text).toList());
-    if(!hasAllData) {
+    boolean hasAllData =
+        params
+            .keySet()
+            .containsAll(Arrays.stream(SiteReceivingParam.values()).map(v -> v.text).toList());
+    if (!hasAllData) {
       log.warn("Bad request received to update site data, missing input. Received: {}", params);
       return ResponseEntity.badRequest().body("Bad request - missing data");
     }
-    
+
     long siteId = Long.parseLong(params.get(SiteReceivingParam.SITE_ID.text));
-    
-    var capabilities = ManageSiteDao.ReceivingCapabilities.builder()
-        .forklift(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_FORKLIFT.text)))
-        .loadingDock(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_LOADING_DOCK.text)))
-        .indoorStorage(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_INDOOR_STORAGE.text)))
-        .build();
-    
+
+    var capabilities =
+        ManageSiteDao.ReceivingCapabilities.builder()
+            .forklift(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_FORKLIFT.text)))
+            .loadingDock(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_LOADING_DOCK.text)))
+            .indoorStorage(
+                Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_INDOOR_STORAGE.text)))
+            .build();
+
     ManageSiteDao.updateReceivingCapabilities(jdbi, siteId, capabilities);
-    
+
     sendSiteUpdate.sendFullUpdate(siteId);
     return ResponseEntity.ok().body("updated");
   }

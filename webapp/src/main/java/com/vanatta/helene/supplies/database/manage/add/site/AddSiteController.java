@@ -3,11 +3,14 @@ package com.vanatta.helene.supplies.database.manage.add.site;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +41,26 @@ public class AddSiteController {
         "countyList",
         SelectSiteController.createItemListing(counties.get("NC").getFirst(), counties.get("NC")));
 
+    List<SelectOption> maxSupplyDeliveryOptions =
+        ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
+            .map(
+                v ->
+                    SelectOption.builder()
+                        .name(v.getName())
+                        .selected(v.isDefaultSelection())
+                        .build())
+            .toList();
+
+    model.put("maxSupplyDeliveryOptions", maxSupplyDeliveryOptions);
+
     return new ModelAndView("manage/new-site/add-site", model);
+  }
+
+  @Builder
+  @Value
+  static class SelectOption {
+    String name;
+    Boolean selected;
   }
 
   /** REST endpoint to create a new site */
@@ -57,6 +79,13 @@ public class AddSiteController {
             .facebook(params.get("facebook"))
             .siteType(SiteType.parseSiteType(params.get("siteType")))
             .siteHours(params.get("siteHours"))
+
+            .hasForklift(Boolean.parseBoolean(params.get("hasForklift")))
+            .hasLoadingDock(Boolean.parseBoolean(params.get("hasLoadingDock")))
+            .hasIndoorStorage(Boolean.parseBoolean(params.get("hasIndoorStorage")))
+            .maxSupplyLoad(params.get("maxSupplyLoad"))
+            .receivingNotes(params.get("receivingNotes"))
+
             .contactName(params.get("contactName"))
             .contactNumber(params.get("contactNumber"))
             .contactEmail(params.get("contactEmail"))

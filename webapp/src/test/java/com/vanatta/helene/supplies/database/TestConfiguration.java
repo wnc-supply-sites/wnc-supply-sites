@@ -52,6 +52,7 @@ public class TestConfiguration {
             .city("city " + name)
             .streetAddress("address of " + name)
             .siteType(siteType)
+            .maxSupplyLoad("Car")
             .build());
     return name;
   }

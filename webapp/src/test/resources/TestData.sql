@@ -1,4 +1,3 @@
-
 delete from site_item_audit;
 delete from site_item;
 delete from item;
@@ -13,6 +12,9 @@ insert into county(name, state) values('Watauga', 'NC');
 insert into county(name, state) values('Sevier', 'TN');
 insert into county(name, state) values('Halifax', 'VA');
 insert into county(name) values('dummy') on conflict do nothing;
+
+insert into max_supply_load(id, sort_order, name, default_selection)
+values( -100, 25, 'test-value', false) on conflict do nothing;
 
 insert into site(
   name,
@@ -63,33 +65,33 @@ values (
        );
 
 -- site2, in Buncombe county, not accepting donations
-insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id) values(
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id) values(
 'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center'), -20
+(select id from site_type where name = 'Distribution Center'), -20, -100
 );
 
 -- site3, in Buncombe county, not active
-insert into site(name, address, city, county_id, active, site_type_id) values(
+insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id) values(
 'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center')
+(select id from site_type where name = 'Distribution Center'), -100
 );
 
 -- site4, in Buncombe county, no items (but active), supply hub
-    insert into site(name, address, city, county_id, site_type_id) values(
-       'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'),
-       (select id from site_type where name = 'Supply Hub')
-    );
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id) values(
+   'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'),
+   (select id from site_type where name = 'Supply Hub'), -100
+);
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
 -- data will not be stable.
-insert into site(name, address, city, county_id, site_type_id) values(
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id) values(
    'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'),
-   (select id from site_type where name = 'Distribution Center')
+   (select id from site_type where name = 'Distribution Center'), -100
 );
 
-insert into site(name, address, city, county_id, website, site_type_id) values(
+insert into site(name, address, city, county_id, website, site_type_id, max_supply_load_id) values(
    'site6', 'address6', 'city6', (select id from county where name = 'Watauga'), 'site6website',
-   (select id from site_type where name = 'Distribution Center')
+   (select id from site_type where name = 'Distribution Center'), -100
 );
 
 

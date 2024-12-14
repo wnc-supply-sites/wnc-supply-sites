@@ -365,13 +365,9 @@ class ManageSiteDaoTest {
     var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
     assertThat(details.getMaxSupply()).isEqualTo("Car");
 
-    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, "");
+    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, "Pickup Truck");
     details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-    assertThat(details.getMaxSupply()).isNull();
-
-    ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, null);
-    details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
-    assertThat(details.getMaxSupply()).isNull();
+    assertThat(details.getMaxSupply()).isEqualTo("Pickup Truck");
   }
 
   @Test

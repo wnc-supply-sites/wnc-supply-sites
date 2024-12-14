@@ -31,3 +31,11 @@ alter table site add column has_forklift boolean not null default false;
 alter table site add column has_loading_dock boolean not null default false;
 alter table site add column has_indoor_storage boolean not null default false;
 alter table site add column receiving_notes varchar(1024) not null default '';
+
+alter table max_supply_load add column default_selection boolean;
+update max_supply_load set default_selection = true where name = 'Pickup Truck';
+update site set max_supply_load_id = (select id from max_supply_load where name = 'Pickup Truck');
+alter table site alter column max_supply_load_id set not null;
+-- if a site is created, it is most likely onboarded, the existing sites
+-- are the ones that might not be properly onboarded.
+alter table site alter column onboarded set default true;
