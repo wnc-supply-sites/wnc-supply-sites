@@ -1,4 +1,8 @@
 #!/bin/bash
+(
+set -eux
+
+cd "$(dirname "$0")"
 
 docker build . --tag local/flyway:latest
 
@@ -12,6 +16,5 @@ docker run \
   -validateMigrationNaming=true \
   -connectRetries=2 \
   repair migrate
-  
   # -skipExecutingMigrations=true \
-
+)
