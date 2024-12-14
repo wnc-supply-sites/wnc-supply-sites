@@ -131,7 +131,9 @@ public class NeedsMatchingDao {
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
             JOIN site_type st on st.id = s.site_type_id
-            WHERE ist.name = 'Oversupply' or (st.name = 'Supply Hub' and ist.name in ('Available', 'Oversupply'))
+            WHERE
+              s.active = true
+              and (ist.name = 'Oversupply' or (st.name = 'Supply Hub' and ist.name in ('Available', 'Oversupply')))
         ), need_match AS (
             SELECT
                 s.name AS siteName,
