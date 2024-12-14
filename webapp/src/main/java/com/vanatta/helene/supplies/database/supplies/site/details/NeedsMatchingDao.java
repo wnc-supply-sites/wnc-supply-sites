@@ -1,8 +1,13 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
-import java.util.Arrays;
+import com.vanatta.helene.supplies.database.data.ItemStatus;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -10,40 +15,89 @@ import org.jdbi.v3.core.Jdbi;
 
 public class NeedsMatchingDao {
 
+  /**
+   * Groups up database results, what is many rows, to rows aggregated by site. The difference
+   * between rows is the item listing and the item urgency.
+   */
+  // @VisibleForTesting
+  static List<NeedsMatchingResult> aggregate(List<NeedsMatchingDbResult> dbResult) {
+    Map<Long, NeedsMatchingResult> needsMatchingResult = new HashMap<>();
+
+    dbResult.forEach(
+        needsMatchingDbResult ->
+            needsMatchingResult
+                .computeIfAbsent(
+                    needsMatchingDbResult.siteId,
+                    _ ->
+                        NeedsMatchingResult.builder()
+                            .siteLink(
+                                SiteDetailController.buildSiteLink(needsMatchingDbResult.siteId))
+                            .siteName(needsMatchingDbResult.siteName)
+                            .siteAddress(needsMatchingDbResult.siteAddress)
+                            .city(needsMatchingDbResult.city)
+                            .county(needsMatchingDbResult.county)
+                            .state(needsMatchingDbResult.state)
+                            .build())
+                .addItem(
+                    NeedsMatchingResult.Item.builder()
+                        .name(needsMatchingDbResult.itemName)
+                        .urgencyCssClass(
+                            ItemStatus.fromTextValue(needsMatchingDbResult.urgency).getCssClass())
+                        .build()));
+
+    return needsMatchingResult.values().stream()
+        .sorted(
+            Comparator.comparingInt(NeedsMatchingResult::getItemCount)
+                .reversed()
+                .thenComparing(NeedsMatchingResult::getSiteName))
+        .toList();
+  }
+
   @Value
-  public static class NeedsMatchingResult {
+  @Builder(toBuilder = true)
+  @AllArgsConstructor
+  static class NeedsMatchingResult {
+    @Value
+    @Builder
+    static class Item {
+      String name;
+      String urgencyCssClass;
+    }
+
     String siteName;
     String siteLink;
     String siteAddress;
     String city;
     String county;
     String state;
-    List<String> items;
-    int itemCount;
+    @Builder.Default List<Item> items = new ArrayList<>();
 
-    NeedsMatchingResult(NeedsMatchingDbResult dbResult) {
-      this.siteName = dbResult.siteName;
-      this.siteLink = SiteDetailController.buildSiteLink(dbResult.siteId);
-      this.siteAddress = dbResult.siteAddress;
-      this.city = dbResult.city;
-      this.county = dbResult.county;
-      this.state = dbResult.state;
-      this.items = Arrays.stream(dbResult.itemName.split(",")).sorted().toList();
-      this.itemCount = dbResult.itemCount;
+    List<Item> getItems() {
+      return items.stream().sorted(Comparator.comparing(i -> i.name)).toList();
+    }
+
+    void addItem(Item item) {
+      this.items.add(item);
+    }
+
+    int getItemCount() {
+      return items.size();
     }
   }
 
   @Data
+  @Builder
   @AllArgsConstructor
   @NoArgsConstructor
   public static class NeedsMatchingDbResult {
-    String siteName;
     long siteId;
+    String siteName;
     String siteAddress;
     String city;
     String county;
     String state;
     String itemName;
+    String urgency;
     int itemCount;
   }
 
@@ -65,7 +119,7 @@ public class NeedsMatchingDao {
     String query =
         """
          WITH needy_items AS (
-            SELECT si.item_id
+            SELECT si.item_id, ist.name urgency
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
@@ -87,7 +141,7 @@ public class NeedsMatchingDao {
                 c.name as county,
                 c.state as state,
                 i.name AS itemName,
-                COUNT(os.item_id) OVER (PARTITION BY s.id) AS itemCount
+                ni.urgency AS urgency
             FROM
                 oversupply_sites os
             JOIN
@@ -107,30 +161,20 @@ public class NeedsMatchingDao {
           A.city,
           county,
           state,
-          string_agg(A.itemName, ',') as itemName,
-          A.itemCount
+          itemName,
+          urgency
         from need_match A
-        group by
-            A.siteName,
-            A.siteId,
-            A.siteAddress,
-            A.city ,
-            A.county,
-            A.state,
-            A.itemCount
-        ORDER BY
-            A.itemCount desc, A.siteName, itemName
+        ORDER BY A.siteId
         """;
-    return jdbi
-        .withHandle(
+    List<NeedsMatchingDbResult> dbResults =
+        jdbi.withHandle(
             handle ->
                 handle
                     .createQuery(query)
                     .bind("id", dbId)
                     .mapToBean(NeedsMatchingDbResult.class)
-                    .list())
-        .stream()
-        .map(NeedsMatchingResult::new)
-        .toList();
+                    .list());
+
+    return aggregate(dbResults);
   }
 }
