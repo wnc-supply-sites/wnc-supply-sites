@@ -297,10 +297,6 @@ usermod -a -G docker webapp
 ### Create DB
 
 ```bash
-sudo usermod -a -G docker postgres
-```
-
-```bash
 sudo -u postgres psql
 create database wnc_helene;
 create user wnc_helene with password '....';
