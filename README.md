@@ -20,6 +20,21 @@ from sites that have too much, to those that need those items.
 
 ## Development 
 
+### Quick Start - Backend Dev
+- clone the code
+- install intellij
+- right click the webapp/build.gradle file & select 'link project'
+- install postgres
+- run: `./schema/run-flyway.sh`
+- Run `SuppliesDatabaseApplication.java`
+  - in run configuration, set the environment variable: `WEBHOOK_SECRET=secret`
+
+### Quick Start - Frontend Dev
+- clone the code
+- open any of the .html file in a web browser
+- update the corresponding HTML, CSS & JS files; check-in & push
+
+
 ### Local Setup
 
 - install postgres to your machine (bare-metal)
