@@ -18,7 +18,4 @@ echo "drop database $database" | psql -U postgres
 echo "create database $database" | psql -U postgres
 echo "alter database $database owner to wnc_helene" | psql -U postgres
 
-export PGPASSWORD=wnc_helene
-for i in $(ls schema | sort -n); do
-  psql -U wnc_helene -d "$database" -f schema/$i
-done
+./schema/run-flyway.sh

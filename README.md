@@ -161,6 +161,15 @@ Whether they are connected to airtable is controlled by environment variables.
 Staging connects to DB `wnc_helene_test` while webapp connects to the DB `wnc_helene`
 All environment variables are in the redeploy sripts in `/root`
 
+### Folders with local git
+
+'git init' was run in the following folders to keep track of configs locally via git.
+
+```
+/root
+/etc/nginx/
+```
+
 ### DB Access
 ```
 sudo -u postgres psql
@@ -180,6 +189,12 @@ docker logs -f webapp
 ```bash
 sudo tail -f /var/log/nginx/access.log
 ```
+
+Database logs:
+```
+tail -200 /var/log/postgresql/postgresql-16-main.log
+```
+
 
 ### IP address blocking
 
@@ -203,20 +218,11 @@ https://github.com/DanVanAtta/wnc-supply-sites/tree/master/schema
 
 Create a new file in there and put the SQL commands in there.
 
-Then run the SQL by connecting to each DB and copy/pasting in the commands.
-Do this 4 times:
-- first on localhost: wnc_helene_test. (unit tests use this DB)
-- second on localhost: wnc_helene (building app locally will use this)
-- then on the server: wnc_helene_test (for the staging environment)
-  - there is a chance to reboot staging app and do testing
-- then on server for prod: wnc_helene-> then reboot the app
+Then run: `./schema/run-flyway.sh`
+That will apply all new migrations to your local test database "wnc_helene_test",
+and to "wnc_helene"
 
-It is assumed that any SQL migrations will all be applied before
-we roll any application updates. Make sure SQL updates get applied!
-
-Ideally Flyway would be part of the build process, we would package
-up a flyway with the scheme migration files and could simply
-run  migrations that way.. One day maybe..
+In production, flyway is automatically run as part of the 'redeploy' scripts.
 
 
 ### How to Rollback:
@@ -289,6 +295,10 @@ usermod -a -G docker webapp
 ```
 
 ### Create DB
+
+```bash
+sudo usermod -a -G docker postgres
+```
 
 ```bash
 sudo -u postgres psql
