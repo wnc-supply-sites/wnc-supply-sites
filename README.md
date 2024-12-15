@@ -23,6 +23,7 @@ from sites that have too much, to those that need those items.
 ### Quick Start - Backend Dev
 - clone the code
 - install intellij
+- install Java21
 - right click the webapp/build.gradle file & select 'link project'
 - install postgres
 - run: `./schema/run-flyway.sh`
