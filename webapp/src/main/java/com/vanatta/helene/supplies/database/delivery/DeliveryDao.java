@@ -52,11 +52,31 @@ public class DeliveryDao {
                 .bind("toSiteWssId", deliveryUpdate.getDropOffSiteWssId().getFirst())
                 .bind("deliveryStatus", deliveryUpdate.getDeliveryStatus())
                 .bind("targetDeliveryDate", deliveryUpdate.getTargetDeliveryDate())
-                .bind("dispatcherName", deliveryUpdate.getDispatcherName().getFirst())
-                .bind("dispatcherNumber", deliveryUpdate.getDispatcherNumber().getFirst())
-                .bind("driverName", deliveryUpdate.getDriverName().getFirst())
-                .bind("driverNumber", deliveryUpdate.getDriverNumber().getFirst())
-                .bind("driverLicensePlateNumbers", deliveryUpdate.getLicensePlateNumbers().getFirst())
+                .bind(
+                    "dispatcherName",
+                    deliveryUpdate.getDispatcherName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDispatcherName().getFirst())
+                .bind(
+                    "dispatcherNumber",
+                    deliveryUpdate.getDispatcherNumber().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDispatcherNumber().getFirst())
+                .bind(
+                    "driverName",
+                    deliveryUpdate.getDriverName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDriverName().getFirst())
+                .bind(
+                    "driverNumber",
+                    deliveryUpdate.getDriverNumber().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDriverNumber().getFirst())
+                .bind(
+                    "driverLicensePlateNumbers",
+                    deliveryUpdate.getLicensePlateNumbers().isEmpty()
+                        ? null
+                        : deliveryUpdate.getLicensePlateNumbers().getFirst())
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
                 .execute());
