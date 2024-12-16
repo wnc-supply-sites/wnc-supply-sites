@@ -60,8 +60,8 @@ public class SiteDetailController {
     HAS_INCOMING_DELIVERIES("hasIncomingDeliveries"),
     INCOMING_DELIVERIES("incomingDeliveries"),
 
-    HAS_OUTGOING_DELIVERIES("hasIncomingDeliveries"),
-    OUTGOING_DELIVERIES("incomingDeliveries"),
+    HAS_OUTGOING_DELIVERIES("hasOutgoingDeliveries"),
+    OUTGOING_DELIVERIES("outgoingDeliveries"),
     ;
     final String text;
   }
@@ -185,7 +185,7 @@ public class SiteDetailController {
 
       List<Delivery> outgoingDeliveries =
           allDeliveries.stream()
-              .filter(d -> !d.getToSite().equals(siteDetailData.getSiteName()))
+              .filter(d -> d.getFromSite().equals(siteDetailData.getSiteName()))
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);

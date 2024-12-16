@@ -144,6 +144,7 @@ public class DeliveryDao {
       d.driver_license_plates licensePlateNumbers,
 
       fromSite.name fromSiteName,
+      fromSite.id fromSiteId,
       fromSite.address fromAddress,
       fromSite.city fromCity,
       fromCounty.state fromState,
@@ -152,6 +153,7 @@ public class DeliveryDao {
       fromSite.hours fromHours,
 
       toSite.name toSiteName,
+      toSite.id toSiteId,
       toSite.address toAddress,
       toSite.city toCity,
       toCounty.state toState,
