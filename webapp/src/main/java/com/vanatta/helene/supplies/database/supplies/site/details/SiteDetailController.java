@@ -1,7 +1,8 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
-import com.vanatta.helene.supplies.database.manage.SelectSiteController;
+import com.vanatta.helene.supplies.database.delivery.Delivery;
+import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import com.vanatta.helene.supplies.database.manage.SiteContactController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
@@ -34,12 +35,52 @@ public class SiteDetailController {
     return PATH_SITE_DETAIL + "?id=" + siteId;
   }
 
+  @AllArgsConstructor
+  enum TemplateParams {
+    EDIT_CONTACT_LINK("editContactLink"),
+    EDIT_INVENTORY_LINK("editInventoryLink"),
+    LOGGED_IN("loggedIn"),
+    SITE_NAME("siteName"),
+    WEBSITE("website"),
+    FACEBOOK("facebook"),
+    HOURS("hours"),
+    ADDRESS_LINE1("addressLine1"),
+    ADDRESS_LINE2("addressLine2"),
+    GOOGLE_MAPS_ADDRESS("googleMapsAddress"),
+    HAS_FORK_LIFT("hasForklift"),
+    HAS_LOADING_DOCK("hasLoadingDock"),
+    HAS_INDOOR_STORAGE("hasIndoorStorage"),
+    CONTACT_NAME("contactName"),
+    CONTACT_NUMBER("contactNumber"),
+    CONTACT_EMAIL("contactEmail"),
+    ADDITIONAL_CONTACTS("additionalContacts"),
+    NEEDS_MATCHING("needsMatching"),
+    NEEDS_MATCH_COUNT("matchCount"),
+    
+    HAS_INCOMING_DELIVERIES("hasIncomingDeliveries"),
+    INCOMING_DELIVERIES("incomingDeliveries"),
+  
+    HAS_OUTGOING_DELIVERIES("hasIncomingDeliveries"),
+    OUTGOING_DELIVERIES("incomingDeliveries"),
+    ;
+    final String text;
+  }
+
   @GetMapping(PATH_SITE_DETAIL)
   public ModelAndView siteDetail(
       @RequestParam(required = false) Long id,
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
+    return siteDetail(id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
+  }
+
+  // @VisibleForTesting
+  public ModelAndView siteDetail(
+      @RequestParam(required = false) Long id,
+      @RequestParam(required = false) Long airtableId,
+      @RequestParam(required = false) Long wssId,
+      boolean isLoggedIn) {
     if (id == null && airtableId == null && wssId == null) {
       return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
@@ -63,7 +104,6 @@ public class SiteDetailController {
     }
     assert id != null;
 
-    boolean isLoggedIn = cookieAuthenticator.isAuthenticated(request);
     SiteDetailDao.SiteDetailData siteDetailData = SiteDetailDao.lookupSiteById(jdbi, id);
 
     // if site not found, not accessible, or for logged in only users, then redirect
@@ -75,34 +115,35 @@ public class SiteDetailController {
 
     Map<String, Object> siteDetails = new HashMap<>();
 
-    siteDetails.put("editContactLink", SiteContactController.buildManageContactsPath(id));
-    siteDetails.put("editInventoryLink", InventoryController.buildInventoryPath(id));
-
-    siteDetails.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
-    siteDetails.put("siteName", siteDetailData.getSiteName());
+    siteDetails.put(
+        TemplateParams.EDIT_CONTACT_LINK.text, SiteContactController.buildManageContactsPath(id));
+    siteDetails.put(
+        TemplateParams.EDIT_INVENTORY_LINK.text, InventoryController.buildInventoryPath(id));
+    siteDetails.put(TemplateParams.LOGGED_IN.text, isLoggedIn);
+    siteDetails.put(TemplateParams.SITE_NAME.text, siteDetailData.getSiteName());
 
     siteDetails.put(
-        "website",
+        TemplateParams.WEBSITE.text,
         siteDetailData.getWebsite() == null || siteDetailData.getWebsite().isBlank()
             ? null
             : new WebsiteLink(siteDetailData.getWebsite()));
     siteDetails.put(
-        "facebook",
+        TemplateParams.FACEBOOK.text,
         siteDetailData.getFacebook() == null || siteDetailData.getFacebook().isBlank()
             ? null
             : new WebsiteLink(siteDetailData.getFacebook()));
     siteDetails.put(
-        "hours",
+        TemplateParams.HOURS.text,
         siteDetailData.getHours() == null || siteDetailData.getHours().isBlank()
             ? null
             : siteDetailData.getHours());
 
-    siteDetails.put("addressLine1", siteDetailData.getAddress());
+    siteDetails.put(TemplateParams.ADDRESS_LINE1.text, siteDetailData.getAddress());
     siteDetails.put(
-        "addressLine2",
+        TemplateParams.ADDRESS_LINE2.text,
         String.format("%s, %s", siteDetailData.getCity(), siteDetailData.getState()));
     siteDetails.put(
-        "googleMapsAddress",
+        TemplateParams.GOOGLE_MAPS_ADDRESS.text,
         String.format(
             "%s, %s, %s",
             urlEncode(siteDetailData.getAddress()),
@@ -110,32 +151,42 @@ public class SiteDetailController {
             urlEncode(siteDetailData.getState())));
 
     if (isLoggedIn) {
-      siteDetails.put("hasForklift", siteDetailData.isHasForklift());
-      siteDetails.put("hasLoadingDock", siteDetailData.isHasLoadingDock());
-      siteDetails.put("hasIndoorStorage", siteDetailData.isHasIndoorStorage());
+      siteDetails.put(TemplateParams.HAS_FORK_LIFT.text, siteDetailData.isHasForklift());
+      siteDetails.put(TemplateParams.HAS_LOADING_DOCK.text, siteDetailData.isHasLoadingDock());
+      siteDetails.put(TemplateParams.HAS_INDOOR_STORAGE.text, siteDetailData.isHasIndoorStorage());
 
       siteDetails.put(
-          "contactName",
+          TemplateParams.CONTACT_NAME.text,
           siteDetailData.getContactName() == null || siteDetailData.getContactName().isBlank()
               ? null
               : siteDetailData.getContactName());
       siteDetails.put(
-          "contactNumber",
+          TemplateParams.CONTACT_NUMBER.text,
           siteDetailData.getContactNumber() == null || siteDetailData.getContactNumber().isBlank()
               ? null
               : ContactHref.newTelephone(siteDetailData.getContactNumber()));
       siteDetails.put(
-          "contactEmail",
+          TemplateParams.CONTACT_EMAIL.text,
           siteDetailData.getContactEmail() == null
               ? null
               : ContactHref.newMailTo(siteDetailData.getContactEmail()));
 
-      siteDetails.put("additionalContacts", siteDetailData.getAdditionalContacts());
+      siteDetails.put(
+          TemplateParams.ADDITIONAL_CONTACTS.text, siteDetailData.getAdditionalContacts());
 
+      
+      List<Delivery> incomingDeliveries  = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
+      siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
+      
+      
+      List<Delivery> outgoingDeliveries  = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
+      siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !incomingDeliveries.isEmpty());
+      
+      
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
           NeedsMatchingDao.executeByInternalId(jdbi, id);
-      siteDetails.put("needsMatching", needsMatching);
-      siteDetails.put("matchCount", needsMatching.size());
+      siteDetails.put(TemplateParams.NEEDS_MATCHING.text, needsMatching);
+      siteDetails.put(TemplateParams.NEEDS_MATCH_COUNT.text, needsMatching.size());
     }
     return new ModelAndView("supplies/site-detail", siteDetails);
   }

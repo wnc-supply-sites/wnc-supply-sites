@@ -1,3 +1,5 @@
+delete from delivery_item;
+delete from delivery;
 delete from site_item_audit;
 delete from site_item;
 delete from item;
@@ -64,17 +66,38 @@ values (
         'inactive reason text'
        );
 
+
 -- site2, in Buncombe county, not accepting donations
 insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id) values(
 'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), false,
 (select id from site_type where name = 'Distribution Center'), -20, -100
 );
 
+
 -- site3, in Buncombe county, not active
 insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id) values(
 'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), false,
 (select id from site_type where name = 'Distribution Center'), -100
 );
+
+-- create a delivery from site2 to site3
+insert into delivery(
+  airtable_id, from_site_id, to_site_id,
+  delivery_status, target_delivery_date, dispatcher_name,
+  dispatcher_number, driver_name, driver_number,
+  driver_license_plates)
+values(
+        -1,
+        (select id from site where name = 'site2'),
+        (select id from site where name = 'site3'),
+        'pending',
+        to_date('2024-12-13', 'YYYY-MM-DD'),
+        'dispatcher1',
+        '555',
+        'driver1',
+        'call me anytime',
+        'traveler'
+      );
 
 -- site4, in Buncombe county, no items (but active), supply hub
 insert into site(name, address, city, county_id, site_type_id, max_supply_load_id) values(

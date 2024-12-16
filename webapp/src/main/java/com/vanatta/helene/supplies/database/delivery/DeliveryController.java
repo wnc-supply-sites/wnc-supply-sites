@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 /** Has a webhook for incoming requests from airtable to receive status updates for deliveries. */
 @Controller
 @Slf4j
+@AllArgsConstructor
 public class DeliveryController {
 
+  
+  public static String buildDeliveryPageLink(long deliveryId) {
+    return "/delivery/" + deliveryId;
+  }
+
+
+  
   // also does delivery upserts
   private static final String PATH_UPDATE_DELIVERY = "/webhook/update-delivery";
+
+  private final Jdbi jdbi;
 
   @Data
   @Builder(toBuilder = true)
@@ -36,6 +47,7 @@ public class DeliveryController {
     List<Long> itemListWssIds;
     String licensePlateNumbers;
     String targetDeliveryDate;
+    String dispatcherNotes;
 
     static DeliveryUpdate parseJson(String inputJson) {
       return new Gson().fromJson(inputJson, DeliveryUpdate.class);
@@ -45,10 +57,16 @@ public class DeliveryController {
   @PostMapping(PATH_UPDATE_DELIVERY)
   ResponseEntity<String> upsertDelivery(@RequestBody String body) {
     log.info("Delivery update endpoint received: {}", body);
-    
     DeliveryUpdate deliveryUpdate = DeliveryUpdate.parseJson(body);
 
-    
+    // if either to or from site are gone, then we can remove the delivery.
+    if (deliveryUpdate.getPickupSiteWssId().isEmpty()
+        || deliveryUpdate.getDropOffSiteWssId().isEmpty()) {
+      DeliveryDao.deleteDelivery(jdbi, deliveryUpdate.deliveryId);
+    } else {
+      DeliveryDao.upsert(jdbi, deliveryUpdate);
+    }
+
     return ResponseEntity.ok("ok");
   }
 }
