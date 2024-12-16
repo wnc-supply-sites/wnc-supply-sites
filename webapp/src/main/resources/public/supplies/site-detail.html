@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="site-detail.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
@@ -152,16 +154,20 @@
 
 <h2>Deliveries<span class="privately-visible">*</h2>
 
-{{#hasIncomingDeliveries}}
-<h3>Incoming Deliveries</h3>
+<h3><span class="fa fa-truck"></span> Incoming Deliveries </h3>
+{{^hasIncomingDeliveries}}
+None scheduled
+{{/hasIncomingDeliveries}}
 
-<table class="needs-matching">
+{{#hasIncomingDeliveries}}
+
+<table class="delivery-table">
   <thead>
   <tr>
-    <th></th>
+<!--    <th></th>-->
+    <th>Delivery Date</th>
     <th>From</th>
     <th>Status</th>
-    <th>Delivery Date</th>
     <th>Item Count</th>
     <th>Items</th>
   </tr>
@@ -169,18 +175,24 @@
   <tbody>
   {{#incomingDeliveries}}
   <tr>
-    <td><a href="{{detailLink}}">[Details]</a></td>
-    <td>{{fromSite}}</td>
-    <td>{{deliveryStatus}}</td>
+<!--    <td><a href="{{detailLink}}">[Details]</a></td>-->
     <td>{{deliveryDate}}</td>
+    <td><a href="{{fromSiteLink}}">{{fromSite}}</a></td>
+    <td>{{deliveryStatus}}</td>
     <td>{{itemCount}}</td>
     <td>{{itemListTruncated}}</td>
   </tr>
   {{/incomingDeliveries}}
   </tbody>
 </table>
+{{/hasIncomingDeliveries}}
 
-<h3>Outgoing Deliveries</h3>
+<h3><span class="fa fa-truck outgoing-truck"></span>  Outgoing Deliveries</h3>
+{{^hasOutgoingDeliveries}}
+None scheduled
+{{/hasOutgoingDeliveries}}
+{{#hasOutgoingDeliveries}}
+{{/hasOutgoingDeliveries}}
 
 
 <h2>Inventory<span class="privately-visible">*</span>

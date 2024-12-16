@@ -56,10 +56,10 @@ public class SiteDetailController {
     ADDITIONAL_CONTACTS("additionalContacts"),
     NEEDS_MATCHING("needsMatching"),
     NEEDS_MATCH_COUNT("matchCount"),
-    
+
     HAS_INCOMING_DELIVERIES("hasIncomingDeliveries"),
     INCOMING_DELIVERIES("incomingDeliveries"),
-  
+
     HAS_OUTGOING_DELIVERIES("hasIncomingDeliveries"),
     OUTGOING_DELIVERIES("incomingDeliveries"),
     ;
@@ -174,15 +174,22 @@ public class SiteDetailController {
       siteDetails.put(
           TemplateParams.ADDITIONAL_CONTACTS.text, siteDetailData.getAdditionalContacts());
 
-      
-      List<Delivery> incomingDeliveries  = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
+      List<Delivery> allDeliveries = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
+
+      List<Delivery> incomingDeliveries =
+          allDeliveries.stream()
+              .filter(d -> d.getToSite().equals(siteDetailData.getSiteName()))
+              .toList();
       siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
-      
-      
-      List<Delivery> outgoingDeliveries  = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
-      siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !incomingDeliveries.isEmpty());
-      
-      
+      siteDetails.put(TemplateParams.INCOMING_DELIVERIES.text, incomingDeliveries);
+
+      List<Delivery> outgoingDeliveries =
+          allDeliveries.stream()
+              .filter(d -> !d.getToSite().equals(siteDetailData.getSiteName()))
+              .toList();
+      siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
+      siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
+
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
           NeedsMatchingDao.executeByInternalId(jdbi, id);
       siteDetails.put(TemplateParams.NEEDS_MATCHING.text, needsMatching);
