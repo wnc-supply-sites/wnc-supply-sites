@@ -3,8 +3,8 @@ package com.vanatta.helene.supplies.database.delivery;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailController;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -54,9 +54,9 @@ public class Delivery {
 
   Delivery(DeliveryDao.DeliveryData dbData) {
     this.deliveryNumber = dbData.getDeliveryId();
-    this.deliveryStatus = dbData.getDeliveryStatus();
+    this.deliveryStatus = Optional.ofNullable(dbData.getDeliveryStatus()).orElse("Scheduling");
     this.detailLink = DeliveryController.buildDeliveryPageLink(dbData.getDeliveryId());
-    this.deliveryDate = dbData.getTargetDeliveryDate();
+    this.deliveryDate = Optional.ofNullable(dbData.getTargetDeliveryDate()).orElse("Scheduling");
     this.driverName = dbData.getDriverName();
     this.driverNumber = dbData.getDriverNumber();
     this.driverLicensePlate = dbData.getLicensePlateNumbers();
