@@ -38,7 +38,7 @@ class DeliveryControllerTest {
            192,
            152
         ],
-        "licensePlateNumbers" : "XYZ-123,ABC-333",
+        "licensePlateNumbers" : ["XYZ-123,ABC-333"],
         "pickupSiteWssId" : [
            3088
         ],
@@ -47,6 +47,9 @@ class DeliveryControllerTest {
      }
      """;
 
+  String deliveryInput2 = """
+  {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[]}
+  """;
   // these values come from TestData.sql
   static final long SITE1_WSS_ID = -10;
   static final long SITE2_WSS_ID = -20;
@@ -66,11 +69,17 @@ class DeliveryControllerTest {
     assertThat(update.getDropOffSiteWssId()).containsExactly(337L);
     assertThat(update.getPickupSiteWssId()).containsExactly(3088L);
     assertThat(update.getItemListWssIds()).contains(161L, 191L, 192L, 152L);
-    assertThat(update.getLicensePlateNumbers()).isEqualTo("XYZ-123,ABC-333");
+    assertThat(update.getLicensePlateNumbers()).containsExactly("XYZ-123,ABC-333");
     assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
     assertThat(update.getDispatcherNotes()).isEqualTo("notes from dispatcher");
   }
 
+  @Test
+  void canParse2() {
+    DeliveryController.DeliveryUpdate.parseJson(deliveryInput2);
+  }
+  
+  
   DeliveryController deliveryController = new DeliveryController(TestConfiguration.jdbiTest);
 
   @Test
@@ -142,7 +151,7 @@ class DeliveryControllerTest {
             // we are flipping the to & from site IDs
             .pickupSiteWssId(List.of(SITE2_WSS_ID))
             .dropOffSiteWssId(List.of(SITE1_WSS_ID))
-            .licensePlateNumbers("Traveler")
+            .licensePlateNumbers(List.of("Traveler"))
             .targetDeliveryDate("2024-12-15")
             // we are reducing the number of items from 2 to 1
             .itemListWssIds(List.of(WATER_WSS_ID))

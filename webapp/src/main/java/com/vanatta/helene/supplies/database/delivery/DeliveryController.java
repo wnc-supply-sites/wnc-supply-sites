@@ -45,7 +45,7 @@ public class DeliveryController {
     List<Long> dropOffSiteWssId;
     List<Long> pickupSiteWssId;
     List<Long> itemListWssIds;
-    String licensePlateNumbers;
+    List<String> licensePlateNumbers;
     String targetDeliveryDate;
     String dispatcherNotes;
 

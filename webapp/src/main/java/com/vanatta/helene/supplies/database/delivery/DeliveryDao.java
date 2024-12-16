@@ -56,7 +56,7 @@ public class DeliveryDao {
                 .bind("dispatcherNumber", deliveryUpdate.getDispatcherNumber().getFirst())
                 .bind("driverName", deliveryUpdate.getDriverName().getFirst())
                 .bind("driverNumber", deliveryUpdate.getDriverNumber().getFirst())
-                .bind("driverLicensePlateNumbers", deliveryUpdate.getLicensePlateNumbers())
+                .bind("driverLicensePlateNumbers", deliveryUpdate.getLicensePlateNumbers().getFirst())
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
                 .execute());
