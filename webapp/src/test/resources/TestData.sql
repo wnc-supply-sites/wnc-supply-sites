@@ -99,11 +99,42 @@ values(
         'traveler'
       );
 
+
+
 -- site4, in Buncombe county, no items (but active), supply hub
 insert into site(name, address, city, county_id, site_type_id, max_supply_load_id) values(
    'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'),
    (select id from site_type where name = 'Supply Hub'), -100
 );
+-- create a delivery from site3 to site4
+insert into delivery(
+  airtable_id, from_site_id, to_site_id,
+  delivery_status, target_delivery_date, dispatcher_name,
+  dispatcher_number, driver_name, driver_number,
+  driver_license_plates)
+values(
+        -2,
+        (select id from site where name = 'site3'),
+        (select id from site where name = 'site4'),
+        'pending',
+        to_date('2024-12-13', 'YYYY-MM-DD'),
+        'dispatcher1',
+        '555',
+        'driver1',
+        'call me anytime',
+        'traveler'
+      );
+
+
+-- create a delivery from site4 to site3
+-- this is a  minimal 'data', everything that can be null should be null
+insert into delivery(
+  airtable_id, from_site_id, to_site_id)
+values(
+        -3,
+        (select id from site where name = 'site3'),
+        (select id from site where name = 'site4')
+      );
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
 -- data will not be stable.
