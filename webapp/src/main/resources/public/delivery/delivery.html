@@ -27,7 +27,7 @@
       <div>{{^fromContactPhone}}-{{/fromContactPhone}}{{#fromContactPhone}}<a href="tel:{{fromContactPhone}}">{{.}}</a>{{/fromContactPhone}}</div>
 
       <div class="sub-section-header">Hours</div>
-      <div>{{fromHours}}</div>
+      <div><pre>{{fromHours}}</pre></div>
     </div>
 
     <!-- DROP OFF -->
@@ -41,7 +41,7 @@
       <div>{{toContactName}}</div>
       <div>{{^toContactPhone}}-{{/toContactPhone}}{{#toContactPhone}}<a href="tel:{{toContactPhone}}">{{.}}</a>{{/toContactPhone}}</div>
       <div class="sub-section-header">Hours</div>
-      <div>{{toHours}}</div>
+      <div><pre>{{toHours}}</pre></div>
     </div>
   </div>
 
