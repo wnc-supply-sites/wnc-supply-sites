@@ -160,32 +160,31 @@ None scheduled
 {{/hasIncomingDeliveries}}
 
 {{#hasIncomingDeliveries}}
-<div class="delivery-table-container">
-    <table class="delivery-table">
-        <thead>
-            <tr>
-                <!--    <th></th>-->
-                <th>Delivery Date</th>
-                <th>From</th>
-                <th>Status</th>
-                <th>Item Count</th>
-                <th>Items</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#incomingDeliveries}}
-            <tr>
-                <!--    <td><a href="{{detailLink}}">[Details]</a></td>-->
-                <td>{{deliveryDate}}</td>
-                <td><a href="{{fromSiteLink}}">{{fromSite}}</a></td>
-                <td>{{deliveryStatus}}</td>
-                <td>{{itemCount}}</td>
-                <td>{{itemListTruncated}}</td>
-            </tr>
-            {{/incomingDeliveries}}
-        </tbody>
-    </table>
-</div>
+
+<table class="delivery-table">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Delivery Date</th>
+    <th>From</th>
+    <th>Status</th>
+    <th>Item Count</th>
+    <th>Items</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#incomingDeliveries}}
+  <tr>
+    <td><a href="{{detailLink}}">[Details]</a></td>
+    <td>{{deliveryDate}}</td>
+    <td><a href="{{fromSiteLink}}">{{fromSite}}</a></td>
+    <td>{{deliveryStatus}}</td>
+    <td>{{itemCount}}</td>
+    <td>{{itemListTruncated}}</td>
+  </tr>
+  {{/incomingDeliveries}}
+  </tbody>
+</table>
 {{/hasIncomingDeliveries}}
 
 <h3><span class="fa fa-truck outgoing-truck"></span>  Outgoing Deliveries</h3>
