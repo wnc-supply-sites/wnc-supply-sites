@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.data.GoogleMapWidget;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +97,8 @@ class DeliveryControllerTest {
     assertThat(input.isComplete()).isFalse();
   }
 
-  DeliveryController deliveryController = new DeliveryController(TestConfiguration.jdbiTest);
+  DeliveryController deliveryController =
+      new DeliveryController(TestConfiguration.jdbiTest, new GoogleMapWidget("secret"));
 
   @Test
   void deliveriesStored() {

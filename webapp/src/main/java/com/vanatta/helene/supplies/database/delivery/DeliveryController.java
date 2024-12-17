@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
+import com.vanatta.helene.supplies.database.data.GoogleMapWidget;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
 import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ public class DeliveryController {
   private static final String PATH_UPDATE_DELIVERY = "/webhook/update-delivery";
 
   private final Jdbi jdbi;
+  private final GoogleMapWidget googleMapWidget;
 
   @Data
   @Builder(toBuilder = true)
@@ -84,8 +86,8 @@ public class DeliveryController {
       DeliveryDao.upsert(jdbi, deliveryUpdate);
       if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
         log.info(
-            "Delivery completion received! Updating site inventory items to no longer be needed." +
-               "Site WSS ID: {}, item WSS IDs: {}",
+            "Delivery completion received! Updating site inventory items to no longer be needed."
+                + "Site WSS ID: {}, item WSS IDs: {}",
             deliveryUpdate.dropOffSiteWssId,
             deliveryUpdate.getItemListWssIds());
         InventoryDao.markItemsAsNotNeeded(
@@ -122,6 +124,8 @@ public class DeliveryController {
     toContactName,
     toContactPhone,
     toHours,
+
+    googleMapLink,
 
     items1,
     items2,
@@ -166,6 +170,19 @@ public class DeliveryController {
         TemplateParams.toContactPhone.name(), nullsToDash(delivery.getToContactPhone()));
     templateParams.put(TemplateParams.toHours.name(), nullsToDash(delivery.getToHours()));
 
+    templateParams.put(
+        TemplateParams.googleMapLink.name(),
+        googleMapWidget.generateMapSrcRef(
+            GoogleMapWidget.SiteAddress.builder()
+                .address(delivery.getFromAddress())
+                .city(delivery.getFromCity())
+                .state(delivery.getFromState())
+                .build(),
+            GoogleMapWidget.SiteAddress.builder()
+                .address(delivery.getToAddress())
+                .city(delivery.getToCity())
+                .state(delivery.getToState())
+                .build()));
     List<List<String>> split = splitItemList(delivery.getItemList().stream().sorted().toList());
     assert split.size() == 3;
 
