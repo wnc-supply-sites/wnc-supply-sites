@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
+import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
 import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,10 @@ public class DeliveryController {
     static DeliveryUpdate parseJson(String inputJson) {
       return new Gson().fromJson(inputJson, DeliveryUpdate.class);
     }
+
+    boolean isComplete() {
+      return deliveryStatus != null && deliveryStatus.toLowerCase().contains("complete");
+    }
   }
 
   @PostMapping(PATH_UPDATE_DELIVERY)
@@ -77,6 +82,15 @@ public class DeliveryController {
       DeliveryDao.deleteDelivery(jdbi, deliveryUpdate.deliveryId);
     } else {
       DeliveryDao.upsert(jdbi, deliveryUpdate);
+      if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
+        log.info(
+            "Delivery completion received! Updating site inventory items to no longer be needed." +
+               "Site WSS ID: {}, item WSS IDs: {}",
+            deliveryUpdate.dropOffSiteWssId,
+            deliveryUpdate.getItemListWssIds());
+        InventoryDao.markItemsAsNotNeeded(
+            jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
+      }
     }
 
     return ResponseEntity.ok("ok");

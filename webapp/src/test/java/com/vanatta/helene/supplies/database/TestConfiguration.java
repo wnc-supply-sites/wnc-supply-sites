@@ -12,6 +12,19 @@ import org.jdbi.v3.core.Jdbi;
 
 public class TestConfiguration {
 
+  // these values come from TestData.sql
+  public static final long SITE1_AIRTABLE_ID = -200;
+  public static final long SITE1_WSS_ID = -10;
+  public static final long SITE2_WSS_ID = -20;
+  public static final long WATER_WSS_ID = -40;
+  public static final long SOAP_WSS_ID = -30;
+  public static final long GLOVES_WSS_ID = -50;
+  public static final long USED_CLOTHES_WSS_ID = -60;
+  public static final long NEW_CLOTHES_WSS_ID = -70;
+  public static final long RANDOM_STUFF_WSS_ID = -80;
+  public static final long HEATER_WSS_ID = -90;
+  public static final long BATTERIES_WSS_ID = -95;
+
   public static final Jdbi jdbiTest;
 
   static {
@@ -23,9 +36,6 @@ public class TestConfiguration {
     HikariDataSource ds = new HikariDataSource(config);
     jdbiTest = Jdbi.create(ds);
   }
-
-  public static final long SITE1_AIRTABLE_ID = -200;
-  public static final long SITE1_WSS_ID = -10;
 
   public static void setupDatabase() {
     try {

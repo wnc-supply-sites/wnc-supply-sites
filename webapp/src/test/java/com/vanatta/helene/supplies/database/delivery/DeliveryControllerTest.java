@@ -56,11 +56,6 @@ class DeliveryControllerTest {
       """
   {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[],"publicUrlKey": "ASDF"}
   """;
-  // these values come from TestData.sql
-  static final long SITE1_WSS_ID = -10;
-  static final long SITE2_WSS_ID = -20;
-  static final long WATER_WSS_ID = -40;
-  static final long GLOVES_WSS_ID = -50;
 
   @Test
   void canParseInput() {
@@ -85,6 +80,22 @@ class DeliveryControllerTest {
     DeliveryController.DeliveryUpdate.parseJson(deliveryInput2);
   }
 
+  @Test
+  void deliveryUpdateComplete() {
+    var input =
+        DeliveryController.DeliveryUpdate.builder().deliveryStatus("Delivery Completed").build();
+    assertThat(input.isComplete()).isTrue();
+
+    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus("complete").build();
+    assertThat(input.isComplete()).isTrue();
+
+    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus(null).build();
+    assertThat(input.isComplete()).isFalse();
+
+    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus("pending").build();
+    assertThat(input.isComplete()).isFalse();
+  }
+
   DeliveryController deliveryController = new DeliveryController(TestConfiguration.jdbiTest);
 
   @Test
@@ -94,9 +105,10 @@ class DeliveryControllerTest {
 
     var inputData =
         update.toBuilder()
-            .pickupSiteWssId(List.of(SITE1_WSS_ID))
-            .dropOffSiteWssId(List.of(SITE2_WSS_ID))
-            .itemListWssIds(List.of(WATER_WSS_ID, GLOVES_WSS_ID))
+            .pickupSiteWssId(List.of(TestConfiguration.SITE1_WSS_ID))
+            .dropOffSiteWssId(List.of(TestConfiguration.SITE2_WSS_ID))
+            .itemListWssIds(
+                List.of(TestConfiguration.WATER_WSS_ID, TestConfiguration.GLOVES_WSS_ID))
             .build();
 
     assertThat(
@@ -154,12 +166,12 @@ class DeliveryControllerTest {
             .driverName(List.of("driver"))
             .driverNumber(List.of("333.333.3333"))
             // we are flipping the to & from site IDs
-            .pickupSiteWssId(List.of(SITE2_WSS_ID))
-            .dropOffSiteWssId(List.of(SITE1_WSS_ID))
+            .pickupSiteWssId(List.of(TestConfiguration.SITE2_WSS_ID))
+            .dropOffSiteWssId(List.of(TestConfiguration.SITE1_WSS_ID))
             .licensePlateNumbers(List.of("Traveler"))
             .targetDeliveryDate("2024-12-15")
             // we are reducing the number of items from 2 to 1
-            .itemListWssIds(List.of(WATER_WSS_ID))
+            .itemListWssIds(List.of(TestConfiguration.WATER_WSS_ID))
             .build();
 
     // now update the delivery that we just inserted

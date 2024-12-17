@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.manage.inventory;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -218,5 +219,42 @@ public class InventoryDao {
                 .bind("itemName", itemName)
                 .mapTo(Long.class)
                 .findOne());
+  }
+
+  public static void markItemsAsNotNeeded(Jdbi jdbi, long siteWssId, List<Long> siteWssIds) {
+    String selectSiteItem =
+        """
+        select si.id
+        from site_item si
+        join site s on s.id = si.site_id
+        join item i on si.item_id = i.id
+        join item_status its on its.id = si.item_status_id
+        where s.wss_id = :siteWssId
+          and its.is_need = true
+          and i.wss_id in (<itemWssIds>)
+        """;
+
+    String update =
+        """
+        update site_item set
+          item_status_id = (select id from item_status where name = 'Available')
+        where id in (<inventoryIds>)
+        """;
+
+    List<Long> inventoryIds =
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(selectSiteItem)
+                    .bind("siteWssId", siteWssId)
+                    .bindList("itemWssIds", siteWssIds)
+                    .mapTo(Long.class)
+                    .list());
+    if (inventoryIds.isEmpty()) {
+      return;
+    } else {
+      jdbi.withHandle(
+          handle -> handle.createUpdate(update).bindList("inventoryIds", inventoryIds).execute());
+    }
   }
 }

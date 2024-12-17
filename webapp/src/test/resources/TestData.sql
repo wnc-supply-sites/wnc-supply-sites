@@ -153,13 +153,13 @@ insert into site(name, address, city, county_id, website, site_type_id, max_supp
 
 
 insert into item(name, wss_id) values('water', -40);
-insert into item(name) values('soap');
+insert into item(name, wss_id) values('soap', -30);
 insert into item(name, wss_id) values('gloves', -50);
-insert into item(name) values('used clothes');
-insert into item(name) values('new clothes');
-insert into item(name) values('random stuff');
-insert into item(name) values('heater');
-insert into item(name) values('batteries');
+insert into item(name, wss_id) values('used clothes', -60);
+insert into item(name, wss_id) values('new clothes', -70);
+insert into item(name, wss_id) values('random stuff', -80);
+insert into item(name, wss_id) values('heater', -90);
+insert into item(name, wss_id) values('batteries', -95);
 
 insert into site_item(site_id, item_id, item_status_id) values(
     (select id from site where name = 'site1'),

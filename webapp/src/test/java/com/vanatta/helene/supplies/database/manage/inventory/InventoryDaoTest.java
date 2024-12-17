@@ -5,9 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
+import com.vanatta.helene.supplies.database.supplies.SuppliesDao;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class InventoryDaoTest {
@@ -160,5 +164,97 @@ class InventoryDaoTest {
     return TestConfiguration.jdbiTest.withHandle(
         handle ->
             handle.createQuery("select count(*) from site_item_audit").mapTo(Integer.class).one());
+  }
+
+  @Nested
+  class MarkNoLongerNeeded {
+
+    /**
+     *
+     *
+     * <pre>
+     * (1) Set up a site with various items that are both needed & available & oversupply
+     * (2) Mark all these items as no longer needed.
+     * (3) validate:
+     *   - needed items are now available
+     *   - available items are still available
+     *   - oversupply items are still oversupply
+     * </pre>
+     */
+    @Test
+    void markSiteItemsNotNeeded() {
+      String newSiteName = TestConfiguration.addSite();
+      long newSiteId = TestConfiguration.getSiteId(newSiteName);
+      var siteDetail = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, newSiteId);
+
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "batteries", ItemStatus.NEEDED.getText());
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "heater", ItemStatus.AVAILABLE.getText());
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "used clothes", ItemStatus.OVERSUPPLY.getText());
+      InventoryDao.updateSiteItemActive(
+          TestConfiguration.jdbiTest, newSiteId, "new clothes", ItemStatus.OVERSUPPLY.getText());
+
+      InventoryDao.markItemsAsNotNeeded(
+          TestConfiguration.jdbiTest,
+          siteDetail.getWssId(),
+          List.of(
+              TestConfiguration.GLOVES_WSS_ID,
+              TestConfiguration.WATER_WSS_ID,
+              TestConfiguration.BATTERIES_WSS_ID,
+              TestConfiguration.HEATER_WSS_ID,
+              TestConfiguration.USED_CLOTHES_WSS_ID,
+              TestConfiguration.NEW_CLOTHES_WSS_ID));
+
+      var supplyResults =
+          SuppliesDao.getSupplyResults(
+              TestConfiguration.jdbiTest,
+              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build());
+      confirmItemStatus(supplyResults, "gloves", ItemStatus.AVAILABLE);
+      confirmItemStatus(supplyResults, "water", ItemStatus.AVAILABLE);
+      confirmItemStatus(supplyResults, "batteries", ItemStatus.AVAILABLE);
+      confirmItemStatus(supplyResults, "heater", ItemStatus.AVAILABLE);
+      confirmItemStatus(supplyResults, "used clothes", ItemStatus.OVERSUPPLY);
+      confirmItemStatus(supplyResults, "new clothes", ItemStatus.OVERSUPPLY);
+    }
+
+    private static void confirmItemStatus(
+        List<SuppliesDao.SuppliesQueryResult> results, String item, ItemStatus desiredStatus) {
+      var result =
+          results.stream()
+              .filter(r -> r.getItem().equals(item))
+              .findAny()
+              .orElseThrow(() -> new IllegalStateException("Did not find item " + item));
+      assertThat(result.getItemStatus()).isEqualTo(desiredStatus.getText());
+    }
+
+    /**
+     * Make sure that if we try the mark 'incorrect' items is okay. An item might be removed from a
+     * site, and then the delivery is completed. We should make sure that this is okay and that the
+     * item is not added back to the site.
+     */
+    @Test
+    void markItemsAsNotNeeded_inActiveItemsStayInactive() {
+      String newSiteName = TestConfiguration.addSite();
+      long newSiteId = TestConfiguration.getSiteId(newSiteName);
+      var siteDetail = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, newSiteId);
+
+      InventoryDao.markItemsAsNotNeeded(
+          TestConfiguration.jdbiTest,
+          siteDetail.getWssId(),
+          List.of(TestConfiguration.GLOVES_WSS_ID));
+
+      // we added no inventory to this new site. Even after marking an item as not needed
+      // the site should still have no inventory.
+      SuppliesDao.getSupplyResults(
+              TestConfiguration.jdbiTest,
+              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
+          .forEach(r -> assertThat(r.getItem()).isNull());
+    }
   }
 }

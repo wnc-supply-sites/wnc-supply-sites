@@ -23,7 +23,7 @@ public class SuppliesDao {
     LocalDate inventoryLastUpdated;
   }
 
-  static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
+  public static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
     StringBuilder query =
         new StringBuilder(
             """
