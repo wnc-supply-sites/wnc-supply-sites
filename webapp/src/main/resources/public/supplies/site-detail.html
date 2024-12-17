@@ -166,7 +166,7 @@
         <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>
         {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}
         {{#hasIncomingDeliveries}}
-        <div class="delivery-table-container">
+        <div class="table-container">
             <table class="delivery-table">
                 <thead>
                     <tr>
@@ -200,7 +200,7 @@
         {{^hasOutgoingDeliveries}} None scheduled {{/hasOutgoingDeliveries}}
         {{#hasOutgoingDeliveries}}
 
-        <div class="delivery-table-container">
+        <div class="table-container">
             <table class="delivery-table">
                 <thead>
                     <tr>
@@ -235,41 +235,42 @@
 
         <a id="needs-matching"></a>
         <h3>Needs Matching ({{matchCount}} sites)</h3>
-
-        <table class="needs-matching">
-            <thead>
-                <tr>
-                    <th>Site Name</th>
-                    <th>Site Address</th>
-                    <th>Site City</th>
-                    <th>Site County</th>
-                    <th>State</th>
-                    <th class="wider-column">Item</th>
-                    <th>Item Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#needsMatching}}
-                <tr>
-                    <td class="bold">
-                        <a href="{{{siteLink}}}">{{siteName}}</a>
-                    </td>
-                    <td>{{siteAddress}}</td>
-                    <td>{{city}}</td>
-                    <td>{{county}}</td>
-                    <td>{{state}}</td>
-                    <td class="bold">
-                        <ul>
-                            {{#items}}
-                            <li class="{{urgencyCssClass}}">{{name}}</li>
-                            {{/items}}
-                        </ul>
-                    </td>
-                    <td>{{itemCount}}</td>
-                </tr>
-                {{/needsMatching}}
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table class="needs-matching">
+                <thead>
+                    <tr>
+                        <th>Site Name</th>
+                        <th>Site Address</th>
+                        <th>Site City</th>
+                        <th>Site County</th>
+                        <th>State</th>
+                        <th class="wider-column">Item</th>
+                        <th>Item Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#needsMatching}}
+                    <tr>
+                        <td class="bold">
+                            <a href="{{{siteLink}}}">{{siteName}}</a>
+                        </td>
+                        <td>{{siteAddress}}</td>
+                        <td>{{city}}</td>
+                        <td>{{county}}</td>
+                        <td>{{state}}</td>
+                        <td class="bold">
+                            <ul>
+                                {{#items}}
+                                <li class="{{urgencyCssClass}}">{{name}}</li>
+                                {{/items}}
+                            </ul>
+                        </td>
+                        <td>{{itemCount}}</td>
+                    </tr>
+                    {{/needsMatching}}
+                </tbody>
+            </table>
+        </div>
         {{/loggedIn}}
     </body>
 </html>

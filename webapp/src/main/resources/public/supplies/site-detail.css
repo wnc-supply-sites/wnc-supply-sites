@@ -72,7 +72,7 @@ table.needs-matching tr {
     margin-right: 5px;
 }
 
-.delivery-table-container {
+.table-container {
     width: 100%;
     overflow-y: auto;
 }
