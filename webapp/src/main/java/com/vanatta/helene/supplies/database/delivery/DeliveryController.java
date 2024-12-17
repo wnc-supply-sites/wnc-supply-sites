@@ -1,7 +1,11 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
+import com.vanatta.helene.supplies.database.util.TruncateString;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /** Has a webhook for incoming requests from airtable to receive status updates for deliveries. */
 @Controller
@@ -19,13 +26,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 public class DeliveryController {
 
-  
+  /** How many items we can have in one column before we split the item list into two. */
+  // @VisibleForTesting
+  static int ITEM_LIST_ONE_COLUMN_MAX = 5;
+
+  // @VisibleForTesting
+  static int ITEM_LIST_TWO_COLUMN_MAX = 11;
+
   public static String buildDeliveryPageLink(long deliveryId) {
     return "/delivery/" + deliveryId;
   }
 
-
-  
   // also does delivery upserts
   private static final String PATH_UPDATE_DELIVERY = "/webhook/update-delivery";
 
@@ -68,5 +79,114 @@ public class DeliveryController {
     }
 
     return ResponseEntity.ok("ok");
+  }
+
+  enum TemplateParams {
+    deliveryId,
+    deliveryDate,
+    itemCount,
+    driverName,
+    driverPhone,
+    licensePlate,
+
+    dispatcherName,
+    dispatcherPhone,
+
+    fromSiteName,
+    fromSiteLink,
+    fromAddress,
+    fromAddressLine2,
+    fromContactName,
+    fromContactPhone,
+    fromHours,
+
+    toSiteName,
+    toSiteLink,
+    toAddress,
+    toAddressLine2,
+    toContactName,
+    toContactPhone,
+    toHours,
+
+    items1,
+    items2,
+    items3;
+  }
+
+  @GetMapping("/delivery/{airtableId}")
+  ModelAndView showDeliveryDetailPage(@PathVariable("airtableId") long airtableId) {
+    Map<String, Object> templateParams = new HashMap<>();
+
+    Delivery delivery = DeliveryDao.fetchDeliveryByAirtableId(jdbi, airtableId);
+    templateParams.put(TemplateParams.deliveryId.name(), delivery.getDeliveryNumber());
+    templateParams.put(TemplateParams.deliveryDate.name(), nullsToDash(delivery.getDeliveryDate()));
+    templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());
+    templateParams.put(TemplateParams.driverName.name(), nullsToDash(delivery.getDriverName()));
+    templateParams.put(TemplateParams.driverPhone.name(), delivery.getDriverNumber());
+    templateParams.put(
+        TemplateParams.licensePlate.name(), nullsToDash(delivery.getDriverLicensePlate()));
+    templateParams.put(
+        TemplateParams.dispatcherName.name(), nullsToDash(delivery.getDispatcherName()));
+    templateParams.put(TemplateParams.dispatcherPhone.name(), delivery.getDispatcherNumber());
+    templateParams.put(
+        TemplateParams.fromSiteName.name(), TruncateString.truncate(delivery.getFromSite(), 30));
+    templateParams.put(TemplateParams.fromSiteLink.name(), delivery.getFromSiteLink());
+    templateParams.put(TemplateParams.fromAddress.name(), delivery.getFromAddress());
+    templateParams.put(
+        TemplateParams.fromAddressLine2.name(),
+        delivery.getFromCity() + ", " + delivery.getFromState());
+    templateParams.put(
+        TemplateParams.fromContactName.name(), nullsToDash(delivery.getFromContactName()));
+    templateParams.put(TemplateParams.fromContactPhone.name(), delivery.getFromContactPhone());
+    templateParams.put(TemplateParams.fromHours.name(), nullsToDash(delivery.getFromHours()));
+    templateParams.put(
+        TemplateParams.toSiteName.name(), TruncateString.truncate(delivery.getToSite(), 30));
+    templateParams.put(TemplateParams.toSiteLink.name(), delivery.getToSiteLink());
+    templateParams.put(TemplateParams.toAddress.name(), nullsToDash(delivery.getToAddress()));
+    templateParams.put(
+        TemplateParams.toAddressLine2.name(), delivery.getToCity() + ", " + delivery.getToState());
+    templateParams.put(
+        TemplateParams.toContactName.name(), nullsToDash(delivery.getToContactName()));
+    templateParams.put(
+        TemplateParams.toContactPhone.name(), nullsToDash(delivery.getToContactPhone()));
+    templateParams.put(TemplateParams.toHours.name(), nullsToDash(delivery.getToHours()));
+
+    List<List<String>> split = splitItemList(delivery.getItemList().stream().sorted().toList());
+    assert split.size() == 3;
+
+    templateParams.put(TemplateParams.items1.name(), split.get(0));
+    templateParams.put(TemplateParams.items2.name(), split.get(1));
+    templateParams.put(TemplateParams.items3.name(), split.get(2));
+
+    return new ModelAndView("delivery/delivery", templateParams);
+  }
+
+  private static String nullsToDash(String input) {
+    return Optional.ofNullable(input).orElse("-");
+  }
+
+  // @VisibleForTesting
+  static List<List<String>> splitItemList(List<String> items) {
+    assert items != null;
+
+    if (items.size() <= ITEM_LIST_ONE_COLUMN_MAX) {
+      return List.of(items, List.of(), List.of());
+    } else if (items.size() <= ITEM_LIST_TWO_COLUMN_MAX) {
+      int splitLocation = items.size() % 2 == 0 ? items.size() / 2 : (items.size() / 2) + 1;
+      List<String> one = items.subList(0, splitLocation);
+      List<String> two = items.subList(splitLocation, items.size());
+      return List.of(one, two, List.of());
+    } else {
+
+      int firstListSize = items.size() % 3 == 0 ? items.size() / 3 : (items.size() / 3) + 1;
+      int secondListSize = items.size() % 3 == 2 ? (items.size() / 3) + 1 : items.size() / 3;
+      int thirdListSize = items.size() / 3;
+      assert (firstListSize + secondListSize + thirdListSize) == items.size();
+
+      List<String> one = items.subList(0, firstListSize);
+      List<String> two = items.subList(firstListSize, firstListSize + secondListSize);
+      List<String> three = items.subList(firstListSize + secondListSize, items.size());
+      return List.of(one, two, three);
+    }
   }
 }

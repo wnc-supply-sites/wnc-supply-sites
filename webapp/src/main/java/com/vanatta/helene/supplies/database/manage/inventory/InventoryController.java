@@ -3,8 +3,8 @@ package com.vanatta.helene.supplies.database.manage.inventory;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
-import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -246,8 +246,9 @@ public class InventoryController {
       return ResponseEntity.badRequest().body("Invalid site id");
     }
 
+    InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
+        .ifPresent(wssId -> new Thread(() -> sendInventoryUpdate.sendItemRemoval(wssId)).start());
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
-    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
     return ResponseEntity.ok("Updated");
   }
 
@@ -276,18 +277,7 @@ public class InventoryController {
       InventoryDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
       var latestStatus = ItemStatus.fromTextValue(newStatus);
       if (oldStatus != latestStatus) {
-        new Thread(
-                () -> {
-                  // if data is stale, or multiple browser windows, then the status
-                  // might not have actually changed. In which case, no-op.
-                  sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
-                  //                  dispatchRequestService
-                  //                      .computeDispatch(siteName, itemName, latestStatus)
-                  //                      .filter(_ -> makeEnabled)
-                  //                      .ifPresent(json ->
-                  // HttpPostSender.sendAsJson(dispatchRequestUrl, json));
-                })
-            .start();
+        new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
       }
     }
 

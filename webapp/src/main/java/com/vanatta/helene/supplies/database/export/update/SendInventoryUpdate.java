@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.export.update;
 
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -50,8 +51,18 @@ public class SendInventoryUpdate {
                 .one());
   }
 
+  public void sendItemRemoval(long wssId) {
+    if (enabled) {
+      var dataToSend =
+          SiteDataDbResult.builder().itemStatus("Removed").itemNeedWssId(wssId).build();
+      HttpPostSender.sendAsJson(webhookUrl, dataToSend);
+    }
+  }
+
   /** Represents DB data for one site with all of its inventory availability and needs. */
   @Data
+  @Builder
+  @AllArgsConstructor
   @NoArgsConstructor
   public static class SiteDataDbResult {
     String siteName;

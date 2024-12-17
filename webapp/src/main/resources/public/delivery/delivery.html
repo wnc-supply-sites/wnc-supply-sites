@@ -1,0 +1,92 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supply Sites - Delivery</title>
+  <link rel="stylesheet" href="../delivery.css"/>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="../mobile.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {{> header-include }}
+</head>
+<body>
+
+<div class="content-wrapper">
+
+  <h2 class="delivery-title">Delivery #{{deliveryId}} - {{deliveryDate}}</h2>
+
+  <div class="horizontal page-section">
+
+    <!-- Pickup Site -->
+    <div class="vertical left-column page-subsection narrow-sub-section">
+      <div class="large-section-header">PICK UP</div>
+      <div><a href="{{fromSiteLink}}">{{fromSiteName}}</a></div>
+      <div>{{fromAddress}}</div>
+      <div>{{fromAddressLine2}}</div>
+
+      <div class="sub-section-header">Contact</div>
+      <div>{{fromContactName}}</div>
+      <div>{{^fromContactPhone}}-{{/fromContactPhone}}{{#fromContactPhone}}<a href="tel:{{fromContactPhone}}">{{.}}</a>{{/fromContactPhone}}</div>
+
+      <div class="sub-section-header">Hours</div>
+      <div><pre>{{fromHours}}</pre></div>
+    </div>
+
+    <!-- DROP OFF -->
+    <div class="vertical page-subsection narrow-sub-section">
+      <div class="large-section-header">DROP OFF</div>
+      <div><a href="{{toSiteLink}}">{{toSiteName}}</a></div>
+      <div>{{toAddress}}</div>
+      <div>{{toAddressLine2}}</div>
+
+      <div class="sub-section-header">Contact</div>
+      <div>{{toContactName}}</div>
+      <div>{{^toContactPhone}}-{{/toContactPhone}}{{#toContactPhone}}<a href="tel:{{toContactPhone}}">{{.}}</a>{{/toContactPhone}}</div>
+      <div class="sub-section-header">Hours</div>
+      <div><pre>{{toHours}}</pre></div>
+    </div>
+  </div>
+
+  <div class="horizontal page-section">
+
+    <div class="vertical left-column page-subsection narrow-sub-section">
+      <div class="large-section-header">Driver</div>
+      <div>{{driverName}}</div>
+      <div>{{^driverPhone}}-{{/driverPhone}}{{#driverPhone}}<a href="tel:{{driverPhone}}">{{.}}</a>{{/driverPhone}}</div>
+      <div class="sub-section-header">License Plate</div>
+      <div>{{licensePlate}}</div>
+    </div>
+
+    <div class="vertical page-subsection narrow-sub-section">
+      <div class="large-section-header">Dispatcher</div>
+      <div>{{dispatcherName}}</div>
+      <div>{{^dispatcherPhone}}-{{/dispatcherPhone}}{{#dispatcherPhone}}<a href="tel:{{dispatcherPhone}}">{{.}}</a>{{/dispatcherPhone}}</div>
+    </div>
+
+  </div>
+
+  <!-- ITEMS -->
+  <div class="page-subsection wide-sub-section">
+    <div class="large-section-header">Items ({{itemCount}})</div>
+
+    <div class="horizontal">
+      <ul>
+        {{#items1}}
+        <li>{{.}}</li>
+        {{/items1}}
+      </ul>
+      <ul>
+        {{#items2}}
+        <li>{{.}}</li>
+        {{/items2}}
+      </ul>
+      <ul>
+        {{#items3}}
+        <li>{{.}}</li>
+        {{/items3}}
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

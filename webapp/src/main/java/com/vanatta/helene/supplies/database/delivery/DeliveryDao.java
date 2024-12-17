@@ -3,10 +3,12 @@ package com.vanatta.helene.supplies.database.delivery;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
+@Slf4j
 public class DeliveryDao {
 
   public static void upsert(Jdbi jdbi, DeliveryController.DeliveryUpdate deliveryUpdate) {
@@ -149,9 +151,31 @@ public class DeliveryDao {
     private String toHours;
   }
 
+  public static Delivery fetchDeliveryByAirtableId(Jdbi jdbi, long airtableId) {
+    String whereClause = "d.airtable_id = :id";
+    var results = fetchDeliveriesBySiteId(jdbi, whereClause, airtableId);
+    if (results.isEmpty()) {
+      log.warn("Failed to fetch delivery by airtable id (record not found): " + airtableId);
+      throw new IllegalArgumentException("Invalid delivery airtable ID: " + airtableId);
+    } else {
+      return results.getFirst();
+    }
+  }
+
   public static List<Delivery> fetchDeliveriesBySiteId(Jdbi jdbi, Long siteId) {
-    String select =
+    String whereClause =
         """
+    d.from_site_id = :id
+    or d.to_site_id = :id
+    """;
+    return fetchDeliveriesBySiteId(jdbi, whereClause, siteId);
+  }
+
+  public static List<Delivery> fetchDeliveriesBySiteId(Jdbi jdbi, String whereClause, long id) {
+
+    String select =
+        String.format(
+            """
     select
       d.airtable_id deliveryId,
       d.delivery_status deliveryStatus,
@@ -185,20 +209,14 @@ public class DeliveryDao {
     join county fromCounty on fromCounty.id = fromSite.county_id
     join site toSite on toSite.id = d.to_site_id
     join county toCounty on toCounty.id = toSite.county_id
-    where (
-      from_site_id = :siteId
-      or to_site_id = :siteId
-    )
-    """;
+    where (%s)
+    """,
+            whereClause);
     List<Delivery> deliveries =
         jdbi
             .withHandle(
                 handle ->
-                    handle
-                        .createQuery(select)
-                        .bind("siteId", siteId)
-                        .mapToBean(DeliveryData.class)
-                        .list())
+                    handle.createQuery(select).bind("id", id).mapToBean(DeliveryData.class).list())
             .stream()
             .map(Delivery::new)
             .toList();
