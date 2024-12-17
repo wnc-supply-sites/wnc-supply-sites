@@ -50,7 +50,7 @@ public class AuthInterceptor implements WebMvcConfigurer {
         HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
       String requestUri = request.getRequestURI();
-      if (requestUri.startsWith("/manage/") || requestUri.startsWith("/delivery/")) {
+      if (requestUri.startsWith("/manage/")) {
 
         String queryString = request.getQueryString();
         if (queryString != null) {
