@@ -72,6 +72,11 @@ table.needs-matching tr {
     margin-right: 5px;
 }
 
+.delivery-table-container {
+    width: 100%;
+    overflow-y: auto;
+}
+
 .delivery-table th,
 .delivery-table td {
     border: solid 1px gray;
