@@ -210,6 +210,7 @@ public class DeliveryDao {
     join site toSite on toSite.id = d.to_site_id
     join county toCounty on toCounty.id = toSite.county_id
     where (%s)
+    order by d.target_delivery_date desc
     """,
             whereClause);
     List<Delivery> deliveries =
