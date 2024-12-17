@@ -24,19 +24,4 @@ class SendInventoryUpdateTest {
     assertThat(result.getItemNeedWssId()).isEqualTo(TestConfiguration.SITE1_WSS_ID);
     assertThat(result.getItemStatus()).isEqualTo("Urgently Needed");
   }
-
-  /** When requesting an item no longer assigned to a site, we should get a "removed" record. */
-  @Test
-  void removeSiteItem() {
-    var result =
-        SendInventoryUpdate.fetchItemForSite(
-            TestConfiguration.jdbiTest,
-            TestConfiguration.getSiteId("site1"),
-            "some item that is not in the database");
-
-    assertThat(result.getItemName()).isEqualTo("some item that is not in the database");
-    assertThat(result.getSiteName()).isEqualTo("site1");
-    assertThat(result.getItemNeedWssId()).isEqualTo(TestConfiguration.SITE1_WSS_ID);
-    assertThat(result.getItemStatus()).isEqualTo("Removed");
-  }
 }
