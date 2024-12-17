@@ -154,7 +154,7 @@ public class DeliveryController {
     templateParams.put(TemplateParams.items2.name(), split.get(1));
     templateParams.put(TemplateParams.items3.name(), split.get(2));
 
-    return new ModelAndView("/delivery/delivery", templateParams);
+    return new ModelAndView("delivery/delivery", templateParams);
   }
 
   private static String nullsToDash(String input) {
