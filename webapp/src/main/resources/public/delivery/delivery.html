@@ -24,7 +24,7 @@
 
       <div class="sub-section-header">Contact</div>
       <div>{{fromContactName}}</div>
-      <div><a href="tel:{{fromContactPhone}}">{{fromContactPhone}}</a></div>
+      <div>{{^fromContactPhone}}-{{/fromContactPhone}}{{#fromContactPhone}}<a href="tel:{{fromContactPhone}}">{{.}}</a>{{/fromContactPhone}}</div>
 
       <div class="sub-section-header">Hours</div>
       <div>{{fromHours}}</div>
@@ -39,7 +39,7 @@
 
       <div class="sub-section-header">Contact</div>
       <div>{{toContactName}}</div>
-      <div><a href="tel:{{toContactPhone}}">{{toContactPhone}}</a></div>
+      <div>{{^toContactPhone}}-{{/toContactPhone}}{{#toContactPhone}}<a href="tel:{{toContactPhone}}">{{.}}</a>{{/toContactPhone}}</div>
       <div class="sub-section-header">Hours</div>
       <div>{{toHours}}</div>
     </div>
@@ -50,7 +50,7 @@
     <div class="vertical left-column page-subsection narrow-sub-section">
       <div class="large-section-header">Driver</div>
       <div>{{driverName}}</div>
-      <div><a href="tel:{{driverPhone}}">{{driverPhone}}</a></div>
+      <div>{{^driverPhone}}-{{/driverPhone}}{{#driverPhone}}<a href="tel:{{driverPhone}}">{{.}}</a>{{/driverPhone}}</div>
       <div class="sub-section-header">License Plate</div>
       <div>{{licensePlate}}</div>
     </div>
@@ -58,7 +58,7 @@
     <div class="vertical page-subsection narrow-sub-section">
       <div class="large-section-header">Dispatcher</div>
       <div>{{dispatcherName}}</div>
-      <div><a href="tel:{{dispatcherPhone}}">{{dispatcherPhone}}</a></div>
+      <div>{{^dispatcherPhone}}-{{/dispatcherPhone}}{{#dispatcherPhone}}<a href="tel:{{dispatcherPhone}}">{{.}}</a>{{/dispatcherPhone}}</div>
     </div>
 
   </div>

@@ -122,13 +122,12 @@ public class DeliveryController {
     templateParams.put(TemplateParams.deliveryDate.name(), nullsToDash(delivery.getDeliveryDate()));
     templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());
     templateParams.put(TemplateParams.driverName.name(), nullsToDash(delivery.getDriverName()));
-    templateParams.put(TemplateParams.driverPhone.name(), nullsToDash(delivery.getDriverNumber()));
+    templateParams.put(TemplateParams.driverPhone.name(), delivery.getDriverNumber());
     templateParams.put(
         TemplateParams.licensePlate.name(), nullsToDash(delivery.getDriverLicensePlate()));
     templateParams.put(
         TemplateParams.dispatcherName.name(), nullsToDash(delivery.getDispatcherName()));
-    templateParams.put(
-        TemplateParams.dispatcherPhone.name(), nullsToDash(delivery.getDispatcherNumber()));
+    templateParams.put(TemplateParams.dispatcherPhone.name(), delivery.getDispatcherNumber());
     templateParams.put(
         TemplateParams.fromSiteName.name(), TruncateString.truncate(delivery.getFromSite(), 30));
     templateParams.put(TemplateParams.fromSiteLink.name(), delivery.getFromSiteLink());
@@ -138,8 +137,7 @@ public class DeliveryController {
         delivery.getFromCity() + ", " + delivery.getFromState());
     templateParams.put(
         TemplateParams.fromContactName.name(), nullsToDash(delivery.getFromContactName()));
-    templateParams.put(
-        TemplateParams.fromContactPhone.name(), nullsToDash(delivery.getFromContactPhone()));
+    templateParams.put(TemplateParams.fromContactPhone.name(), delivery.getFromContactPhone());
     templateParams.put(TemplateParams.fromHours.name(), nullsToDash(delivery.getFromHours()));
     templateParams.put(
         TemplateParams.toSiteName.name(), TruncateString.truncate(delivery.getToSite(), 30));
