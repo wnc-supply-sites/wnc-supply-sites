@@ -132,7 +132,6 @@
 </h2>
 
 <div class="mission-statement">
-
   <div class="data-field vertical">
     <div class="horizontal checkbox-option">
       {{^hasForklift}}<span class="red small-right-margin">&times;</span>{{/hasForklift}}
@@ -194,30 +193,32 @@ None scheduled
 {{/hasOutgoingDeliveries}}
 {{#hasOutgoingDeliveries}}
 
-<table class="delivery-table">
-  <thead>
-  <tr>
-    <th></th>
-    <th>Delivery Date</th>
-    <th>To</th>
-    <th>Status</th>
-    <th>Item Count</th>
-    <th>Items</th>
-  </tr>
-  </thead>
-  <tbody>
-  {{#outgoingDeliveries}}
-  <tr>
-    <td><a href="{{detailLink}}">[Details]</a></td>
-    <td>{{deliveryDate}}</td>
-    <td><a href="{{toSiteLink}}">{{toSite}}</a></td>
-    <td>{{deliveryStatus}}</td>
-    <td>{{itemCount}}</td>
+<div class="delivery-table-container">
+  <table class="delivery-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Delivery Date</th>
+        <th>To</th>
+        <th>Status</th>
+        <th>Item Count</th>
+        <th>Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#outgoingDeliveries}}
+      <tr>
+        <td><a href="{{detailLink}}">[Details]</a></td>
+        <td>{{deliveryDate}}</td>
+        <td><a href="{{toSiteLink}}">{{toSite}}</a></td>
+        <td>{{deliveryStatus}}</td>
+        <td>{{itemCount}}</td>
     <td>{{itemListTruncated}}</td>
-  </tr>
-  {{/outgoingDeliveries}}
-  </tbody>
-</table>
+    </tr>
+    {{/outgoingDeliveries}}
+    </tbody>
+  </table>
+</div>
 {{/hasOutgoingDeliveries}}
     
     
