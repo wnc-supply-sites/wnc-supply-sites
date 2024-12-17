@@ -33,8 +33,8 @@ public class DeliveryController {
   // @VisibleForTesting
   static int ITEM_LIST_TWO_COLUMN_MAX = 11;
 
-  public static String buildDeliveryPageLink(long deliveryId) {
-    return "/delivery/" + deliveryId;
+  public static String buildDeliveryPageLink(String publicUrlKey) {
+    return "/delivery/" + publicUrlKey;
   }
 
   // also does delivery upserts
@@ -48,6 +48,7 @@ public class DeliveryController {
   @AllArgsConstructor
   public static class DeliveryUpdate {
     long deliveryId;
+    String publicUrlKey;
     String deliveryStatus;
     List<String> dispatcherName;
     List<String> dispatcherNumber;
@@ -113,11 +114,11 @@ public class DeliveryController {
     items3;
   }
 
-  @GetMapping("/delivery/{airtableId}")
-  ModelAndView showDeliveryDetailPage(@PathVariable("airtableId") long airtableId) {
+  @GetMapping("/delivery/{publicUrlKey}")
+  ModelAndView showDeliveryDetailPage(@PathVariable("publicUrlKey") String publicUrlKey) {
     Map<String, Object> templateParams = new HashMap<>();
 
-    Delivery delivery = DeliveryDao.fetchDeliveryByAirtableId(jdbi, airtableId);
+    Delivery delivery = DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicUrlKey);
     templateParams.put(TemplateParams.deliveryId.name(), delivery.getDeliveryNumber());
     templateParams.put(TemplateParams.deliveryDate.name(), nullsToDash(delivery.getDeliveryDate()));
     templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());

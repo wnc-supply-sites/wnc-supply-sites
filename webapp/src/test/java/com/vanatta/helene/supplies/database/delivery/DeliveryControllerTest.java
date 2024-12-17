@@ -47,13 +47,14 @@ class DeliveryControllerTest {
            3088
         ],
         "targetDeliveryDate" : "2024-12-13",
-        "dispatcherNotes": "notes from dispatcher"
+        "dispatcherNotes": "notes from dispatcher",
+        "publicUrlKey": "QWER"
      }
      """;
 
   String deliveryInput2 =
       """
-  {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[]}
+  {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[],"publicUrlKey": "ASDF"}
   """;
   // these values come from TestData.sql
   static final long SITE1_WSS_ID = -10;
@@ -209,7 +210,7 @@ class DeliveryControllerTest {
 
     @Test
     void detailPageHasAllParameters() {
-      ModelAndView result = deliveryController.showDeliveryDetailPage(-2);
+      ModelAndView result = deliveryController.showDeliveryDetailPage("XKCD");
       var templateDataMap = result.getModelMap();
 
       List<String> expectedTemplateParams =
@@ -226,11 +227,22 @@ class DeliveryControllerTest {
     void renderPageWithMostlyNull() {
       // delivery '-3' has almost all null values, it is minimum data
       // for us to store a delivery record
-      ModelAndView result = deliveryController.showDeliveryDetailPage(-3);
+      ModelAndView result = deliveryController.showDeliveryDetailPage("ABCD");
       var templateDataMap = result.getModelMap();
 
       List<String> expectedTemplateParams =
           Arrays.stream(DeliveryController.TemplateParams.values())
+              // phone number values are null when not set - this lets the front end handle
+              // creating links around the phone number or not. We need to filter them out.
+              .filter(
+                  e ->
+                      !List.of(
+                              DeliveryController.TemplateParams.dispatcherPhone,
+                              DeliveryController.TemplateParams.driverPhone,
+                              DeliveryController.TemplateParams.dispatcherPhone,
+                              DeliveryController.TemplateParams.fromContactPhone,
+                              DeliveryController.TemplateParams.toContactPhone)
+                          .contains(e))
               .map(Enum::name)
               .sorted()
               .toList();
@@ -257,7 +269,7 @@ class DeliveryControllerTest {
         var input = generateListOfLength(i);
 
         List<List<String>> result = DeliveryController.splitItemList(input);
-        
+
         assertThat(result).hasSize(3);
         assertThat(result.getFirst()).hasSize(i);
         assertThat(result.get(1)).isEmpty();
@@ -287,7 +299,7 @@ class DeliveryControllerTest {
 
         assertThat(result).hasSize(3);
         assertThat(result.get(2)).isEmpty();
-        
+
         if (i % 2 == 0) {
           assertThat(result.getFirst()).hasSize((i / 2));
         } else {
@@ -340,10 +352,7 @@ class DeliveryControllerTest {
       }
     }
   }
-  
+
   @Nested
-  class TruncateSiteName {
-  
-  
-  }
+  class TruncateSiteName {}
 }

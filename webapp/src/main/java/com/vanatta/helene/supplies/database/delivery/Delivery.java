@@ -57,7 +57,7 @@ public class Delivery {
   Delivery(DeliveryDao.DeliveryData dbData) {
     this.deliveryNumber = dbData.getDeliveryId();
     this.deliveryStatus = Optional.ofNullable(dbData.getDeliveryStatus()).orElse("Scheduling");
-    this.detailLink = DeliveryController.buildDeliveryPageLink(dbData.getDeliveryId());
+    this.detailLink = DeliveryController.buildDeliveryPageLink(dbData.getPublicUrlKey());
     this.deliveryDate = Optional.ofNullable(dbData.getTargetDeliveryDate()).orElse("Scheduling");
     this.driverName = dbData.getDriverName();
     this.driverNumber = dbData.getDriverNumber();

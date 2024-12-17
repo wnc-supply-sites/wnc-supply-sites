@@ -6,9 +6,18 @@ body {
     margin: 3px;
 }
 
-.delivery-title {
-    text-align: center;
+.logo-image {
+    margin-right: 3px;
 }
+
+.delivery-title {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .content-wrapper {
   /*width: 380px;*/
   /*  min-width: 360px;*/
@@ -52,6 +61,7 @@ body {
     font-weight: bold;
     font-size: larger;
     margin-bottom: 5px;
+    font-family: sans-serif;
 }
 
 
@@ -60,4 +70,9 @@ body {
     margin-bottom: 3px;
     text-align: center;
     font-weight: bold;
+    font-family: sans-serif;
+}
+
+pre {
+    font-family: serif;
 }

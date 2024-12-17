@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.TestConfiguration;
@@ -16,7 +17,8 @@ class DeliveryDaoTest {
     "driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],
     "dispatcherName":["John"],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
-    "targetDeliveryDate":"2024-12-16","licensePlateNumbers":[]}
+    "targetDeliveryDate":"2024-12-16","licensePlateNumbers":[],
+    "publicUrlKey": "akey"}
     """;
 
   static final String upsertJson2 =
@@ -25,7 +27,8 @@ class DeliveryDaoTest {
     "driverNumber":[],"driverName":[],"dispatcherNumber":[],
     "dispatcherName":[],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
-    "targetDeliveryDate":"","licensePlateNumbers":[]}
+    "targetDeliveryDate":"","licensePlateNumbers":[],
+    "publicUrlKey": "bkey"}
     """;
 
   static final long SITE1_WSS_ID = -10;
@@ -50,5 +53,13 @@ class DeliveryDaoTest {
                 .build();
 
     DeliveryDao.upsert(TestConfiguration.jdbiTest, update);
+  }
+
+  /** Make sure we can do a lookup of a delivery by public URL key */
+  @ParameterizedTest
+  @ValueSource(strings = {"BETA", "XKCD", "ABCD"})
+  void fetchDeliveryByPublicUrl(String urlKey) {
+    var result = DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, urlKey);
+    assertThat(result).isNotNull();
   }
 }

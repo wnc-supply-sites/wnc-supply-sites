@@ -20,7 +20,7 @@ public class DeliveryDao {
         insert into delivery(
           from_site_id, to_site_id, delivery_status, target_delivery_date,
           dispatcher_name, dispatcher_number, driver_name, driver_number,
-          driver_license_plates, airtable_id, dispatcher_notes)
+          driver_license_plates, airtable_id, dispatcher_notes, public_url_key)
         values(
           (select id from site where wss_id = :fromSiteWssId),
           (select id from site where wss_id = :toSiteWssId),
@@ -32,7 +32,8 @@ public class DeliveryDao {
           :driverNumber,
           :driverLicensePlateNumbers,
           :airtableId,
-          :dispatcherNotes
+          :dispatcherNotes,
+          :publicUrlKey
         ) on conflict(airtable_id) do update set
           from_site_id = (select id from site where wss_id = :fromSiteWssId),
           to_site_id = (select id from site where wss_id = :toSiteWssId),
@@ -43,7 +44,6 @@ public class DeliveryDao {
           driver_name = :driverName,
           driver_number = :driverNumber,
           driver_license_plates = :driverLicensePlateNumbers,
-          airtable_id = :airtableId,
           dispatcher_notes = :dispatcherNotes
         """;
     jdbi.withHandle(
@@ -81,6 +81,7 @@ public class DeliveryDao {
                         : deliveryUpdate.getLicensePlateNumbers().getFirst())
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
+                .bind("publicUrlKey", deliveryUpdate.getPublicUrlKey())
                 .execute());
 
     String deletePreviousItems =
@@ -123,6 +124,7 @@ public class DeliveryDao {
   @NoArgsConstructor
   public static class DeliveryData {
     long deliveryId;
+    String publicUrlKey;
     String deliveryStatus;
     String dispatcherName;
     String dispatcherNumber;
@@ -151,12 +153,12 @@ public class DeliveryDao {
     private String toHours;
   }
 
-  public static Delivery fetchDeliveryByAirtableId(Jdbi jdbi, long airtableId) {
-    String whereClause = "d.airtable_id = :id";
-    var results = fetchDeliveriesBySiteId(jdbi, whereClause, airtableId);
+  public static Delivery fetchDeliveryByPublicKey(Jdbi jdbi, String publicUrlKey) {
+    String whereClause = "d.public_url_key = :id";
+    var results = fetchDeliveries(jdbi, whereClause, publicUrlKey);
     if (results.isEmpty()) {
-      log.warn("Failed to fetch delivery by airtable id (record not found): " + airtableId);
-      throw new IllegalArgumentException("Invalid delivery airtable ID: " + airtableId);
+      log.warn("Failed to fetch delivery by id (record not found): {}", publicUrlKey);
+      throw new IllegalArgumentException("Invalid delivery ID: " + publicUrlKey);
     } else {
       return results.getFirst();
     }
@@ -168,16 +170,17 @@ public class DeliveryDao {
     d.from_site_id = :id
     or d.to_site_id = :id
     """;
-    return fetchDeliveriesBySiteId(jdbi, whereClause, siteId);
+    return fetchDeliveries(jdbi, whereClause, siteId);
   }
 
-  public static List<Delivery> fetchDeliveriesBySiteId(Jdbi jdbi, String whereClause, long id) {
+  private static List<Delivery> fetchDeliveries(Jdbi jdbi, String whereClause, Object idValue) {
 
     String select =
         String.format(
             """
     select
       d.airtable_id deliveryId,
+      d.public_url_key publicUrlKey,
       d.delivery_status deliveryStatus,
       d.target_delivery_date targetDeliveryDate,
       d.dispatcher_name dispatcherName,
@@ -217,7 +220,7 @@ public class DeliveryDao {
         jdbi
             .withHandle(
                 handle ->
-                    handle.createQuery(select).bind("id", id).mapToBean(DeliveryData.class).list())
+                    handle.createQuery(select).bind("id", idValue).mapToBean(DeliveryData.class).list())
             .stream()
             .map(Delivery::new)
             .toList();

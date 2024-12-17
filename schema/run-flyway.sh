@@ -16,7 +16,7 @@ fi
 
 function runFlyway {
   local dbName="$1"
-  local skip="${2-false}
+  local skip="${2-false}"
 
   docker run \
     -e "FLYWAY_URL=jdbc:postgresql://host.docker.internal:5432/$dbName" \
@@ -35,6 +35,6 @@ function runFlyway {
 (
   cd "$(dirname "$0")"
   docker build . --tag local/flyway:latest
-  runFlyway wnc_helene_test "$skip"
+  runFlyway wnc_helene_test "$skipTest"
   runFlyway wnc_helene
 )

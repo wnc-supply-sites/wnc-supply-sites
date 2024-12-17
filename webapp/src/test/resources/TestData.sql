@@ -85,7 +85,7 @@ insert into delivery(
   airtable_id, from_site_id, to_site_id,
   delivery_status, target_delivery_date, dispatcher_name,
   dispatcher_number, driver_name, driver_number,
-  driver_license_plates)
+  driver_license_plates, public_url_key)
 values(
         -1,
         (select id from site where name = 'site2'),
@@ -96,7 +96,8 @@ values(
         '555',
         'driver1',
         'call me anytime',
-        'traveler'
+        'traveler',
+       'BETA'
       );
 
 
@@ -111,7 +112,7 @@ insert into delivery(
   airtable_id, from_site_id, to_site_id,
   delivery_status, target_delivery_date, dispatcher_name,
   dispatcher_number, driver_name, driver_number,
-  driver_license_plates)
+  driver_license_plates, public_url_key)
 values(
         -2,
         (select id from site where name = 'site3'),
@@ -122,18 +123,20 @@ values(
         '555',
         'driver1',
         'call me anytime',
-        'traveler'
+        'traveler',
+       'XKCD'
       );
 
 
 -- create a delivery from site4 to site3
 -- this is a  minimal 'data', everything that can be null should be null
 insert into delivery(
-  airtable_id, from_site_id, to_site_id)
+  airtable_id, from_site_id, to_site_id, public_url_key)
 values(
         -3,
         (select id from site where name = 'site3'),
-        (select id from site where name = 'site4')
+        (select id from site where name = 'site4'),
+       'ABCD'
       );
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
