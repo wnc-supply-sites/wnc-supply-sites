@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
+import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,19 +129,24 @@ public class DeliveryController {
         TemplateParams.dispatcherName.name(), nullsToDash(delivery.getDispatcherName()));
     templateParams.put(
         TemplateParams.dispatcherPhone.name(), nullsToDash(delivery.getDispatcherNumber()));
-    templateParams.put(TemplateParams.fromSiteName.name(), delivery.getFromSite() + " " + delivery.getFromSite());
+    templateParams.put(
+        TemplateParams.fromSiteName.name(), TruncateString.truncate(delivery.getFromSite(), 30));
     templateParams.put(TemplateParams.fromSiteLink.name(), delivery.getFromSiteLink());
     templateParams.put(TemplateParams.fromAddress.name(), delivery.getFromAddress());
-    templateParams.put(TemplateParams.fromAddressLine2.name(), delivery.getFromCity() + ", " + delivery.getFromState());
+    templateParams.put(
+        TemplateParams.fromAddressLine2.name(),
+        delivery.getFromCity() + ", " + delivery.getFromState());
     templateParams.put(
         TemplateParams.fromContactName.name(), nullsToDash(delivery.getFromContactName()));
     templateParams.put(
         TemplateParams.fromContactPhone.name(), nullsToDash(delivery.getFromContactPhone()));
     templateParams.put(TemplateParams.fromHours.name(), nullsToDash(delivery.getFromHours()));
-    templateParams.put(TemplateParams.toSiteName.name(), delivery.getToSite());
+    templateParams.put(
+        TemplateParams.toSiteName.name(), TruncateString.truncate(delivery.getToSite(), 30));
     templateParams.put(TemplateParams.toSiteLink.name(), delivery.getToSiteLink());
     templateParams.put(TemplateParams.toAddress.name(), nullsToDash(delivery.getToAddress()));
-    templateParams.put(TemplateParams.toAddressLine2.name(), delivery.getToCity() + ", " + delivery.getToState());
+    templateParams.put(
+        TemplateParams.toAddressLine2.name(), delivery.getToCity() + ", " + delivery.getToState());
     templateParams.put(
         TemplateParams.toContactName.name(), nullsToDash(delivery.getToContactName()));
     templateParams.put(
