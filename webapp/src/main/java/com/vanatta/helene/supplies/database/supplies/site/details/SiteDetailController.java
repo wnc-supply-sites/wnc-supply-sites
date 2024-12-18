@@ -152,17 +152,28 @@ public class SiteDetailController {
             ? null
             : siteDetailData.getHours());
 
-    siteDetails.put(TemplateParams.ADDRESS_LINE1.text, siteDetailData.getAddress());
-    siteDetails.put(
-        TemplateParams.ADDRESS_LINE2.text,
-        String.format("%s, %s", siteDetailData.getCity(), siteDetailData.getState()));
+    // if we should show address, then address line 1 is street address
+    // and line 2 will be city/state, otherwise line 1 is the city/state and there is no line 2
+    // We show address if user is logged in, or if the site is publicly accessible.
+    final String addressLine1 =
+        (isLoggedIn
+                || siteDetailData.isAcceptingDonations()
+                || siteDetailData.isDistributingSupplies())
+            ? siteDetailData.getAddress()
+            : String.format("%s, %s", siteDetailData.getCity(), siteDetailData.getState());
+    final String addressLine2 =
+        (isLoggedIn
+                || siteDetailData.isAcceptingDonations()
+                || siteDetailData.isDistributingSupplies())
+            ? String.format("%s, %s", siteDetailData.getCity(), siteDetailData.getState())
+            : "";
+
+    siteDetails.put(TemplateParams.ADDRESS_LINE1.text, addressLine1);
+
+    siteDetails.put(TemplateParams.ADDRESS_LINE2.text, addressLine2);
     siteDetails.put(
         TemplateParams.GOOGLE_MAPS_ADDRESS.text,
-        String.format(
-            "%s, %s, %s",
-            urlEncode(siteDetailData.getAddress()),
-            urlEncode(siteDetailData.getCity()),
-            urlEncode(siteDetailData.getState())));
+        String.format("%s, %s", urlEncode(addressLine1), urlEncode(addressLine2)));
 
     if (isLoggedIn) {
       siteDetails.put(TemplateParams.HAS_FORK_LIFT.text, siteDetailData.isHasForklift());

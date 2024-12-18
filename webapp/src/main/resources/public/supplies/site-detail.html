@@ -15,23 +15,10 @@
     </head>
 
     <body>
-        <div class="horizontal">
-            <h1>
-                <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
-                WNC Supply Sites
-            </h1>
-            <div class="vertical">
-                {{^loggedIn}}
-                <div class="login-indicator" id="do-login-indicator">
-                    <a href="/login?redirectUri=/supplies/needs">Login</a>
-                </div>
-                {{/loggedIn}} {{#loggedIn}}
-                <div class="login-indicator" id="logged-in-indicator">
-                    You are logged in
-                </div>
-                {{/loggedIn}}
-            </div>
-        </div>
+        <h1>
+            <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
+            WNC Supply Sites
+        </h1>
 
         <div class="back-link">
             <a href="javascript:goBack()">[&larr; Go Back]</a>
