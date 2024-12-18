@@ -48,10 +48,15 @@ html, table {
     font-size: 1.2em;
 }
 
+.nav-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items:center;
+}
+
 .nav-button-container {
-    margin-left: 50px;
-    margin-top: 20px;
-    margin-bottom: 25px;
+    width: max-content;
 }
 
 .wide-button {
@@ -148,3 +153,13 @@ html, table {
     color: green;
 }
 
+@media only screen and (min-width: 600px) {
+
+    .nav-buttons-container {
+        align-items: start;
+    }
+
+    .nav-button-container {
+        margin-left: 50px;
+    }
+}
