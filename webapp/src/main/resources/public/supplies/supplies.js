@@ -145,6 +145,20 @@ async function fetchSupplyData() {
 }
 
 function formatItems(items) {
+
+  let list1 = "";
+  let list2 = "";
+
+  if(items.length < 5) {
+    list1 = formatAsList(items);
+  } else {
+    list1 = formatAsList(items.slice(0, items.length / 2));
+    list2 = formatAsList(items.slice(items.length / 2));
+  }
+  return `<div class="horizontal">${list1} ${list2}</div>`
+}
+
+function formatAsList(items) {
   return "<ul>\n" +
       items.map(i =>
           `<li><div class="${i.displayClass}">${i.name}</div></li>\n`
