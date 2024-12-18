@@ -56,14 +56,6 @@ dd {
     font-size: 0.8em;
 }
 
-table.needs-matching tr {
-    border: solid 1px gray;
-    border-spacing: 0;
-    border-collapse: collapse;
-    padding: 3px;
-    outline: solid;
-}
-
 .wider-column {
     width: 200px;
 }
@@ -77,6 +69,8 @@ table.needs-matching tr {
     overflow-y: auto;
 }
 
+table.needs-matching th,
+table.needs-matching td,
 .delivery-table th,
 .delivery-table td {
     border: solid 1px gray;
@@ -93,3 +87,14 @@ table.needs-matching tr {
 .outgoing-truck {
     transform: scaleX(-1);
 }
+
+.site-name {
+    margin-bottom: 3px;
+    font-size: 1.05em;
+}
+
+.city-name {
+    font-weight: bold;
+    font-style: italic;
+}
+

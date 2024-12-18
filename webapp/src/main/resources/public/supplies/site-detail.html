@@ -234,15 +234,13 @@
 
         <a id="needs-matching"></a>
         <h3>Needs Matching ({{matchCount}} sites)</h3>
+        <p>The below sites have supplies that are needed and can be transported to the current site.</p>
         <div class="table-container">
             <table class="needs-matching">
                 <thead>
                     <tr>
                         <th>Site Name</th>
-                        <th>Site Address</th>
-                        <th>Site City</th>
-                        <th>Site County</th>
-                        <th>State</th>
+                        <th>County</th>
                         <th class="wider-column">Item</th>
                         <th>Item Count</th>
                     </tr>
@@ -250,19 +248,29 @@
                 <tbody>
                     {{#needsMatching}}
                     <tr>
-                        <td class="bold">
-                            <a href="{{{siteLink}}}">{{siteName}}</a>
+                        <td>
+                            <div class="vertical">
+                                <div class="bold site-name">
+                                    <a href="{{{siteLink}}}">{{siteName}}</a>
+                                </div>
+                                <div>{{siteAddress}}</div>
+                                <div class="city-name">{{city}}</div>
+                            </div>
                         </td>
-                        <td>{{siteAddress}}</td>
-                        <td>{{city}}</td>
-                        <td>{{county}}</td>
-                        <td>{{state}}</td>
-                        <td class="bold">
-                            <ul>
-                                {{#items}}
-                                <li class="{{urgencyCssClass}}">{{name}}</li>
-                                {{/items}}
-                            </ul>
+                        <td>{{county}}, {{state}}</td>
+                        <td>
+                            <div class="horizontal">
+                                <ul>
+                                    {{#items1}}
+                                    <li class="{{urgencyCssClass}}">{{name}}</li>
+                                    {{/items1}}
+                                </ul>
+                                <ul>
+                                    {{#items2}}
+                                    <li class="{{urgencyCssClass}}">{{name}}</li>
+                                    {{/items2}}
+                                </ul>
+                            </div>
                         </td>
                         <td>{{itemCount}}</td>
                     </tr>

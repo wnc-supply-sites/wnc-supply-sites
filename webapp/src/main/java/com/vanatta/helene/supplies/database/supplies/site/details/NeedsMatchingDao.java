@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.util.ListSplitter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -72,8 +73,18 @@ public class NeedsMatchingDao {
     String state;
     @Builder.Default List<Item> items = new ArrayList<>();
 
-    List<Item> getItems() {
-      return items.stream().sorted(Comparator.comparing(i -> i.name)).toList();
+    List<Item> getItems1() {
+      List<List<Item>> splitLists =
+          ListSplitter.splitItemList(
+              items.stream().sorted(Comparator.comparing(i -> i.name)).toList(), 5);
+      return splitLists.getFirst();
+    }
+
+    List<Item> getItems2() {
+      List<List<Item>> splitLists =
+          ListSplitter.splitItemList(
+              items.stream().sorted(Comparator.comparing(i -> i.name)).toList(), 5);
+      return splitLists.size() > 1 ? splitLists.get(1) : List.of();
     }
 
     void addItem(Item item) {
