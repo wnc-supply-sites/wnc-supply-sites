@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.supplies;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -15,6 +14,7 @@ public class SuppliesDao {
   public static class SuppliesQueryResult {
     Long siteId;
     boolean acceptingDonations;
+    boolean givingDonations;
     String site;
     String siteType;
     String county;
@@ -30,6 +30,7 @@ public class SuppliesDao {
       select
         s.id siteId,
         s.accepting_donations acceptingDonations,
+        s.distributing_supplies givingDonations,
         s.name site,
         st.name siteType,
         c.name county,

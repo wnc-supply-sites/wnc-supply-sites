@@ -106,10 +106,15 @@ public class SuppliesController {
                     .name(result.getItem())
                     .displayClass(itemStatus.getCssClass())
                     .build();
-            if (itemStatus == ItemStatus.AVAILABLE || itemStatus == ItemStatus.OVERSUPPLY) {
-              siteSupplyData.getAvailableItems().add(item);
+
+            if (itemStatus.isNeeded()) {
+              if (isAuthenticated || result.isGivingDonations()) {
+                siteSupplyData.getNeededItems().add(item);
+              }
             } else {
-              siteSupplyData.getNeededItems().add(item);
+              if (isAuthenticated || result.isGivingDonations()) {
+                siteSupplyData.getAvailableItems().add(item);
+              }
             }
           }
         });
