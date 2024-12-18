@@ -21,7 +21,7 @@ function runFlyway {
   docker run \
     -e "FLYWAY_URL=jdbc:postgresql://host.docker.internal:5432/$dbName" \
     -e FLYWAY_USER=postgres \
-    -e FLWAY_PASSWORD=blackbox \
+    -e FLYWAY_PASSWORD=blackbox \
     local/flyway:latest \
     -locations=filesystem:/flyway/sql \
     -password=blackbox \
