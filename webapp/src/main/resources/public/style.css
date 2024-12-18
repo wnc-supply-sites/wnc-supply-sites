@@ -57,6 +57,8 @@ html, table {
 
 .nav-button-container {
     width: max-content;
+    margin-top: 5px;
+    margin-bottom: 20px;
 }
 
 .wide-button {
