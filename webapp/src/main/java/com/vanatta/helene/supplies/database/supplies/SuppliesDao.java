@@ -109,41 +109,4 @@ public class SuppliesDao {
           return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
         });
   }
-
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Data
-  public static class SupplyDataCsvBean {
-    long siteId;
-    String siteName;
-    String county;
-    long itemId;
-    String itemName;
-    String itemStatus;
-    String lastUpdated;
-  }
-
-  static List<SupplyDataCsvBean> fetchCsvData(Jdbi jdbi) {
-    String query =
-        """
-        select
-          s.id siteId,
-          s.name siteName,
-          c.name county,
-          i.id itemId,
-          i.name itemName,
-          istatus.name itemStatus,
-          si.last_updated lastUpdated
-        from site_item si
-        join item i on i.id = si.item_id
-        join item_status istatus on istatus.id = si.item_status_id
-        join site s on s.id = si.site_id
-        join county c on c.id = s.county_id
-        where s.active = true
-        order by lower(s.name), lower(i.name);
-        """;
-
-    return jdbi.withHandle(
-        handle -> handle.createQuery(query).mapToBean(SupplyDataCsvBean.class).list());
-  }
 }

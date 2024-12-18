@@ -4,12 +4,7 @@ import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
-import com.vanatta.helene.supplies.database.supplies.SuppliesDao.SupplyDataCsvBean;
-import de.siegmar.fastcsv.writer.CsvWriter;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -129,35 +124,5 @@ public class SuppliesController {
         .resultCount(resultData.size())
         .results(resultData)
         .build();
-  }
-
-  @GetMapping("/supplies/download")
-  void downloadCsv(HttpServletResponse response) throws Exception {
-    response.setContentType("text/plain; charset=utf-8");
-    response.getWriter().print(generateCsv(jdbi));
-  }
-
-  static String generateCsv(Jdbi jdbi) throws IOException {
-
-    List<SupplyDataCsvBean> data = SuppliesDao.fetchCsvData(jdbi);
-
-    StringWriter writer = new StringWriter();
-    try (CsvWriter csv = CsvWriter.builder().build(writer)) {
-      csv.writeRecord(
-          "Site Id", "Site Name", "County", "Item Id", "Item Name", "Item Status", "Last Updated");
-
-      data.forEach(
-          value ->
-              csv.writeRecord(
-                  String.valueOf(value.getSiteId()),
-                  value.getSiteName(),
-                  value.getCounty(),
-                  String.valueOf(value.getItemId()),
-                  value.getItemName(),
-                  value.getItemStatus(),
-                  value.getLastUpdated()));
-
-      return writer.toString();
-    }
   }
 }
