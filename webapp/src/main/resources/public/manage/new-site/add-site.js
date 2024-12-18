@@ -4,11 +4,13 @@ async function saveNewSite() {
   const siteName = document.getElementById("Site Name");
   const streetAddress = document.getElementById("Street Address");
   const cityField = document.getElementById("City");
+  const contactNumber = document.getElementById("Contact Number");
 
   let validData = true;
   validData = checkField(siteName) && validData;
   validData = checkField(streetAddress) && validData;
   validData = checkField(cityField) && validData;
+  validData = checkField(contactNumber) && validData;
 
   /* Drop Down Selection Fields */
   const stateField = document.getElementById("State");
@@ -27,7 +29,6 @@ async function saveNewSite() {
   const receivingNotes = document.getElementById('receivingNotes');
 
   const contactName = document.getElementById("Contact Name");
-  const contactNumber = document.getElementById("Contact Number");
   const contactEmail = document.getElementById("Contact Email");
   const additionalContacts = document.getElementById("Additional Contacts");
 
