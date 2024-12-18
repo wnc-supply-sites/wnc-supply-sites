@@ -226,14 +226,56 @@
             </table>
         </div>
         {{/hasOutgoingDeliveries}}
+        {{/loggedIn}}
 
         <h2>
-            Inventory<span class="privately-visible">*</span>
-            <a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>
+            Inventory
+            {{#loggedIn}}<a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>
+            <span class="privately-visible">*</span>{{/loggedIn}}
         </h2>
+        <div class="table-container">
+            <table class="inventory-table">
+                <tr>
+                    <th>{{#hasNeeds}}Needs List{{/hasNeeds}}</th>
+                    <th>{{#hasAvailable}}Available List{{/hasAvailable}}</th>
+                </tr>
+                <tr>
+                    <td class="inventory-column">
+                        <div class="horizontal">
+                            <ul>
+                            {{#needsList1}}
+                                <li><div class="{{displayClass}}">{{name}}</div></li>
+                            {{/needsList1}}
+                            </ul>
+                            <ul>
+                            {{#needsList2}}
+                            <li><div class="{{displayClass}}">{{name}}</div></li>
+                            {{/needsList2}}
+                            </ul>
+                        </div>
+                    </td>
 
+                    <td class="inventory-column">
+                        <div class="horizontal">
+                            <ul>
+                                {{#availableList1}}
+                                <li><div class="{{displayClass}}">{{name}}</div></li>
+                                {{/availableList1}}
+                            </ul>
+                            <ul>
+                                {{#availableList2}}
+                                <li><div class="{{displayClass}}">{{name}}</div></li>
+                                {{/availableList2}}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {{#loggedIn}}
         <a id="needs-matching"></a>
-        <h3>Needs Matching ({{matchCount}} sites)</h3>
+        <h2>Needs Matching<span class="privately-visible">*</span> ({{matchCount}} sites)</h2>
         <p>The below sites have supplies that are needed and can be transported to the current site.</p>
         <div class="table-container">
             <table class="needs-matching">

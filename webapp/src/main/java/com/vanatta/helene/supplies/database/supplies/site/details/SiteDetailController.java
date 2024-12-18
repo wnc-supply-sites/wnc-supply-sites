@@ -1,11 +1,15 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
+import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.delivery.Delivery;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import com.vanatta.helene.supplies.database.manage.SiteContactController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
+import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
+import com.vanatta.helene.supplies.database.supplies.SuppliesDao;
+import com.vanatta.helene.supplies.database.util.ListSplitter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
@@ -54,6 +59,15 @@ public class SiteDetailController {
     CONTACT_NUMBER("contactNumber"),
     CONTACT_EMAIL("contactEmail"),
     ADDITIONAL_CONTACTS("additionalContacts"),
+
+    HAS_NEEDS("hasNeeds"),
+    NEEDS_LIST1("needsList1"),
+    NEEDS_LIST2("needsList2"),
+
+    HAS_AVAILABLE("hasAvailable"),
+    AVAILABLE_LIST1("availableList1"),
+    AVAILABLE_LIST2("availableList2"),
+
     NEEDS_MATCHING("needsMatching"),
     NEEDS_MATCH_COUNT("matchCount"),
 
@@ -190,12 +204,51 @@ public class SiteDetailController {
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
 
+      // site supplies
+      List<SuppliesDao.SuppliesQueryResult> supplies =
+          SuppliesDao.getSupplyResults(
+              jdbi, SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build());
+      List<InventoryItem> needs =
+          supplies.stream()
+              .filter(i -> ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
+              .map(InventoryItem::new)
+              .toList();
+      List<List<InventoryItem>> needsSplit = ListSplitter.splitItemList(needs, 8);
+      siteDetails.put(TemplateParams.NEEDS_LIST1.text, needsSplit.getFirst());
+      siteDetails.put(
+          TemplateParams.NEEDS_LIST2.text, needsSplit.size() > 1 ? needsSplit.get(1) : List.of());
+      siteDetails.put(TemplateParams.HAS_NEEDS.text, needs.isEmpty() ? null : true);
+
+      List<InventoryItem> available =
+          supplies.stream()
+              .filter(i -> !ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
+              .map(InventoryItem::new)
+              .toList();
+      List<List<InventoryItem>> availableSplit = ListSplitter.splitItemList(available, 8);
+      siteDetails.put(TemplateParams.AVAILABLE_LIST1.text, availableSplit.getFirst());
+      siteDetails.put(
+          TemplateParams.AVAILABLE_LIST2.text,
+          availableSplit.size() > 1 ? availableSplit.get(1) : List.of());
+      siteDetails.put(TemplateParams.HAS_AVAILABLE.text, available.isEmpty() ? null : true);
+
+      // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
           NeedsMatchingDao.executeByInternalId(jdbi, id);
       siteDetails.put(TemplateParams.NEEDS_MATCHING.text, needsMatching);
       siteDetails.put(TemplateParams.NEEDS_MATCH_COUNT.text, needsMatching.size());
     }
     return new ModelAndView("supplies/site-detail", siteDetails);
+  }
+
+  @Value
+  static class InventoryItem {
+    private final String name;
+    private final String displayClass;
+
+    InventoryItem(SuppliesDao.SuppliesQueryResult result) {
+      name = result.getItem();
+      displayClass = ItemStatus.fromTextValue(result.getItemStatus()).getCssClass();
+    }
   }
 
   @Getter

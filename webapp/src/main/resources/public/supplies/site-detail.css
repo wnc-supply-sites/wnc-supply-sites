@@ -69,6 +69,8 @@ dd {
     overflow-y: auto;
 }
 
+.inventory-table th,
+.inventory-table td,
 table.needs-matching th,
 table.needs-matching td,
 .delivery-table th,
@@ -98,3 +100,6 @@ table.needs-matching td,
     font-style: italic;
 }
 
+.inventory-column {
+    vertical-align: top;
+}
