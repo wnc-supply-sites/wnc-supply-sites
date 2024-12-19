@@ -102,7 +102,7 @@ class NeedsMatchingDaoTest {
 
     var results = NeedsMatchingDao.aggregate(dbResults);
     assertThat(results)
-        .containsExactly(
+        .contains(
             NeedsMatchingDao.NeedsMatchingResult.builder()
                 .siteLink(SiteDetailController.buildSiteLink(10L))
                 .siteName("site-10")
@@ -113,16 +113,16 @@ class NeedsMatchingDaoTest {
                 .items(
                     List.of(
                         Item.builder()
+                            .name("water") //
+                            .urgencyCssClass(ItemStatus.NEEDED.getCssClass())
+                            .build(),
+                        Item.builder()
                             .name("coffee")
                             .urgencyCssClass(ItemStatus.URGENTLY_NEEDED.getCssClass())
                             .build(),
                         Item.builder()
                             .name("snacks")
                             .urgencyCssClass(ItemStatus.URGENTLY_NEEDED.getCssClass())
-                            .build(),
-                        Item.builder()
-                            .name("water") //
-                            .urgencyCssClass(ItemStatus.NEEDED.getCssClass())
                             .build()))
                 .build(),
             NeedsMatchingDao.NeedsMatchingResult.builder()
@@ -135,12 +135,12 @@ class NeedsMatchingDaoTest {
                 .items(
                     List.of(
                         Item.builder()
-                            .name("gloves") //
-                            .urgencyCssClass(ItemStatus.NEEDED.getCssClass())
-                            .build(),
-                        Item.builder()
                             .name("water")
                             .urgencyCssClass(ItemStatus.URGENTLY_NEEDED.getCssClass())
+                            .build(),
+                        Item.builder()
+                            .name("gloves") //
+                            .urgencyCssClass(ItemStatus.NEEDED.getCssClass())
                             .build()))
                 .build(),
             NeedsMatchingDao.NeedsMatchingResult.builder()

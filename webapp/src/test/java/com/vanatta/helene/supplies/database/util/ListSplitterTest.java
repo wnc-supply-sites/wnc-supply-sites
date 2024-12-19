@@ -50,10 +50,8 @@ class ListSplitterTest {
 
         List<List<String>> result = ListSplitter.splitItemList(input);
 
-        assertThat(result).hasSize(3);
+        assertThat(result).hasSize(1);
         assertThat(result.getFirst()).hasSize(i);
-        assertThat(result.get(1)).isEmpty();
-        assertThat(result.get(2)).isEmpty();
       }
     }
 
@@ -77,8 +75,7 @@ class ListSplitterTest {
 
         List<List<String>> result = ListSplitter.splitItemList(input);
 
-        assertThat(result).hasSize(3);
-        assertThat(result.get(2)).isEmpty();
+        assertThat(result).hasSize(2);
 
         if (i % 2 == 0) {
           assertThat(result.getFirst()).hasSize((i / 2));

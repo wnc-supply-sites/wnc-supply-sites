@@ -29,6 +29,7 @@ public class AddSiteDaoTest {
           .county("Ashe")
           .state("NC")
           .maxSupplyLoad("Car")
+          .contactNumber("111")
           .build();
 
   private static final AddSiteData siteData2 =
@@ -40,6 +41,7 @@ public class AddSiteDaoTest {
           .county("Ashe")
           .state("NC")
           .maxSupplyLoad("Car")
+          .contactNumber("000")
           .build();
 
   @Test
@@ -65,7 +67,7 @@ public class AddSiteDaoTest {
     long id = TestConfiguration.getSiteId(siteData2.getSiteName());
     SiteDetailData details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, id);
 
-    assertThat(details.getContactNumber()).isNull();
+    assertThat(details.getContactNumber()).isEqualTo("000");
     assertThat(details.getWebsite()).isNull();
     assertThat(details.getSiteType()).isEqualTo(siteData2.getSiteType().getText());
     assertThat(details.getSiteName()).isEqualTo(siteData2.getSiteName());

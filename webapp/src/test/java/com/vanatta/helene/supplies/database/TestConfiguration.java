@@ -63,6 +63,7 @@ public class TestConfiguration {
             .streetAddress("address of " + name)
             .siteType(siteType)
             .maxSupplyLoad("Car")
+            .contactNumber("000")
             .build());
     return name;
   }
