@@ -27,3 +27,8 @@ div.data-field label {
     width: 200px;
     margin-bottom: 5px;
 }
+
+.missingData {
+    background-color: lightcoral;
+}
+

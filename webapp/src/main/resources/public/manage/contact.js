@@ -7,11 +7,28 @@
 async function showUpdateConfirmation(siteId, field) {
   let newValue;
 
+
+
   if (field === 'County' || field === 'State') {
     newValue =
         document.getElementById('County').value + ',' + document.getElementById('State').value;
   } else {
     newValue = document.getElementById(field).value;
+  }
+
+
+  if (newValue.trim() === "" &&
+      ((field === "Contact Number")
+          || (field === "Site Name")
+          || (field === "Street Address")
+          || (field === "City"))
+  ) {
+    document.getElementById(field).classList.add("missingData");
+    document.getElementById(field + "-update-confirm").innerHTML =
+        "Field is required"
+    return false;
+  } else {
+    document.getElementById(field).classList.remove("missingData");
   }
 
   try {
