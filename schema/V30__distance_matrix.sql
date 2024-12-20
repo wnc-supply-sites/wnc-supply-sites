@@ -16,7 +16,7 @@ alter table site_distance_matrix
 
 alter table site_distance_matrix
   add constraint site_distance_matrix_calculated check
-     ((distance_miles is null and drive_time is null) or (distance_miles is not null and drive_time_seconds is not null));
+     ((distance_miles is null and drive_time_seconds is null) or (distance_miles is not null and drive_time_seconds is not null));
 
 /**
   If valid is null or false, then distance & drive time should be too. If valid is false.
