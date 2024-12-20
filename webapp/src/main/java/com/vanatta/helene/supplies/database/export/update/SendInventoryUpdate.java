@@ -69,5 +69,6 @@ public class SendInventoryUpdate {
     String itemName;
     long itemNeedWssId;
     String itemStatus;
+    @Builder.Default long updateTimeStamp = System.currentTimeMillis();
   }
 }
