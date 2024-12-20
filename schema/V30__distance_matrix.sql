@@ -1,7 +1,7 @@
 create table site_distance_matrix(
   id serial primary key ,
-  site1 integer not null references site(id),
-  site2 integer not null references site(id),
+  site1_id integer not null references site(id),
+  site2_id integer not null references site(id),
   distance integer,
   drive_time integer
 );
@@ -9,7 +9,7 @@ create table site_distance_matrix(
 alter table site_distance_matrix owner to wnc_helene;
 
 alter table site_distance_matrix
-  add constraint site_distance_matrix_uk unique (site1, site2);
+  add constraint site_distance_matrix_uk unique (site1_id, site2_id);
 
 alter table site_distance_matrix
   add constraint site_distance_matrix_calculated check
