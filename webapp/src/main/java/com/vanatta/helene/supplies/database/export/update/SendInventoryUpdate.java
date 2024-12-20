@@ -51,10 +51,19 @@ public class SendInventoryUpdate {
                 .one());
   }
 
-  public void sendItemRemoval(long wssId) {
+  public void sendItemRemoval(
+      String itemName,
+      String siteName,
+      long wssId) {
     if (enabled) {
       var dataToSend =
-          SiteDataDbResult.builder().itemStatus("Removed").itemNeedWssId(wssId).build();
+          SiteDataDbResult.builder()
+              
+              .itemName(itemName)
+              .siteName(siteName )
+              .itemStatus("Removed")
+              .itemNeedWssId(wssId)
+              .build();
       HttpPostSender.sendAsJson(webhookUrl, dataToSend);
     }
   }

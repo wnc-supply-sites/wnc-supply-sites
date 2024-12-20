@@ -247,7 +247,10 @@ public class InventoryController {
     }
 
     InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
-        .ifPresent(wssId -> new Thread(() -> sendInventoryUpdate.sendItemRemoval(wssId)).start());
+        .ifPresent(
+            wssId ->
+                new Thread(() -> sendInventoryUpdate.sendItemRemoval(itemName, siteName, wssId))
+                    .start());
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     return ResponseEntity.ok("Updated");
   }
