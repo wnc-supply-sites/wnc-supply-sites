@@ -6,6 +6,8 @@ create table site_distance_matrix(
   drive_time integer
 );
 
+alter table site_distance_matrix owner to wnc_helene;
+
 alter table site_distance_matrix
   add constraint site_distance_matrix_uk unique (site1, site2);
 
