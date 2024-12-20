@@ -10,3 +10,12 @@
 .about-header {
     margin-left: 10px;
 }
+
+h4 {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+h3 {
+    text-align: center;
+}
