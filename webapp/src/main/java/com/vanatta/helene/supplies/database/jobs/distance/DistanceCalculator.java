@@ -4,7 +4,6 @@ import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.data.SiteAddress;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;

@@ -79,13 +79,11 @@ public class AddSiteController {
             .facebook(params.get("facebook"))
             .siteType(SiteType.parseSiteType(params.get("siteType")))
             .siteHours(params.get("siteHours"))
-
             .hasForklift(Boolean.parseBoolean(params.get("hasForklift")))
             .hasLoadingDock(Boolean.parseBoolean(params.get("hasLoadingDock")))
             .hasIndoorStorage(Boolean.parseBoolean(params.get("hasIndoorStorage")))
             .maxSupplyLoad(params.get("maxSupplyLoad"))
             .receivingNotes(params.get("receivingNotes"))
-
             .contactName(params.get("contactName"))
             .contactNumber(params.get("contactNumber"))
             .contactEmail(params.get("contactEmail"))

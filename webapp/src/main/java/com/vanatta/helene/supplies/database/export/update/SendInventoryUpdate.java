@@ -51,16 +51,12 @@ public class SendInventoryUpdate {
                 .one());
   }
 
-  public void sendItemRemoval(
-      String itemName,
-      String siteName,
-      long wssId) {
+  public void sendItemRemoval(String itemName, String siteName, long wssId) {
     if (enabled) {
       var dataToSend =
           SiteDataDbResult.builder()
-              
               .itemName(itemName)
-              .siteName(siteName )
+              .siteName(siteName)
               .itemStatus("Removed")
               .itemNeedWssId(wssId)
               .build();

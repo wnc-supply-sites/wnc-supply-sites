@@ -1,12 +1,11 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.List;
 
 @Slf4j
 public class DeliveryDao {
@@ -220,7 +219,11 @@ public class DeliveryDao {
         jdbi
             .withHandle(
                 handle ->
-                    handle.createQuery(select).bind("id", idValue).mapToBean(DeliveryData.class).list())
+                    handle
+                        .createQuery(select)
+                        .bind("id", idValue)
+                        .mapToBean(DeliveryData.class)
+                        .list())
             .stream()
             .map(Delivery::new)
             .toList();

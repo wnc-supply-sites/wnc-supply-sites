@@ -19,13 +19,14 @@ class BulkDataExportDao {
     String name;
     long wssId;
   }
-  
+
   static List<ItemExportDbEntry> getAllItems(Jdbi jdbi) {
     String query =
         """
           select name, wss_id from item order by lower(name)
         """;
-    return jdbi.withHandle(handle -> handle.createQuery(query).mapToBean(ItemExportDbEntry.class).list());
+    return jdbi.withHandle(
+        handle -> handle.createQuery(query).mapToBean(ItemExportDbEntry.class).list());
   }
 
   static List<SiteExportJson> fetchAllSites(Jdbi jdbi) {
@@ -138,7 +139,7 @@ class BulkDataExportDao {
     String available;
     String overSupply;
   }
-  
+
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -162,7 +163,5 @@ class BulkDataExportDao {
     String status;
     List<String> suppliesNeeded;
     List<String> suppliesUrgentlyNeeded;
-
-
   }
 }

@@ -12,15 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-
 @Controller
 @Slf4j
 @AllArgsConstructor
 public class DriverController {
 
   private final Jdbi jdbi;
-  
+
   @Getter
   @ToString
   @EqualsAndHashCode
@@ -31,17 +29,16 @@ public class DriverController {
     private String phone;
     private boolean active;
     private String location;
-    
+
     static DriverJson parseJson(String json) {
       return new Gson().fromJson(json, DriverJson.class);
     }
   }
-  
+
   @PostMapping("/webhook/driver/update")
   ResponseEntity<String> receiveDriverUpdates(@RequestBody String driver) {
     log.info("Received driver update: {}", driver);
-    
-    
+
     return ResponseEntity.ok("ok");
   }
 }

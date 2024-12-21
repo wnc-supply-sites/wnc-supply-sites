@@ -31,7 +31,6 @@ public class SiteStatusController {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
 
-
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status")
   ModelAndView showManageStatusPage(String siteId) {

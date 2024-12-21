@@ -1,10 +1,6 @@
 package com.vanatta.helene.supplies.database.data;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import com.vanatta.helene.supplies.database.util.UrlEncode;
-import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +12,7 @@ public class GoogleMapWidget {
   public GoogleMapWidget(@Value("${google.maps.api.key}") String apiKey) {
     this.apiKey = apiKey;
   }
-  
+
   /**
    * Generates a 'src' URL suitable for an iframe
    *

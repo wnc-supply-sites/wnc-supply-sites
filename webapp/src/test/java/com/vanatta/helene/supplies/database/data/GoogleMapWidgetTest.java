@@ -14,12 +14,7 @@ class GoogleMapWidgetTest {
             .city("twin & city")
             .state("city, hills!")
             .build();
-    var to =
-        SiteAddress.builder()
-            .address("address")
-            .city("twin & city")
-            .state("NC")
-            .build();
+    var to = SiteAddress.builder().address("address").city("twin & city").state("NC").build();
 
     GoogleMapWidget googleMapWidget = new GoogleMapWidget("secretKey");
 

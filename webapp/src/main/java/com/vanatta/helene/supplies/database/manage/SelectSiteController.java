@@ -69,7 +69,6 @@ public class SelectSiteController {
     return ManageSiteDao.fetchSiteName(jdbi, siteId);
   }
 
-
   public static List<ItemListing> createItemListing(
       String selectedValue, Collection<String> allValues) {
     return allValues.stream()

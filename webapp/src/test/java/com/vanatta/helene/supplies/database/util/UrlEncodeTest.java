@@ -9,11 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class UrlEncodeTest {
 
   @ParameterizedTest
-  @CsvSource({
-    "  a ,a",
-    "twin & city,twin+%26+city",
-    "'city, hills!',city%2C+hills%21"
-  })
+  @CsvSource({"  a ,a", "twin & city,twin+%26+city", "'city, hills!',city%2C+hills%21"})
   void urlEncoding(String input, String expectedOutput) {
     var output = UrlEncode.encode(input);
     assertThat(output).isEqualTo(expectedOutput);

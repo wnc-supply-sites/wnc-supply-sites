@@ -30,8 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 @AllArgsConstructor
 public class DeliveryController {
 
-
-
   public static String buildDeliveryPageLink(String publicUrlKey) {
     return "/delivery/" + publicUrlKey;
   }
@@ -180,7 +178,8 @@ public class DeliveryController {
                 .city(delivery.getToCity())
                 .state(delivery.getToState())
                 .build()));
-    List<List<String>> split = ListSplitter.splitItemList(delivery.getItemList().stream().sorted().toList());
+    List<List<String>> split =
+        ListSplitter.splitItemList(delivery.getItemList().stream().sorted().toList());
 
     templateParams.put(TemplateParams.items1.name(), split.get(0));
     templateParams.put(TemplateParams.items2.name(), split.size() > 1 ? split.get(1) : List.of());
@@ -192,5 +191,4 @@ public class DeliveryController {
   private static String nullsToDash(String input) {
     return Optional.ofNullable(input).orElse("-");
   }
-
 }

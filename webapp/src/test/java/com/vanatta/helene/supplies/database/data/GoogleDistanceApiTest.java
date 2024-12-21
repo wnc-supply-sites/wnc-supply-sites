@@ -75,13 +75,12 @@ class GoogleDistanceApiTest {
    */
   @Test
   void responseParsing() {
-    var result =
-        new Gson().fromJson(sampleResponse, GoogleDistanceApi.GoogleDistanceJson.class);
+    var result = new Gson().fromJson(sampleResponse, GoogleDistanceApi.GoogleDistanceJson.class);
     assertThat(result.isValid()).isTrue();
     assertThat(result.getDistance()).isEqualTo(18.8);
     assertThat(result.getDuration()).isEqualTo(1656L);
   }
-  
+
   @Test
   void invalidAddressResponseParsing() {
     var result =

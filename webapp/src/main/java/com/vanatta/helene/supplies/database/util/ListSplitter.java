@@ -13,15 +13,15 @@ public class ListSplitter {
 
   // @VisibleForTesting
   static int ITEM_LIST_TWO_COLUMN_MAX = 11;
-  
+
   /**
-   * Splits an incoming list into up to three lists. Uses default threshold for if we split the incoming
-   * list into two, and if long enough, we split into three lists.
+   * Splits an incoming list into up to three lists. Uses default threshold for if we split the
+   * incoming list into two, and if long enough, we split into three lists.
    */
   public static <T> List<List<T>> splitItemList(List<T> items) {
     return splitItemList(items, ITEM_LIST_ONE_COLUMN_MAX, ITEM_LIST_TWO_COLUMN_MAX);
   }
-  
+
   /**
    * Splits an incoming list into two, with input parameter for max number of elements in first list
    * before we split it into two.
@@ -30,7 +30,8 @@ public class ListSplitter {
     return splitItemList(items, cutOffForTwoLists, Integer.MAX_VALUE);
   }
 
-  private static <T> List<List<T>> splitItemList(List<T> items, int cutOffForTwoLists, int cutOffForThreeLists) {
+  private static <T> List<List<T>> splitItemList(
+      List<T> items, int cutOffForTwoLists, int cutOffForThreeLists) {
     assert items != null;
     assert cutOffForTwoLists >= 0 && cutOffForThreeLists >= 0;
     assert cutOffForTwoLists < cutOffForThreeLists;

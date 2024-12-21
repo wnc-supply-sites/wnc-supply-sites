@@ -6,7 +6,6 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-
 class DriverControllerTest {
 
   String exampleInput =
@@ -31,20 +30,18 @@ class DriverControllerTest {
     assertThat(driver.isActive()).isEqualTo(true);
     assertThat(driver.getLocation()).isEqualTo("nowheresville");
   }
-  
+
   @Disabled // TODO
   @Test
   void upsert() {
     DriverController driverController = new DriverController(TestConfiguration.jdbiTest);
     driverController.receiveDriverUpdates(exampleInput);
-    
+
     DriverDao.Driver driver = DriverDao.lookupByAirtableId(34L);
     assertThat(driver.getFullName()).isEqualTo("Test Driver");
     assertThat(driver.getEmail()).isEqualTo("exampleEmail");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");
     assertThat(driver.isActive()).isEqualTo(true);
     assertThat(driver.getLocation()).isEqualTo("nowheresville");
-    
   }
-  
 }

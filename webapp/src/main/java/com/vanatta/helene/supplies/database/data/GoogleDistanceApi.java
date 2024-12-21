@@ -70,7 +70,9 @@ public class GoogleDistanceApi {
     }
 
     Double getDistance() {
-      if(rows.length == 0 || rows[0].elements.length == 0 || rows[0].elements[0].distance == null) {
+      if (rows.length == 0
+          || rows[0].elements.length == 0
+          || rows[0].elements[0].distance == null) {
         return null;
       }
       long meters = rows[0].elements[0].distance.value;
@@ -81,7 +83,9 @@ public class GoogleDistanceApi {
 
     // returns time duration in seconds
     Long getDuration() {
-      if(rows.length == 0 || rows[0].elements.length == 0 || rows[0].elements[0].duration == null) {
+      if (rows.length == 0
+          || rows[0].elements.length == 0
+          || rows[0].elements[0].duration == null) {
         return null;
       }
       return rows[0].elements[0].duration.value;
