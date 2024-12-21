@@ -9,133 +9,114 @@
 </head>
 <body>
 
+<div class="sticky-header">
+
 <h1>
   <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
   WNC Supply Sites - Delivery Sign-Up
 </h1>
 
+  <div class="larger">
+  <h3>Filters</h3>
 
-<div class="table-container">
-  <table class="delivery-options">
-    <thead>
-    <tr>
-      <th>Delivery</th>
-      <th>From Site</th>
-      <th>To Site</th>
-      <th class="wider-column">Items</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{#deliveryOptions}}
-    <tr>
-      <td>
-        <div class="vertical">
-          <div>
-            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
-            {{#driveTime}}{{.}}{{/driveTime}}
-          </div>
-          <div class="horizontal page-section">
-            <!-- Pickup Site -->
-            <div class="vertical left-column page-subsection narrow-sub-section">
-              <div class="large-section-header">Pick Up</div>
-              <div><a href="{{fromSiteLink}}">{{fromSiteName}}</a></div>
-              <div>{{fromAddress}}</div>
-              <div>{{!fromAddressLine2}}</div>
-
-              <div class="sub-section-header">Hours</div>
-              <div>
-                <pre>{{!fromHours}}</pre>
-              </div>
-            </div>
-
-            <!-- DROP OFF -->
-            <div class="vertical page-subsection narrow-sub-section">
-              <div class="large-section-header">Drop Off</div>
-              <div><a href="{{toSiteLink}}">{{toSiteName}}</a></div>
-              <div>{{toAddress}}</div>
-              <div>{{!toAddressLine2}}</div>
-
-              <div class="sub-section-header">Hours</div>
-              <div>
-                <pre>{{!toHours}}</pre>
-              </div>
-            </div>
-          </div>
-          <button>Volunteer Request</button>
-        </div>
-      </td>
-
-      <!-- FROM SITE MAP -->
-      <td class="padded">
-        <div class="vertical">
-          <div class="vertical site-title">
-            <div class="bold site-name">
-              <a href="{{{fromSiteLink}}}">{{fromSiteName}}</a>
-            </div>
-          </div>
-
-          <div class="map">
-            <iframe
-                width="300"
-                height="300"
-                class="gmap_iframe"
-                frameborder="0"
-                scrolling="no"
-                marginheight="0"
-                marginwidth="0"
-                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-            >
-            </iframe>
-          </div>
-        </div>
-      </td>
-
-      <!-- TO SITE MAP -->
-      <td>
-        <div class="vertical">
-          <div class="vertical site-title">
-            <div class="bold site-name">
-              <a href="{{{toSiteLink}}}">{{toSiteName}}</a>
-            </div>
-          </div>
-
-          <div class="map">
-            <iframe
-                width="300"
-                height="300"
-                class="gmap_iframe"
-                frameborder="0"
-                scrolling="no"
-                marginheight="0"
-                marginwidth="0"
-                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-            >
-            </iframe>
-          </div>
-        </div>
-      </td>
-
-      <td>
-        <div class="vertical center">
-          {{itemCount}} items
-          <div class="horizontal">
-            <ul>
-              {{#items1}}
-              <li class="{{urgencyCssClass}}">{{name}}</li>
-              {{/items1}}
-            </ul>
-            <ul>
-              {{#items2}}
-              <li class="{{urgencyCssClass}}">{{name}}</li>
-              {{/items2}}
-            </ul>
-          </div>
-        </div>
-    </tr>
-    {{/deliveryOptions}}
-    </tbody>
-  </table>
+    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>
+<!--    <checkbox></checkbox>-->
+<!--    <label for="county">Counties</label>-->
+<!--    <select id="county">-->
+<!--      <option>county</option>-->
+<!--    </select>-->
+  </div>
 </div>
+
+{{#deliveryOptions}}
+<table class="delivery-options">
+  <thead>
+  <tr>
+    <th colspan="3">
+      <div class="large-section-header">
+        {{fromSiteName}} &#8594; {{toSiteName}}
+      </div>
+      <div class="sub-section-header">
+        {{#distanceMiles}}{{.}} miles{{/distanceMiles}} {{#driveTime}}({{.}}){{/driveTime}}
+      </div>
+    </th>
+  </tr>
+
+  <tr>
+    <th>From {{fromCounty}} County</th>
+    <th>To {{county}} County</th>
+    <!--      <th>From Site</th>-->
+    <!--      <th>To Site</th>-->
+    <th class="wider-column">Items</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <tr>
+    <td class="site">
+      <iframe
+        width="300"
+        height="300"
+        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+      </iframe>
+
+      <h4 class="sub-section-header">{{fromSiteName}}</h4>
+      <div>{{fromAddress}}</div>
+      <div>{{fromCity}}, {{fromState}}</div>
+
+      <h4 class="sub-section-header">Hours</h4>
+      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+    </td>
+
+    <td class="site">
+      <iframe
+        width="300"
+        height="300"
+        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+      </iframe>
+
+      <h4 class="sub-section-header">{{toSiteName}}</h4>
+      <div>{{toAddress}}</div>
+      <div>{{city}}, {{state}}</div>
+
+      <h4 class="sub-section-header">Hours</h4>
+      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+
+    </td>
+
+    <td rowspan="2">
+      <div class="vertical center">
+        <div>
+          {{itemCount}} items
+        </div>
+
+        <div class="horizontal">
+          <ul>
+            {{#items1}}
+            <li class="{{urgencyCssClass}}">{{name}}</li>
+            {{/items1}}
+          </ul>
+          <ul>
+            {{#items2}}
+            <li class="{{urgencyCssClass}}">{{name}}</li>
+            {{/items2}}
+          </ul>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+
+  <tr>
+    <td colspan="2">
+      <div class="horizontal volunteer-button-row">
+        <button class="volunteer-button">Volunteer</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+{{/deliveryOptions}}
 
 
 </body>

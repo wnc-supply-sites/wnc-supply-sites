@@ -1,17 +1,88 @@
+.delivery-options {
+    margin-top: 5px;
+    margin-bottom: 40px;
+    border-radius: 30px;
+    border: solid;
+    background-color: #E3E3E3;
+    /*width: 600px;*/
+}
+
 .delivery-options th,
 .delivery-options td
 {
-    border: solid 1px gray;
-    border-spacing: 0;
-    border-collapse: collapse;
+    /*border: solid 1px gray;*/
+    /*border-spacing: 0;*/
+    /*border-collapse: collapse;*/
     padding: 5px;
-    outline: solid;
+    /*outline: solid;*/
+    width: 600px;
 }
 
-.left-column {
-    justify-content: flex-start;
+.page-section {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    /*background-color: #F0F0F0;*/
+    /*border: solid #111;*/
+    /*border-radius: 20px;*/
+    font-size: 1.1em;
+    /*max-width: 500px;*/
 }
 
-.right-column {
-    justify-content: flex-end;
+.large-section-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: larger;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+}
+
+
+.sub-section-header {
+    margin-top: 10px;
+    margin-bottom: 3px;
+    text-align: center;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.flex {
+    display:flex;
+    flex-grow:1;
+}
+.site {
+    align-content: baseline;
+    text-align: center;
+}
+
+.volunteer-button {
+    width: 150px;
+    height: 50px;
+    font-weight: bold;
+
+    background-color: lightyellow;
+}
+
+
+.table-background {
+    background-color: #AAA;
+    border-radius: 20px;
+    width: 600px;
+    padding: 20px;
+}
+
+.sticky-header {
+    position: sticky;
+    /*background-color: inherit;*/
+    top: 0px;
+    background-color: #F5F5F5;
+    border-bottom: 4px #333 ridge;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+
+}
+
+
+.volunteer-button-row {
+    justify-content: center;
+    padding-bottom: 10px;
 }
