@@ -30,6 +30,7 @@
     <tr>
       <td>
         <div class="horizontal page-section">
+
           <!-- Pickup Site -->
           <div class="vertical left-column page-subsection narrow-sub-section">
             <div class="large-section-header">Pick Up</div>
@@ -41,6 +42,14 @@
             <div>
               <pre>{{!fromHours}}</pre>
             </div>
+
+            <div class="map">
+              <iframe width="300" height="300"
+                      src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+              >
+              </iframe>
+            </div>
+
           </div>
 
           <!-- DROP OFF -->
@@ -54,7 +63,22 @@
             <div>
               <pre>{{!toHours}}</pre>
             </div>
+
+            <div class="map">
+              <iframe
+                  width="300"
+                  height="300"
+                  class="gmap_iframe"
+                  frameborder="0"
+                  scrolling="no"
+                  marginheight="0"
+                  marginwidth="0"
+                  src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+              >
+              </iframe>
+            </div>
           </div>
+
         </div>
 
         <div class="delivery-distance">
@@ -64,49 +88,6 @@
 
         <button>Volunteer</button>
 
-        <div class="vertical">
-          <div class="vertical site-title">
-            <div class="bold site-name">
-              <a href="{{{fromSiteLink}}}">{{fromSiteName}}</a>
-            </div>
-          </div>
-
-          <div class="map">
-            <iframe
-                width="300"
-                height="300"
-                class="gmap_iframe"
-                frameborder="0"
-                scrolling="no"
-                marginheight="0"
-                marginwidth="0"
-                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-            >
-            </iframe>
-          </div>
-        </div>
-
-®        <div class="vertical">
-          <div class="vertical site-title">
-            <div class="bold site-name">
-              <a href="{{{toSiteLink}}}">{{toSiteName}}</a>
-            </div>
-          </div>
-
-          <div class="map">
-            <iframe
-                width="300"
-                height="300"
-                class="gmap_iframe"
-                frameborder="0"
-                scrolling="no"
-                marginheight="0"
-                marginwidth="0"
-                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-            >
-            </iframe>
-          </div>
-        </div>
       </td>
 
       <td>
