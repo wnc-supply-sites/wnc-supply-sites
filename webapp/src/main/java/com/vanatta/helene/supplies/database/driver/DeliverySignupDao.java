@@ -43,7 +43,6 @@ public class DeliverySignupDao {
                             .fromCity(deliveryOptionDbResult.fromCity)
                             .fromCounty(deliveryOptionDbResult.fromCounty)
                             .fromState(deliveryOptionDbResult.fromState)
-
                             .toSiteLink(
                                 SiteDetailController.buildSiteLink(deliveryOptionDbResult.siteId))
                             .toSiteName(deliveryOptionDbResult.siteName)
@@ -51,7 +50,6 @@ public class DeliverySignupDao {
                             .city(deliveryOptionDbResult.city)
                             .county(deliveryOptionDbResult.county)
                             .state(deliveryOptionDbResult.state)
-
                             .driveTimeSeconds(deliveryOptionDbResult.driveTimeSeconds)
                             .distanceMiles(deliveryOptionDbResult.distanceMiles)
                             .build())
@@ -106,7 +104,7 @@ public class DeliverySignupDao {
           .build()
           .toEncodedUrlValue();
     }
-    
+
     String getGoogleMapsAddress() {
       return SiteAddress.builder()
           .address(toAddress)

@@ -10,7 +10,10 @@ public class EnumUtil {
   public static <T> Optional<T> mapText(
       T[] values, Function<T, String> mapper, String textToMatch) {
     if (textToMatch == null) {
-      log.warn("Null value requested to be mapped in values: {}", Arrays.toString(values), new IllegalStateException());
+      log.warn(
+          "Null value requested to be mapped in values: {}",
+          Arrays.toString(values),
+          new IllegalStateException());
       return Optional.empty();
     }
 

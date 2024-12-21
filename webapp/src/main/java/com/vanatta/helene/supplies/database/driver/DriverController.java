@@ -43,11 +43,10 @@ public class DriverController {
 
     return ResponseEntity.ok("ok");
   }
-  
+
   @GetMapping("/driver/portal")
   ModelAndView showDriverPortal() {
-  
+
     return new ModelAndView("driver/portal");
   }
-  
 }
