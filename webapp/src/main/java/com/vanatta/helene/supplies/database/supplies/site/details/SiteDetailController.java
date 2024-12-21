@@ -221,6 +221,7 @@ public class SiteDetailController {
               jdbi, SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build());
       List<InventoryItem> needs =
           supplies.stream()
+              .filter(i -> i.getItem() != null)
               .filter(i -> ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
               .map(InventoryItem::new)
               .toList();
@@ -232,6 +233,7 @@ public class SiteDetailController {
 
       List<InventoryItem> available =
           supplies.stream()
+              .filter(i -> i.getItem() != null)
               .filter(i -> !ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
               .map(InventoryItem::new)
               .toList();

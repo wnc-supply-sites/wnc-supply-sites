@@ -10,7 +10,7 @@ public class EnumUtil {
   public static <T> Optional<T> mapText(
       T[] values, Function<T, String> mapper, String textToMatch) {
     if (textToMatch == null) {
-      log.warn("Null value requested to be mapped in values: {}", Arrays.toString(values));
+      log.warn("Null value requested to be mapped in values: {}", Arrays.toString(values), new IllegalStateException());
       return Optional.empty();
     }
 
@@ -20,7 +20,8 @@ public class EnumUtil {
       log.warn(
           "Unmapped value: {}, requested to be mapped in values: {}",
           textToMatch,
-          Arrays.toString(values));
+          Arrays.toString(values),
+          new IllegalStateException());
     }
     return matchedValue;
   }
