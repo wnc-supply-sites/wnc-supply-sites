@@ -1,3 +1,4 @@
+delete from site_distance_matrix;
 delete from delivery_item;
 delete from delivery;
 delete from site_item_audit;

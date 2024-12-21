@@ -32,16 +32,15 @@ public class HttpPostSender {
               .header("Content-type", "application/json")
               .build();
 
-      HttpResponse<String> response = null;
       try {
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 200) {
           log.info("Successfully sent!");
         } else {
           log.error("Failed, bad response received: {}, {}", response, response.body());
         }
       } catch (IOException | InterruptedException e) {
-        log.error("Failed to send data to URL: {}, data: {}", url, json);
+        log.error("Failed to send data to URL: {}, data: {}", url, json, e);
         throw new RuntimeException(e);
       }
     }

@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.data.GoogleMapWidget;
+import com.vanatta.helene.supplies.database.data.SiteAddress;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
 import com.vanatta.helene.supplies.database.util.ListSplitter;
 import com.vanatta.helene.supplies.database.util.TruncateString;
@@ -169,12 +170,12 @@ public class DeliveryController {
     templateParams.put(
         TemplateParams.googleMapLink.name(),
         googleMapWidget.generateMapSrcRef(
-            GoogleMapWidget.SiteAddress.builder()
+            SiteAddress.builder()
                 .address(delivery.getFromAddress())
                 .city(delivery.getFromCity())
                 .state(delivery.getFromState())
                 .build(),
-            GoogleMapWidget.SiteAddress.builder()
+            SiteAddress.builder()
                 .address(delivery.getToAddress())
                 .city(delivery.getToCity())
                 .state(delivery.getToState())

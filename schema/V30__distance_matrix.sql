@@ -2,7 +2,7 @@ create table site_distance_matrix(
   id serial primary key ,
   site1_id integer not null references site(id),
   site2_id integer not null references site(id),
-  distance_miles decimal(1),
+  distance_miles decimal(6,1),
   drive_time_seconds integer,
   valid boolean
 );
@@ -32,3 +32,9 @@ alter table site_distance_matrix
   add constraint site_distance_distance_value check (distance_miles >= 0.0);
 alter table site_distance_matrix
   add constraint site_distance_time_value check (drive_time_seconds >= 0.0);
+
+insert into site_distance_matrix(site1_id, site2_id)
+select s1.id, s2.id
+from site s1
+cross join site s2
+where s1.id < s2.id;

@@ -46,26 +46,32 @@ public class ManageSiteDao {
   @AllArgsConstructor
   @Getter
   public enum SiteField {
-    SITE_NAME("name", "Site Name", true),
-    STREET_ADDRESS("address", "Street Address", true),
-    CITY("city", "City", true),
-    STATE("state", "State", true),
-    COUNTY("county", "County", true),
-    WEBSITE("website", "Website", false),
-    FACEBOOK("facebook", "Facebook", false),
-    SITE_HOURS("hours", "Site Hours", false),
-    CONTACT_NAME("contact_name", "Contact Name", false),
-    CONTACT_NUMBER("contact_number", "Contact Number", false),
-    CONTACT_EMAIL("contact_email", "Contact Email", false),
-    ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false),
-    BAD_NUMBERS("bad_numbers", "Bad Numbers", false),
-    MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false),
-    RECEIVING_NOTES("receiving_notes", "receiving notes", false),
+    SITE_NAME("name", "Site Name", true, false),
+    STREET_ADDRESS("address", "Street Address", true, true),
+    CITY("city", "City", true, true),
+    STATE("state", "State", true, true),
+    COUNTY("county", "County", true, true),
+    WEBSITE("website", "Website", false, false),
+    FACEBOOK("facebook", "Facebook", false, false),
+    SITE_HOURS("hours", "Site Hours", false, false),
+    CONTACT_NAME("contact_name", "Contact Name", false, false),
+    CONTACT_NUMBER("contact_number", "Contact Number", false, false),
+    CONTACT_EMAIL("contact_email", "Contact Email", false, false),
+    ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false, false),
+    BAD_NUMBERS("bad_numbers", "Bad Numbers", false, false),
+    MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false, false),
+    RECEIVING_NOTES("receiving_notes", "receiving notes", false, false),
     ;
 
     private final String columnName;
     private final String frontEndName;
     private final boolean required;
+
+    /**
+     * isLocationField identifies where a site is located. This flag helps us know when we need to
+     * recalculate distances.
+     */
+    private final boolean isLocationField;
 
     static Optional<SiteField> lookupField(String name) {
       return Arrays.stream(SiteField.values()).filter(f -> f.frontEndName.equals(name)).findAny();
@@ -102,6 +108,18 @@ public class ManageSiteDao {
     }
     addToAuditTrail(
         jdbi, siteId, field, oldValue, newValue == null || newValue.isBlank() ? "-" : newValue);
+
+    // if location as changed, then we need to delete previous distances and re-calculate
+    if (field.isLocationField()) {
+      String deleteDistances =
+          """
+          update site_distance_matrix
+          set distance_miles = null, drive_time_seconds = null, valid = null
+          where site1_id = :siteId or site2_id = :siteId
+          """;
+      jdbi.withHandle(
+          handle -> handle.createUpdate(deleteDistances).bind("siteId", siteId).execute());
+    }
   }
 
   /**

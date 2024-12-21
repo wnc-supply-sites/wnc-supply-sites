@@ -63,34 +63,45 @@ public class AddSiteDao {
         """;
 
     try {
-      return jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(insert)
-                  .bind("siteName", siteData.getSiteName())
-                  .bind("address", siteData.getStreetAddress())
-                  .bind("city", siteData.getCity())
-                  .bind("countyName", siteData.getCounty())
-                  .bind("state", siteData.getState())
-                  .bind("website", siteData.getWebsite())
-                  .bind("facebook", siteData.getFacebook())
-                  .bind("siteType", siteData.getSiteType().getText())
-                  .bind("hours", siteData.getSiteHours())
-                  .bind("contactName", siteData.getContactName())
-                  .bind("contactNumber", siteData.getContactNumber())
-                  .bind("contactEmail", siteData.getContactEmail())
-                  .bind("additionalContacts", siteData.getAdditionalContacts())
-                  .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
-                  
-                  .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
-                  .bind("hasForklift", siteData.isHasForklift())
-                  .bind("hasIndoorStorage", siteData.isHasIndoorStorage())
-                  .bind("hasLoadingDock", siteData.isHasLoadingDock())
-                  .bind("receivingNotes", siteData.getReceivingNotes())
-          
-          .executeAndReturnGeneratedKeys("id")
-                  .mapTo(Long.class)
-                  .one());
+      long siteId =
+          jdbi.withHandle(
+              handle ->
+                  handle
+                      .createUpdate(insert)
+                      .bind("siteName", siteData.getSiteName())
+                      .bind("address", siteData.getStreetAddress())
+                      .bind("city", siteData.getCity())
+                      .bind("countyName", siteData.getCounty())
+                      .bind("state", siteData.getState())
+                      .bind("website", siteData.getWebsite())
+                      .bind("facebook", siteData.getFacebook())
+                      .bind("siteType", siteData.getSiteType().getText())
+                      .bind("hours", siteData.getSiteHours())
+                      .bind("contactName", siteData.getContactName())
+                      .bind("contactNumber", siteData.getContactNumber())
+                      .bind("contactEmail", siteData.getContactEmail())
+                      .bind("additionalContacts", siteData.getAdditionalContacts())
+                      .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
+                      .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
+                      .bind("hasForklift", siteData.isHasForklift())
+                      .bind("hasIndoorStorage", siteData.isHasIndoorStorage())
+                      .bind("hasLoadingDock", siteData.isHasLoadingDock())
+                      .bind("receivingNotes", siteData.getReceivingNotes())
+                      .executeAndReturnGeneratedKeys("id")
+                      .mapTo(Long.class)
+                      .one());
+
+      String addToDimensionMatrix =
+          String.format(
+              """
+              insert into site_distance_matrix(site1_id, site2_id)
+              select id, %s from site where id != %s
+              """,
+              siteId, siteId);
+
+      jdbi.withHandle(handle -> handle.createUpdate(addToDimensionMatrix).execute());
+
+      return siteId;
     } catch (UnableToExecuteStatementException e) {
       if (e.getMessage()
           .contains("duplicate key value violates unique constraint \"site_name_key\"")) {

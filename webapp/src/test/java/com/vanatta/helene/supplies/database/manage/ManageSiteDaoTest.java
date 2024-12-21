@@ -6,11 +6,14 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ManageSiteDaoTest {
 
@@ -374,5 +377,74 @@ class ManageSiteDaoTest {
   void getAllMaxSupplyLoadCapabilities() {
     var result = ManageSiteDao.getAllMaxSupplyOptions(TestConfiguration.jdbiTest);
     assertThat(result).hasSizeGreaterThan(2);
+  }
+
+  @Nested
+  class DistanceMatrixUpdates {
+
+    /**
+     * When a site updates a field that is an address field, we need to re-calculate distances. In
+     * this test, we first fill in the distance matrix table so that everything "looks" computed. We
+     * then do the upate, and then validate that rows are cleared.
+     */
+    @ParameterizedTest
+    @MethodSource
+    void updateAddressFieldUpdatesDistanceMatrix(ManageSiteDao.SiteField field) {
+      fillInDistanceMatrix();
+      assertThat(countUncalculatedDistance()).isEqualTo(0);
+
+      long siteId = TestConfiguration.getSiteId();
+      ManageSiteDao.updateSiteField(
+          TestConfiguration.jdbiTest,
+          siteId,
+          field,
+          // if we are upating state or county, we must use valid values in the county table
+          field == ManageSiteDao.SiteField.STATE || field == ManageSiteDao.SiteField.COUNTY
+              ? "Buncombe,NC"
+              : "new value test");
+
+      // expected number of distances to now be uncalculated is the number of sites minus one.
+      // The distance from this site to each and other one needs to be recalculated.
+      int numberOfSites = countSites();
+      assertThat(countUncalculatedDistance()).isEqualTo(numberOfSites - 1);
+    }
+
+    static List<ManageSiteDao.SiteField> updateAddressFieldUpdatesDistanceMatrix() {
+      return Arrays.stream(ManageSiteDao.SiteField.values())
+          .filter(ManageSiteDao.SiteField::isLocationField)
+          .toList();
+    }
+
+    /**
+     * Populates the site_distance_matrix so the whole thing appears to be filled in, all distances
+     * calculated.
+     */
+    private static void fillInDistanceMatrix() {
+      String setupData =
+          """
+          delete from site_distance_matrix;
+          insert into site_distance_matrix(site1_id, site2_id, distance_miles, drive_time_seconds, valid)
+          select s1.id, s2.id, 10.0, 60, true
+          from site s1
+          cross join site s2
+          where s1.id < s2.id;
+          """;
+
+      TestConfiguration.jdbiTest.withHandle(handle -> handle.createScript(setupData).execute());
+    }
+
+    private static int countSites() {
+      String countSites = "select count(*) from site";
+      return TestConfiguration.jdbiTest.withHandle(
+          handle -> handle.createQuery(countSites).mapTo(Integer.class).one());
+    }
+
+    private static int countUncalculatedDistance() {
+      String countNumberOfUncalculatedDistances =
+          "select count(*) from site_distance_matrix where valid is null";
+      return TestConfiguration.jdbiTest.withHandle(
+          handle ->
+              handle.createQuery(countNumberOfUncalculatedDistances).mapTo(Integer.class).one());
+    }
   }
 }

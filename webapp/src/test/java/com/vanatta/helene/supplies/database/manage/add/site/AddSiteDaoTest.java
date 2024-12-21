@@ -7,6 +7,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao.SiteDetailData;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,6 +100,40 @@ public class AddSiteDaoTest {
               AddSiteDao.addSite(
                   TestConfiguration.jdbiTest,
                   siteData2.toBuilder().county("invalid-county").build()));
+    }
+  }
+
+  @Nested
+  class AddToDistanceMatrix {
+
+    /**
+     * When we add a site, we should add rows to 'site_distance_matrix' equal to the number of
+     * existing sites. For example, if there are 3 sites, then the 4th site should add 3 more rows
+     * to the distance matrix.
+     */
+    @Test
+    void addingSite() {
+      int numberOfSites = countNumberOfSites();
+      int previousNumberOfMatrixRows = countSiteDistanceRows();
+
+      AddSiteDao.addSite(
+          TestConfiguration.jdbiTest,
+          siteData2.toBuilder().siteName(UUID.randomUUID().toString()).build());
+
+      int numberOfMatrixRows = countSiteDistanceRows();
+      assertThat(numberOfMatrixRows).isEqualTo(previousNumberOfMatrixRows + numberOfSites);
+    }
+
+    private int countNumberOfSites() {
+      String count = "select count(*) from site";
+      return TestConfiguration.jdbiTest.withHandle(
+          handle -> handle.createQuery(count).mapTo(Integer.class).one());
+    }
+
+    private int countSiteDistanceRows() {
+      String count = "select count(*) from site_distance_matrix";
+      return TestConfiguration.jdbiTest.withHandle(
+          handle -> handle.createQuery(count).mapTo(Integer.class).one());
     }
   }
 }

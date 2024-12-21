@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database.data;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
+import com.vanatta.helene.supplies.database.util.UrlEncode;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,14 +16,7 @@ public class GoogleMapWidget {
   public GoogleMapWidget(@Value("${google.maps.api.key}") String apiKey) {
     this.apiKey = apiKey;
   }
-
-  @Builder
-  public static class SiteAddress {
-    private final String address;
-    private final String city;
-    private final String state;
-  }
-
+  
   /**
    * Generates a 'src' URL suitable for an iframe
    *
@@ -49,19 +44,15 @@ public class GoogleMapWidget {
         "https://www.google.com/maps/embed/v1/directions?key=%s"
             + "&origin=%s,%s,%s&destination=%s,%s,%s",
         apiKey,
-        encode(from.address),
-        encode(from.city),
-        encode(from.state),
-        encode(to.address),
-        encode(to.city),
-        encode(to.state));
+        encode(from.getAddress()),
+        encode(from.getCity()),
+        encode(from.getState()),
+        encode(to.getAddress()),
+        encode(to.getCity()),
+        encode(to.getState()));
   }
 
   private static String encode(String input) {
-    if (input == null) {
-      return "";
-    } else {
-      return URLEncoder.encode(input, StandardCharsets.UTF_8);
-    }
+    return UrlEncode.encode(input);
   }
 }
