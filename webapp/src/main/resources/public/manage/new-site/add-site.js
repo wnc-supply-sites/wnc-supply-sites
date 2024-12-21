@@ -107,7 +107,7 @@ function showSuccess(editSiteUrl, siteName) {
   greenCheck.classList.remove("hidden");
   redX.classList.add("hidden");
   confirmMessage.classList.remove("errorMessage");
-  confirmation.innerHTML = `${siteName} saved. <a href=${editSiteUrl}>Click to set up inventory</a>`
+  confirmation.innerHTML = `${siteName} saved. <a href=${editSiteUrl}>Click to view site details</a>`
 
   /** Clear data entry fields to facilitate adding more sites. */
   document.getElementById("Site Name").value = "";
