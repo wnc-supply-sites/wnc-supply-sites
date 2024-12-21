@@ -24,6 +24,7 @@ public class HttpGetSender {
     } else {
       String queryString =
           params.entrySet().stream()
+              .sorted(Map.Entry.comparingByKey())
               .map(e -> e.getKey() + "=" + UrlEncode.encode(e.getValue().trim()))
               .collect(Collectors.joining("&"));
       return url + "?" + queryString;

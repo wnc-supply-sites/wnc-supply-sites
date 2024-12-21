@@ -13,9 +13,9 @@ class DurationFormatterTest {
     "0,0 min", //
     "1,1 min",
     "59,59 min",
-    "60,1 hr",
+    "60,1 hr 0 min",
     "61,1 hr 1 min",
-    "360,6 hr"
+    "360,6 hr 0 min"
   })
   void format(int input, String expected) {
     var inputDuration = Duration.ofMinutes(input);
