@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DistanceCalculator {
-  private static final int EVERY_THREE_MINUTES_IN_MS = 3 * 60 * 1000;
+  private static final int EVERY_MINUTE_IN_MS = 3 * 60 * 1000;
   private final Jdbi jdbi;
   private final GoogleDistanceApi googleDistanceApi;
   private final boolean enabled;
@@ -32,7 +32,7 @@ public class DistanceCalculator {
     this.delayBetweenRequestsInMs = delayBetweenRequestsInMs;
   }
 
-  @Scheduled(fixedRate = EVERY_THREE_MINUTES_IN_MS)
+  @Scheduled(fixedDelay = EVERY_MINUTE_IN_MS)
   public void calculateDistances() {
     if (!enabled) {
       return;
