@@ -103,3 +103,7 @@ table.needs-matching td,
 .inventory-column {
     vertical-align: top;
 }
+
+.center {
+    text-align: center;
+}
