@@ -20,8 +20,8 @@
     <thead>
     <tr>
       <th>Delivery</th>
-      <th>From Site</th>
-      <th>To Site</th>
+<!--      <th>From Site</th>-->
+<!--      <th>To Site</th>-->
       <th class="wider-column">Items</th>
     </tr>
     </thead>
@@ -29,44 +29,41 @@
     {{#deliveryOptions}}
     <tr>
       <td>
-        <div class="vertical">
-          <div>
-            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
-            {{#driveTime}}{{.}}{{/driveTime}}
-          </div>
-          <div class="horizontal page-section">
-            <!-- Pickup Site -->
-            <div class="vertical left-column page-subsection narrow-sub-section">
-              <div class="large-section-header">Pick Up</div>
-              <div><a href="{{fromSiteLink}}">{{fromSiteName}}</a></div>
-              <div>{{fromAddress}}</div>
-              <div>{{!fromAddressLine2}}</div>
+        <div class="horizontal page-section">
+          <!-- Pickup Site -->
+          <div class="vertical left-column page-subsection narrow-sub-section">
+            <div class="large-section-header">Pick Up</div>
+            <div><a href="{{fromSiteLink}}">{{fromSiteName}}</a></div>
+            <div>{{fromAddress}}</div>
+            <div>{{!fromAddressLine2}}</div>
 
-              <div class="sub-section-header">Hours</div>
-              <div>
-                <pre>{{!fromHours}}</pre>
-              </div>
-            </div>
-
-            <!-- DROP OFF -->
-            <div class="vertical page-subsection narrow-sub-section">
-              <div class="large-section-header">Drop Off</div>
-              <div><a href="{{toSiteLink}}">{{toSiteName}}</a></div>
-              <div>{{toAddress}}</div>
-              <div>{{!toAddressLine2}}</div>
-
-              <div class="sub-section-header">Hours</div>
-              <div>
-                <pre>{{!toHours}}</pre>
-              </div>
+            <div class="sub-section-header">Hours</div>
+            <div>
+              <pre>{{!fromHours}}</pre>
             </div>
           </div>
-          <button>Volunteer Request</button>
+
+          <!-- DROP OFF -->
+          <div class="vertical page-subsection narrow-sub-section">
+            <div class="large-section-header">Drop Off</div>
+            <div><a href="{{toSiteLink}}">{{toSiteName}}</a></div>
+            <div>{{toAddress}}</div>
+            <div>{{!toAddressLine2}}</div>
+
+            <div class="sub-section-header">Hours</div>
+            <div>
+              <pre>{{!toHours}}</pre>
+            </div>
+          </div>
         </div>
-      </td>
 
-      <!-- FROM SITE MAP -->
-      <td class="padded">
+        <div class="delivery-distance">
+          {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
+          {{#driveTime}}{{.}}{{/driveTime}}
+        </div>
+
+        <button>Volunteer</button>
+
         <div class="vertical">
           <div class="vertical site-title">
             <div class="bold site-name">
@@ -88,11 +85,8 @@
             </iframe>
           </div>
         </div>
-      </td>
 
-      <!-- TO SITE MAP -->
-      <td>
-        <div class="vertical">
+®        <div class="vertical">
           <div class="vertical site-title">
             <div class="bold site-name">
               <a href="{{{toSiteLink}}}">{{toSiteName}}</a>
