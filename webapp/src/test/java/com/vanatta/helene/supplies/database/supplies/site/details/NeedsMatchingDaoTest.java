@@ -43,6 +43,8 @@ class NeedsMatchingDaoTest {
                 .itemName("water")
                 .urgency(ItemStatus.NEEDED.getText())
                 .itemCount(3)
+                .driveTimeSeconds(100)
+                .distanceMiles(30.0)
                 .build(),
             NeedsMatchingDbResult.builder()
                 .siteId(10L) //
@@ -110,6 +112,8 @@ class NeedsMatchingDaoTest {
                 .city("city")
                 .county("county")
                 .state("state")
+                .distanceMiles(30.0)
+                .driveTimeSeconds(100)
                 .items(
                     List.of(
                         Item.builder()
@@ -158,4 +162,6 @@ class NeedsMatchingDaoTest {
                             .build()))
                 .build());
   }
+  
+  
 }

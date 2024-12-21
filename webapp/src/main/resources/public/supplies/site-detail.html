@@ -273,6 +273,7 @@
                     <tr>
                         <th>Site Name</th>
                         <th>County</th>
+                        <th>Distance</th>
                         <th class="wider-column">Item</th>
                         <th>Item Count</th>
                     </tr>
@@ -290,6 +291,10 @@
                             </div>
                         </td>
                         <td>{{county}}, {{state}}</td>
+                        <td>
+                            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
+                            {{#driveTime}}{{.}}{{/driveTime}}
+                        </td>
                         <td>
                             <div class="horizontal">
                                 <ul>
