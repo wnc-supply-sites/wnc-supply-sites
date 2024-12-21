@@ -58,7 +58,7 @@
                         scrolling="no"
                         marginheight="0"
                         marginwidth="0"
-                        src="https://maps.google.com/maps?width=600&amp;height=500&amp;hl=en&amp;q={{googleMapsAddress}}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+                        src="https://maps.google.com/maps?width=600&amp;height=500&amp;hl=en&amp;q={{googleMapsAddress}}&amp;t=&amp;z=10&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
                     >
                     </iframe>
                 </div>
@@ -272,7 +272,7 @@
                 <thead>
                     <tr>
                         <th>Site Name</th>
-                        <th>County</th>
+                        <th>Map</th>
                         <th>Distance</th>
                         <th class="wider-column">Item</th>
                         <th>Item Count</th>
@@ -281,16 +281,31 @@
                 <tbody>
                     {{#needsMatching}}
                     <tr>
-                        <td>
-                            <div class="vertical">
+                        <td class="padded">
+                            <div class="vertical site-title">
                                 <div class="bold site-name">
                                     <a href="{{{siteLink}}}">{{siteName}}</a>
                                 </div>
                                 <div>{{siteAddress}}</div>
                                 <div class="city-name">{{city}}</div>
+                                <div>{{county}} county, {{state}}</div>
                             </div>
                         </td>
-                        <td>{{county}}, {{state}}</td>
+                        <td>
+                            <div class="map">
+                                <iframe
+                                    width="300"
+                                    height="300"
+                                    class="gmap_iframe"
+                                    frameborder="0"
+                                    scrolling="no"
+                                    marginheight="0"
+                                    marginwidth="0"
+                                    src="https://maps.google.com/maps?z=9&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+                                >
+                                </iframe>
+                            </div>
+                        </td>
                         <td>
                             {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
                             {{#driveTime}}{{.}}{{/driveTime}}

@@ -12,7 +12,7 @@ public class SiteAddress {
   @Nonnull private final String city;
   @Nonnull private final String state;
 
-  String toEncodedUrlValue() {
+  public String toEncodedUrlValue() {
     return String.format(
         "%s,%s,%s", UrlEncode.encode(address), UrlEncode.encode(city), UrlEncode.encode(state));
   }

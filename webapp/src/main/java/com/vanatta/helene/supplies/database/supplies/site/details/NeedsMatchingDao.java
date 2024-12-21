@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.data.SiteAddress;
 import com.vanatta.helene.supplies.database.util.DurationFormatter;
 import com.vanatta.helene.supplies.database.util.ListSplitter;
 import java.time.Duration;
@@ -78,6 +79,15 @@ public class NeedsMatchingDao {
     Integer driveTimeSeconds;
     Double distanceMiles;
     @Builder.Default List<Item> items = new ArrayList<>();
+
+    String getGoogleMapsAddress() {
+      return SiteAddress.builder()
+          .address(siteAddress)
+          .city(city)
+          .state(state)
+          .build()
+          .toEncodedUrlValue();
+    }
 
     String getDriveTime() {
       return driveTimeSeconds == null
