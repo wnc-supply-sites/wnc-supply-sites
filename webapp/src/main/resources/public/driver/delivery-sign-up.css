@@ -1,0 +1,17 @@
+.delivery-options th,
+.delivery-options td
+{
+    border: solid 1px gray;
+    border-spacing: 0;
+    border-collapse: collapse;
+    padding: 5px;
+    outline: solid;
+}
+
+.left-column {
+    justify-content: flex-start;
+}
+
+.right-column {
+    justify-content: flex-end;
+}

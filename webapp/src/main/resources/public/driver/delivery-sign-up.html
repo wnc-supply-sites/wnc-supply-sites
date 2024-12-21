@@ -1,0 +1,142 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supply Sites - Driver Delivery Sign-Up</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="../mobile.css"/>
+  <link rel="stylesheet" href="delivery-sign-up.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {{> header-include }}
+</head>
+<body>
+
+<h1>
+  <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
+  WNC Supply Sites - Delivery Sign-Up
+</h1>
+
+
+<div class="table-container">
+  <table class="delivery-options">
+    <thead>
+    <tr>
+      <th>Delivery</th>
+      <th>From Site</th>
+      <th>To Site</th>
+      <th class="wider-column">Items</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#deliveryOptions}}
+    <tr>
+      <td>
+        <div class="vertical">
+          <div>
+            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
+            {{#driveTime}}{{.}}{{/driveTime}}
+          </div>
+          <div class="horizontal page-section">
+            <!-- Pickup Site -->
+            <div class="vertical left-column page-subsection narrow-sub-section">
+              <div class="large-section-header">Pick Up</div>
+              <div><a href="{{fromSiteLink}}">{{fromSiteName}}</a></div>
+              <div>{{fromAddress}}</div>
+              <div>{{!fromAddressLine2}}</div>
+
+              <div class="sub-section-header">Hours</div>
+              <div>
+                <pre>{{!fromHours}}</pre>
+              </div>
+            </div>
+
+            <!-- DROP OFF -->
+            <div class="vertical page-subsection narrow-sub-section">
+              <div class="large-section-header">Drop Off</div>
+              <div><a href="{{toSiteLink}}">{{toSiteName}}</a></div>
+              <div>{{toAddress}}</div>
+              <div>{{!toAddressLine2}}</div>
+
+              <div class="sub-section-header">Hours</div>
+              <div>
+                <pre>{{!toHours}}</pre>
+              </div>
+            </div>
+          </div>
+          <button>Volunteer Request</button>
+        </div>
+      </td>
+
+      <!-- FROM SITE MAP -->
+      <td class="padded">
+        <div class="vertical">
+          <div class="vertical site-title">
+            <div class="bold site-name">
+              <a href="{{{fromSiteLink}}}">{{fromSiteName}}</a>
+            </div>
+          </div>
+
+          <div class="map">
+            <iframe
+                width="300"
+                height="300"
+                class="gmap_iframe"
+                frameborder="0"
+                scrolling="no"
+                marginheight="0"
+                marginwidth="0"
+                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+            >
+            </iframe>
+          </div>
+        </div>
+      </td>
+
+      <!-- TO SITE MAP -->
+      <td>
+        <div class="vertical">
+          <div class="vertical site-title">
+            <div class="bold site-name">
+              <a href="{{{toSiteLink}}}">{{toSiteName}}</a>
+            </div>
+          </div>
+
+          <div class="map">
+            <iframe
+                width="300"
+                height="300"
+                class="gmap_iframe"
+                frameborder="0"
+                scrolling="no"
+                marginheight="0"
+                marginwidth="0"
+                src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+            >
+            </iframe>
+          </div>
+        </div>
+      </td>
+
+      <td>
+        <div class="vertical center">
+          {{itemCount}} items
+          <div class="horizontal">
+            <ul>
+              {{#items1}}
+              <li class="{{urgencyCssClass}}">{{name}}</li>
+              {{/items1}}
+            </ul>
+            <ul>
+              {{#items2}}
+              <li class="{{urgencyCssClass}}">{{name}}</li>
+              {{/items2}}
+            </ul>
+          </div>
+        </div>
+    </tr>
+    {{/deliveryOptions}}
+    </tbody>
+  </table>
+</div>
+
+
+</body>
+</html>

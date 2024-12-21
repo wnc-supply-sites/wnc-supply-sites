@@ -1,8 +1,11 @@
 /* Style sheet common to all pages. */
 html, table {
-    /*font-size: 1.1em;*/
     background-color: #F5F5F5;
     color: #333;
+}
+
+button {
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
 }
 
 .vertical {
@@ -153,6 +156,10 @@ html, table {
 
 .green {
     color: green;
+}
+
+.danger-fields {
+    border: 1px solid red;
 }
 
 @media only screen and (min-width: 600px) {

@@ -1,0 +1,18 @@
+.smaller {
+    font-size: smaller;
+}
+
+.update-button {
+    margin-top: 20px;
+    height: 40px;
+}
+
+.form-header {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+dt {
+    font-weight: bold;
+}
+
