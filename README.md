@@ -36,6 +36,11 @@ from sites that have too much, to those that need those items.
 - update the corresponding HTML, CSS & JS files; check-in & push
 
 
+### Branching Strategy & Workflow
+
+- Ship, Show, Ask: https://martinfowler.com/articles/ship-show-ask.html
+
+
 ### Local Setup
 
 - install postgres to your machine (bare-metal)

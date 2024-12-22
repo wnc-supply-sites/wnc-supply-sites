@@ -29,6 +29,8 @@ public class TestConfiguration {
 
   static {
     HikariConfig config = new HikariConfig();
+    
+    System.getenv("DB_URL")
     config.setJdbcUrl("jdbc:postgresql://localhost:5432/wnc_helene_test");
     config.setUsername("wnc_helene");
     config.setPassword("wnc_helene");
