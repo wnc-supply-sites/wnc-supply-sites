@@ -6,20 +6,20 @@
 #
 services:
   database:
-    image: postgres:10
+    image: postgres:16.6
     environment:
-      POSTGRES_USER: db
-      POSTGRES_PASSWORD: db
-      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
       - ./.docker-compose/database/01-init.sql:/docker-entrypoint-initdb.d/01-init.sql
-  #   healthcheck:
-  #     test: echo 'select 1' | psql -h localhost -U postgres  | grep -q '1 row'
-  #     interval: 3s
-  #     retries: 10
-  #     timeout: 3s
+    healthcheck:
+      test: echo 'select 1' | psql -h localhost -U postgres  | grep -q '1 row'
+      interval: 3s
+      retries: 10
+      timeout: 3s
   flyway:
     build:
       context: schema
