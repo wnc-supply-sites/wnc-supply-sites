@@ -29,7 +29,7 @@ public class TestConfiguration {
 
   static {
     HikariConfig config = new HikariConfig();
-    config.setJdbcUrl("jdbc:postgresql://localhost:5432/wnc_helene_test");
+    config.setJdbcUrl("jdbc:postgresql://database:5432/wnc_helene_test");
     config.setUsername("wnc_helene");
     config.setPassword("wnc_helene");
     config.addDataSourceProperty("maximumPoolSize", "16");
