@@ -66,7 +66,7 @@ public class AuthInterceptor implements WebMvcConfigurer {
           cookie.setSecure(true);
           cookie.setHttpOnly(true);
           response.addCookie(cookie);
-          response.sendRedirect("/login?redirectUri=" + requestUri);
+          response.sendRedirect("/login/login?redirectUri=" + requestUri);
           return false;
         }
       } else if (requestUri.startsWith("/import/") || requestUri.startsWith("/webhook/")) {
