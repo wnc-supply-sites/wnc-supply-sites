@@ -40,6 +40,9 @@ from sites that have too much, to those that need those items.
 
 - Ship, Show, Ask: https://martinfowler.com/articles/ship-show-ask.html
 
+- Keep a linear history, do not push merge commits to master!
+  - use merge with fast forward only or rebase
+
 
 ### Local Setup
 
