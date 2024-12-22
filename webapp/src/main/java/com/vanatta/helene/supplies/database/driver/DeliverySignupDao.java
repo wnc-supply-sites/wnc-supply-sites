@@ -20,19 +20,26 @@ import org.jdbi.v3.core.Jdbi;
 
 public class DeliverySignupDao {
 
+  @Value
+  @Builder
+  private static class SitePair {
+    long fromSiteId;
+    long toSiteId;
+  }
+  
   /**
    * Groups up database results, what is many rows, to rows aggregated by site. The difference
    * between rows is the item listing and the item urgency.
    */
   // @VisibleForTesting
   static List<DeliveryOption> aggregate(List<DeliveryOptionDbResult> dbResult) {
-    Map<Long, DeliveryOption> needsMatchingResult = new HashMap<>();
+    Map<SitePair, DeliveryOption> needsMatchingResult = new HashMap<>();
 
     dbResult.forEach(
         deliveryOptionDbResult ->
             needsMatchingResult
                 .computeIfAbsent(
-                    deliveryOptionDbResult.siteId,
+                    SitePair.builder().fromSiteId(deliveryOptionDbResult.fromSiteId).toSiteId(deliveryOptionDbResult.siteId).build(),
                     _ ->
                         DeliveryOption.builder()
                             .fromSiteName(deliveryOptionDbResult.fromSiteName)
