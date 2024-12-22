@@ -1,8 +1,4 @@
 
-select {
-    max-width: 150px;
-}
-
 .not-accepting-donations {
     font-size: 0.9em;
     font-style: italic;
@@ -27,10 +23,6 @@ select {
 }
 .selected-value {
     font-weight: bold;
-}
-
-table.filters-table {
-    /*min-width: 600px;*/
 }
 
 table.filters-table tbody {
