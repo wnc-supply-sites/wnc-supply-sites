@@ -9,95 +9,114 @@
 </head>
 <body>
 
+<div class="sticky-header">
+
 <h1>
   <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
   WNC Supply Sites - Delivery Sign-Up
 </h1>
 
+  <div class="larger">
+  <h3>Filters</h3>
 
-<div class="table-container">
-  <table class="delivery-options">
-    <thead>
-    <tr>
-      <th>From</th>
-      <th>To</th>
-<!--      <th>From Site</th>-->
-<!--      <th>To Site</th>-->
-      <th class="wider-column">Items</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{#deliveryOptions}}
-
-    <tr>
-      <td class="site">
-        <iframe
-          width="300"
-          height="300"
-          src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
-        </iframe>
-
-        <h4 class="sub-section-header">{{fromSiteName}}</h4>
-        <div>{{fromAddress}}</div>
-        <div>{{fromCity}}, {{fromState}}</div>
-
-        <h4 class="sub-section-header">Hours</h4>
-        {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}?{{/fromHours}}
-      </td>
-
-      <td class="site">
-        <iframe
-          width="300"
-          height="300"
-          src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
-        </iframe>
-      </td>
-
-      <td rowspan="2">
-        <div class="vertical center">
-          <div>
-            {{itemCount}} items
-          </div>
-
-          <div class="horizontal">
-            <ul>
-              {{#items1}}
-              <li class="{{urgencyCssClass}}">{{name}}</li>
-              {{/items1}}
-            </ul>
-            <ul>
-              {{#items2}}
-              <li class="{{urgencyCssClass}}">{{name}}</li>
-              {{/items2}}
-            </ul>
-          </div>
-        </div>
-      </td>
-    </tr>
-
-
-    <tr>
-      <td colspan="2">
-        <div class="horizontal">
-          <button class="volunteer-button">Volunteer</button>
-
-          <div>
-            {{fromSiteName}} -> {{toSiteName}}:
-          </div>
-          <div class="vertical">
-            {{driveTime}}
-            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}
-          </div>
-        </div>
-      </td>
-    </tr>
-
-
-
-    {{/deliveryOptions}}
-    </tbody>
-  </table>
+    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>
+<!--    <checkbox></checkbox>-->
+<!--    <label for="county">Counties</label>-->
+<!--    <select id="county">-->
+<!--      <option>county</option>-->
+<!--    </select>-->
+  </div>
 </div>
+
+{{#deliveryOptions}}
+<table class="delivery-options">
+  <thead>
+  <tr>
+    <th colspan="3">
+      <div class="large-section-header">
+        {{fromSiteName}} &#8594; {{toSiteName}}
+      </div>
+      <div class="sub-section-header">
+        {{#distanceMiles}}{{.}} miles{{/distanceMiles}} {{#driveTime}}({{.}}){{/driveTime}}
+      </div>
+    </th>
+  </tr>
+
+  <tr>
+    <th>From {{fromCounty}} County</th>
+    <th>To {{county}} County</th>
+    <!--      <th>From Site</th>-->
+    <!--      <th>To Site</th>-->
+    <th class="wider-column">Items</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <tr>
+    <td class="site">
+      <iframe
+        width="300"
+        height="300"
+        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+      </iframe>
+
+      <h4 class="sub-section-header">{{fromSiteName}}</h4>
+      <div>{{fromAddress}}</div>
+      <div>{{fromCity}}, {{fromState}}</div>
+
+      <h4 class="sub-section-header">Hours</h4>
+      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+    </td>
+
+    <td class="site">
+      <iframe
+        width="300"
+        height="300"
+        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+      </iframe>
+
+      <h4 class="sub-section-header">{{toSiteName}}</h4>
+      <div>{{toAddress}}</div>
+      <div>{{city}}, {{state}}</div>
+
+      <h4 class="sub-section-header">Hours</h4>
+      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+
+    </td>
+
+    <td rowspan="2">
+      <div class="vertical center">
+        <div>
+          {{itemCount}} items
+        </div>
+
+        <div class="horizontal">
+          <ul>
+            {{#items1}}
+            <li class="{{urgencyCssClass}}">{{name}}</li>
+            {{/items1}}
+          </ul>
+          <ul>
+            {{#items2}}
+            <li class="{{urgencyCssClass}}">{{name}}</li>
+            {{/items2}}
+          </ul>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+
+  <tr>
+    <td colspan="2">
+      <div class="horizontal volunteer-button-row">
+        <button class="volunteer-button">Volunteer</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+{{/deliveryOptions}}
 
 
 </body>

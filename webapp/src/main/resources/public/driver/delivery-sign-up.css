@@ -1,11 +1,21 @@
+.delivery-options {
+    margin-top: 5px;
+    margin-bottom: 40px;
+    border-radius: 30px;
+    border: solid;
+    background-color: #E3E3E3;
+    /*width: 600px;*/
+}
+
 .delivery-options th,
 .delivery-options td
 {
-    border: solid 1px gray;
-    border-spacing: 0;
-    border-collapse: collapse;
+    /*border: solid 1px gray;*/
+    /*border-spacing: 0;*/
+    /*border-collapse: collapse;*/
     padding: 5px;
-    outline: solid;
+    /*outline: solid;*/
+    width: 600px;
 }
 
 .page-section {
@@ -16,15 +26,6 @@
     /*border-radius: 20px;*/
     font-size: 1.1em;
     /*max-width: 500px;*/
-}
-
-.left-column {
-    margin-right: 10px;
-}
-
-.narrow-sub-section {
-    width: 165px;
-    text-align: center;
 }
 
 .large-section-header {
@@ -58,4 +59,30 @@
     height: 50px;
     font-weight: bold;
 
+    background-color: lightyellow;
+}
+
+
+.table-background {
+    background-color: #AAA;
+    border-radius: 20px;
+    width: 600px;
+    padding: 20px;
+}
+
+.sticky-header {
+    position: sticky;
+    /*background-color: inherit;*/
+    top: 0px;
+    background-color: #F5F5F5;
+    border-bottom: 4px #333 ridge;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+
+}
+
+
+.volunteer-button-row {
+    justify-content: center;
+    padding-bottom: 10px;
 }

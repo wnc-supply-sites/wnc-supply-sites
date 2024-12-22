@@ -124,7 +124,7 @@ public class DeliverySignupDao {
 
     String getDriveTime() {
       return driveTimeSeconds == null
-          ? ""
+          ? null
           : DurationFormatter.formatDuration(Duration.ofSeconds(driveTimeSeconds));
     }
 
