@@ -26,7 +26,7 @@ public class DeliverySignupDao {
     long fromSiteId;
     long toSiteId;
   }
-  
+
   /**
    * Groups up database results, what is many rows, to rows aggregated by site. The difference
    * between rows is the item listing and the item urgency.
@@ -39,7 +39,10 @@ public class DeliverySignupDao {
         deliveryOptionDbResult ->
             needsMatchingResult
                 .computeIfAbsent(
-                    SitePair.builder().fromSiteId(deliveryOptionDbResult.fromSiteId).toSiteId(deliveryOptionDbResult.siteId).build(),
+                    SitePair.builder()
+                        .fromSiteId(deliveryOptionDbResult.fromSiteId)
+                        .toSiteId(deliveryOptionDbResult.siteId)
+                        .build(),
                     _ ->
                         DeliveryOption.builder()
                             .fromSiteName(deliveryOptionDbResult.fromSiteName)
@@ -51,7 +54,6 @@ public class DeliverySignupDao {
                             .fromCounty(deliveryOptionDbResult.fromCounty)
                             .fromState(deliveryOptionDbResult.fromState)
                             .fromHours(deliveryOptionDbResult.fromHours)
-                            
                             .toSiteLink(
                                 SiteDetailController.buildSiteLink(deliveryOptionDbResult.siteId))
                             .toSiteName(deliveryOptionDbResult.siteName)
@@ -60,7 +62,6 @@ public class DeliverySignupDao {
                             .county(deliveryOptionDbResult.county)
                             .state(deliveryOptionDbResult.state)
                             .hours(deliveryOptionDbResult.hours)
-                            
                             .driveTimeSeconds(deliveryOptionDbResult.driveTimeSeconds)
                             .distanceMiles(deliveryOptionDbResult.distanceMiles)
                             .build())
@@ -98,7 +99,6 @@ public class DeliverySignupDao {
     String fromState;
     String fromHours;
 
-    
     String toSiteName;
     String toSiteLink;
     String toAddress;
@@ -178,7 +178,7 @@ public class DeliverySignupDao {
     String county;
     String state;
     String hours;
-    
+
     String itemName;
     String urgency;
     int itemCount;
