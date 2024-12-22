@@ -8,27 +8,54 @@
     outline: solid;
 }
 
+.page-section {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    /*background-color: #F0F0F0;*/
+    /*border: solid #111;*/
+    /*border-radius: 20px;*/
+    font-size: 1.1em;
+    /*max-width: 500px;*/
+}
+
 .left-column {
-    justify-content: flex-start;
+    margin-right: 10px;
 }
 
-.right-column {
-    justify-content: flex-end;
+.narrow-sub-section {
+    width: 165px;
+    text-align: center;
 }
 
-.flex-column {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+.large-section-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: larger;
+    margin-bottom: 5px;
+    font-family: sans-serif;
 }
 
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
+
+.sub-section-header {
+    margin-top: 10px;
+    margin-bottom: 3px;
+    text-align: center;
+    font-weight: bold;
+    font-family: sans-serif;
 }
 
-.delivery-distance {
-
+.flex {
+    display:flex;
+    flex-grow:1;
+}
+.site {
+    align-content: baseline;
+    text-align: center;
 }
 
+.volunteer-button {
+    width: 150px;
+    height: 50px;
+    font-weight: bold;
+
+}

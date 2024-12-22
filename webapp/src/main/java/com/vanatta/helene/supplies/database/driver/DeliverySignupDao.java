@@ -43,6 +43,8 @@ public class DeliverySignupDao {
                             .fromCity(deliveryOptionDbResult.fromCity)
                             .fromCounty(deliveryOptionDbResult.fromCounty)
                             .fromState(deliveryOptionDbResult.fromState)
+                            .fromHours(deliveryOptionDbResult.fromHours)
+                            
                             .toSiteLink(
                                 SiteDetailController.buildSiteLink(deliveryOptionDbResult.siteId))
                             .toSiteName(deliveryOptionDbResult.siteName)
@@ -50,6 +52,8 @@ public class DeliverySignupDao {
                             .city(deliveryOptionDbResult.city)
                             .county(deliveryOptionDbResult.county)
                             .state(deliveryOptionDbResult.state)
+                            .hours(deliveryOptionDbResult.hours)
+                            
                             .driveTimeSeconds(deliveryOptionDbResult.driveTimeSeconds)
                             .distanceMiles(deliveryOptionDbResult.distanceMiles)
                             .build())
@@ -85,13 +89,17 @@ public class DeliverySignupDao {
     String fromCity;
     String fromCounty;
     String fromState;
+    String fromHours;
 
+    
     String toSiteName;
     String toSiteLink;
     String toAddress;
     String city;
     String county;
     String state;
+    String hours;
+
     Integer driveTimeSeconds;
     Double distanceMiles;
     @Builder.Default List<Item> items = new ArrayList<>();
@@ -154,6 +162,7 @@ public class DeliverySignupDao {
     String fromCity;
     String fromCounty;
     String fromState;
+    String fromHours;
 
     long siteId;
     String siteName;
@@ -161,6 +170,8 @@ public class DeliverySignupDao {
     String city;
     String county;
     String state;
+    String hours;
+    
     String itemName;
     String urgency;
     int itemCount;
@@ -195,6 +206,7 @@ public class DeliverySignupDao {
             fromSite.city fromCity,
             fromCounty.name fromCounty,
             fromCounty.state fromState,
+            fromSite.hours fromHours,
 
             s.name AS siteName,
             s.id AS siteId,
@@ -202,6 +214,7 @@ public class DeliverySignupDao {
             s.city as city,
             c.name as county,
             c.state as state,
+            s.hours as hours,
 
             i.name AS itemName,
             ni.urgency AS urgency,
