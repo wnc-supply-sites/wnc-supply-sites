@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
   <title>WNC Supply Sites - Login</title>
-  <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="login.css"/>
+  <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="mobile.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
@@ -22,7 +22,7 @@
 
 <div style="color: red; font-style: italic">{{errorMessage}}</div>
 
-<form action="/doLogin" method="post">
+<form class="login-form" action="/doLogin" method="post">
 
 <table>
   <tr>
@@ -39,12 +39,12 @@
   <button type="submit">Login</button>
 </form>
 
-<div class="mission-statement">
+<div class="mission-statement m-0 vertical items-center gap-1">
   Login credentials are only provided to supply site managers.<br/>
 
-  <div class="nav-button-container">
+  <div class="nav-button-container w-75 m-0">
     <a href="/registration/registration.html">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button w-full">
         Site Manager Registration
       </button>
     </a>

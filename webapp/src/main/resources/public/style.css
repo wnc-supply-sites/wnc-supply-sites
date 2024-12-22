@@ -100,6 +100,18 @@ button {
     font-size: 18px;
 }
 
+
+@media only screen and (min-width: 600px) {
+
+  .nav-buttons-container {
+      align-items: start;
+  }
+
+  .nav-button-container {
+      margin-left: 50px;
+  }
+}
+
 .green-check {
     color: green;
     /*font-size: 1.3em;*/
@@ -162,13 +174,24 @@ button {
     border: 1px solid red;
 }
 
-@media only screen and (min-width: 600px) {
+.m-0 {
+  margin: 0px;
+}
 
-    .nav-buttons-container {
-        align-items: start;
-    }
 
-    .nav-button-container {
-        margin-left: 50px;
-    }
+.w-full {
+  width: 100%;
+}
+
+.w-75 {
+  width: 75%;
+}
+
+.items-center {
+  justify-items: center;
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 1rem;
 }
