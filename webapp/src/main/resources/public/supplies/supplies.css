@@ -3,10 +3,6 @@ select {
     max-width: 150px;
 }
 
-.site-name {
-    /*color: inherit;*/
-}
-
 .not-accepting-donations {
     font-size: 0.9em;
     font-style: italic;
@@ -161,4 +157,29 @@ table.results-table tbody tr:nth-child(even) {
     width: 100%;
     overflow-x: auto;
     margin-bottom: 10px;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.status-checkbox-container {
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+}
+
+.h-full {
+  height: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .filters-container {
+    flex-direction: column;
+  }
+
+  .status-checkbox-container {
+    flex-direction: row;
+  }
 }

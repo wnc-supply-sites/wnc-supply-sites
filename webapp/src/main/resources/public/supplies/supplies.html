@@ -17,7 +17,7 @@
 
 <div id="error-div" class="error-div"></div>
 
-<div class="horizontal">
+<div class="filters-container">
   <table class="filters-table">
     <colgroup>
       <col style="width:150px">
@@ -88,9 +88,9 @@
   </table>
 
   <!-- Item Status Filters -->
-  <div class="vertical">
-    <div>
-      <fieldset class="vertical" id="item-status">
+  <div class="status-checkbox-container">
+    <div class="vertical">
+      <fieldset class="vertical h-full" id="item-status">
         <legend>Item Status</legend>
 
         <!-- Filter: Urgently Needed -->
@@ -122,7 +122,7 @@
     </div>
 
     <div class="vertical">
-      <fieldset class="vertical" id="site-status">
+      <fieldset class="vertical h-full" id="site-status">
         <legend>Site Status</legend>
         <div>
           <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"
@@ -138,7 +138,7 @@
     </div>
 
     <div class="vertical">
-      <fieldset class="vertical" id="site-type">
+      <fieldset class="vertical h-full" id="site-type">
         <legend>Site Type</legend>
         <div>
           <input
