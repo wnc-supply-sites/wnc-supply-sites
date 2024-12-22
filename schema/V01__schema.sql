@@ -5,6 +5,7 @@ create table county
     id   serial primary key,
     name varchar(256) unique not null
 );
+alter table county owner to wnc_helene;
 
 -- create table county_adjacency
 -- (
@@ -31,11 +32,15 @@ create table site
     active              boolean default true           not null
 );
 
+alter table site owner to wnc_helene;
+
 create table item
 (
     id   serial primary key,
     name varchar(128) not null unique
 );
+alter table item owner to wnc_helene;
+
 
 create table item_status
 (
@@ -43,6 +48,7 @@ create table item_status
     name varchar(32) not null unique,
     sort_order integer not null unique
 );
+alter table item_status owner to wnc_helene;
 
 insert into item_status(name, sort_order) values ('Urgent Need', 1);
 insert into item_status(name, sort_order) values ('Oversupply', 2);
@@ -56,6 +62,7 @@ create table site_item
     item_id integer references item (id) not null,
     item_status_id integer references item_status(id) not null
 );
+alter table site_item owner to wnc_helene;
 
 alter table site_item
     add constraint site_item_uk unique (site_id, item_id);
