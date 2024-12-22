@@ -7,6 +7,8 @@ import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import java.util.Optional;
 import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 
@@ -29,9 +31,8 @@ public class TestConfiguration {
 
   static {
     HikariConfig config = new HikariConfig();
-    
-    System.getenv("DB_URL")
-    config.setJdbcUrl("jdbc:postgresql://localhost:5432/wnc_helene_test");
+    String dbUrl = Optional.ofNullable(System.getenv("DB_URL")).orElse("localhost:5432");
+    config.setJdbcUrl(String.format("jdbc:postgresql://%s/wnc_helene_test", dbUrl));
     config.setUsername("wnc_helene");
     config.setPassword("wnc_helene");
     config.addDataSourceProperty("maximumPoolSize", "16");
