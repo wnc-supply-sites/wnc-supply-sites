@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * Receives the challenge access code that we send to a user via SMS, validates the access
- * code. If the access code is valid, then we advance the user to password reset. For apss
+ * Receives the challenge access code that we send to a user via SMS, validates the access code. If
+ * the access code is valid, then we advance the user to password reset. For apss
  */
 @Controller
 @Slf4j
