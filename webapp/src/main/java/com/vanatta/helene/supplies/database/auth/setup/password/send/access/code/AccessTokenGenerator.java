@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.auth.setup.password;
+package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import java.security.SecureRandom;
 import org.springframework.stereotype.Component;

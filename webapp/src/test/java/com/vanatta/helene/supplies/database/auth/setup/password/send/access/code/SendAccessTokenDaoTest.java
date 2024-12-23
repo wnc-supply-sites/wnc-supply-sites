@@ -1,12 +1,13 @@
-package com.vanatta.helene.supplies.database.auth.setup.password;
+package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.setup.password.Helper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SetupPasswordDaoTest {
+class SendAccessTokenDaoTest {
   String number = "123___1234";
 
   @BeforeEach
@@ -16,7 +17,7 @@ class SetupPasswordDaoTest {
 
   @Test
   void phoneNumberIsRegistered() {
-    boolean result = SetupPasswordDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
 
     assertThat(result).isFalse();
   }
@@ -25,7 +26,7 @@ class SetupPasswordDaoTest {
   void registeredPhoneNumber() {
     Helper.withRegisteredNumber(number);
 
-    boolean result = SetupPasswordDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
 
     assertThat(result).isTrue();
   }
@@ -39,9 +40,9 @@ class SetupPasswordDaoTest {
     boolean tokenExists = Helper.accessTokenExists(accessCode, csrfToken);
     assertThat(tokenExists).isFalse();
 
-    SetupPasswordDao.insertSmsPasscode(
+    SendAccessTokenDao.insertSmsPasscode(
         TestConfiguration.jdbiTest,
-        SetupPasswordDao.InsertAccessCodeParams.builder()
+        SendAccessTokenDao.InsertAccessCodeParams.builder()
             .phoneNumber(number)
             .accessCode(accessCode)
             .csrfToken(csrfToken)

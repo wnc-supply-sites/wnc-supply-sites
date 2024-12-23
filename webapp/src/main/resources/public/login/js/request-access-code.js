@@ -34,18 +34,15 @@ function sendSms() {
   .then(
       async function (response) {
         if (response.ok) {
-
-
-          // const responseJson = await response.json();
-          // const editNewSiteInventoryUrl = responseJson.editSiteInventoryUrl;
-          // showSuccess(editNewSiteInventoryUrl, siteName.value);
+          const responseJson = await response.json();
+          document.getElementById("csrf").value = responseJson.csrf;
         } else {
           const responseJson = await response.json();
           showSendAccessCodeError("Error from server: " + responseJson.error);
         }
       },
       function (error) {
-        showSendAccessCodeError("Failed to send access code, server error.");
+        showSendAccessCodeError("Failed to send access code, server error: " + error);
       });
 }
 

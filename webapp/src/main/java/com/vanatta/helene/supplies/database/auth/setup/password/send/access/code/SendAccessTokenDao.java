@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.auth.setup.password;
+package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import com.vanatta.helene.supplies.database.util.HashingUtil;
 import jakarta.annotation.Nonnull;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
 
-class SetupPasswordDao {
+public class SendAccessTokenDao {
 
   static boolean isPhoneNumberRegistered(Jdbi jdbi, String phoneNumber) {
     String query =
@@ -27,7 +27,7 @@ class SetupPasswordDao {
 
   @Getter
   @Builder
-  static class InsertAccessCodeParams {
+  public static class InsertAccessCodeParams {
     @Nonnull String phoneNumber;
     @Nonnull String accessCode;
     @Nonnull String csrfToken;
@@ -41,8 +41,7 @@ class SetupPasswordDao {
     }
   }
 
-  static void insertSmsPasscode(Jdbi jdbi, InsertAccessCodeParams params) {
-
+  public static void insertSmsPasscode(Jdbi jdbi, InsertAccessCodeParams params) {
     String insert =
         """
 

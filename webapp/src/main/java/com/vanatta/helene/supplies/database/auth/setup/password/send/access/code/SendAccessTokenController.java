@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.auth.setup.password;
+package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @Slf4j
-public class SetupPasswordController {
+public class SendAccessTokenController {
 
   private final SmsSender smsSender;
   private final Jdbi jdbi;
@@ -23,12 +23,12 @@ public class SetupPasswordController {
   private final AccessTokenGenerator accessTokenGenerator;
 
   @Autowired
-  SetupPasswordController(
+  SendAccessTokenController(
       SmsSender smsSender, Jdbi jdbi, AccessTokenGenerator accessTokenGenerator) {
     this(smsSender, jdbi, accessTokenGenerator, () -> UUID.randomUUID().toString());
   }
 
-  SetupPasswordController(
+  SendAccessTokenController(
       SmsSender smsSender,
       Jdbi jdbi,
       AccessTokenGenerator accessTokenGenerator,
@@ -52,7 +52,7 @@ public class SetupPasswordController {
     // check that the user has a registered phone number
     String phoneNumber = sendAccessCodeRequest.getNumber();
 
-    if (!SetupPasswordDao.isPhoneNumberRegistered(jdbi, phoneNumber)) {
+    if (!SendAccessTokenDao.isPhoneNumberRegistered(jdbi, phoneNumber)) {
       log.warn("Access code requested for unregistered phone number: {}", phoneNumber);
       return ResponseEntity.status(401)
           .body(
@@ -69,9 +69,9 @@ public class SetupPasswordController {
     String csrf = csrfGenerator.get();
 
     // store in database
-    SetupPasswordDao.insertSmsPasscode(
+    SendAccessTokenDao.insertSmsPasscode(
         jdbi,
-        SetupPasswordDao.InsertAccessCodeParams.builder()
+        SendAccessTokenDao.InsertAccessCodeParams.builder()
             .phoneNumber(phoneNumber)
             .csrfToken(csrf)
             .accessCode(accessCode)
@@ -120,7 +120,7 @@ public class SetupPasswordController {
       return new SendAccessCodeResponse(null, error);
     }
 
-    String crf;
+    String csrf;
     String error;
   }
 }
