@@ -1,0 +1,55 @@
+# This docker-compose file depends on './gradlew shadowJar'
+#
+# Launches all of the background servers used by TripleA.
+# The main entrypoint to those services is NGINX which
+# is listening on localhost:80
+#
+services:
+  database:
+    image: postgres:16.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5000:5432"
+    volumes:
+      - ./.docker-compose/database/01-init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: echo 'select 1' | psql -h localhost -U postgres  | grep -q '1 row'
+      interval: 3s
+      retries: 10
+      timeout: 3s
+  flyway:
+    build:
+      context: schema
+      dockerfile: Dockerfile
+    command: >
+      -locations=filesystem:/flyway/sql
+      -connectRetries=60
+      -user=postgres
+      -password=postgres
+      -url=jdbc:postgresql://database:5432/wnc_helene_test
+      migrate
+    depends_on:
+      - database
+  gradle:
+    image: gradle:8.10-jdk23
+    build:
+      context: ./webapp/gradle
+      dockerfile: Dockerfile
+    volumes:
+      - ./webapp:/app
+    working_dir: /app
+    command: >
+      ./gradlew build bootJar
+#  app:
+#    build:
+#      context: ./webapp
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - JAVA_OPTS=-Xmx512m
+#    depends_on:
+#      - flyway
+
