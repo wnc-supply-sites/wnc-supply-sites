@@ -24,6 +24,7 @@ class RouteWeightingTest {
   static class WeightingAlgorithm {
     /** 10, 25, 10 -> relatively optimal weights */
     List<Double> weights;
+
     @Nonnull Function<String, Double> normalWeight;
     @Nonnull Function<String, Double> urgentWeight;
     @Nonnull Function<Double, Double> distanceWeight;
