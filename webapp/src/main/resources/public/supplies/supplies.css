@@ -120,6 +120,7 @@ table.results-table tbody tr:nth-child(even) {
 
 .selection-td {
     height: 50px;
+    max-width: 150px;
 }
 
 .toggle-all-button {
