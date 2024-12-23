@@ -73,7 +73,15 @@ alter database wnc_helene_test owner to wnc_helene;
 - if on Mac, be sure to go to settings, file & folder permissions, and allow 'Docker' to access 'Documents' folder
 - TODO: docker install steps
 
-#### Access local DB
+Access local DB (on docker)
+```
+docker exec -it helene-distro-database-1 bash
+su postgres
+psql
+\c wnc_helene_test
+```
+
+#### Access local DB (on bare-metal)
 ```bash
 sudo -u postgres psql
 \c wnc_helene
