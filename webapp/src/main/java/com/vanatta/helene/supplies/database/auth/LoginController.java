@@ -34,12 +34,18 @@ public class LoginController {
     this.validPass = pass;
   }
 
-  @GetMapping("/login")
+  @GetMapping("/login/login")
   public ModelAndView login(@RequestParam(required = false) String redirectUri) {
     Map<String, String> pageParams = new HashMap<>();
     pageParams.put("redirectUri", Optional.ofNullable(redirectUri).orElse("/manage/select-site"));
     pageParams.put("errorMessage", "");
-    return new ModelAndView("login", pageParams);
+    return new ModelAndView("login/login", pageParams);
+  }
+  
+  @GetMapping("/login/password-setup")
+  public ModelAndView passwordSetup(@RequestParam(required = false) String redirectUri) {
+    Map<String, String> pageParams = new HashMap<>();
+    return new ModelAndView("login/password-setup", pageParams);
   }
 
   @PostMapping(
