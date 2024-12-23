@@ -20,7 +20,11 @@ public class EnvLoggingConfiguration {
       @Value("${make.webhook.dispatch.new}") String dispatchWebhook,
       @Value("${distance.calculator.enabled}") boolean distanceCalculatorEnabled,
       @Value("${distance.calculator.delay.ms}") int distanceCalculatorDelayMs,
-      @Value("${google.maps.api.key}") String googleApiKey) {
+      @Value("${google.maps.api.key}") String googleApiKey,
+      @Value("${twilio.from.number}") String twilioFromNumber,
+      @Value("${twilio.account.sid}") String twilioAccountSid,
+      @Value("${twilio.auth.token}") String twilioAuthToken,
+      @Value("${twilio.sms.enabled}") boolean twilioSmsEnabled) {
     log.info("ENV - JDBI URL: {}", url);
     log.info("ENV - JDBI USER: {}", user);
     log.info("ENV - AUTH ENABLED: {}", authEnabled);
@@ -32,5 +36,10 @@ public class EnvLoggingConfiguration {
     log.info("ENV - DISTANCE CALCULATOR ENABLED: {}", distanceCalculatorEnabled);
     log.info("ENV - DISTANCE CALCULATOR DELAY: {}", distanceCalculatorDelayMs);
     log.info("ENV - GOOGLE API KEY: {}", googleApiKey);
+
+    log.info("ENV - TWILIO FROM NUMBER: {}", twilioFromNumber);
+    log.info("ENV - TWILIO ACCOUNT SID: {}", twilioAccountSid);
+    log.info("ENV - TWILIO AUTH TOKEN: {}", twilioAuthToken);
+    log.info("ENV - TWILIO SMS ENABLED: {}", twilioSmsEnabled);
   }
 }

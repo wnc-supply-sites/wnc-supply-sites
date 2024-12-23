@@ -2,8 +2,6 @@ package com.vanatta.helene.supplies.database.driver;
 
 public class RouteWeighting {
 
-
-  
   /*
   YES
   -----
@@ -24,7 +22,7 @@ public class RouteWeighting {
 
   120 miles
   Heater
- 
+
   17.9 miles (22 min)
   Water U
 
@@ -50,10 +48,10 @@ public class RouteWeighting {
 
   48.1 miles (1 hr 8 min)
   Disinfectant
-  
+
   30 miles
   Clothing (New)
-  
+
 
   70.9 miles (1 hr 30 min)
   Dish Soap
@@ -62,20 +60,20 @@ public class RouteWeighting {
   30 miles
   Christmas presents (For Teens)
   Food (Non-Perishable)
-  
-  
+
+
   200 miles
   Heaters   U
   Kerosene  U
-  
+
   50 miles (26 min)
   Childrens OTC Meds
   Garbage Bags    U
 
-  
 
-  
-  
+
+
+
    */
 
 }

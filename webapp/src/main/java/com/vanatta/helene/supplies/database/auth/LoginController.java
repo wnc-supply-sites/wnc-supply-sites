@@ -41,7 +41,7 @@ public class LoginController {
     pageParams.put("errorMessage", "");
     return new ModelAndView("login/login", pageParams);
   }
-  
+
   @GetMapping("/login/password-setup")
   public ModelAndView passwordSetup(@RequestParam(required = false) String redirectUri) {
     Map<String, String> pageParams = new HashMap<>();
