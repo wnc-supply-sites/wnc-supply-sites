@@ -13,7 +13,7 @@ class HashingUtilTest {
     var result = HashingUtil.sha256("input");
     assertThat(result)
         .isEqualTo("c96c6d5be8d08a12e7b5cdc1b207fa6b2430974c86803d8891675e76fd992c20");
-    assertThat(result).hasSize(30);
+    assertThat(result).hasSize(64);
   }
 
   @ParameterizedTest
