@@ -35,6 +35,12 @@ from sites that have too much, to those that need those items.
 - open any of the .html file in a web browser
 - update the corresponding HTML, CSS & JS files; check-in & push
 
+### Quick Start - dockerized
+
+- install docker
+- clone the code
+- cd to the project directory
+- run: `docker compose up`
 
 ### Branching Strategy & Workflow
 

@@ -1,9 +1,3 @@
-# This docker-compose file depends on './gradlew shadowJar'
-#
-# Launches all of the background servers used by TripleA.
-# The main entrypoint to those services is NGINX which
-# is listening on localhost:80
-#
 services:
   database:
     image: postgres:16.6
@@ -21,9 +15,9 @@ services:
       retries: 10
       timeout: 3s
   flyway:
-    build:
-      context: schema
-      dockerfile: Dockerfile
+    image: flyway/flyway
+    volumes:
+      - ./schema/:/flyway/sql
     command: >
       -locations=filesystem:/flyway/sql
       -connectRetries=60
@@ -42,22 +36,26 @@ services:
       - ./webapp:/app
     working_dir: /app
     command: >
-      ./gradlew build bootJar
+      ./gradlew build bootJar -x composeUp -x composeDown --info
     environment:
       - DB_URL=database:5432
       - WEBHOOK_SECRET=secret
       - DB_NAME=wnc_helene_test
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
   app:
-    build:
-      context: ./webapp
+    image: openjdk:23-jdk-slim
+    volumes:
+      - ./webapp/build/libs/:/build/
+    command: >
+      java -jar /build/supplies-database.jar
     ports:
       - "8000:8080"
-#    environment:
-#      - JAVA_OPTS=-Xmx512m
     depends_on:
-      - gradle
+      gradle:
+        condition: service_completed_successfully
     environment:
       - DB_URL=database:5432
       - WEBHOOK_SECRET=secret
       - DB_NAME=wnc_helene_test
-
