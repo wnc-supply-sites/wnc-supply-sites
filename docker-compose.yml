@@ -45,6 +45,9 @@ services:
       ./gradlew build bootJar
     environment:
       - DB_URL=database:5432
+      - WEBHOOK_SECRET=secret
+      - DB_NAME=wnc_helene_test
+
 #  app:
 #    build:
 #      context: ./webapp
