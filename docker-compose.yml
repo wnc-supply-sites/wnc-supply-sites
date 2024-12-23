@@ -43,6 +43,8 @@ services:
     working_dir: /app
     command: >
       ./gradlew build bootJar
+    environment:
+      - DB_URL=database:5432
 #  app:
 #    build:
 #      context: ./webapp

@@ -52,6 +52,7 @@ from sites that have too much, to those that need those items.
   when running the app locally and accessing via "localhost:8080", the other DB, 'wnc_helene_test' is used 
   by unit tests.
 
+
 ```bash
 sudo -u postgres psql
 create database wnc_helene;
@@ -66,6 +67,11 @@ alter database wnc_helene_test owner to wnc_helene;
 - Run the schema migration files found in the 'schema/'
   - The script `./recreate-db.sh` will drop the local test database & run all
     of the migration files. The script can be altered to set up the `wnc_helene`
+
+#### Docker
+
+- if on Mac, be sure to go to settings, file & folder permissions, and allow 'Docker' to access 'Documents' folder
+- TODO: docker install steps
 
 #### Access local DB
 ```bash
