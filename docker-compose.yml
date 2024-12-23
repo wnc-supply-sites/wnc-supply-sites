@@ -47,14 +47,17 @@ services:
       - DB_URL=database:5432
       - WEBHOOK_SECRET=secret
       - DB_NAME=wnc_helene_test
-
-#  app:
-#    build:
-#      context: ./webapp
-#    ports:
-#      - "8080:8080"
+  app:
+    build:
+      context: ./webapp
+    ports:
+      - "8000:8080"
 #    environment:
 #      - JAVA_OPTS=-Xmx512m
-#    depends_on:
-#      - flyway
+    depends_on:
+      - gradle
+    environment:
+      - DB_URL=database:5432
+      - WEBHOOK_SECRET=secret
+      - DB_NAME=wnc_helene_test
 
