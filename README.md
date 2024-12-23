@@ -71,6 +71,7 @@ alter database wnc_helene_test owner to wnc_helene;
 #### Docker
 
 - if on Mac, be sure to go to settings, file & folder permissions, and allow 'Docker' to access 'Documents' folder
+- if on Mac, be sure to configure docker to be installed as a system resource
 - TODO: docker install steps
 
 Access local DB (on docker)
@@ -213,6 +214,25 @@ Applications are running in docker containers. 'webapp' is prod, 'staging' is te
 Whether they are connected to airtable is controlled by environment variables.
 Staging connects to DB `wnc_helene_test` while webapp connects to the DB `wnc_helene`
 All environment variables are in the redeploy sripts in `/root`
+
+
+### QuickStart
+
+`ssh [last-name]@wnc-supply-sites.com`
+
+Connnect to the database with:
+`sudo -u postgres psql`
+
+Check logs with:
+`docker logs -f webapp`
+
+Restart staging with:
+`/root/staging-redeploy.sh`
+
+check staging logs:
+`docker logs -f staging`
+
+
 
 ### Folders with local git
 
