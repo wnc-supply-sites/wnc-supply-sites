@@ -1,6 +1,83 @@
 package com.vanatta.helene.supplies.database.driver;
 
+import java.util.List;
+import java.util.function.Function;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+
 public class RouteWeighting {
+
+  @Builder
+  @Value
+  @AllArgsConstructor
+  public static class RouteData {
+    double distance;
+    List<Item> items;
+
+    RouteData(DeliverySignupDao.DeliveryOption deliveryOption) {
+      // if we don't know the distance between two sites.. just use a ballpark of about 100 miles.
+      this.distance =
+          deliveryOption.getDistanceMiles() == null ? 100.0 : deliveryOption.getDistanceMiles();
+      this.items =
+          deliveryOption.getItems().stream()
+              .map(
+                  deliveryItem ->
+                      Item.builder()
+                          .name(deliveryItem.getName())
+                          .priority(
+                              deliveryItem.getUrgencyCssClass().equals("urgent")
+                                  ? "URGENT"
+                                  : "NORMAL")
+                          .build())
+              .toList();
+    }
+
+    @Builder
+    @Value
+    static class Item {
+      String name;
+      String priority;
+    }
+  }
+
+  public static boolean filter(DeliverySignupDao.DeliveryOption deliveryOption) {
+    return filter(new RouteData(deliveryOption));
+  }
+
+  public static boolean filter(RouteData input) {
+    return filter(input, _ -> 10.0, _ -> 25.0, d -> Math.pow(d / 10, 2));
+  }
+
+  /**
+   * For a given input, applies a weighting algorithm and returs true if the 'route data' passes.
+   * False if it does not. False implies the route is "silly", eg: send toothbrushes 300 miles, vs
+   * an important route like "send urgently needed electric blankets 20 miles"
+   */
+  public static boolean filter(
+      RouteData input,
+      Function<String, Double> normalWeight,
+      Function<String, Double> urgentWeight,
+      Function<Double, Double> distanceWeight) {
+    if (input.distance <= 0.0) {
+      return false;
+    }
+
+    double itemWeightScore =
+        input.getItems().stream()
+            .filter(i -> i.getPriority().equals("NORMAL"))
+            .map(RouteData.Item::getName)
+            .mapToDouble(normalWeight::apply)
+            .sum();
+    double priorityItemWeightScore =
+        input.getItems().stream()
+            .filter(i -> i.getPriority().equals("URGENT"))
+            .map(RouteData.Item::getName)
+            .mapToDouble(urgentWeight::apply)
+            .sum();
+    double distanceWeightScore = distanceWeight.apply(input.distance);
+    return (itemWeightScore + priorityItemWeightScore - distanceWeightScore) > 0;
+  }
 
   /*
   YES

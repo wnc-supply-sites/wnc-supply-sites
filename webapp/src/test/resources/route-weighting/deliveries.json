@@ -1,0 +1,635 @@
+{"deliveries": [
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult Diapers", "priority": "URGENT" },
+      { "name": "Adult OTC Meds", "priority": "URGENT" },
+      { "name": "Air Mattress", "priority": "URGENT" },
+      { "name": "Baby Food", "priority": "URGENT" },
+      { "name": "Baby Formula", "priority": "URGENT" },
+      { "name": "Baby Items", "priority": "URGENT" },
+      { "name": "Bar soap", "priority": "URGENT" },
+      { "name": "Batteries", "priority": "URGENT" },
+      { "name": "Bedding", "priority": "URGENT" },
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Bleach", "priority": "URGENT" },
+      { "name": "Breakfast foods", "priority": "URGENT" },
+      { "name": "Buckets (Timbor 5 gallon)", "priority": "URGENT" },
+      { "name": "Buddy heater adapter hose", "priority": "URGENT" },
+      { "name": "Camp Stove", "priority": "URGENT" },
+      { "name": "Can Opener", "priority": "URGENT" },
+      { "name": "Cat Food", "priority": "URGENT" },
+      { "name": "Cat Litter", "priority": "URGENT" },
+      { "name": "Cereal", "priority": "URGENT" },
+      { "name": "Chair saw bar oil", "priority": "URGENT" },
+      { "name": "Charcoal", "priority": "URGENT" },
+      { "name": "Childrens OTC Meds", "priority": "URGENT" },
+      { "name": "Christmas presents (For Teens)", "priority": "URGENT" },
+      { "name": "Cleaning Supplies", "priority": "URGENT" },
+      { "name": "Clothing (Used)", "priority": "URGENT" },
+      { "name": "Comforters", "priority": "URGENT" },
+      { "name": "Cookstoves", "priority": "URGENT" },
+      { "name": "Corn meal", "priority": "URGENT" },
+      { "name": "Crunch bars", "priority": "URGENT" },
+      { "name": "Diapers", "priority": "URGENT" },
+      { "name": "Diapers sizes 5-8", "priority": "URGENT" },
+      { "name": "Diapers size 6 & 7", "priority": "URGENT" },
+      { "name": "Disinfectant", "priority": "URGENT" },
+      { "name": "Dog Food", "priority": "URGENT" },
+      { "name": "Electric Heater", "priority": "URGENT" },
+      { "name": "Feminine Hygiene", "priority": "URGENT" },
+      { "name": "Fire Extinguisher (Household)", "priority": "URGENT" },
+      { "name": "First Aid", "priority": "URGENT" },
+      { "name": "Flashlights", "priority": "URGENT" },
+      { "name": "Food (Non-Perishable)", "priority": "URGENT" },
+      { "name": "Garbage Bags", "priority": "URGENT" },
+      { "name": "Gas Cans", "priority": "URGENT" },
+      { "name": "Gloves", "priority": "URGENT" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Individual snack items (cookies, chips)", "priority": "URGENT" },
+      { "name": "Kid friendly snacks", "priority": "URGENT" },
+      { "name": "Kleenex", "priority": "URGENT" },
+      { "name": "Lanterns", "priority": "URGENT" },
+      { "name": "Laundry Detergent", "priority": "URGENT" },
+      { "name": "Lighters", "priority": "URGENT" },
+      { "name": "MRE's", "priority": "URGENT" },
+      { "name": "Mac n cheese", "priority": "URGENT" },
+      { "name": "Mold/Mildew Cleaner", "priority": "URGENT" },
+      { "name": "Mouthwash", "priority": "NORMAL" },
+      { "name": "Neosporin", "priority": "URGENT" },
+      { "name": "Nitrile Gloves", "priority": "URGENT" },
+      { "name": "Paper Towels", "priority": "URGENT" },
+      { "name": "Peanut Butter", "priority": "URGENT" },
+      { "name": "Pet supplies", "priority": "NORMAL" },
+      { "name": "Premium Infant Formula", "priority": "NORMAL" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Propane (1lb)", "priority": "URGENT" },
+      { "name": "Propane (20lb)", "priority": "URGENT" },
+      { "name": "Propane Heaters", "priority": "URGENT" },
+      { "name": "Protein bars", "priority": "URGENT" },
+      { "name": "Ramen", "priority": "URGENT" },
+      { "name": "Rice", "priority": "NORMAL" },
+      { "name": "Sheets", "priority": "URGENT" },
+      { "name": "Shovels", "priority": "NORMAL" },
+      { "name": "Sleeping Bag", "priority": "URGENT" },
+      { "name": "Soap", "priority": "NORMAL" },
+      { "name": "Socks", "priority": "URGENT" },
+      { "name": "Tarps", "priority": "NORMAL" },
+      { "name": "Tea bags", "priority": "URGENT" },
+      { "name": "Toilet Paper", "priority": "URGENT" },
+      { "name": "Toiletries", "priority": "URGENT" },
+      { "name": "Tomato soup", "priority": "URGENT" },
+      { "name": "Toothbrush", "priority": "URGENT" },
+      { "name": "Toothpaste", "priority": "URGENT" },
+      { "name": "Towels", "priority": "URGENT" },
+      { "name": "Toys", "priority": "URGENT" },
+      { "name": "Trash Bags", "priority": "URGENT" },
+      { "name": "Tuna", "priority": "URGENT" },
+      { "name": "Water", "priority": "URGENT" },
+      { "name": "Wet Wipe", "priority": "URGENT" },
+      { "name": "Wood", "priority": "URGENT" },
+      { "name": "disposable tableware", "priority": "URGENT" },
+      { "name": "n95 mask", "priority": "URGENT" }
+    ],
+    "distance": 61.5 
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "NORMAL" },
+      { "name": "Baby Wipes", "priority": "URGENT" },
+      { "name": "Batteries", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Breakfast cereal", "priority": "URGENT" },
+      { "name": "Breakfast foods", "priority": "URGENT" },
+      { "name": "Buddy heater adapter hose", "priority": "NORMAL" },
+      { "name": "Camp Stove", "priority": "NORMAL" },
+      { "name": "Canned Chicken", "priority": "URGENT" },
+      { "name": "Canned corn", "priority": "URGENT" },
+      { "name": "Cereal", "priority": "NORMAL" },
+      { "name": "Childrens OTC Meds", "priority": "URGENT" },
+      { "name": "Christmas presents (For Teens)", "priority": "NORMAL" },
+      { "name": "Cleaning Supplies", "priority": "URGENT" },
+      { "name": "Cookstoves", "priority": "NORMAL" },
+      { "name": "Diapers sizes 5-8", "priority": "URGENT" },
+      { "name": "Diapers size 6 & 7", "priority": "URGENT" },
+      { "name": "Dried beans", "priority": "NORMAL" },
+      { "name": "Electric Heater", "priority": "URGENT" },
+      { "name": "First Aid", "priority": "NORMAL" },
+      { "name": "Food (Non-Perishable)", "priority": "NORMAL" },
+      { "name": "Fruit cups", "priority": "URGENT" },
+      { "name": "Garbage Bags", "priority": "NORMAL" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Individual snack items (cookies, chips)", "priority": "URGENT" },
+      { "name": "Kid friendly snacks", "priority": "URGENT" },
+      { "name": "Laundry Detergent", "priority": "URGENT" },
+      { "name": "Mac n cheese", "priority": "URGENT" },
+      { "name": "Mold/Mildew Cleaner", "priority": "NORMAL" },
+      { "name": "Paper Towels", "priority": "URGENT" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Propane (1lb)", "priority": "URGENT" },
+      { "name": "Propane Heaters", "priority": "URGENT" },
+      { "name": "Ramen", "priority": "URGENT" },
+      { "name": "Rice", "priority": "URGENT" },
+      { "name": "Soap", "priority": "NORMAL" },
+      { "name": "Socks", "priority": "NORMAL" },
+      { "name": "Toilet Paper", "priority": "URGENT" },
+      { "name": "Tomato soup", "priority": "URGENT" },
+      { "name": "Toothpaste", "priority": "NORMAL" },
+      { "name": "Towels", "priority": "NORMAL" },
+      { "name": "Toys", "priority": "NORMAL" },
+      { "name": "Tuna", "priority": "URGENT" }
+    ],
+    "distance": 38.9 
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "NORMAL" },
+      { "name": "Baby Items", "priority": "NORMAL" },
+      { "name": "Batteries", "priority": "URGENT" },
+      { "name": "Bedding", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Buckets (Timbor 5 gallon)", "priority": "URGENT" },
+      { "name": "Chair saw bar oil", "priority": "NORMAL" },
+      { "name": "Clothing (New)", "priority": "NORMAL" },
+      { "name": "Cookware", "priority": "NORMAL" },
+      { "name": "Diapers", "priority": "NORMAL" },
+      { "name": "Feminine Hygiene", "priority": "NORMAL" },
+      { "name": "Fire Extinguisher (Household)", "priority": "NORMAL" },
+      { "name": "First Aid", "priority": "NORMAL" },
+      { "name": "Flashlights", "priority": "NORMAL" },
+      { "name": "Food (Non-Perishable)", "priority": "NORMAL" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Kid friendly snacks", "priority": "NORMAL" },
+      { "name": "Propane (20lb)", "priority": "URGENT" },
+      { "name": "Sleeping Bag", "priority": "URGENT" },
+      { "name": "Socks", "priority": "URGENT" },
+      { "name": "Toilet Paper", "priority": "NORMAL" },
+      { "name": "Toothbrush", "priority": "NORMAL" },
+      { "name": "Toothpaste", "priority": "NORMAL" },
+      { "name": "Wet Wipe", "priority": "NORMAL" },
+      { "name": "Wool Blankets", "priority": "NORMAL" }
+    ],
+    "distance": 212.8
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult Diapers", "priority": "URGENT" },
+      { "name": "Adult OTC Meds", "priority": "URGENT" },
+      { "name": "Baby Food", "priority": "URGENT" },
+      { "name": "Baby Formula", "priority": "URGENT" },
+      { "name": "Baby Items", "priority": "URGENT" },
+      { "name": "Batteries", "priority": "URGENT" },
+      { "name": "Bedding", "priority": "URGENT" },
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Buckets (Timbor 5 gallon)", "priority": "URGENT" },
+      { "name": "Chair saw bar oil", "priority": "URGENT" },
+      { "name": "Clothing (New)", "priority": "URGENT" },
+      { "name": "Clothing (Used)", "priority": "URGENT" },
+      { "name": "Cookware", "priority": "URGENT" },
+      { "name": "Diapers", "priority": "URGENT" },
+      { "name": "Extension Cord (12 gauge outdoor)", "priority": "URGENT" },
+      { "name": "Feminine Hygiene", "priority": "URGENT" },
+      { "name": "Fire Extinguisher (Household)", "priority": "URGENT" },
+      { "name": "First Aid", "priority": "URGENT" },
+      { "name": "Flashlights", "priority": "URGENT" },
+      { "name": "Food (Non-Perishable)", "priority": "URGENT" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Kid friendly snacks", "priority": "URGENT" },
+      { "name": "Light Bulbs", "priority": "NORMAL" },
+      { "name": "MRE's", "priority": "URGENT" },
+      { "name": "Premium Infant Formula", "priority": "NORMAL" },
+      { "name": "Propane (20lb)", "priority": "URGENT" },
+      { "name": "Sleeping Bag", "priority": "URGENT" },
+      { "name": "Socks", "priority": "URGENT" },
+      { "name": "Toilet Paper", "priority": "URGENT" },
+      { "name": "Toothbrush", "priority": "URGENT" },
+      { "name": "Toothpaste", "priority": "URGENT" },
+      { "name": "Water", "priority": "URGENT" },
+      { "name": "Wet Wipe", "priority": "URGENT" },
+      { "name": "Wool Blankets", "priority": "URGENT" },
+      { "name": "disposable tableware", "priority": "URGENT" },
+      { "name": "n95 mask", "priority": "URGENT" }
+    ],
+    "distance": 84.3
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "URGENT" },
+      { "name": "Childrens OTC Meds", "priority": "URGENT" },
+      { "name": "Clothing (Used)", "priority": "URGENT" },
+      { "name": "Dental Wax for Braces", "priority": "URGENT" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" },
+      { "name": "Infant OTC Meds", "priority": "URGENT" },
+      { "name": "Pedialyte", "priority": "URGENT" },
+      { "name": "Premium Infant Formula", "priority": "URGENT" },
+      { "name": "Push Broom", "priority": "URGENT" },
+      { "name": "Stop Smoking Aid - Gum/Lozenge", "priority": "URGENT" },
+      { "name": "Water", "priority": "URGENT" },
+      { "name": "n95 mask", "priority": "URGENT" }
+    ],
+    "distance": 111.1
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Bar soap", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Charcoal", "priority": "URGENT" },
+      { "name": "Charcoal Grill", "priority": "NORMAL" },
+      { "name": "Clothing (New)", "priority": "NORMAL" },
+      { "name": "Life Straw", "priority": "NORMAL" },
+      { "name": "Sleeping Bag", "priority": "URGENT" },
+      { "name": "Toiletries", "priority": "NORMAL" },
+      { "name": "Toothbrush", "priority": "NORMAL" },
+      { "name": "Toothpaste", "priority": "NORMAL" }
+    ],
+    "distance": 244.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Generators", "priority": "NORMAL" },
+      { "name": "Gloves", "priority": "NORMAL" },
+      { "name": "Mold/Mildew Cleaner", "priority": "URGENT" },
+      { "name": "Sleeping Bag", "priority": "NORMAL" },
+      { "name": "Soap", "priority": "NORMAL" },
+      { "name": "Socks", "priority": "NORMAL" },
+      { "name": "Toothbrush", "priority": "NORMAL" },
+      { "name": "Toothpaste", "priority": "NORMAL" },
+      { "name": "Wet Wipe", "priority": "NORMAL" },
+      { "name": "Wool Blankets", "priority": "NORMAL" }
+    ],
+    "distance": 60.7
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Adult Diapers", "priority": "URGENT" },
+      { "name": "Air Mattress", "priority": "URGENT" },
+      { "name": "Baby Food", "priority": "URGENT" },
+      { "name": "Baby Formula", "priority": "URGENT" },
+      { "name": "Baby Items", "priority": "URGENT" },
+      { "name": "Bedding", "priority": "URGENT" },
+      { "name": "Coffee", "priority": "URGENT" },
+      { "name": "Dish Soap", "priority": "URGENT" },
+      { "name": "Disinfectant", "priority": "URGENT" },
+      { "name": "Disposable cups", "priority": "URGENT" }
+    ],
+    "distance": 215.4
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "NORMAL" },
+      { "name": "Batteries", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Buddy heater adapter hose", "priority": "NORMAL" },
+      { "name": "CO Detector", "priority": "NORMAL" },
+      { "name": "Camp Stove", "priority": "NORMAL" },
+      { "name": "Cleaning Supplies", "priority": "URGENT" },
+      { "name": "Clothing (New)", "priority": "NORMAL" },
+      { "name": "Cookstoves", "priority": "NORMAL" },
+      { "name": "Disposable cups", "priority": "URGENT" },
+      { "name": "Electric Heater", "priority": "URGENT" },
+      { "name": "First Aid", "priority": "NORMAL" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Mold/Mildew Cleaner", "priority": "NORMAL" },
+      { "name": "OTC cough/cold/flu meds", "priority": "URGENT" },
+      { "name": "Paper Products", "priority": "URGENT" },
+      { "name": "Paper Towels", "priority": "URGENT" },
+      { "name": "Propane (1lb)", "priority": "URGENT" },
+      { "name": "Propane Heaters", "priority": "URGENT" },
+      { "name": "Shampoo", "priority": "NORMAL" },
+      { "name": "Soap", "priority": "NORMAL" },
+      { "name": "Socks", "priority": "NORMAL" },
+      { "name": "Toilet Paper", "priority": "URGENT" },
+      { "name": "Winter Jackets", "priority": "URGENT" }
+    ],
+    "distance": 12.7
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "URGENT" },
+      { "name": "Batteries", "priority": "NORMAL" },
+      { "name": "Bicycles", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Buckets (Timbor 5 gallon)", "priority": "NORMAL" },
+      { "name": "Chair saw bar oil", "priority": "NORMAL" },
+      { "name": "Cookware", "priority": "NORMAL" },
+      { "name": "Extension Cord (12 gauge outdoor)", "priority": "NORMAL" },
+      { "name": "Fire Extinguisher (Household)", "priority": "NORMAL" },
+      { "name": "First Aid", "priority": "URGENT" },
+      { "name": "Flashlights", "priority": "NORMAL" },
+      { "name": "Food (Non-Perishable)", "priority": "URGENT" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Kid friendly snacks", "priority": "NORMAL" },
+      { "name": "Light Bulbs", "priority": "NORMAL" },
+      { "name": "Propane (20lb)", "priority": "URGENT" },
+      { "name": "Sleeping Bag", "priority": "NORMAL" },
+      { "name": "Socks", "priority": "NORMAL" },
+      { "name": "Toilet Paper", "priority": "NORMAL" },
+      { "name": "Toothbrush", "priority": "NORMAL" },
+      { "name": "Toothpaste", "priority": "NORMAL" },
+      { "name": "Wet Wipe", "priority": "NORMAL" },
+      { "name": "Wool Blankets", "priority": "NORMAL" }
+    ],
+    "distance": 101.9
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Buckets (Timbor 5 gallon)", "priority": "URGENT" },
+      { "name": "Buddy heater adapter hose", "priority": "URGENT" },
+      { "name": "CO Detector", "priority": "URGENT" },
+      { "name": "Electric Heater", "priority": "URGENT" },
+      { "name": "Extension Cord (12 gauge outdoor)", "priority": "URGENT" },
+      { "name": "Fire Extinguisher (Household)", "priority": "URGENT" },
+      { "name": "Generators", "priority": "URGENT" },
+      { "name": "Gloves", "priority": "URGENT" },
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Propane (1lb)", "priority": "URGENT" },
+      { "name": "Propane (20lb)", "priority": "URGENT" },
+      { "name": "Sleeping Bag", "priority": "URGENT" },
+      { "name": "Socks", "priority": "URGENT" },
+      { "name": "Winter Jackets", "priority": "URGENT" },
+      { "name": "Woodstove", "priority": "URGENT" },
+      { "name": "n95 mask", "priority": "URGENT" }
+    ],
+    "distance": 31.0
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Bleach", "priority": "URGENT" },
+      { "name": "Dish Soap", "priority": "URGENT" },
+      { "name": "Feminine Hygiene", "priority": "URGENT" }
+    ],
+    "distance": 170.4
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Adult OTC Meds", "priority": "NORMAL" },
+      { "name": "Childrens OTC Meds", "priority": "URGENT" },
+      { "name": "Infant OTC Meds", "priority": "URGENT" },
+      { "name": "Push Broom", "priority": "NORMAL" }
+    ],
+    "distance": 111.8
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Charcoal", "priority": "NORMAL" },
+      { "name": "Headlamps", "priority": "NORMAL" },
+      { "name": "Kleenex", "priority": "NORMAL" }
+    ],
+    "distance": 16.8
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Clothing (New)", "priority": "URGENT" },
+      { "name": "Motrin & Tylenol", "priority": "URGENT" },
+      { "name": "Toothpaste", "priority": "URGENT" }
+    ],
+    "distance": 35.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Mold/Mildew Cleaner", "priority": "URGENT" },
+      { "name": "Soap", "priority": "URGENT" },
+      { "name": "Socks", "priority": "URGENT" },
+      { "name": "Toothpaste", "priority": "URGENT" }
+    ],
+    "distance": 47.9
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Cleaning Supplies", "priority": "URGENT" },
+      { "name": "Cookstoves", "priority": "URGENT" },
+      { "name": "Generators", "priority": "URGENT" },
+      { "name": "Propane Heaters", "priority": "URGENT" }
+    ],
+    "distance": 8.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Cleaning Supplies", "priority": "NORMAL" },
+      { "name": "Cookstoves", "priority": "NORMAL" },
+      { "name": "Propane", "priority": "NORMAL" },
+      { "name": "Propane Heaters", "priority": "NORMAL" }
+    ],
+    "distance": 33.8
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Life Straw", "priority": "NORMAL" },
+      { "name": "Shovels", "priority": "NORMAL" }
+    ],
+    "distance": 186.7
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Kerosene", "priority": "URGENT" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Wood", "priority": "URGENT" }
+    ],
+    "distance": 47.4
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Dish Soap", "priority": "URGENT" }
+    ],
+    "distance": 77.1
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Dish Soap", "priority": "URGENT" }
+    ],
+    "distance": 40.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Water", "priority": "URGENT" }
+    ],
+    "distance": 17.9
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Toiletries", "priority": "URGENT" }
+    ],
+    "distance": 26.3
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Baby Formula", "priority": "URGENT" }
+    ],
+    "distance": 0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Propane (20lb)", "priority": "URGENT" }
+    ],
+    "distance": 37.9
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Dish Soap", "priority": "URGENT" }
+    ],
+    "distance": 273.3
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" }
+    ],
+    "distance": 150.0
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" }
+    ],
+    "distance": 90.0
+  },
+
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Butane", "priority": "URGENT" },
+      { "name": "Electric Blankets", "priority": "URGENT" },
+      { "name": "Sleeping Bags", "priority": "URGENT" }
+    ],
+    "distance": 90.0
+  },
+
+  {
+    "show": false,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Butane", "priority": "URGENT" },
+      { "name": "Electric Blankets", "priority": "URGENT" },
+      { "name": "Sleeping Bags", "priority": "URGENT" }
+    ],
+    "distance": 150.0
+  },
+
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Propane", "priority": "URGENT" },
+      { "name": "Butane", "priority": "URGENT" },
+      { "name": "Electric Blankets", "priority": "URGENT" },
+      { "name": "Sleeping Bags", "priority": "URGENT" },
+      { "name": "Water", "priority": "URGENT" },
+      { "name": "Baby Formula", "priority": "URGENT" },
+      { "name": "Diapers", "priority": "URGENT" },
+      { "name": "Blankets", "priority": "URGENT" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" },
+      { "name": "Generator", "priority": "URGENT" }
+    ],
+    "distance": 150.0
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Heaters", "priority": "NORMAL" },
+      { "name": "Propane", "priority": "NORMAL" },
+      { "name": "Butane", "priority": "NORMAL" },
+      { "name": "Electric Blankets", "priority": "NORMAL" },
+      { "name": "Sleeping Bags", "priority": "NORMAL" },
+      { "name": "Water", "priority": "NORMAL" },
+      { "name": "Baby Formula", "priority": "NORMAL" },
+      { "name": "Diapers", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Hand Sanitizer", "priority": "NORMAL" },
+      { "name": "Generator", "priority": "NORMAL" }
+    ],
+    "distance": 150.0
+  },
+  {
+    "show": false,
+    "items": [
+      { "name": "Water", "priority": "NORMAL" },
+      { "name": "Gloves", "priority": "URGENT" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" },
+      { "name": "Wet Wipes", "priority": "URGENT" },
+      { "name": "Shovels", "priority": "URGENT" },
+      { "name": "Canned Food", "priority": "URGENT" },
+      { "name": "Cereal", "priority": "URGENT" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Hand Sanitizer", "priority": "URGENT" }
+    ],
+    "distance": 100.0
+  },
+
+
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" }
+    ],
+    "distance": 40.0
+  },
+
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "URGENT" },
+      { "name": "Kerosene", "priority": "URGENT" }
+    ],
+    "distance": 60.0
+  },
+
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "NORMAL" },
+      { "name": "Kerosene", "priority": "NORMAL" }
+    ],
+    "distance": 30.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Propane", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" }
+    ],
+    "distance": 40.0
+  },
+  {
+    "show": true,
+    "items": [
+      { "name": "Heaters", "priority": "NORMAL" },
+      { "name": "Blankets", "priority": "NORMAL" },
+      { "name": "Kerosene", "priority": "NORMAL" }
+    ],
+    "distance": 50.0
+  }
+
+]}

@@ -1,6 +1,15 @@
+function togglePassword() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
 function sendSms() {
   const fieldValue = document.getElementById("phone-number")
-      .value.trim().replace(/\D/g, '');
+  .value.trim().replace(/\D/g, '');
 
 
   if (fieldValue.length < 10) {

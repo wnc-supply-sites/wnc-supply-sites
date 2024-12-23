@@ -22,7 +22,7 @@ function confirmAccessCode() {
       async function (response) {
         if (response.ok) {
           const responseJson = await response.json();
-          // document.getElementById("csrf").value = responseJson.csrf;
+          document.getElementById("validationToken").value = responseJson.validationToken
         } else {
           const responseJson = await response.json();
           showConfirmCodeError("Error from server: " + responseJson.error);

@@ -42,10 +42,10 @@ public class LoginController {
     return new ModelAndView("login/login", pageParams);
   }
 
-  @GetMapping("/login/password-setup")
+  @GetMapping("/login/setup-password")
   public ModelAndView passwordSetup(@RequestParam(required = false) String redirectUri) {
     Map<String, String> pageParams = new HashMap<>();
-    return new ModelAndView("login/password-setup", pageParams);
+    return new ModelAndView("login/setup-password", pageParams);
   }
 
   @PostMapping(

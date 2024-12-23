@@ -21,6 +21,8 @@ public enum TestDataFile {
 
   // contains a value with a quote in it. Encoded as  \\\"
   DATA_CONTAINS_DOUBLE_QUOTE("/webhook/json/double-escaped-quote-in-value.json"),
+  
+  DELIVERY_TRAINING_DATA("/route-weighting/deliveries.json"),
   ;
   private final String path;
 

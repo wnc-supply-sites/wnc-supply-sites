@@ -111,6 +111,15 @@ public class DeliverySignupDao {
     Double distanceMiles;
     @Builder.Default List<Item> items = new ArrayList<>();
 
+    /** lower numbers sort first */
+    double sortScore() {
+      if (distanceMiles == null) {
+        return 1000.0 - items.size();
+      } else {
+        return items.size() / distanceMiles;
+      }
+    }
+
     String getFromGoogleMapsAddress() {
       return SiteAddress.builder()
           .address(fromAddress)

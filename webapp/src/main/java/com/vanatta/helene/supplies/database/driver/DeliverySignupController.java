@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.driver;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,10 @@ public class DeliverySignupController {
   ModelAndView deliverySignUp() {
 
     List<DeliverySignupDao.DeliveryOption> deliveryOptions =
-        DeliverySignupDao.findDeliveryOptions(jdbi);
+        DeliverySignupDao.findDeliveryOptions(jdbi).stream()
+            .filter(RouteWeighting::filter)
+            .sorted(Comparator.comparingDouble(DeliverySignupDao.DeliveryOption::sortScore))
+            .toList();
     Map<String, Object> templateParams = new HashMap<>();
     templateParams.put(TemplateParams.deliveryOptions.name(), deliveryOptions);
 
