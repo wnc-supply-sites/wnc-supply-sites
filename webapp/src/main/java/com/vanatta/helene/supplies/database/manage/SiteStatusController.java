@@ -32,7 +32,7 @@ public class SiteStatusController {
   }
 
   /** Displays the 'manage-status' page. */
-  @GetMapping("/manage/status")
+  @GetMapping("/manage/status/status")
   ModelAndView showManageStatusPage(String siteId) {
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
@@ -61,7 +61,7 @@ public class SiteStatusController {
     pageParams.put(
         "supplyHubChecked", siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
 
-    return new ModelAndView("manage/status", pageParams);
+    return new ModelAndView("manage/status/status", pageParams);
   }
 
   @AllArgsConstructor

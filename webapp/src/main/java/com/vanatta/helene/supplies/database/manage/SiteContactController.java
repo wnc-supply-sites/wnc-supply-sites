@@ -33,7 +33,7 @@ public class SiteContactController {
 
   static final String COUNTY_LIST = "countyList";
   static final String STATE_LIST = "stateList";
-  public static final String PATH_MANAGE_CONTACTS = "/manage/contact";
+  public static final String PATH_MANAGE_CONTACTS = "/manage/contact/contact";
 
   public static String buildManageContactsPath(long siteId) {
     return PATH_MANAGE_CONTACTS + "?siteId=" + siteId;
@@ -48,7 +48,7 @@ public class SiteContactController {
       return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
-    return new ModelAndView("manage/contact", pageParams);
+    return new ModelAndView("manage/contact/contact", pageParams);
   }
 
   // @VisibleForTesting

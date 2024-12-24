@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @Slf4j
 public class InventoryController {
-  public static final String PATH_INVENTORY = "/manage/inventory";
+  public static final String PATH_INVENTORY = "/manage/inventory/inventory";
 
   public static String buildInventoryPath(long siteId) {
     return PATH_INVENTORY + "?siteId=" + siteId;
@@ -83,7 +83,7 @@ public class InventoryController {
 
     pageParams.put("inventoryList", inventoryList);
 
-    return new ModelAndView("manage/inventory", pageParams);
+    return new ModelAndView("manage/inventory/inventory", pageParams);
   }
 
   @Data
