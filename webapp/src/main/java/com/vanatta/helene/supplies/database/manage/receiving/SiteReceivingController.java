@@ -4,14 +4,13 @@ import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.util.HtmlSelectOptionsUtil;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -30,24 +28,12 @@ public class SiteReceivingController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
-
   /** Fetches data for the manage site page */
   @GetMapping("/manage/receiving/receiving")
   ModelAndView showSiteContactPage(String siteId) {
-    Map<String, Object> pageParams =
-        buildContactPageParams(jdbi, Long.parseLong(siteId)).orElse(null);
-    if (pageParams == null) {
-      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
-    }
-
-    return new ModelAndView("manage/contact/contact", pageParams);
-  }
-
-  // @VisibleForTesting
-  static Optional<Map<String, Object>> buildContactPageParams(Jdbi jdbi, long siteId) {
-    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, siteId);
+    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
     if (data == null) {
-      return Optional.empty();
+      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
     Map<String, Object> pageParams = new HashMap<>();
@@ -60,18 +46,15 @@ public class SiteReceivingController {
     pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
     pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
 
-    List<ItemListing> maxSupplyOptions =
-        ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
-            .map(
-                v ->
-                    ItemListing.builder()
-                        .name(v.getName())
-                        .selected(v.getName().equals(data.getMaxSupply()) ? "selected" : null)
-                        .build())
-            .toList();
+    List<HtmlSelectOptionsUtil.ItemListing> maxSupplyOptions =
+        HtmlSelectOptionsUtil.createItemListing(
+            data.getMaxSupply(),
+            ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
+                .map(ManageSiteDao.MaxSupplyOption::getName)
+                .toList());
     pageParams.put(PageParam.MAX_SUPPLY_OPTIONS.text, maxSupplyOptions);
 
-    return Optional.of(pageParams);
+    return new ModelAndView("manage/receiving/receiving", pageParams);
   }
 
   @AllArgsConstructor
@@ -88,46 +71,6 @@ public class SiteReceivingController {
     final String text;
   }
 
-  @Builder
-  @Data
-  public static class ItemListing {
-    String name;
-
-    /** Should either be blank, or "selected" */
-    String selected;
-  }
-
-  /** Info update for a site, eg: site-rename, site contact info changed. */
-  @PostMapping("/manage/update-site")
-  @ResponseBody
-  ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
-    log.info("Update site data request received: {}", params);
-
-    String siteId = params.get("siteId");
-    String field = params.get("field");
-    String newValue = params.get("newValue");
-
-    if (newValue != null) {
-      newValue = newValue.trim();
-    }
-
-    if (ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId)) == null) {
-      log.warn("invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
-    var siteField = ManageSiteDao.SiteField.lookupField(field).orElse(null);
-    if (siteField == null) {
-      log.warn("Invalid field requested for update: {}, params: {}", field, params);
-      return ResponseEntity.badRequest().body("Invalid field: " + field);
-    }
-    ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
-    log.info("Site updated: {}", params);
-    sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
-
-    return ResponseEntity.ok().body("Updated");
-  }
-  
   @AllArgsConstructor
   enum SiteReceivingParam {
     SITE_ID("siteId"),

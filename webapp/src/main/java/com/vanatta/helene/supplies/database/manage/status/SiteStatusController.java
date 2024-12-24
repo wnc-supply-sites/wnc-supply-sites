@@ -28,7 +28,6 @@ public class SiteStatusController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
-
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status/status")
   ModelAndView showManageStatusPage(String siteId) {

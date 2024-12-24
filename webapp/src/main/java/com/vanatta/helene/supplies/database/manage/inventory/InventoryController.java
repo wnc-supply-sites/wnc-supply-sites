@@ -208,18 +208,7 @@ public class InventoryController {
 
     InventoryDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
 
-    new Thread(
-            () -> {
-              sendInventoryUpdate.send(Long.parseLong(siteId), itemName);
-
-              //              dispatchRequestService
-              //                  .computeDispatch(siteName, itemName,
-              // ItemStatus.fromTextValue(itemStatus))
-              //                  .filter(_ -> makeEnabled)
-              //                  .ifPresent(json -> HttpPostSender.sendAsJson(dispatchRequestUrl,
-              // json));
-            })
-        .start();
+    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
 
     return ResponseEntity.ok("Updated");
   }
