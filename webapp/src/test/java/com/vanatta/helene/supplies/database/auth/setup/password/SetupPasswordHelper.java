@@ -3,11 +3,12 @@ package com.vanatta.helene.supplies.database.auth.setup.password;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.util.HashingUtil;
 
-public class Helper {
+public class SetupPasswordHelper {
 
   public static void setup() {
     String script =
         """
+        delete from wss_user_pass_change_history;
         delete from sms_passcode;
         delete from wss_user;
         """;

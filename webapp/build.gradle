@@ -24,6 +24,7 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.34'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
+	implementation 'at.favre.lib:bcrypt:0.10.2'
 	implementation 'commons-codec:commons-codec:1.17.1'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

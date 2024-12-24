@@ -7,46 +7,45 @@ function togglePassword() {
   }
 }
 
-function sendSms() {
-  const fieldValue = document.getElementById("phone-number")
-  .value.trim().replace(/\D/g, '');
+function sendPassword() {
+  const validationToken = document.getElementById("validationToken").value;
+  const password = document.getElementById("password").value;
 
-
-  if (fieldValue.length < 10) {
-    showSendAccessCodeError("Phone number too short");
-  } else if (fieldValue.length > 11) {
-    showSendAccessCodeError("Phone number too long");
+  if (password.length < 5) {
+    showPasswordError("Password too short");
   } else {
     document.getElementById("phone-number-error-message")
         .innerHTML = "";
   }
 
-  fetch("/send-access-code", {
+  fetch("/set-password", {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      number: fieldValue
+      validationToken: validationToken,
+      password: password
     })
   })
   .then(
       async function (response) {
         if (response.ok) {
-          const responseJson = await response.json();
-          document.getElementById("csrf").value = responseJson.csrf;
+          ;
+          // const responseJson = await response.json();
+          // document.getElementById("csrf").value = responseJson.csrf;
         } else {
           const responseJson = await response.json();
-          showSendAccessCodeError("Error from server: " + responseJson.error);
+          showPasswordError("Error: " + responseJson.error);
         }
       },
       function (error) {
-        showSendAccessCodeError("Failed to send access code, server error: " + error);
+        showPasswordError("Failed, server error: " + error);
       });
 }
 
-function showSendAccessCodeError(message) {
-  document.getElementById("phone-number-error-message")
+function showPasswordError(message) {
+  document.getElementById("password-error-message")
       .innerHTML = message;
 }

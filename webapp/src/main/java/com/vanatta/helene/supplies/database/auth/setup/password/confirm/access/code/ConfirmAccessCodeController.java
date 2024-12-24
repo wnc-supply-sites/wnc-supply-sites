@@ -57,6 +57,7 @@ public class ConfirmAccessCodeController {
     }
   }
 
+  @Builder
   @Value
   public static class ConfirmAccessCodeRequest {
     String csrf;

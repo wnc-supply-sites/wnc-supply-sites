@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.auth.setup.password.confirm.access.
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.auth.setup.password.Helper;
+import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
 import com.vanatta.helene.supplies.database.auth.setup.password.send.access.code.SendAccessTokenDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class ConfirmAccessCodeControllerTest {
 
   @BeforeEach
   void cleanDb() {
-    Helper.setup();
+    SetupPasswordHelper.setup();
   }
 
   @Test
@@ -36,12 +36,12 @@ class ConfirmAccessCodeControllerTest {
   @Test
   void confirmAccessCode() {
     assertThat(
-            Helper.accessTokenExists(
+            SetupPasswordHelper.accessTokenExists(
                 "557603", "1a24abcd-029f-49fe-8d76-af1c4b93bc28", "validation token"))
         .isFalse();
 
     String number = "123___4444";
-    Helper.withRegisteredNumber(number);
+    SetupPasswordHelper.withRegisteredNumber(number);
     SendAccessTokenDao.insertSmsPasscode(
         TestConfiguration.jdbiTest,
         SendAccessTokenDao.InsertAccessCodeParams.builder()
@@ -55,7 +55,7 @@ class ConfirmAccessCodeControllerTest {
     assertThat(response.getBody().getError()).isNull();
     assertThat(response.getBody().getValidationToken()).isEqualTo("validation token");
     assertThat(
-            Helper.accessTokenExists(
+            SetupPasswordHelper.accessTokenExists(
                 "557603", "1a24abcd-029f-49fe-8d76-af1c4b93bc28", "validation token"))
         .isTrue();
   }
@@ -63,7 +63,7 @@ class ConfirmAccessCodeControllerTest {
   @Test
   void confirmAccessBadAccessToken() {
     String number = "123___4444";
-    Helper.withRegisteredNumber(number);
+    SetupPasswordHelper.withRegisteredNumber(number);
     SendAccessTokenDao.insertSmsPasscode(
         TestConfiguration.jdbiTest,
         SendAccessTokenDao.InsertAccessCodeParams.builder()
@@ -81,7 +81,7 @@ class ConfirmAccessCodeControllerTest {
   @Test
   void confirmAccessBadCsrfToken() {
     String number = "123___4444";
-    Helper.withRegisteredNumber(number);
+    SetupPasswordHelper.withRegisteredNumber(number);
     SendAccessTokenDao.insertSmsPasscode(
         TestConfiguration.jdbiTest,
         SendAccessTokenDao.InsertAccessCodeParams.builder()

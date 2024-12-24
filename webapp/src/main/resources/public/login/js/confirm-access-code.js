@@ -4,6 +4,9 @@ function confirmAccessCode() {
 
   if(fieldValue.length !== 6) {
     showConfirmCodeError("Confirm code not valid");
+  } else {
+    document.getElementById("confirm-code-error-message")
+        .innerHTML = "";
   }
   const csrf = document.getElementById("csrf").value;
 

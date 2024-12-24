@@ -3,7 +3,7 @@ package com.vanatta.helene.supplies.database.auth.setup.password.send.access.cod
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.auth.setup.password.Helper;
+import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +32,7 @@ class SendAccessTokenControllerTest {
 
   @BeforeEach
   void setup() {
-    Helper.setup();
+    SetupPasswordHelper.setup();
   }
 
   @Nested
@@ -57,9 +57,9 @@ class SendAccessTokenControllerTest {
 
   @Test
   void sendAccessCode_case_registered() {
-    assertThat(Helper.accessTokenExists(accessCode, csrf)).isFalse();
-    Helper.withRegisteredNumber(number);
-    int numberOfSmsSendsRow = Helper.countSendHistoryRecords();
+    assertThat(SetupPasswordHelper.accessTokenExists(accessCode, csrf)).isFalse();
+    SetupPasswordHelper.withRegisteredNumber(number);
+    int numberOfSmsSendsRow = SetupPasswordHelper.countSendHistoryRecords();
 
     ResponseEntity<SendAccessTokenController.SendAccessCodeResponse> response =
         controller.sendAccessCode(input);
@@ -67,7 +67,7 @@ class SendAccessTokenControllerTest {
     assertThat(response.getStatusCode().value()).isEqualTo(200);
     assertThat(response.getBody().getError()).isNull();
     assertThat(response.getBody().getCsrf()).isEqualTo(csrf);
-    assertThat(Helper.countSendHistoryRecords()).isEqualTo(numberOfSmsSendsRow + 1);
-    assertThat(Helper.accessTokenExists(accessCode, csrf)).isTrue();
+    assertThat(SetupPasswordHelper.countSendHistoryRecords()).isEqualTo(numberOfSmsSendsRow + 1);
+    assertThat(SetupPasswordHelper.accessTokenExists(accessCode, csrf)).isTrue();
   }
 }
