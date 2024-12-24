@@ -54,16 +54,21 @@ async function updateData() {
         data.results.map(r => `
               <tr>
                   <td>
-                    <a href='site-detail?id=${r.id}'><span class="site-name">${r.site}</span></a>
-                    ${r.siteType === "Supply Hub" ? supplyHubHtml : ''}
-                    ${r.acceptingDonations ? '' : notAcceptingDonationsHtml}
-                  </td>
-                  <td>
-                    ${r.county}
+                    <div class="vertical site-name-column">
+                      <span>
+                        <a href='site-detail?id=${r.id}'><span class="site-name">${r.site}</span></a>
+                      </span>
+                      <span>${r.county} County</span>
+                      <span>${r.siteType === "Supply Hub" ? supplyHubHtml : ''}</span>
+                      <span>${r.acceptingDonations ? '' : notAcceptingDonationsHtml}</span>
+                      <div>
+                        <span>Last Updated</span>
+                        <span>${r.inventoryLastUpdated}</span>
+                      </div>
+                    </div>
                   </td>
                   <td>${formatItems(r.neededItems)}</td>
                   <td>${formatItems(r.availableItems)}</td>
-                  <td class="date-column">${r.inventoryLastUpdated}</td>
               </tr>`)
         .join("\n");
     document.getElementById('result-count').innerHTML = `${data.resultCount} results`;

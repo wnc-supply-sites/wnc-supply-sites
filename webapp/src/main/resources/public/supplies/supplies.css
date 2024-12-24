@@ -142,10 +142,6 @@ table.results-table tbody tr:nth-child(even) {
     margin-left: 360px;
 }
 
-.inventoryLastUpdatedColumn {
-    width: 125px;
-}
-
 .results-table-container {
     width: 100%;
     overflow-x: auto;
@@ -165,6 +161,10 @@ table.results-table tbody tr:nth-child(even) {
 
 .h-full {
   height: 100%;
+}
+
+.site-name-column span {
+    padding-bottom: 5px;
 }
 
 @media only screen and (max-width: 600px) {
