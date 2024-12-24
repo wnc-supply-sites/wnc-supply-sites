@@ -4,7 +4,7 @@ import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.delivery.Delivery;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
-import com.vanatta.helene.supplies.database.manage.SiteContactController;
+import com.vanatta.helene.supplies.database.manage.contact.SiteContactController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;

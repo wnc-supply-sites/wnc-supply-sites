@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class SelectSiteController {
 
-  static final String PATH_SELECT_SITE = "/manage/select-site";
+  public static final String PATH_SELECT_SITE = "/manage/select-site";
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 

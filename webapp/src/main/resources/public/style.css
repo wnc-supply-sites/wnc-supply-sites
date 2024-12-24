@@ -211,13 +211,20 @@ button {
 }
 
 h1 {
-    margin-top: 0px;
+    margin-top: 3px;
     margin-bottom: 3px;
+    display: flex;
+    font-size: 1.8em;
+}
+
+.logo-image {
+    margin-right: 3px;
 }
 
 h2 {
     margin-top: 0px;
     margin-bottom: 5px;
+    margin-left: 50px;
 }
 
 h1, h2, h3, h4 {
@@ -226,7 +233,7 @@ h1, h2, h3, h4 {
 
 .back-link {
     margin-top: 0px;
-    margin-bottom: 5px;
-    margin-left: 5px;
+    margin-bottom: 10px;
+    margin-left: 15px;
     font-size: 0.9em;
 }

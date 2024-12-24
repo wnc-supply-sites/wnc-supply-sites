@@ -1,7 +1,9 @@
-package com.vanatta.helene.supplies.database.manage;
+package com.vanatta.helene.supplies.database.manage.address;
 
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @AllArgsConstructor
 @Slf4j
-public class SiteContactController {
+public class SiteAddressController {
 
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
@@ -65,17 +67,6 @@ public class SiteContactController {
     pageParams.put(PageParam.CITY.text, Optional.ofNullable(data.getCity()).orElse(""));
     pageParams.put(PageParam.WEBSITE.text, Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put(PageParam.FACEBOOK.text, Optional.ofNullable(data.getFacebook()).orElse(""));
-    pageParams.put(PageParam.HOURS.text, Optional.ofNullable(data.getHours()).orElse(""));
-    pageParams.put(
-        PageParam.SITE_CONTACT_NAME.text, Optional.ofNullable(data.getContactName()).orElse(""));
-    pageParams.put(
-        PageParam.SITE_CONTACT_EMAIL.text, Optional.ofNullable(data.getContactEmail()).orElse(""));
-    pageParams.put(
-        PageParam.SITE_CONTACT_NUMBER.text,
-        Optional.ofNullable(data.getContactNumber()).orElse(""));
-    pageParams.put(
-        PageParam.ADDITIONAL_CONTACTS.text,
-        Optional.ofNullable(data.getAdditionalContacts()).orElse(""));
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
     pageParams.put(PageParam.FULL_COUNTY_LIST.text, counties);
@@ -84,22 +75,6 @@ public class SiteContactController {
     pageParams.put(
         PageParam.COUNTY_LIST.text,
         createItemListing(data.getCounty(), counties.get(data.getState())));
-
-    pageParams.put(PageParam.HAS_FORKLIST.text, data.isHasForklift());
-    pageParams.put(PageParam.HAS_INDOOR_STORAGE.text, data.isHasIndoorStorage());
-    pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
-    pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
-
-    List<ItemListing> maxSupplyOptions =
-        ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()
-            .map(
-                v ->
-                    ItemListing.builder()
-                        .name(v.getName())
-                        .selected(v.getName().equals(data.getMaxSupply()) ? "selected" : null)
-                        .build())
-            .toList();
-    pageParams.put(PageParam.MAX_SUPPLY_OPTIONS.text, maxSupplyOptions);
 
     return Optional.of(pageParams);
   }
@@ -112,19 +87,9 @@ public class SiteContactController {
     CITY("city"),
     WEBSITE("website"),
     FACEBOOK("facebook"),
-    HOURS("hours"),
-    SITE_CONTACT_NAME("siteContactName"),
-    SITE_CONTACT_EMAIL("siteContactEmail"),
-    SITE_CONTACT_NUMBER("siteContactNumber"),
-    ADDITIONAL_CONTACTS("additionalContacts"),
     FULL_COUNTY_LIST("fullCountyList"),
     STATE_LIST("stateList"),
     COUNTY_LIST("countyList"),
-    MAX_SUPPLY_OPTIONS("maxSupplyDeliveryOptions"),
-    HAS_FORKLIST("hasForklift"),
-    HAS_LOADING_DOCK("hasLoadingDock"),
-    HAS_INDOOR_STORAGE("hasIndoorStorage"),
-    RECEIVING_NOTES("receivingNotes"),
     ;
     final String text;
   }
@@ -165,7 +130,7 @@ public class SiteContactController {
       newValue = newValue.trim();
     }
 
-    if (fetchSiteName(siteId) == null) {
+    if (ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId)) == null) {
       log.warn("invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
@@ -181,12 +146,7 @@ public class SiteContactController {
 
     return ResponseEntity.ok().body("Updated");
   }
-
-  /** Returns null if ID is not valid or DNE. */
-  private String fetchSiteName(String siteId) {
-    return ManageSiteDao.fetchSiteName(jdbi, siteId);
-  }
-
+  
   @AllArgsConstructor
   enum SiteReceivingParam {
     SITE_ID("siteId"),

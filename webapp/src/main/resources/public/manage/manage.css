@@ -10,3 +10,39 @@ h2 {
 .very-wide-button {
     width: 350px;
 }
+
+
+#update-button {
+    width: 90px;
+}
+
+#update-confirm {
+    display: none;
+}
+
+.confirm-text {
+    font-style: italic;
+    font-size: 0.95em;
+}
+
+.shortTextField {
+    width: 150px;
+}
+
+.data-field {
+    margin-bottom: 7px;
+}
+
+div.data-field label {
+    font-weight: bold;
+}
+
+.checkbox-option {
+    width: 200px;
+    margin-bottom: 5px;
+}
+
+.missingData {
+    background-color: lightcoral;
+}
+

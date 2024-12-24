@@ -1,7 +1,9 @@
-package com.vanatta.helene.supplies.database.manage;
+package com.vanatta.helene.supplies.database.manage.status;
 
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,15 +28,11 @@ public class SiteStatusController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
-  /** Returns null if ID is not valid or DNE. */
-  private String fetchSiteName(String siteId) {
-    return ManageSiteDao.fetchSiteName(jdbi, siteId);
-  }
 
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status/status")
   ModelAndView showManageStatusPage(String siteId) {
-    String siteName = fetchSiteName(siteId);
+    String siteName = ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId));
     if (siteName == null) {
       return SelectSiteController.showSelectSitePage(jdbi);
     }
@@ -46,7 +44,7 @@ public class SiteStatusController {
     ManageSiteDao.SiteStatus siteStatus =
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
-    pageParams.put("sitePublic", siteStatus.publiclyVisible ? "true" : null);
+    pageParams.put("sitePublic", siteStatus.isPubliclyVisible() ? "true" : null);
     pageParams.put(
         "inactiveReason", Optional.ofNullable(siteStatus.getInactiveReason()).orElse(""));
 
@@ -88,7 +86,7 @@ public class SiteStatusController {
     String statusFlag = params.get("statusFlag");
     String newValue = params.get("newValue");
 
-    String siteName = fetchSiteName(siteId);
+    String siteName = ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId));
     if (siteName == null) {
       log.warn(
           "Invalid site update value received, invalid site id (not found), params: {}", params);

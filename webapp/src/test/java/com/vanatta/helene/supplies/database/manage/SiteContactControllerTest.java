@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.manage.contact.SiteContactController;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Arrays;
 import java.util.List;

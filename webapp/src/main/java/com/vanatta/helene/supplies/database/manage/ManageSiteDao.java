@@ -72,7 +72,7 @@ public class ManageSiteDao {
      */
     private final boolean isLocationField;
 
-    static Optional<SiteField> lookupField(String name) {
+    public static Optional<SiteField> lookupField(String name) {
       return Arrays.stream(SiteField.values()).filter(f -> f.frontEndName.equals(name)).findAny();
     }
   }
@@ -424,7 +424,7 @@ public class ManageSiteDao {
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }
 
-  static void updateSiteType(Jdbi jdbi, long siteId, SiteType siteType) {
+  public static void updateSiteType(Jdbi jdbi, long siteId, SiteType siteType) {
     String update =
         """
         update site set site_type_id = (select id from site_type where name = :siteTypeName)
@@ -441,13 +441,13 @@ public class ManageSiteDao {
 
   @Builder
   @Value
-  static class ReceivingCapabilities {
+  public static class ReceivingCapabilities {
     boolean forklift;
     boolean loadingDock;
     boolean indoorStorage;
   }
 
-  static void updateReceivingCapabilities(
+  public static void updateReceivingCapabilities(
       Jdbi jdbi, long siteId, ReceivingCapabilities receivingCapabilities) {
     String update =
         """
