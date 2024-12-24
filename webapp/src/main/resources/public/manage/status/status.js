@@ -75,16 +75,6 @@ async function updatePubliclyVisible(siteId) {
   }
 }
 
-async function updateOnboarded(siteId) {
-  const onboarded = document.getElementById("onboardedYes").checked;
-  try {
-    await sendStatusUpdate(siteId, "onboarded", onboarded);
-    showConfirmation("Site set to " + (onboarded ? "onboarded" : "not onboarded"));
-  } catch (error) {
-    showError(error, "onboarded was not updated");
-  }
-}
-
 async function sendStatusUpdate(siteId, statusFlag, newValue) {
   const url = "/manage/update-status";
 

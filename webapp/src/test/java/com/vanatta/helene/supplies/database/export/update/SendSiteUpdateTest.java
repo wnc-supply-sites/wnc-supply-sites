@@ -75,7 +75,6 @@ class SendSiteUpdateTest {
     assertThat(siteDataResult.isHasIndoorStorage()).isNotNull();
     assertThat(siteDataResult.isHasLoadingDock()).isNotNull();
 
-    assertThat(siteDataResult.isOnboarded()).isNotNull();
     assertThat(siteDataResult.getInactiveReason()).isNotNull();
   }
 

@@ -65,7 +65,7 @@ public class InventoryDao {
         throw e;
       }
     }
-    ManageSiteDao.updateSiteInventoryLastUpdatedAndOnboardedFlag(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdated(jdbi, siteId);
   }
 
   /** Adds a record to the site item change table. */
@@ -116,7 +116,7 @@ public class InventoryDao {
     if (deleteCount > 0) {
       updateSiteItemAudit(jdbi, siteId, itemName, "active", "inactive");
     }
-    ManageSiteDao.updateSiteInventoryLastUpdatedAndOnboardedFlag(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdated(jdbi, siteId);
   }
 
   public static void updateItemStatus(Jdbi jdbi, long siteId, String itemName, String itemStatus) {
@@ -163,7 +163,7 @@ public class InventoryDao {
       throw new IllegalArgumentException(String.format("Invalid item name: %s", itemName));
     }
     updateSiteItemAudit(jdbi, siteId, itemName, oldStatus, itemStatus);
-    ManageSiteDao.updateSiteInventoryLastUpdatedAndOnboardedFlag(jdbi, siteId);
+    ManageSiteDao.updateSiteInventoryLastUpdated(jdbi, siteId);
   }
 
   /**

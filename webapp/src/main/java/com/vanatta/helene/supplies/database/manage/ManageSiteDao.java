@@ -58,7 +58,6 @@ public class ManageSiteDao {
     CONTACT_NUMBER("contact_number", "Contact Number", false, false),
     CONTACT_EMAIL("contact_email", "Contact Email", false, false),
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false, false),
-    BAD_NUMBERS("bad_numbers", "Bad Numbers", false, false),
     MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false, false),
     RECEIVING_NOTES("receiving_notes", "receiving notes", false, false),
     ;
@@ -284,7 +283,6 @@ public class ManageSiteDao {
     boolean publiclyVisible;
     boolean acceptingDonations;
     boolean distributingSupplies;
-    boolean onboarded;
     String inactiveReason;
     String siteType;
 
@@ -304,7 +302,6 @@ public class ManageSiteDao {
           s.accepting_donations,
           s.publicly_visible,
           s.distributing_supplies,
-          s.onboarded,
           s.inactive_reason,
           st.name siteType
         from site s
@@ -322,11 +319,7 @@ public class ManageSiteDao {
       return siteStatus;
     }
   }
-
-  public static void updateSiteOnboarded(Jdbi jdbi, long siteId, boolean newValue) {
-    updateSiteFlag(jdbi, siteId, "onboarded", newValue);
-  }
-
+  
   public static void updateSiteAcceptingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
     updateSiteFlag(jdbi, siteId, "accepting_donations", newValue);
   }
@@ -422,11 +415,11 @@ public class ManageSiteDao {
 
   /**
    * Updates that the site inventory was last updated now, and because the site inventory was
-   * updated, mark the site as onboarded.
+   * updated.
    */
-  public static void updateSiteInventoryLastUpdatedAndOnboardedFlag(Jdbi jdbi, long siteId) {
+  public static void updateSiteInventoryLastUpdated(Jdbi jdbi, long siteId) {
     String updateSiteLastUpdated =
-        "update site set inventory_last_updated = now(), onboarded = true where id = :siteId";
+        "update site set inventory_last_updated = now() where id = :siteId";
     jdbi.withHandle(
         handle -> handle.createUpdate(updateSiteLastUpdated).bind("siteId", siteId).execute());
   }

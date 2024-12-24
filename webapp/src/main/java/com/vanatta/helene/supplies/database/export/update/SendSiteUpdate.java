@@ -101,7 +101,6 @@ public class SendSiteUpdate {
               s.has_forklift,
               s.has_indoor_storage,
               s.has_loading_dock,
-              s.onboarded,
               s.inactive_reason
             from site s
             join county c on c.id = s.county_id
@@ -155,7 +154,6 @@ public class SendSiteUpdate {
     boolean hasIndoorStorage;
     boolean hasLoadingDock;
 
-    boolean onboarded;
     String inactiveReason;
   }
 
@@ -187,7 +185,6 @@ public class SendSiteUpdate {
     boolean hasForkLift;
     boolean hasIndoorStorage;
     boolean hasLoadingDock;
-    boolean onboarded;
     String inactiveReason;
 
     SiteExportJson(SiteExportDataResult result) {
@@ -232,7 +229,6 @@ public class SendSiteUpdate {
       this.hasIndoorStorage = result.hasIndoorStorage;
       this.hasLoadingDock = result.hasLoadingDock;
 
-      this.onboarded = result.onboarded;
       this.inactiveReason = result.getInactiveReason();
     }
   }

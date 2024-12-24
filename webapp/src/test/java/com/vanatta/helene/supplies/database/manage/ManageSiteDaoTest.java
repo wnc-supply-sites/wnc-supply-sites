@@ -84,10 +84,7 @@ class ManageSiteDaoTest {
         siteId,
         ManageSiteDao.SiteField.ADDITIONAL_CONTACTS,
         "More: 22-333");
-
-    ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.BAD_NUMBERS, "123 not working");
-
+    
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.MAX_SUPPLY_LOAD, "Car");
 
@@ -272,19 +269,6 @@ class ManageSiteDaoTest {
       ManageSiteDao.updateSitePubliclyVisible(TestConfiguration.jdbiTest, siteId, true);
       result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
       assertThat(result.isPubliclyVisible()).isTrue();
-    }
-
-    @Test
-    void siteOnboarded() {
-      long siteId = Helper.getSiteId("site1");
-
-      ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, false);
-      var result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-      assertThat(result.isOnboarded()).isFalse();
-
-      ManageSiteDao.updateSiteOnboarded(TestConfiguration.jdbiTest, siteId, true);
-      result = ManageSiteDao.fetchSiteStatus(TestConfiguration.jdbiTest, siteId);
-      assertThat(result.isOnboarded()).isTrue();
     }
 
     @Test

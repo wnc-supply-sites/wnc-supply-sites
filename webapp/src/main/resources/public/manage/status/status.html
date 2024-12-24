@@ -87,31 +87,6 @@
       </fieldset>
     </div>
 
-    <!-- SITE ONBOARDED -->
-    <div class="statusArea">
-      <fieldset class="danger-fields">
-        <legend class="bold">Site is Onboarded:</legend>
-        <div class="horizontal">
-          <div class="statusControls">
-            <input type="radio" id="onboardedYes" name="onboarded" {{#onboarded}}checked{{/onboarded}}><label
-              for="onboardedYes">Yes</label>
-            <input type="radio" id="onboardedNo" name="onboarded" {{^onboarded}}checked{{/onboarded}}><label
-              for="onboardedNo">No</label>
-            <button class="siteStatusUpdateButton" onclick="updateOnboarded({{siteId}})">Update</button>
-          </div>
-          <span class="statusCaption larger">
-              Indicates that {{siteName}} is actively onboarded to WSS. <br>
-               <ul>
-                 <li>Site is engaged with R4 & WSS</li>
-                 <li>Contact information is entered and correct</li>
-                 <li>Site is actively managing their supply inventory,
-                   or has appointed someone within R4 to do so.</li>
-               </ul>
-          </span>
-        </div>
-      </fieldset>
-    </div>
-
     <!-- Publicly Visible -->
     <div class="statusArea">
       <fieldset class="danger-fields">
@@ -154,7 +129,6 @@
             <dt>Inactive Reason:</dt>
             <dd><textarea
                 id="inactive-reason" cols="50" rows="3" placeholder="Example: Site is closed
-Example: Site never onboarded
 Example: Temporary closure">{{inactiveReason}}</textarea>
             </dd>
           </dl>

@@ -207,6 +207,7 @@ button {
     width: 100px;
     margin-left: 15px;
     margin-top: 5px;
+    text-align: end;
 }
 
 h1 {

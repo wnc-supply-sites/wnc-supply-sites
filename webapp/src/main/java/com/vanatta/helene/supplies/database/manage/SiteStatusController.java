@@ -47,7 +47,6 @@ public class SiteStatusController {
         ManageSiteDao.fetchSiteStatus(jdbi, Long.parseLong(siteId));
     pageParams.put("siteActive", siteStatus.isActive() ? "true" : null);
     pageParams.put("sitePublic", siteStatus.publiclyVisible ? "true" : null);
-    pageParams.put("onboarded", siteStatus.onboarded ? "true" : null);
     pageParams.put(
         "inactiveReason", Optional.ofNullable(siteStatus.getInactiveReason()).orElse(""));
 
@@ -72,7 +71,6 @@ public class SiteStatusController {
     ACCEPTING_SUPPLIES("acceptingSupplies"),
     DISTRIBUTING_SUPPLIES("distributingSupplies"),
     PUBLICLY_VISIBLE("publiclyVisible"),
-    ONBOARDED("onboarded"),
     INACTIVE_REASON("inactiveReason"),
     ;
     final String text;
@@ -125,10 +123,6 @@ public class SiteStatusController {
         break;
       case ACTIVE:
         ManageSiteDao.updateSiteActiveFlag(
-            jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
-        break;
-      case ONBOARDED:
-        ManageSiteDao.updateSiteOnboarded(
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
         break;
       case INACTIVE_REASON:

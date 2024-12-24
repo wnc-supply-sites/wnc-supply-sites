@@ -45,8 +45,6 @@ public class SiteDetailDao {
     boolean acceptingDonations;
     String hours;
     long wssId;
-    boolean onboarded;
-    String badNumbers;
     String inactiveReason;
     String maxSupply;
     boolean hasForklift;
@@ -81,8 +79,6 @@ public class SiteDetailDao {
                               s.accepting_donations,
                               s.hours,
                               s.wss_id,
-                              s.onboarded,
-                              s.bad_numbers,
                               s.inactive_reason,
                               msl.name maxSupply,
                               s.has_forklift,
