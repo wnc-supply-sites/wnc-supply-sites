@@ -116,7 +116,7 @@ public class DeliverySignupDao {
       if (distanceMiles == null) {
         return 1000.0 - items.size();
       } else {
-        return items.size() / distanceMiles;
+        return distanceMiles;
       }
     }
 
