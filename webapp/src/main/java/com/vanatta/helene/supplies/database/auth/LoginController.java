@@ -22,16 +22,19 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginController {
 
   private final Jdbi jdbi;
-  private final CookieAuthenticator cookieAuthenticator;
   private final String universalUser;
   private final String universalPassword;
+  private final boolean allowUniversalLogin;
 
   LoginController(
-      Jdbi jdbi, @Value("${auth.user}") String user, @Value("${auth.pass}") String pass) {
+      Jdbi jdbi,
+      @Value("${auth.user}") String user,
+      @Value("${auth.pass}") String pass,
+      @Value("${allow.universal.login}") boolean allowUniversalLogin) {
     this.jdbi = jdbi;
-    this.cookieAuthenticator = new CookieAuthenticator(jdbi);
     this.universalUser = user;
     this.universalPassword = pass;
+    this.allowUniversalLogin = allowUniversalLogin;
   }
 
   @GetMapping("/login/login")
@@ -71,7 +74,14 @@ public class LoginController {
       return new ModelAndView("redirect:" + redirectUri);
     } else if (universalUser.equalsIgnoreCase(user.trim())
         && universalPassword.equalsIgnoreCase(password.trim())) {
-      return new ModelAndView("redirect:/login/setup-password");
+      if (allowUniversalLogin) {
+        LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
+        String authToken = LoginDao.getAuthKeyOrGenerateIt(jdbi);
+        CookieUtil.setCookie(response, "auth", authToken);
+        return new ModelAndView("redirect:" + redirectUri);
+      } else {
+        return new ModelAndView("redirect:/login/setup-password");
+      }
     } else {
       LoginDao.recordLoginFailure(jdbi, request.getRemoteAddr());
       log.info("User login failed: {}, IP: {}", user, request.getRemoteAddr());

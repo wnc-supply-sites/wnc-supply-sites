@@ -211,8 +211,21 @@ button {
 
 h1 {
     margin-top: 0px;
+    margin-bottom: 3px;
 }
 
 h2 {
     margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+h1, h2, h3, h4 {
+    font-family: sans-serif;
+}
+
+.back-link {
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    font-size: 0.9em;
 }
