@@ -29,6 +29,14 @@ table {
     margin-bottom: 15px;
 }
 
+#user,
+#password {
+    width: 190px;
+    height: 35px;
+    font-size: 26px;
+}
+
+
 @media only screen and (max-width: 600px) {
   .login-form-container{
     padding: 0px;
