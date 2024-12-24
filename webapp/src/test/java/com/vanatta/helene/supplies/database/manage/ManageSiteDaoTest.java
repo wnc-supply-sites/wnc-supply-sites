@@ -84,7 +84,7 @@ class ManageSiteDaoTest {
         siteId,
         ManageSiteDao.SiteField.ADDITIONAL_CONTACTS,
         "More: 22-333");
-    
+
     ManageSiteDao.updateSiteField(
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.MAX_SUPPLY_LOAD, "Car");
 

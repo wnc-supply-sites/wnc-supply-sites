@@ -22,14 +22,15 @@ public class CookieAuthenticator {
   private final boolean allowUniversalLogin;
 
   @Autowired
-  public CookieAuthenticator(Jdbi jdbi, @Value("${allow.universal.login}") boolean allowUniversalLogin) {
+  public CookieAuthenticator(
+      Jdbi jdbi, @Value("${allow.universal.login}") boolean allowUniversalLogin) {
     authKey = LoginDao.getAuthKeyOrGenerateIt(jdbi);
     this.jdbi = jdbi;
     this.allowUniversalLogin = allowUniversalLogin;
   }
 
   public boolean isAuthenticated(HttpServletRequest request) {
-    if(allowUniversalLogin && isAuthenticatedWithUniversalPassword(request)) {
+    if (allowUniversalLogin && isAuthenticatedWithUniversalPassword(request)) {
       return true;
     }
     return CookieUtil.readCookieValue(request, "auth")

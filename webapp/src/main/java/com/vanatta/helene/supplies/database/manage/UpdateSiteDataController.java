@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -10,34 +11,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
-
 @Controller
 @AllArgsConstructor
 @Slf4j
 public class UpdateSiteDataController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
-  
+
   /** Info update for a site, eg: site-rename, site contact info changed. */
   @PostMapping("/manage/update-site")
   @ResponseBody
   ResponseEntity<?> updateSiteData(@RequestBody Map<String, String> params) {
     log.info("Update site data request received: {}", params);
-    
+
     String siteId = params.get("siteId");
     String field = params.get("field");
     String newValue = params.get("newValue");
-    
+
     if (newValue != null) {
       newValue = newValue.trim();
     }
-    
+
     if (ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId)) == null) {
       log.warn("invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
-    
+
     var siteField = ManageSiteDao.SiteField.lookupField(field).orElse(null);
     if (siteField == null) {
       log.warn("Invalid field requested for update: {}, params: {}", field, params);
@@ -46,7 +45,7 @@ public class UpdateSiteDataController {
     ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
     log.info("Site updated: {}", params);
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
-    
+
     return ResponseEntity.ok().body("Updated");
   }
 }

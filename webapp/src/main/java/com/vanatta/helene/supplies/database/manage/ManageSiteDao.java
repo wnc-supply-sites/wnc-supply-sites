@@ -319,7 +319,7 @@ public class ManageSiteDao {
       return siteStatus;
     }
   }
-  
+
   public static void updateSiteAcceptingDonationsFlag(Jdbi jdbi, long siteId, boolean newValue) {
     updateSiteFlag(jdbi, siteId, "accepting_donations", newValue);
   }

@@ -1,11 +1,10 @@
 package com.vanatta.helene.supplies.database.util;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import lombok.Builder;
+import lombok.Data;
 
 public class HtmlSelectOptionsUtil {
   public static List<ItemListing> createItemListing(
@@ -20,12 +19,12 @@ public class HtmlSelectOptionsUtil {
         .sorted(Comparator.comparing(ItemListing::getName))
         .toList();
   }
-  
+
   @Builder
   @Data
   public static class ItemListing {
     String name;
-    
+
     /** Should either be blank, or "selected" */
     String selected;
   }
