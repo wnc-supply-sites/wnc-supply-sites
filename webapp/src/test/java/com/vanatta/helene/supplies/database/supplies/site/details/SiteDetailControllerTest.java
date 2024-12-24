@@ -19,7 +19,7 @@ class SiteDetailControllerTest {
 
     SiteDetailController siteDetailController =
         new SiteDetailController(
-            TestConfiguration.jdbiTest, new CookieAuthenticator(TestConfiguration.jdbiTest));
+            TestConfiguration.jdbiTest, new CookieAuthenticator(TestConfiguration.jdbiTest, false));
 
     var model = siteDetailController.siteDetail(site1Id, null, null, true);
 

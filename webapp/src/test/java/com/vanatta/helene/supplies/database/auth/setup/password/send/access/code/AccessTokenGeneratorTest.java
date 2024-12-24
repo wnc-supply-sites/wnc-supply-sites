@@ -2,12 +2,13 @@ package com.vanatta.helene.supplies.database.auth.setup.password.send.access.cod
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 class AccessTokenGeneratorTest {
   AccessTokenGenerator accessTokenGenerator = new AccessTokenGenerator();
 
-  @Test
+  @RepeatedTest(300)
   void generate() {
     String value = accessTokenGenerator.generate();
     assertThat(value).hasSize(6);

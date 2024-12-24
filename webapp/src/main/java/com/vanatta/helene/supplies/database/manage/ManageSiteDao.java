@@ -163,7 +163,7 @@ public class ManageSiteDao {
     return oldValue;
   }
 
-  static String updateMaxSupply(Jdbi jdbi, long siteId, String newMaxSupply) {
+  public static String updateMaxSupply(Jdbi jdbi, long siteId, String newMaxSupply) {
     if (newMaxSupply == null || newMaxSupply.isBlank()) {
       throw new IllegalArgumentException("Illegal null value for max supply, siteId: " + siteId);
     }

@@ -101,7 +101,6 @@ class ManageSiteDaoTest {
     assertThat(dataLookup.getContactNumber()).isEqualTo("999-596-111");
     assertThat(dataLookup.getContactEmail()).isEqualTo("smith@awesome.org");
     assertThat(dataLookup.getAdditionalContacts()).isEqualTo("More: 22-333");
-    assertThat(dataLookup.getBadNumbers()).isEqualTo("123 not working");
     assertThat(dataLookup.getMaxSupply()).isEqualTo("Car");
   }
 

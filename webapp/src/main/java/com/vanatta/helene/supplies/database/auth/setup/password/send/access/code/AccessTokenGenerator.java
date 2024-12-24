@@ -8,6 +8,11 @@ public class AccessTokenGenerator {
   private final SecureRandom secureRandom = new SecureRandom();
 
   public String generate() {
-    return String.valueOf(secureRandom.nextInt(1_000_000));
+    String accessCode = String.valueOf(secureRandom.nextInt(1_000_000));
+
+    if (accessCode.length() < 6) {
+      accessCode = "0".repeat(6 - accessCode.length()) + accessCode;
+    }
+    return accessCode;
   }
 }

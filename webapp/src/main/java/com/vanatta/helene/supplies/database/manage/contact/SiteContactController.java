@@ -51,7 +51,7 @@ public class SiteContactController {
   }
 
   @AllArgsConstructor
-  enum PageParam {
+  public enum PageParam {
     SITE_ID("siteId"),
     SITE_NAME("siteName"),
     SITE_CONTACT_NAME("siteContactName"),

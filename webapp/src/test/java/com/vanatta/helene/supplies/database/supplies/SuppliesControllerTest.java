@@ -20,7 +20,7 @@ class SuppliesControllerTest {
   static final Jdbi jdbiTest = TestConfiguration.jdbiTest;
 
   private final SuppliesController suppliesController =
-      new SuppliesController(jdbiTest, new CookieAuthenticator(jdbiTest));
+      new SuppliesController(jdbiTest, new CookieAuthenticator(jdbiTest, false));
 
   @BeforeAll
   static void clearDatabase() {
