@@ -49,7 +49,7 @@ public class SiteAddressController {
         PageParam.COUNTY_LIST.text,
         HtmlSelectOptionsUtil.createItemListing(data.getCounty(), counties.get(data.getState())));
 
-    return new ModelAndView("manage/adress/address", pageParams);
+    return new ModelAndView("manage/address/address", pageParams);
   }
 
   @AllArgsConstructor
