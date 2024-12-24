@@ -1,6 +1,6 @@
 package com.vanatta.helene.supplies.database.auth;
 
-import jakarta.servlet.http.Cookie;
+import com.vanatta.helene.supplies.database.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -23,15 +23,15 @@ public class LoginController {
 
   private final Jdbi jdbi;
   private final CookieAuthenticator cookieAuthenticator;
-  private final String validUser;
-  private final String validPass;
+  private final String universalUser;
+  private final String universalPassword;
 
   LoginController(
       Jdbi jdbi, @Value("${auth.user}") String user, @Value("${auth.pass}") String pass) {
     this.jdbi = jdbi;
     this.cookieAuthenticator = new CookieAuthenticator(jdbi);
-    this.validUser = user;
-    this.validPass = pass;
+    this.universalUser = user;
+    this.universalPassword = pass;
   }
 
   @GetMapping("/login/login")
@@ -59,27 +59,26 @@ public class LoginController {
     String password = params.get("password").getFirst();
     String redirectUri = params.get("redirectUri").getFirst();
 
-    if (user != null
-        && validUser.equalsIgnoreCase(user.trim())
-        && password != null
-        && validPass.equalsIgnoreCase(password.trim())) {
-      LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
-      Cookie cookie = new Cookie("auth", cookieAuthenticator.getAuthKey());
-      response.addCookie(cookie);
-      cookie.setMaxAge(14 * 24 * 60 * 60); // expires in 14 days
-      cookie.setSecure(true);
-      cookie.setHttpOnly(true);
-      return new ModelAndView("redirect:" + redirectUri);
-    } else {
-      // TODO: logging password is sketchy. When we move to unique logins, do not log the password
-      // attempted.
-      log.warn(
-          "Failed login, user: {}, password: {}, IP: {}", user, password, request.getRemoteAddr());
-      LoginDao.recordLoginFailure(jdbi, request.getRemoteAddr());
+    if (user == null || user.isEmpty() || password == null || password.isEmpty()) {
       Map<String, String> pageParams = new HashMap<>();
       pageParams.put("redirectUri", redirectUri);
       pageParams.put("errorMessage", "Invalid Login");
-      return new ModelAndView("login", pageParams);
+      return new ModelAndView("login/login", pageParams);
+    } else if (PasswordDao.confirmPassword(jdbi, user, password)) {
+      LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
+      String authToken = LoginDao.generateAuthToken(jdbi, user);
+      CookieUtil.setCookie(response, "auth", authToken);
+      return new ModelAndView("redirect:" + redirectUri);
+    } else if (universalUser.equalsIgnoreCase(user.trim())
+        && universalPassword.equalsIgnoreCase(password.trim())) {
+      return new ModelAndView("redirect:/login/setup-password");
+    } else {
+      LoginDao.recordLoginFailure(jdbi, request.getRemoteAddr());
+      log.info("User login failed: {}, IP: {}", user, request.getRemoteAddr());
+      Map<String, String> pageParams = new HashMap<>();
+      pageParams.put("redirectUri", redirectUri);
+      pageParams.put("errorMessage", "Invalid Login");
+      return new ModelAndView("login/login", pageParams);
     }
   }
 }

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,7 +45,6 @@ public class SiteDetailController {
   enum TemplateParams {
     EDIT_CONTACT_LINK("editContactLink"),
     EDIT_INVENTORY_LINK("editInventoryLink"),
-    LOGGED_IN("loggedIn"),
     SITE_NAME("siteName"),
     WEBSITE("website"),
     FACEBOOK("facebook"),
@@ -86,7 +86,8 @@ public class SiteDetailController {
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
-    return siteDetail(id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
+    return siteDetail(
+        id, airtableId, wssId, cookieAuthenticator.isAuthenticatedWithUniversalPassword(request));
   }
 
   // @VisibleForTesting
@@ -94,7 +95,7 @@ public class SiteDetailController {
       @RequestParam(required = false) Long id,
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
-      boolean isLoggedIn) {
+      @ModelAttribute("loggedIn") boolean isLoggedIn) {
     if (id == null && airtableId == null && wssId == null) {
       return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
@@ -133,7 +134,6 @@ public class SiteDetailController {
         TemplateParams.EDIT_CONTACT_LINK.text, SiteContactController.buildManageContactsPath(id));
     siteDetails.put(
         TemplateParams.EDIT_INVENTORY_LINK.text, InventoryController.buildInventoryPath(id));
-    siteDetails.put(TemplateParams.LOGGED_IN.text, isLoggedIn);
     siteDetails.put(TemplateParams.SITE_NAME.text, siteDetailData.getSiteName());
 
     siteDetails.put(

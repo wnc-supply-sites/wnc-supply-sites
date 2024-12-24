@@ -1,6 +1,6 @@
 package com.vanatta.helene.supplies.database.auth;
 
-import jakarta.servlet.http.Cookie;
+import com.vanatta.helene.supplies.database.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
@@ -58,17 +58,16 @@ public class AuthInterceptor implements WebMvcConfigurer {
 
         if (cookieAuthenticator.isAuthenticated(request)) {
           return true;
+        } else if (cookieAuthenticator.isAuthenticatedWithUniversalPassword(request)) {
+          response.sendRedirect("/login/setup-password");
+          return false;
         } else {
           // auth failed, delete cookie if present
-          Cookie cookie = new Cookie("auth", null);
-          cookie.setMaxAge(0);
-          cookie.setSecure(true);
-          cookie.setHttpOnly(true);
-          response.addCookie(cookie);
+          CookieUtil.deleteCookie(response, "auth");
           response.sendRedirect("/login/login?redirectUri=" + requestUri);
           return false;
         }
-      } else if (requestUri.startsWith("/import/") || requestUri.startsWith("/webhook/")) {
+      } else if (requestUri.startsWith("/webhook/")) {
         if (webhookAuthenticator.hasCorrectSecret(request)) {
           return true;
         } else {

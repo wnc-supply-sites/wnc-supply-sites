@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class SetPasswordControllerTest {
   SetPasswordController controller = new SetPasswordController(TestConfiguration.jdbiTest);
 
-  String number = "123___4422";
+  String number = "1230004422";
   String csrf = "csrf token";
   String accessCode = "333666";
   String validation = "validation auth token";

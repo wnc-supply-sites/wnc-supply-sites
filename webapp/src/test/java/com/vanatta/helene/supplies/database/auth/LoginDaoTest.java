@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -58,5 +59,16 @@ class LoginDaoTest {
 
     long postFailureCount = Helper.countLoginHistoryRows();
     assertThat(postFailureCount).isEqualTo(postCount + 1);
+  }
+
+  @Test
+  void isLoggedIn_and_GenerateAuthToken() {
+    SetupPasswordHelper.setup();
+    String number = "1113332244";
+    SetupPasswordHelper.withRegisteredNumber(number);
+
+    String token = LoginDao.generateAuthToken(TestConfiguration.jdbiTest, number);
+    assertThat(LoginDao.isLoggedIn(TestConfiguration.jdbiTest, token)).isTrue();
+    assertThat(LoginDao.isLoggedIn(TestConfiguration.jdbiTest, "wrong value")).isFalse();
   }
 }

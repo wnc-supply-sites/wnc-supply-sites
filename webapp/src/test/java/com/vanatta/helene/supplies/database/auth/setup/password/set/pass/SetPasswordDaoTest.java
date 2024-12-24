@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SetPasswordDaoTest {
-  String number = "123___4422";
+  String number = "1230004223";
   String csrf = "csrf token";
   String accessCode = "333666";
   String validation = "validation auth token";
@@ -47,8 +47,10 @@ class SetPasswordDaoTest {
    */
   @Test
   void updatePasswordUsingValidationToken() {
-    assertThat(PasswordDao.confirmPassword(jdbiTest, number, newPassword)).isFalse();
+    assertThat(PasswordDao.confirmPassword(jdbiTest, "1230004223", newPassword)).isFalse();
     SetPasswordDao.updatePassword(jdbiTest, validation, newPassword);
-    assertThat(PasswordDao.confirmPassword(jdbiTest, number, newPassword)).isTrue();
+    assertThat(PasswordDao.confirmPassword(jdbiTest, "1230004223", newPassword)).isTrue();
+    assertThat(PasswordDao.confirmPassword(jdbiTest, "123.000.4223", newPassword)).isTrue();
+    assertThat(PasswordDao.confirmPassword(jdbiTest, "(123) 000-4223", newPassword)).isTrue();
   }
 }

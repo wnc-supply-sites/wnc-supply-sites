@@ -28,7 +28,7 @@ class HashingUtilTest {
     var result = HashingUtil.sha256("input");
     assertThat(result).hasSize(64);
   }
-  
+
   @Test
   void bcryptUsage() {
     var hash = HashingUtil.bcrypt("hopping rabbit");

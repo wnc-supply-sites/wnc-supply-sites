@@ -8,6 +8,7 @@ public class SetupPasswordHelper {
   public static void setup() {
     String script =
         """
+        delete from wss_user_auth_key;
         delete from wss_user_pass_change_history;
         delete from sms_passcode;
         delete from wss_user;
@@ -18,7 +19,7 @@ public class SetupPasswordHelper {
   public static void withRegisteredNumber(String number) {
     String insert =
         """
-        insert into wss_user(id, public_id, phone) values(-1, '123', :phone)
+        insert into wss_user(id, phone) values(-1, :phone)
         """;
     TestConfiguration.jdbiTest.withHandle(
         handle -> handle.createUpdate(insert).bind("phone", number).execute());

@@ -9,11 +9,11 @@ public class HashingUtil {
   public static String sha256(String input) {
     return DigestUtils.sha256Hex(input);
   }
-  
+
   public static String bcrypt(final String password) {
     return BCrypt.with(LongPasswordStrategies.none()).hashToString(10, password.toCharArray());
   }
-  
+
   public static boolean verifyBCryptHash(final String password, final String hash) {
     return BCrypt.verifyer(null, LongPasswordStrategies.none())
         .verify(password.toCharArray(), hash.toCharArray())

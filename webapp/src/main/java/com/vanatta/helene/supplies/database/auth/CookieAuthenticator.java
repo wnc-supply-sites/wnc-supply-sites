@@ -1,8 +1,7 @@
 package com.vanatta.helene.supplies.database.auth;
 
-import jakarta.servlet.http.Cookie;
+import com.vanatta.helene.supplies.database.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
 
@@ -15,28 +14,22 @@ public class CookieAuthenticator {
   /** AuthKey value is cached. */
   @Getter private final String authKey;
 
+  private final Jdbi jdbi;
+
   public CookieAuthenticator(Jdbi jdbi) {
     authKey = LoginDao.getAuthKeyOrGenerateIt(jdbi);
+    this.jdbi = jdbi;
   }
 
   public boolean isAuthenticated(HttpServletRequest request) {
-    // check auth cookie is present
-    Cookie[] cookies = request.getCookies();
-    if (cookies == null) {
-      return false;
-    }
+    return CookieUtil.readCookieValue(request, "auth")
+        .map(auth -> LoginDao.isLoggedIn(jdbi, auth))
+        .orElse(false);
+  }
 
-    Cookie authCookie =
-        Arrays.stream(cookies).filter(c -> c.getName().equals("auth")).findAny().orElse(null);
-
-    if (authCookie == null) {
-      return false;
-    } else {
-      if (authKey.equals(authCookie.getValue())) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+  public boolean isAuthenticatedWithUniversalPassword(HttpServletRequest request) {
+    return CookieUtil.readCookieValue(request, "auth")
+        .map(auth -> auth.equals(authKey))
+        .orElse(false);
   }
 }

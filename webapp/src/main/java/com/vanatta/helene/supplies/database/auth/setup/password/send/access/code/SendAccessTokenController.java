@@ -60,7 +60,7 @@ public class SendAccessTokenController {
                   """
                     Phone number is not registered.
                     The phone number associated with the site or that you used during driver sign up is required.
-                    Please contact us to get your number registered.
+                    Please <a href="/registration/registration.html">contact us</a> to get your number registered.
                   """));
     }
 

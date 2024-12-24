@@ -43,8 +43,6 @@ public class SuppliesController {
         "notAcceptingDonationsChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("overSupplyChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("availableChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
-
-    templateValues.put("loggedIn", cookieAuthenticator.isAuthenticated(request));
     return new ModelAndView("supplies/supplies", templateValues);
   }
 
@@ -66,7 +64,7 @@ public class SuppliesController {
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(
       HttpServletRequest httpRequest, @RequestBody SiteSupplyRequest request) {
-    boolean authenticated = cookieAuthenticator.isAuthenticated(httpRequest);
+    boolean authenticated = cookieAuthenticator.isAuthenticatedWithUniversalPassword(httpRequest);
     return getSuppliesData(request, authenticated);
   }
 
