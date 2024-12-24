@@ -174,7 +174,36 @@ public class SiteDetailController {
     siteDetails.put(
         TemplateParams.GOOGLE_MAPS_ADDRESS.text,
         String.format("%s, %s", urlEncode(addressLine1), urlEncode(addressLine2)));
-
+    
+    // site supplies
+    List<SuppliesDao.SuppliesQueryResult> supplies =
+        SuppliesDao.getSupplyResults(
+            jdbi, SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build());
+    List<InventoryItem> needs =
+        supplies.stream()
+            .filter(i -> i.getItem() != null)
+            .filter(i -> ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
+            .map(InventoryItem::new)
+            .toList();
+    List<List<InventoryItem>> needsSplit = ListSplitter.splitItemList(needs, 8);
+    siteDetails.put(TemplateParams.NEEDS_LIST1.text, needsSplit.getFirst());
+    siteDetails.put(
+        TemplateParams.NEEDS_LIST2.text, needsSplit.size() > 1 ? needsSplit.get(1) : List.of());
+    siteDetails.put(TemplateParams.HAS_NEEDS.text, needs.isEmpty() ? null : true);
+    
+    List<InventoryItem> available =
+        supplies.stream()
+            .filter(i -> i.getItem() != null)
+            .filter(i -> !ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
+            .map(InventoryItem::new)
+            .toList();
+    List<List<InventoryItem>> availableSplit = ListSplitter.splitItemList(available, 8);
+    siteDetails.put(TemplateParams.AVAILABLE_LIST1.text, availableSplit.getFirst());
+    siteDetails.put(
+        TemplateParams.AVAILABLE_LIST2.text,
+        availableSplit.size() > 1 ? availableSplit.get(1) : List.of());
+    siteDetails.put(TemplateParams.HAS_AVAILABLE.text, available.isEmpty() ? null : true);
+    
     if (isLoggedIn) {
       siteDetails.put(TemplateParams.HAS_FORK_LIFT.text, siteDetailData.isHasForklift());
       siteDetails.put(TemplateParams.HAS_LOADING_DOCK.text, siteDetailData.isHasLoadingDock());
@@ -214,35 +243,6 @@ public class SiteDetailController {
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
-
-      // site supplies
-      List<SuppliesDao.SuppliesQueryResult> supplies =
-          SuppliesDao.getSupplyResults(
-              jdbi, SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build());
-      List<InventoryItem> needs =
-          supplies.stream()
-              .filter(i -> i.getItem() != null)
-              .filter(i -> ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
-              .map(InventoryItem::new)
-              .toList();
-      List<List<InventoryItem>> needsSplit = ListSplitter.splitItemList(needs, 8);
-      siteDetails.put(TemplateParams.NEEDS_LIST1.text, needsSplit.getFirst());
-      siteDetails.put(
-          TemplateParams.NEEDS_LIST2.text, needsSplit.size() > 1 ? needsSplit.get(1) : List.of());
-      siteDetails.put(TemplateParams.HAS_NEEDS.text, needs.isEmpty() ? null : true);
-
-      List<InventoryItem> available =
-          supplies.stream()
-              .filter(i -> i.getItem() != null)
-              .filter(i -> !ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
-              .map(InventoryItem::new)
-              .toList();
-      List<List<InventoryItem>> availableSplit = ListSplitter.splitItemList(available, 8);
-      siteDetails.put(TemplateParams.AVAILABLE_LIST1.text, availableSplit.getFirst());
-      siteDetails.put(
-          TemplateParams.AVAILABLE_LIST2.text,
-          availableSplit.size() > 1 ? availableSplit.get(1) : List.of());
-      siteDetails.put(TemplateParams.HAS_AVAILABLE.text, available.isEmpty() ? null : true);
 
       // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =

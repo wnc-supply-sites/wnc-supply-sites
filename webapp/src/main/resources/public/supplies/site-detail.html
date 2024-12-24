@@ -215,8 +215,10 @@
 
         <h2>
             Inventory
-            {{#loggedIn}}<a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>
-            <span class="privately-visible">*</span>{{/loggedIn}}
+            {{#loggedIn}}
+            <a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>
+            <span class="privately-visible">*</span>
+            {{/loggedIn}}
         </h2>
         <div class="table-container">
             <table class="inventory-table">
