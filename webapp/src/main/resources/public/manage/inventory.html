@@ -11,21 +11,13 @@
 </head>
 
 <body>
-<h1>
-  <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
-  WNC Supply Sites - Site Management
-</h1>
-
-<div id="error-div">ERR</div>
-
+{{> header }}
+<h2>{{siteName}} Inventory</h2>
 
 <div class="back-link">
   <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
 </div>
-
-<h2>{{siteName}}</h2>
-
-<h3>Site Inventory</h3>
+<div id="error-div"></div>
 
 <ul>
   <li>Unchecked items will be removed from the site inventory listing.</li>

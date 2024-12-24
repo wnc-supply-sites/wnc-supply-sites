@@ -27,6 +27,8 @@ public class SetPasswordController {
 
     if (setPasswordRequest.getPassword() == null || setPasswordRequest.getPassword().length() < 5) {
       return ResponseEntity.badRequest().body(new SetPasswordResponse("Password too short"));
+    } else if(EasyPasswordList.isEasyPassword(setPasswordRequest.getPassword())) {
+      return ResponseEntity.badRequest().body(new SetPasswordResponse("Password is too easy to guess"));
     }
 
     boolean success =

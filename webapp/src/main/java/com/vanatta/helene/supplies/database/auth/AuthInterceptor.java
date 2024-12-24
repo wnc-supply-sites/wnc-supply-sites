@@ -51,7 +51,6 @@ public class AuthInterceptor implements WebMvcConfigurer {
 
       String requestUri = request.getRequestURI();
       if (requestUri.startsWith("/manage/")) {
-
         String queryString = request.getQueryString();
         if (queryString != null) {
           requestUri += URLEncoder.encode("?" + queryString, StandardCharsets.UTF_8);

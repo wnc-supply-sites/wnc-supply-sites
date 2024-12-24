@@ -202,3 +202,17 @@ button {
 .gap-1 {
   gap: 1rem;
 }
+
+.logout {
+    width: 100px;
+    margin-left: 15px;
+    margin-top: 5px;
+}
+
+h1 {
+    margin-top: 0px;
+}
+
+h2 {
+    margin-top: 0px;
+}

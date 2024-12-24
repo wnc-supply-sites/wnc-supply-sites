@@ -9,19 +9,14 @@
 </head>
 
 <body>
-
-<h1>
-  <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
-  WNC Supply Sites - Site Management
-</h1>
+{{> header }}
+<h2 id="site-name-header">{{siteName}}</h2>
 
 <div class="back-link">
   <a href="/manage/select-site">[&larr; Go Back]</a>
 </div>
 
 <div id="site-manage-select-div">
-  <h2 id="site-name-header">{{siteName}}</h2>
-
   <div class="nav-button-container">
     <a href="/manage/inventory?siteId={{siteId}}" id="manage-site-inventory-href">
       <button type="button" class="nav-button very-wide-button">Manage Site Inventory</button>

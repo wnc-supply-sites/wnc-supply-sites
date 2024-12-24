@@ -28,6 +28,48 @@ class ConfirmAccessCodeControllerTest {
     assertThat(request.getCsrf()).isEqualTo("1a24abcd-029f-49fe-8d76-af1c4b93bc28");
   }
 
+  @Test
+  void validConfirmCodeRequest() {
+    assertThat(ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder().build().isValid())
+        .isFalse();
+    assertThat(
+            ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder()
+                .csrf("value")
+                .build()
+                .isValid())
+        .isFalse();
+    assertThat(
+            ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder()
+                .confirmCode("123456")
+                .build()
+                .isValid())
+        .isFalse();
+
+    assertThat(
+            ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder()
+                .csrf("value")
+                .confirmCode("123456")
+                .build()
+                .isValid())
+        .isTrue();
+
+    assertThat(
+            ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder()
+                .csrf("value")
+                .confirmCode("1234567")
+                .build()
+                .isValid())
+        .isFalse();
+
+    assertThat(
+            ConfirmAccessCodeController.ConfirmAccessCodeRequest.builder()
+                .csrf("value")
+                .confirmCode("12345")
+                .build()
+                .isValid())
+        .isFalse();
+  }
+
   /**
    * Send a valid access token with CSRF. This should create a validation token in database and that
    * token will be returned to us. The test objct is set up to generate a hardcoded validation
