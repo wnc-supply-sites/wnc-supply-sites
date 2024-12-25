@@ -86,7 +86,6 @@ public class AddSiteController {
             .receivingNotes(params.get("receivingNotes"))
             .contactName(params.get("contactName"))
             .contactNumber(params.get("contactNumber"))
-            .contactEmail(params.get("contactEmail"))
             .additionalContacts(params.get("additionalContacts"))
             .build();
     if (addSiteData.isMissingRequiredData()) {

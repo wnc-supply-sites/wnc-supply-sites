@@ -31,7 +31,6 @@ public class SiteDetailDao {
     String siteType;
     String contactName;
     String contactNumber;
-    String contactEmail;
     String additionalContacts;
     String address;
     String city;
@@ -65,7 +64,6 @@ public class SiteDetailDao {
                               st.name siteType,
                               s.contact_name,
                               s.contact_number,
-                              s.contact_email,
                               s.additional_contacts,
                               s.address,
                               s.city,

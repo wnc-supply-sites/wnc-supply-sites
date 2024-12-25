@@ -40,7 +40,6 @@ class AddSiteControllerTest {
 
     newSiteParams.put("contactName", "contactName");
     newSiteParams.put("contactNumber", "contactNumber");
-    newSiteParams.put("contactEmail", "contactEmail");
     newSiteParams.put("additionalContacts", "additionalContacts");
 
     ResponseEntity<String> result = addSiteController.postNewSite(newSiteParams);
@@ -70,7 +69,6 @@ class AddSiteControllerTest {
 
     assertThat(data.getContactName()).isEqualTo("contactName");
     assertThat(data.getContactNumber()).isEqualTo("contactNumber");
-    assertThat(data.getContactEmail()).isEqualTo("contactEmail");
     assertThat(data.getAdditionalContacts()).isEqualTo("additionalContacts");
   }
 }

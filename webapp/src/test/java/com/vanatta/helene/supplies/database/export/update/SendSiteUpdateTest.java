@@ -58,7 +58,6 @@ class SendSiteUpdateTest {
     assertThat(siteDataResult.getSiteName()).isNotNull();
     assertThat(siteDataResult.getSiteTypes()).contains("POD", "POC");
     assertThat(siteDataResult.getContactNumber()).isNotNull();
-    assertThat(siteDataResult.getContactEmail()).isNotNull();
     assertThat(siteDataResult.getContactName()).isNotNull();
     assertThat(siteDataResult.getAddress()).isNotNull();
     assertThat(siteDataResult.getCity()).isNotNull();

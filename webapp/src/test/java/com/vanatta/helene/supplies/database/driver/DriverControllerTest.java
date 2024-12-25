@@ -13,7 +13,6 @@ class DriverControllerTest {
      {
         "airtableId":34,
         "fullName":"Test Driver",
-        "email":"exampleEmail",
         "phone":"(919) 111-1111",
         "active":true,
         "location":"nowheresville"
@@ -25,7 +24,6 @@ class DriverControllerTest {
     DriverController.DriverJson driver = DriverController.DriverJson.parseJson(exampleInput);
     assertThat(driver.getAirtableId()).isEqualTo(34);
     assertThat(driver.getFullName()).isEqualTo("Test Driver");
-    assertThat(driver.getEmail()).isEqualTo("exampleEmail");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");
     assertThat(driver.isActive()).isEqualTo(true);
     assertThat(driver.getLocation()).isEqualTo("nowheresville");
@@ -39,7 +37,6 @@ class DriverControllerTest {
 
     DriverDao.Driver driver = DriverDao.lookupByAirtableId(34L);
     assertThat(driver.getFullName()).isEqualTo("Test Driver");
-    assertThat(driver.getEmail()).isEqualTo("exampleEmail");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");
     assertThat(driver.isActive()).isEqualTo(true);
     assertThat(driver.getLocation()).isEqualTo("nowheresville");

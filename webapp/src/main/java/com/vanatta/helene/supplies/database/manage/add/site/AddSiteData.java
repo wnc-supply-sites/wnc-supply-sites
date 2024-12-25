@@ -29,7 +29,6 @@ public class AddSiteData {
 
   String contactName;
   String contactNumber;
-  String contactEmail;
   String additionalContacts;
 
   @SuppressWarnings("ConstantValue")

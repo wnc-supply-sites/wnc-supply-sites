@@ -57,13 +57,6 @@ public class SiteDetailTest {
 
   @Nested
   class ContactHref {
-    @Test
-    void email() {
-      String input = "email@domain.com";
-      var output = SiteDetailController.ContactHref.newMailTo(input);
-      assertThat(output.getHref()).isEqualTo("mailTo:email@domain.com");
-      assertThat(output.getTitle()).isEqualTo("email@domain.com");
-    }
 
     @Test
     void phoneNumber() {

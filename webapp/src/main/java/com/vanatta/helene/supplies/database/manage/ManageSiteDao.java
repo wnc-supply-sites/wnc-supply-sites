@@ -56,7 +56,6 @@ public class ManageSiteDao {
     SITE_HOURS("hours", "Site Hours", false, false),
     CONTACT_NAME("contact_name", "Contact Name", false, false),
     CONTACT_NUMBER("contact_number", "Contact Number", false, false),
-    CONTACT_EMAIL("contact_email", "Contact Email", false, false),
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false, false),
     MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false, false),
     RECEIVING_NOTES("receiving_notes", "receiving notes", false, false),

@@ -83,7 +83,6 @@ public class SendSiteUpdate {
               s.name siteName,
               st.name siteType,
               s.contact_number,
-              s.contact_email,
               s.contact_name,
               s.address,
               s.city,
@@ -136,7 +135,6 @@ public class SendSiteUpdate {
     String state;
     String county;
 
-    String contactEmail;
     String contactNumber;
     String contactName;
     String additionalContacts;
@@ -167,7 +165,6 @@ public class SendSiteUpdate {
     String siteName;
     List<String> siteTypes;
     String contactNumber;
-    String contactEmail;
     String contactName;
     String additionalContacts;
     String address;
@@ -203,7 +200,6 @@ public class SendSiteUpdate {
         siteTypes.add("HUB");
       }
       this.contactNumber = result.getContactNumber();
-      this.contactEmail = result.getContactEmail();
       this.contactName = result.getContactName();
       this.additionalContacts = result.getAdditionalContacts();
       this.address = result.getAddress();

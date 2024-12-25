@@ -57,7 +57,6 @@ public class SiteDetailController {
     HAS_INDOOR_STORAGE("hasIndoorStorage"),
     CONTACT_NAME("contactName"),
     CONTACT_NUMBER("contactNumber"),
-    CONTACT_EMAIL("contactEmail"),
     ADDITIONAL_CONTACTS("additionalContacts"),
 
     HAS_NEEDS("hasNeeds"),
@@ -174,7 +173,7 @@ public class SiteDetailController {
     siteDetails.put(
         TemplateParams.GOOGLE_MAPS_ADDRESS.text,
         String.format("%s, %s", urlEncode(addressLine1), urlEncode(addressLine2)));
-    
+
     // site supplies
     List<SuppliesDao.SuppliesQueryResult> supplies =
         SuppliesDao.getSupplyResults(
@@ -190,7 +189,7 @@ public class SiteDetailController {
     siteDetails.put(
         TemplateParams.NEEDS_LIST2.text, needsSplit.size() > 1 ? needsSplit.get(1) : List.of());
     siteDetails.put(TemplateParams.HAS_NEEDS.text, needs.isEmpty() ? null : true);
-    
+
     List<InventoryItem> available =
         supplies.stream()
             .filter(i -> i.getItem() != null)
@@ -203,7 +202,7 @@ public class SiteDetailController {
         TemplateParams.AVAILABLE_LIST2.text,
         availableSplit.size() > 1 ? availableSplit.get(1) : List.of());
     siteDetails.put(TemplateParams.HAS_AVAILABLE.text, available.isEmpty() ? null : true);
-    
+
     if (isLoggedIn) {
       siteDetails.put(TemplateParams.HAS_FORK_LIFT.text, siteDetailData.isHasForklift());
       siteDetails.put(TemplateParams.HAS_LOADING_DOCK.text, siteDetailData.isHasLoadingDock());
@@ -219,11 +218,6 @@ public class SiteDetailController {
           siteDetailData.getContactNumber() == null || siteDetailData.getContactNumber().isBlank()
               ? null
               : ContactHref.newTelephone(siteDetailData.getContactNumber()));
-      siteDetails.put(
-          TemplateParams.CONTACT_EMAIL.text,
-          siteDetailData.getContactEmail() == null
-              ? null
-              : ContactHref.newMailTo(siteDetailData.getContactEmail()));
 
       siteDetails.put(
           TemplateParams.ADDITIONAL_CONTACTS.text, siteDetailData.getAdditionalContacts());
@@ -294,10 +288,6 @@ public class SiteDetailController {
 
     static ContactHref newTelephone(String number) {
       return new ContactHref(number, "tel");
-    }
-
-    static ContactHref newMailTo(String email) {
-      return new ContactHref(email, "mailTo");
     }
 
     private ContactHref(String number, String contactType) {

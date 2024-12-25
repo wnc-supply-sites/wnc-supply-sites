@@ -27,7 +27,6 @@ public class DriverController {
   static class DriverJson {
     private long airtableId;
     private String fullName;
-    private String email;
     private String phone;
     private boolean active;
     private String location;

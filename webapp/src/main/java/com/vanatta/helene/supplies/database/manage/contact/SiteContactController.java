@@ -39,8 +39,6 @@ public class SiteContactController {
     pageParams.put(
         PageParam.SITE_CONTACT_NAME.text, Optional.ofNullable(data.getContactName()).orElse(""));
     pageParams.put(
-        PageParam.SITE_CONTACT_EMAIL.text, Optional.ofNullable(data.getContactEmail()).orElse(""));
-    pageParams.put(
         PageParam.SITE_CONTACT_NUMBER.text,
         Optional.ofNullable(data.getContactNumber()).orElse(""));
     pageParams.put(
@@ -55,7 +53,6 @@ public class SiteContactController {
     SITE_ID("siteId"),
     SITE_NAME("siteName"),
     SITE_CONTACT_NAME("siteContactName"),
-    SITE_CONTACT_EMAIL("siteContactEmail"),
     SITE_CONTACT_NUMBER("siteContactNumber"),
     ADDITIONAL_CONTACTS("additionalContacts"),
     ;
