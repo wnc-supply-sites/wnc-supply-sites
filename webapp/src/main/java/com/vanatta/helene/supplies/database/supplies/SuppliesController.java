@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -95,6 +96,12 @@ public class SuppliesController {
                           .acceptingDonations(result.isAcceptingDonations())
                           .inventoryLastUpdated(
                               result.getInventoryLastUpdated().format(dateTimeFormatter))
+                          .lastDelivery(
+                              isAuthenticated
+                                  ? Optional.ofNullable(result.getLastDeliveryDate())
+                                      .map(d -> d.format(dateTimeFormatter))
+                                      .orElse(null)
+                                  : null)
                           .build());
           // add items to the corresponding needed or available lists
           if (result.getItem() != null) {

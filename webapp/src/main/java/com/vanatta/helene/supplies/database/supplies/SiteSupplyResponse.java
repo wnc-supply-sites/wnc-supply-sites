@@ -26,6 +26,7 @@ public class SiteSupplyResponse {
     @Builder.Default List<SiteItem> availableItems = new ArrayList<>();
     boolean acceptingDonations;
     String inventoryLastUpdated;
+    String lastDelivery;
   }
 
   @Value

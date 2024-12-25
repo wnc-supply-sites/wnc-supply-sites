@@ -61,10 +61,13 @@ async function updateData() {
                       <span>${r.county} County</span>
                       <span>${r.siteType === "Supply Hub" ? supplyHubHtml : ''}</span>
                       <span>${r.acceptingDonations ? '' : notAcceptingDonationsHtml}</span>
-                      <div>
+                      <div class="vertical">
                         <span>Last Updated</span>
                         <span>${r.inventoryLastUpdated}</span>
                       </div>
+                      ${r.lastDelivery  ?
+                        "<div class='vertical'><span>Last Delivery</span><span>" + r.lastDelivery + "</span></div>" : ""
+                      }
                     </div>
                   </td>
                   <td>${formatItems(r.neededItems)}</td>

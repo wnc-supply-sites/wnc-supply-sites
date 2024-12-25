@@ -21,6 +21,7 @@ public class SuppliesDao {
     String item;
     String itemStatus;
     LocalDate inventoryLastUpdated;
+    LocalDate lastDeliveryDate;
   }
 
   public static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
@@ -36,14 +37,18 @@ public class SuppliesDao {
         c.name county,
         i.name item,
         ist.name itemStatus,
-        s.inventory_last_updated inventoryLastUpdated
+        s.inventory_last_updated inventoryLastUpdated,
+        max(d.target_delivery_date) lastDeliveryDate
       from site s
       join site_type st on st.id = s.site_type_id
       join county c on c.id = s.county_id
       left join site_item si on si.site_id = s.id
       left join item i on i.id = si.item_id
       left join item_status ist on ist.id = si.item_status_id
+      left join delivery d on d.to_site_id = s.id
       where s.active = true
+         and (
+           d.delivery_status is null or d.delivery_status = 'Delivery Completed')
       """);
 
     if (!request.getSites().isEmpty()) {
@@ -80,7 +85,21 @@ public class SuppliesDao {
       query.append("and s.publicly_visible = true").append("\n");
     }
 
-    query.append("\norder by c.name, s.name, ist.sort_order, i.name");
+    query.append(
+        """
+      group by
+        s.id,
+        s.accepting_donations,
+        s.distributing_supplies,
+        s.name,
+        st.name,
+        c.name,
+        i.name,
+        ist.name,
+        s.inventory_last_updated,
+        ist.sort_order
+      order by c.name, s.name, ist.sort_order, i.name
+      """);
 
     List<String> decodedSites =
         request.getSites().stream().map(s -> s.replace("&amp;", "&")).toList();
