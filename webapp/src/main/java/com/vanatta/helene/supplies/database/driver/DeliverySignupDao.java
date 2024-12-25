@@ -204,6 +204,8 @@ public class DeliverySignupDao {
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
             WHERE ist.name IN ('Urgently Needed', 'Needed')
+              and s.active = true
+              and s.accepting_donations = true
         ),
         oversupply_sites AS (
             SELECT si.site_id, si.item_id
