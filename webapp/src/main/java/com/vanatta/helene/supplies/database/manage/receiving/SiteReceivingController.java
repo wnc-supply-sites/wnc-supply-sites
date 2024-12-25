@@ -41,9 +41,6 @@ public class SiteReceivingController {
     pageParams.put(PageParam.SITE_NAME.text, data.getSiteName());
     pageParams.put(PageParam.HOURS.text, Optional.ofNullable(data.getHours()).orElse(""));
 
-    pageParams.put(PageParam.HAS_FORKLIST.text, data.isHasForklift());
-    pageParams.put(PageParam.HAS_INDOOR_STORAGE.text, data.isHasIndoorStorage());
-    pageParams.put(PageParam.HAS_LOADING_DOCK.text, data.isHasLoadingDock());
     pageParams.put(PageParam.RECEIVING_NOTES.text, data.getReceivingNotes());
 
     List<HtmlSelectOptionsUtil.ItemListing> maxSupplyOptions =
@@ -63,49 +60,8 @@ public class SiteReceivingController {
     SITE_NAME("siteName"),
     HOURS("hours"),
     MAX_SUPPLY_OPTIONS("maxSupplyDeliveryOptions"),
-    HAS_FORKLIST("hasForklift"),
-    HAS_LOADING_DOCK("hasLoadingDock"),
-    HAS_INDOOR_STORAGE("hasIndoorStorage"),
     RECEIVING_NOTES("receivingNotes"),
     ;
     final String text;
-  }
-
-  @AllArgsConstructor
-  enum SiteReceivingParam {
-    SITE_ID("siteId"),
-    HAS_FORKLIFT("hasForkLift"),
-    HAS_LOADING_DOCK("hasLoadingDock"),
-    HAS_INDOOR_STORAGE("hasIndoorStorage");
-
-    final String text;
-  }
-
-  @PostMapping("/manage/update-site-receiving")
-  ResponseEntity<?> updateSiteReceiving(@RequestBody Map<String, String> params) {
-    log.info("Update site receiving request received: {}", params);
-    boolean hasAllData =
-        params
-            .keySet()
-            .containsAll(Arrays.stream(SiteReceivingParam.values()).map(v -> v.text).toList());
-    if (!hasAllData) {
-      log.warn("Bad request received to update site data, missing input. Received: {}", params);
-      return ResponseEntity.badRequest().body("Bad request - missing data");
-    }
-
-    long siteId = Long.parseLong(params.get(SiteReceivingParam.SITE_ID.text));
-
-    var capabilities =
-        ManageSiteDao.ReceivingCapabilities.builder()
-            .forklift(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_FORKLIFT.text)))
-            .loadingDock(Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_LOADING_DOCK.text)))
-            .indoorStorage(
-                Boolean.parseBoolean(params.get(SiteReceivingParam.HAS_INDOOR_STORAGE.text)))
-            .build();
-
-    ManageSiteDao.updateReceivingCapabilities(jdbi, siteId, capabilities);
-
-    sendSiteUpdate.sendFullUpdate(siteId);
-    return ResponseEntity.ok().body("updated");
   }
 }

@@ -148,9 +148,6 @@ public class SendSiteUpdate {
     boolean distributingSupplies;
 
     String maxSupplyTruckSize;
-    boolean hasForkLift;
-    boolean hasIndoorStorage;
-    boolean hasLoadingDock;
 
     String inactiveReason;
   }
@@ -179,9 +176,6 @@ public class SendSiteUpdate {
     boolean publiclyVisible;
 
     String maxSupplyTruckSize;
-    boolean hasForkLift;
-    boolean hasIndoorStorage;
-    boolean hasLoadingDock;
     String inactiveReason;
 
     SiteExportJson(SiteExportDataResult result) {
@@ -221,10 +215,6 @@ public class SendSiteUpdate {
       }
 
       this.maxSupplyTruckSize = result.getMaxSupplyTruckSize();
-      this.hasForkLift = result.hasForkLift;
-      this.hasIndoorStorage = result.hasIndoorStorage;
-      this.hasLoadingDock = result.hasLoadingDock;
-
       this.inactiveReason = result.getInactiveReason();
     }
   }

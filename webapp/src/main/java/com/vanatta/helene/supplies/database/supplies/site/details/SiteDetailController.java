@@ -52,9 +52,6 @@ public class SiteDetailController {
     ADDRESS_LINE1("addressLine1"),
     ADDRESS_LINE2("addressLine2"),
     GOOGLE_MAPS_ADDRESS("googleMapsAddress"),
-    HAS_FORK_LIFT("hasForklift"),
-    HAS_LOADING_DOCK("hasLoadingDock"),
-    HAS_INDOOR_STORAGE("hasIndoorStorage"),
     CONTACT_NAME("contactName"),
     CONTACT_NUMBER("contactNumber"),
     ADDITIONAL_CONTACTS("additionalContacts"),
@@ -204,10 +201,6 @@ public class SiteDetailController {
     siteDetails.put(TemplateParams.HAS_AVAILABLE.text, available.isEmpty() ? null : true);
 
     if (isLoggedIn) {
-      siteDetails.put(TemplateParams.HAS_FORK_LIFT.text, siteDetailData.isHasForklift());
-      siteDetails.put(TemplateParams.HAS_LOADING_DOCK.text, siteDetailData.isHasLoadingDock());
-      siteDetails.put(TemplateParams.HAS_INDOOR_STORAGE.text, siteDetailData.isHasIndoorStorage());
-
       siteDetails.put(
           TemplateParams.CONTACT_NAME.text,
           siteDetailData.getContactName() == null || siteDetailData.getContactName().isBlank()

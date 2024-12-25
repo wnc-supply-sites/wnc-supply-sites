@@ -36,9 +36,6 @@ insert into site(
   wss_id,
   publicly_visible,
   distributing_supplies,
-  has_forklift,
-  has_indoor_storage,
-  has_loading_dock,
   max_supply_load_id,
   inactive_reason)
 values (
@@ -56,9 +53,6 @@ values (
         'our hours',
         'fb url',
         -10,
-        true,
-        true,
-        true,
         true,
         true,
         (select id from max_supply_load where name = 'Car'),

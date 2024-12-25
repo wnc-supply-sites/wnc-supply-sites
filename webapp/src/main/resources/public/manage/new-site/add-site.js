@@ -22,9 +22,6 @@ async function saveNewSite() {
       .checked ? "Distribution Center" : "Supply Hub";
   const siteHours = document.getElementById("Site Hours");
 
-  const hasForkLift = document.getElementById('hasForklift');
-  const hasLoadingDock = document.getElementById('hasLoadingDock');
-  const hasIndoorStorage = document.getElementById('hasIndoorStorage');
   const maxSupplyLoad = document.getElementById('maxSupplyLoad');
   const receivingNotes = document.getElementById('receivingNotes');
 
@@ -56,9 +53,6 @@ async function saveNewSite() {
       siteType: siteType.trim(),
       siteHours: siteHours.value.trim(),
 
-      hasForklift: hasForkLift.checked,
-      hasLoadingDock: hasLoadingDock.checked,
-      hasIndoorStorage: hasIndoorStorage.checked,
       maxSupplyLoad: maxSupplyLoad.value,
       receivingNotes: receivingNotes.value.trim(),
 
@@ -117,11 +111,7 @@ function showSuccess(editSiteUrl, siteName) {
   document.getElementById("Facebook").value = "";
   document.getElementById("Site Hours").value = "";
 
-  document.getElementById('hasForklift').checked = false;
-  document.getElementById('hasLoadingDock').checked = false;
-  document.getElementById('hasIndoorStorage').checked = false;
   document.getElementById('receivingNotes').value = "";
-
   document.getElementById("Contact Name").value = "";
   document.getElementById("Contact Number").value = "";
   document.getElementById("Contact Email").value = "";

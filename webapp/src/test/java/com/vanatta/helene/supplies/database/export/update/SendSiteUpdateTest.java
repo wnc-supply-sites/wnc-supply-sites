@@ -70,10 +70,6 @@ class SendSiteUpdateTest {
     assertThat(siteDataResult.isPubliclyVisible()).isTrue();
     assertThat(siteDataResult.getHours()).isNotNull();
     assertThat(siteDataResult.getMaxSupplyTruckSize()).isNotNull();
-    assertThat(siteDataResult.isHasForkLift()).isNotNull();
-    assertThat(siteDataResult.isHasIndoorStorage()).isNotNull();
-    assertThat(siteDataResult.isHasLoadingDock()).isNotNull();
-
     assertThat(siteDataResult.getInactiveReason()).isNotNull();
   }
 

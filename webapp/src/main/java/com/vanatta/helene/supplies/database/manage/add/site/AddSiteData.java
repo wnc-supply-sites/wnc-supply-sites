@@ -21,9 +21,6 @@ public class AddSiteData {
   @Nonnull SiteType siteType;
   String siteHours;
 
-  boolean hasForklift;
-  boolean hasLoadingDock;
-  boolean hasIndoorStorage;
   @Nonnull String maxSupplyLoad;
   String receivingNotes;
 

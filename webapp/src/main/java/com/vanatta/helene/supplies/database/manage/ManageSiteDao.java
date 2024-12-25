@@ -437,35 +437,4 @@ public class ManageSiteDao {
                 .bind("siteTypeName", siteType.getText())
                 .execute());
   }
-
-  @Builder
-  @Value
-  public static class ReceivingCapabilities {
-    boolean forklift;
-    boolean loadingDock;
-    boolean indoorStorage;
-  }
-
-  public static void updateReceivingCapabilities(
-      Jdbi jdbi, long siteId, ReceivingCapabilities receivingCapabilities) {
-    String update =
-        """
-        update site
-        set
-          has_forklift = :forklift,
-          has_loading_dock = :loadingDock,
-          has_indoor_storage = :indoorStorage
-        where id = :siteId
-        """;
-
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate(update)
-                .bind("forklift", receivingCapabilities.forklift)
-                .bind("loadingDock", receivingCapabilities.loadingDock)
-                .bind("indoorStorage", receivingCapabilities.indoorStorage)
-                .bind("siteId", siteId)
-                .execute());
-  }
 }

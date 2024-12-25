@@ -46,9 +46,6 @@ public class SiteDetailDao {
     long wssId;
     String inactiveReason;
     String maxSupply;
-    boolean hasForklift;
-    boolean hasLoadingDock;
-    boolean hasIndoorStorage;
     String receivingNotes;
   }
 
@@ -79,9 +76,6 @@ public class SiteDetailDao {
                               s.wss_id,
                               s.inactive_reason,
                               msl.name maxSupply,
-                              s.has_forklift,
-                              s.has_loading_dock,
-                              s.has_indoor_storage,
                               s.receiving_notes
                             from site s
                             join county c on c.id = s.county_id
