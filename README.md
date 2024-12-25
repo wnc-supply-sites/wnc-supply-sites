@@ -238,6 +238,16 @@ Restart staging with:
 check staging logs:
 `docker logs -f staging`
 
+### DB Quickstart
+
+Connect to database
+```
+sudo -u postgres psql
+\c wnc_helene
+```
+
+View tables: `\d`
+View columns of a table: `\d [table name]`
 
 
 ### Folders with local git
@@ -399,9 +409,14 @@ sudo -u postgres psql wnc_helene < db-dump.sql
 
 DB dump from prod to staging:
 ```
-# todo: likely need to recreate test database
 sudo -u postgres pg_dump -U postgres wnc_helene > db-dump.sql
+docker stop staging
+sudo -u postgres dropdb wnc_helene_test
+echo "create database wnc_helene_test;
+alter database wnc_helene_test owner to wnc_helene;
+" | sudo -u postgres psql
 sudo -u postgres psql wnc_helene_test < db-dump.sql
+docker start staging
 rm db-dump.sql
 ```
 
