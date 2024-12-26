@@ -339,8 +339,7 @@ async function addItem(siteId) {
         </tr>
   `;
 
-  document.getElementById("inventoryTableBody").innerHTML +=
-      newItemRowHtml;
+  document.getElementById("inventoryTableBody").insertAdjacentHTML('beforeend', newItemRowHtml);
 
   document.getElementById("newItemText").value = "";
 
