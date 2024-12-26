@@ -27,8 +27,7 @@ public class AuthInterceptor implements WebMvcConfigurer {
   public AuthInterceptor(
       @Value("${auth.enabled}") String authEnabled,
       @Value("${webhook.auth.secret}") String webhookAuthSecret,
-      CookieAuthenticator cookieAuthenticator,
-      Jdbi jdbi) {
+      CookieAuthenticator cookieAuthenticator) {
     this.authEnabled = Boolean.parseBoolean(authEnabled);
     this.cookieAuthenticator = cookieAuthenticator;
     this.webhookAuthenticator = new WebhookAuthenticator(webhookAuthSecret);
