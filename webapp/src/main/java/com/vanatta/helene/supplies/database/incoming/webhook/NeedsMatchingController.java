@@ -36,10 +36,17 @@ public class NeedsMatchingController {
     this.addToDeliveryWebhook = addToDeliveryWebhook;
   }
 
+  /**
+   * Data result for a needs match request. A needs match are all eligible items at a 'from' site
+   * that match match the needs of a 'to' site.
+   */
   @Builder
   @lombok.Value
   public static class ComputedNeeds {
+    /** ID of the delivery, as received from Airtable */
     long deliveryId;
+
+    /** Results, list of items names */
     List<String> itemList;
   }
 
