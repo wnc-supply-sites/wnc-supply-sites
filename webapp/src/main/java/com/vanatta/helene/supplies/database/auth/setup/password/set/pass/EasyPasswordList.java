@@ -7,6 +7,10 @@ class EasyPasswordList {
 
   private static final List<String> easyPasswords =
       List.of(
+          "tarheel strong",
+          "jumping rabbit",
+          "big truck",
+          "move stuff",
           "password",
           "password123",
           "12345",
