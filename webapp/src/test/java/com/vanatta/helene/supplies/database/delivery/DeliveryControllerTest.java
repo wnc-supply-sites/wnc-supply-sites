@@ -257,7 +257,8 @@ class DeliveryControllerTest {
     var response = deliveryController.upsertDelivery(input);
     assertThat(response.getStatusCode().value()).isEqualTo(200);
 
-    var update = DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, "HHHH");
+    var update = DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, "HHHH")
+            .orElseThrow();
 
     assertThat(update.getDeliveryNumber()).isEqualTo(5);
     assertThat(update.getItemList())

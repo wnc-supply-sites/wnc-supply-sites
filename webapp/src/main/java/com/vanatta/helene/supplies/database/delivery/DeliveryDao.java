@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -91,104 +92,30 @@ public class DeliveryDao {
                         : deliveryUpdate.getDropOffSiteWssId().getFirst())
                 .bind("deliveryStatus", deliveryUpdate.getDeliveryStatus())
                 .bind("targetDeliveryDate", deliveryUpdate.getTargetDeliveryDate())
-                .bind(
-                    "dispatcherName",
-                    deliveryUpdate.getDispatcherName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDispatcherName().getFirst())
-                .bind(
-                    "dispatcherNumber",
-                    deliveryUpdate.getDispatcherNumber().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDispatcherNumber().getFirst())
-                .bind(
-                    "driverName",
-                    deliveryUpdate.getDriverName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDriverName().getFirst())
-                .bind(
-                    "driverNumber",
-                    deliveryUpdate.getDriverNumber().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDriverNumber().getFirst())
+                .bind("dispatcherName", firstValue(deliveryUpdate.getDispatcherName()))
+                .bind("dispatcherNumber", firstValue(deliveryUpdate.getDispatcherNumber()))
+                .bind("driverName", firstValue(deliveryUpdate.getDriverName()))
+                .bind("driverNumber", firstValue(deliveryUpdate.getDriverNumber()))
                 .bind(
                     "driverLicensePlateNumbers",
-                    deliveryUpdate.getLicensePlateNumbers().isEmpty()
-                        ? null
-                        : deliveryUpdate.getLicensePlateNumbers().getFirst())
+                    firstValue(deliveryUpdate.getLicensePlateNumbers()))
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
                 .bind("publicUrlKey", deliveryUpdate.getPublicUrlKey())
-                .bind(
-                    "pickupSiteName",
-                    deliveryUpdate.getPickupSiteName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupSiteName().getFirst())
-                .bind(
-                    "pickupContactName",
-                    deliveryUpdate.getPickupContactName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupContactName().getFirst())
-                .bind(
-                    "pickupContactPhone",
-                    deliveryUpdate.getPickupContactPhone().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupContactPhone().getFirst())
-                .bind(
-                    "pickupHours",
-                    deliveryUpdate.getPickupHours().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupHours().getFirst())
-                .bind(
-                    "pickupAddress",
-                    deliveryUpdate.getPickupAddress().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupAddress().getFirst())
-                .bind(
-                    "pickupCity",
-                    deliveryUpdate.getPickupCity().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupCity().getFirst())
-                .bind(
-                    "pickupState",
-                    deliveryUpdate.getPickupState().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupState().getFirst())
-                .bind(
-                    "dropoffSiteName",
-                    deliveryUpdate.getDropoffSiteName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffSiteName().getFirst())
-                .bind(
-                    "dropoffContactName",
-                    deliveryUpdate.getDropoffContactName().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffContactName().getFirst())
-                .bind(
-                    "dropoffContactPhone",
-                    deliveryUpdate.getDropoffContactPhone().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffContactPhone().getFirst())
-                .bind(
-                    "dropoffHours",
-                    deliveryUpdate.getDropoffHours().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffHours().getFirst())
-                .bind(
-                    "dropoffAddress",
-                    deliveryUpdate.getDropoffAddress().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffAddress().getFirst())
-                .bind(
-                    "dropoffCity",
-                    deliveryUpdate.getDropoffCity().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffCity().getFirst())
-                .bind(
-                    "dropoffState",
-                    deliveryUpdate.getDropoffState().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropoffState().getFirst())
+                .bind("pickupSiteName", firstValue(deliveryUpdate.getPickupSiteName()))
+                .bind("pickupContactName", firstValue(deliveryUpdate.getPickupContactName()))
+                .bind("pickupContactPhone", firstValue(deliveryUpdate.getPickupContactPhone()))
+                .bind("pickupHours", firstValue(deliveryUpdate.getPickupHours()))
+                .bind("pickupAddress", firstValue(deliveryUpdate.getPickupAddress()))
+                .bind("pickupCity", firstValue(deliveryUpdate.getPickupCity()))
+                .bind("pickupState", firstValue(deliveryUpdate.getPickupState()))
+                .bind("dropoffSiteName", firstValue(deliveryUpdate.getDropoffSiteName()))
+                .bind("dropoffContactName", firstValue(deliveryUpdate.getDropoffContactName()))
+                .bind("dropoffContactPhone", firstValue(deliveryUpdate.getDropoffContactPhone()))
+                .bind("dropoffHours", firstValue(deliveryUpdate.getDropoffHours()))
+                .bind("dropoffAddress", firstValue(deliveryUpdate.getDropoffAddress()))
+                .bind("dropoffCity", firstValue(deliveryUpdate.getDropoffCity()))
+                .bind("dropoffState", firstValue(deliveryUpdate.getDropoffState()))
                 .execute());
 
     String deletePreviousItems =
@@ -233,15 +160,21 @@ public class DeliveryDao {
     )
     """;
     List<String> itemNames = deliveryUpdate.getItemList();
-    for (String itemName : itemNames) {
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(insertByName)
-                  .bind("airtableId", deliveryUpdate.getDeliveryId())
-                  .bind("itemName", itemName)
-                  .execute());
+    if (itemNames != null) {
+      for (String itemName : itemNames) {
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(insertByName)
+                    .bind("airtableId", deliveryUpdate.getDeliveryId())
+                    .bind("itemName", itemName)
+                    .execute());
+      }
     }
+  }
+
+  private static String firstValue(List<String> input) {
+    return input == null || input.isEmpty() ? null : input.getFirst();
   }
 
   // get
@@ -279,14 +212,13 @@ public class DeliveryDao {
     private String toHours;
   }
 
-  public static Delivery fetchDeliveryByPublicKey(Jdbi jdbi, String publicUrlKey) {
+  public static Optional<Delivery> fetchDeliveryByPublicKey(Jdbi jdbi, String publicUrlKey) {
     String whereClause = "d.public_url_key = :id";
     var results = fetchDeliveries(jdbi, whereClause, publicUrlKey);
     if (results.isEmpty()) {
-      log.warn("Failed to fetch delivery by id (record not found): {}", publicUrlKey);
-      throw new IllegalArgumentException("Invalid delivery ID: " + publicUrlKey);
+      return Optional.empty();
     } else {
-      return results.getFirst();
+      return Optional.of(results.getFirst());
     }
   }
 

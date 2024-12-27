@@ -91,9 +91,8 @@ public class DeliveryController {
     DeliveryUpdate deliveryUpdate = DeliveryUpdate.parseJson(body);
 
     String oldStatus =
-        Optional.ofNullable(
-                DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryUpdate.getPublicUrlKey())
-                    .getDeliveryStatus())
+        DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryUpdate.getPublicUrlKey())
+            .map(Delivery::getDeliveryStatus)
             .orElse("");
 
     DeliveryDao.upsert(jdbi, deliveryUpdate);
@@ -157,7 +156,10 @@ public class DeliveryController {
   ModelAndView showDeliveryDetailPage(@PathVariable("publicUrlKey") String publicUrlKey) {
     Map<String, Object> templateParams = new HashMap<>();
 
-    Delivery delivery = DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicUrlKey);
+    Delivery delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicUrlKey)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Invalid delivery key: " + publicUrlKey));
     templateParams.put(TemplateParams.deliveryId.name(), delivery.getDeliveryNumber());
     templateParams.put(TemplateParams.deliveryDate.name(), nullsToDash(delivery.getDeliveryDate()));
     templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());

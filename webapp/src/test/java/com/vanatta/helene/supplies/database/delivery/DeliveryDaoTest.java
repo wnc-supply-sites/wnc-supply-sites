@@ -59,7 +59,8 @@ class DeliveryDaoTest {
   @ParameterizedTest
   @ValueSource(strings = {"BETA", "XKCD", "ABCD"})
   void fetchDeliveryByPublicUrl(String urlKey) {
-    var result = DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, urlKey);
+    var result =
+        DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, urlKey).orElseThrow();
     assertThat(result).isNotNull();
   }
 }
