@@ -29,28 +29,7 @@ public class SendSiteUpdate {
   public static SendSiteUpdate newDisabled() {
     return new SendSiteUpdate(null, null, false);
   }
-
-  @Data
-  @Builder
-  static class SendWssIdJson {
-    long wssId;
-    long airtableId;
-  }
-
-  /** Sends airtableId & wssId to airtable. This lets airtable map the WSS ID to the airtable ID. */
-  public void sendIdsToAirtable(long airtableId) {
-    if (!enabled) {
-      return;
-    }
-    new Thread(
-            () -> {
-              long wssId = fetchWssIdByAirtableId(jdbi, airtableId);
-              var json = SendWssIdJson.builder().airtableId(airtableId).wssId(wssId).build();
-              HttpPostSender.sendAsJson(webhookUrl, json);
-            })
-        .start();
-  }
-
+  
   static long fetchWssIdByAirtableId(Jdbi jdbi, long airtableId) {
     String query = "select wss_id from site where airtable_id = :airtableId";
     return jdbi.withHandle(
@@ -97,9 +76,6 @@ public class SendSiteUpdate {
               s.hours,
               s.additional_contacts,
               msl.name maxSupplyTruckSize,
-              s.has_forklift,
-              s.has_indoor_storage,
-              s.has_loading_dock,
               s.inactive_reason
             from site s
             join county c on c.id = s.county_id

@@ -84,7 +84,8 @@ public class UserWhiteListWebhook {
         """
       delete from wss_user_roles where wss_user_id = (select id from wss_user where phone = :phone);
     """;
-    jdbi.withHandle(handle -> handle.createUpdate(removeOldRoles).bind("phone", phoneNumber).execute());
+    jdbi.withHandle(
+        handle -> handle.createUpdate(removeOldRoles).bind("phone", phoneNumber).execute());
 
     for (String role : roles) {
       String insert =

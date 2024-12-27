@@ -55,10 +55,27 @@ public class DeliveryController {
     List<Long> dropOffSiteWssId;
     List<Long> pickupSiteWssId;
     List<Long> itemListWssIds;
+    List<String> itemList;
     List<String> licensePlateNumbers;
     String targetDeliveryDate;
     String dispatcherNotes;
-
+    
+    List<String> pickupSiteName;
+    List<String> pickupContactName;
+    List<String> pickupContactPhone;
+    List<String> pickupHours;
+    List<String> pickupAddress;
+    List<String> pickupCity;
+    List<String> pickupState;
+    
+    List<String> dropoffSiteName;
+    List<String> dropoffContactName;
+    List<String> dropoffContactPhone;
+    List<String> dropoffHours;
+    List<String> dropoffAddress;
+    List<String> dropoffCity;
+    List<String> dropoffState;
+    
     static DeliveryUpdate parseJson(String inputJson) {
       return new Gson().fromJson(inputJson, DeliveryUpdate.class);
     }

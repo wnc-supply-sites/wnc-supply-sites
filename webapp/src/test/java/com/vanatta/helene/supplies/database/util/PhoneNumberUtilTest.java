@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class PhoneNumberUtilTest {
 
-  @CsvSource(value = {"a,", "123a,123", "(555) 333-1213,5553331213", " 123 ,123"})
+  @CsvSource(value = {"a,''", "123a,123", "(555) 333-1213,5553331213", " 123 ,123"})
   @ParameterizedTest
   void removeNonNumeric(String input, String output) {
     assertThat(PhoneNumberUtil.removeNonNumeric(input)).isEqualTo(output);
