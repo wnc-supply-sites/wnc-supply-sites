@@ -36,7 +36,7 @@ public class Delivery {
   private final String dispatcherNumber;
   private final String dispatcherNotes;
 
-  private List<String> itemList = new ArrayList<>();
+  private final List<String> itemList = new ArrayList<>();
 
   private final String fromAddress;
   private final String fromCity;

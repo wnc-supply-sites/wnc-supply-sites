@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -382,7 +383,7 @@ public class DeliveryDao {
                       .bind("deliveryId", delivery.getDeliveryNumber())
                       .mapTo(String.class)
                       .list());
-      delivery.getItemList().addAll(items);
+      delivery.getItemList().addAll(items.stream().filter(Objects::nonNull).sorted().toList());
     }
 
     return deliveries;
