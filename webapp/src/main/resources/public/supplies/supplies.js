@@ -1,13 +1,27 @@
+function addSelectionsFromSession() {
+  const filters = ["site", "county", "item"];
+
+  filters.forEach((filter) => {
+    const currentFilterSet = readSelectionsFromSession(filter);
+    currentFilterSet.forEach((filterValue) => {
+      addSelection(filter, filterValue)
+    }); 
+  });
+}
+
+function readSelectionsFromSession (filterCategory) {
+  const currentFilterSet = JSON.parse(sessionStorage.getItem(`${filterCategory}-filter`));
+  return currentFilterSet ? currentFilterSet : [];
+}
+
 function handleSelection(elementSelected) {
-  debugger;
   const selectionBox = document.getElementById(elementSelected + "-select");
   const selection = selectionBox.value;
 
   if (selection === "") {
     return;
   }
-  // todo: add selection to session storage 
-  // Format should be  filterData: { element: [selections] }
+
   saveToSession(elementSelected, selection);
   addSelection(elementSelected, selection);
   selectionBox.selectedIndex = 0;
@@ -15,10 +29,11 @@ function handleSelection(elementSelected) {
 }
 
 function saveToSession(elementSelected, value) {
-  const currentSessionValue = JSON.parse(sessionStorage.getItem(`${elementSelected}-filter`));
+  const currentFilterSet = JSON.parse(sessionStorage.getItem(`${elementSelected}-filter`));
 
-  if (currentSessionValue) {
-    return sessionStorage.setItem(`${elementSelected}-filter`, JSON.stringify([...currentSessionValue, value]));
+  if (currentFilterSet) {
+    if (currentFilterSet.includes(value)) return;
+    return sessionStorage.setItem(`${elementSelected}-filter`, JSON.stringify([...currentFilterSet, value]));
   } else {
     return sessionStorage.setItem(`${elementSelected}-filter`, JSON.stringify([value]));
   }
@@ -34,14 +49,24 @@ function addSelection(elementSelected, value) {
   }
   const selectionDiv = document.getElementById(elementSelected + "-selections");
   selectionDiv.innerHTML +=
-      `<div class='box horizontal selection-box' onclick="removeSelection(this)">
+      `<div class='box horizontal selection-box' onclick="removeSelection(this, '${elementSelected}', '${value}')">
                     <div style="margin-right: 5px"><button type="button">X</button></div>
                     <div class="selected-value">${value}</div>\
                 </div>`
 }
 
-function removeSelection(div) {
-  // todo: remove from session storage
+function removeFromSession(filterCategory, filterValue) {
+  const currentFilterSet = JSON.parse(sessionStorage.getItem(`${filterCategory}-filter`));
+  const newFilterSet = currentFilterSet.reduce((acc, cur) => {
+    if (cur !== filterValue) acc.push(cur);
+    return acc;
+  }, []) 
+  debugger
+  sessionStorage.setItem(`${filterCategory}-filter`, JSON.stringify(newFilterSet));
+}
+
+function removeSelection(div, filterCategory, filterValue) {
+  removeFromSession(filterCategory, filterValue);
   div.parentNode.removeChild(div);
   updateData();
 }
@@ -189,3 +214,5 @@ function formatAsList(items) {
       ).join("\n")
       + "\n</ul>";
 }
+
+

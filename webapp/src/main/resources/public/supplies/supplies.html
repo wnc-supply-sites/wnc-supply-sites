@@ -198,7 +198,7 @@
 
 <!-- Script to populate filter controls (select site, inventory, etc..), executed after page is loaded -->
 <script>
-  debugger;
+
   console.log("Populating filter controls...");
   const url = "/supplies/filter-data";
   fetch(url, {
@@ -209,7 +209,6 @@
     }
   })
   .then(response => {
-        debugger
         if (!response.ok) {
           throw new Error(`Server ${response.status} error: ${response.statusText}`);
         }
@@ -218,7 +217,6 @@
       }
   )
   .then(filterData => {
-    debugger
     const emptyOption = "<option value=''></option>\n";
     document.getElementById('site-select').innerHTML =
         emptyOption +
@@ -233,6 +231,7 @@
         filterData.items.map(v =>
             `<option value="${v}">${v}</option>`).join("\n");
     // todo: Read from local storage and run addData 
+    addSelectionsFromSession();
     updateData();
   }).catch(error => {
     showError(error);
