@@ -59,7 +59,7 @@ public class DeliveryController {
     List<String> licensePlateNumbers;
     String targetDeliveryDate;
     String dispatcherNotes;
-    
+
     List<String> pickupSiteName;
     List<String> pickupContactName;
     List<String> pickupContactPhone;
@@ -67,7 +67,7 @@ public class DeliveryController {
     List<String> pickupAddress;
     List<String> pickupCity;
     List<String> pickupState;
-    
+
     List<String> dropoffSiteName;
     List<String> dropoffContactName;
     List<String> dropoffContactPhone;
@@ -75,7 +75,7 @@ public class DeliveryController {
     List<String> dropoffAddress;
     List<String> dropoffCity;
     List<String> dropoffState;
-    
+
     static DeliveryUpdate parseJson(String inputJson) {
       return new Gson().fromJson(inputJson, DeliveryUpdate.class);
     }
@@ -90,15 +90,15 @@ public class DeliveryController {
     log.info("Delivery update endpoint received: {}", body);
     DeliveryUpdate deliveryUpdate = DeliveryUpdate.parseJson(body);
 
-      DeliveryDao.upsert(jdbi, deliveryUpdate);
-      if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
-        log.info(
-            "Delivery completion received! Updating site inventory items to no longer be needed."
-                + "Site WSS ID: {}, item WSS IDs: {}",
-            deliveryUpdate.dropOffSiteWssId,
-            deliveryUpdate.getItemListWssIds());
-        InventoryDao.markItemsAsNotNeeded(
-            jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
+    DeliveryDao.upsert(jdbi, deliveryUpdate);
+    if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
+      log.info(
+          "Delivery completion received! Updating site inventory items to no longer be needed."
+              + "Site WSS ID: {}, item WSS IDs: {}",
+          deliveryUpdate.dropOffSiteWssId,
+          deliveryUpdate.getItemListWssIds());
+      InventoryDao.markItemsAsNotNeeded(
+          jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
     }
 
     return ResponseEntity.ok("ok");
