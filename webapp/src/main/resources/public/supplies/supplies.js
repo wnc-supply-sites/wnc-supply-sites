@@ -61,8 +61,13 @@ function removeFromSession(filterCategory, filterValue) {
     if (cur !== filterValue) acc.push(cur);
     return acc;
   }, []) 
-  debugger
   sessionStorage.setItem(`${filterCategory}-filter`, JSON.stringify(newFilterSet));
+}
+
+function clearSelectionFromSession(filterCategory) {
+  const currentValue = readSelectionsFromSession(filterCategory);
+  if (currentValue.length === 0) return;
+  sessionStorage.setItem(`${filterCategory}-filter`, JSON.stringify([]));
 }
 
 function removeSelection(div, filterCategory, filterValue) {
@@ -78,6 +83,7 @@ function readSelections(selectionElement) {
 
 function clearSelections(selectionElement) {
   // todo: set all selections as empty arrays
+  clearSelectionFromSession(selectionElement);
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
   updateData();

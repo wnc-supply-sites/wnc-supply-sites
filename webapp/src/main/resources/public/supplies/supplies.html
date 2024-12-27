@@ -230,7 +230,7 @@
         emptyOption +
         filterData.items.map(v =>
             `<option value="${v}">${v}</option>`).join("\n");
-    // todo: Read from local storage and run addData 
+
     addSelectionsFromSession();
     updateData();
   }).catch(error => {
