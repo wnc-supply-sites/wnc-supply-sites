@@ -9,6 +9,7 @@ import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -98,7 +99,8 @@ public class DeliveryController {
 
     DeliveryDao.upsert(jdbi, deliveryUpdate);
 
-    // if the delivery was already completed, and we get an update and the delivery is still complete, then
+    // if the delivery was already completed, and we get an update and the delivery is still
+    // complete, then
     // we should skip any automations.
     boolean deliveryWasNotComplete = !oldStatus.toLowerCase().contains("complete");
     boolean deliveryIsNowComplete = deliveryUpdate.isComplete();
@@ -204,7 +206,8 @@ public class DeliveryController {
                 .state(delivery.getToState())
                 .build()));
     List<List<String>> split =
-        ListSplitter.splitItemList(delivery.getItemList().stream().sorted().toList());
+        ListSplitter.splitItemList(
+            delivery.getItemList().stream().filter(Objects::nonNull).sorted().toList());
 
     templateParams.put(TemplateParams.items1.name(), split.get(0));
     templateParams.put(TemplateParams.items2.name(), split.size() > 1 ? split.get(1) : List.of());
