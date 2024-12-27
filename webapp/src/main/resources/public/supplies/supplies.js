@@ -1,14 +1,28 @@
 function handleSelection(elementSelected) {
+  debugger;
   const selectionBox = document.getElementById(elementSelected + "-select");
   const selection = selectionBox.value;
 
   if (selection === "") {
     return;
   }
+  // todo: add selection to session storage 
+  // Format should be  filterData: { element: [selections] }
+  saveToSession(elementSelected, selection);
   addSelection(elementSelected, selection);
   selectionBox.selectedIndex = 0;
   updateData();
 }
+
+function saveToSession(elementSelected, value) {
+  const currentSessionValue = JSON.parse(sessionStorage.getItem(`${elementSelected}-filter`));
+
+  if (currentSessionValue) {
+    return sessionStorage.setItem(`${elementSelected}-filter`, JSON.stringify([...currentSessionValue, value]));
+  } else {
+    return sessionStorage.setItem(`${elementSelected}-filter`, JSON.stringify([value]));
+  }
+};
 
 function addSelection(elementSelected, value) {
   if (value === "") {
@@ -27,6 +41,7 @@ function addSelection(elementSelected, value) {
 }
 
 function removeSelection(div) {
+  // todo: remove from session storage
   div.parentNode.removeChild(div);
   updateData();
 }
@@ -37,6 +52,7 @@ function readSelections(selectionElement) {
 }
 
 function clearSelections(selectionElement) {
+  // todo: set all selections as empty arrays
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
   updateData();
