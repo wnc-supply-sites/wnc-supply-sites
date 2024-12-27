@@ -11,15 +11,16 @@ import org.jdbi.v3.core.Jdbi;
 public class DeliveryDao {
 
   public static void upsert(Jdbi jdbi, DeliveryController.DeliveryUpdate deliveryUpdate) {
-    assert !deliveryUpdate.getPickupSiteWssId().isEmpty();
-    assert !deliveryUpdate.getDropOffSiteWssId().isEmpty();
-
     String upsert =
         """
         insert into delivery(
           from_site_id, to_site_id, delivery_status, target_delivery_date,
           dispatcher_name, dispatcher_number, driver_name, driver_number,
-          driver_license_plates, airtable_id, dispatcher_notes, public_url_key)
+          driver_license_plates, airtable_id, dispatcher_notes, public_url_key,
+          pickup_site_name, pickup_contact_name, pickup_contact_phone,
+          pickup_hours, pickup_address, pickup_city, pickup_state,
+          dropoff_site_name, dropoff_contact_name, dropoff_contact_phone,
+          dropoff_hours, dropoff_address, dropoff_city, dropoff_state)
         values(
           (select id from site where wss_id = :fromSiteWssId),
           (select id from site where wss_id = :toSiteWssId),
@@ -32,7 +33,21 @@ public class DeliveryDao {
           :driverLicensePlateNumbers,
           :airtableId,
           :dispatcherNotes,
-          :publicUrlKey
+          :publicUrlKey,
+          :pickupSiteName,
+          :pickupContactName,
+          :pickupContactPhone,
+          :pickupHours,
+          :pickupAddress,
+          :pickupCity,
+          :pickupState,
+          :dropoffSiteName,
+          :dropoffContactName,
+          :dropoffContactPhone,
+          :dropoffHours,
+          :dropoffAddress,
+          :dropoffCity,
+          :dropoffState
         ) on conflict(airtable_id) do update set
           from_site_id = (select id from site where wss_id = :fromSiteWssId),
           to_site_id = (select id from site where wss_id = :toSiteWssId),
@@ -43,14 +58,36 @@ public class DeliveryDao {
           driver_name = :driverName,
           driver_number = :driverNumber,
           driver_license_plates = :driverLicensePlateNumbers,
-          dispatcher_notes = :dispatcherNotes
+          dispatcher_notes = :dispatcherNotes,
+          pickup_site_name = :pickupSiteName,
+          pickup_contact_name = :pickupContactName,
+          pickup_contact_phone = :pickupContactPhone,
+          pickup_hours = :pickupHours,
+          pickup_address = :pickupAddress,
+          pickup_city = :pickupCity,
+          pickup_state = :pickupState,
+          dropoff_site_name = :dropoffSiteName,
+          dropoff_contact_name = :dropoffContactName,
+          dropoff_contact_phone = :dropoffContactPhone,
+          dropoff_hours = :dropoffHours,
+          dropoff_address = :dropoffAddress,
+          dropoff_city = :dropoffCity,
+          dropoff_state = :dropoffState
         """;
     jdbi.withHandle(
         handle ->
             handle
                 .createUpdate(upsert)
-                .bind("fromSiteWssId", deliveryUpdate.getPickupSiteWssId().getFirst())
-                .bind("toSiteWssId", deliveryUpdate.getDropOffSiteWssId().getFirst())
+                .bind(
+                    "fromSiteWssId",
+                    deliveryUpdate.getPickupSiteWssId().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupSiteWssId().getFirst())
+                .bind(
+                    "toSiteWssId",
+                    deliveryUpdate.getDropOffSiteWssId().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropOffSiteWssId().getFirst())
                 .bind("deliveryStatus", deliveryUpdate.getDeliveryStatus())
                 .bind("targetDeliveryDate", deliveryUpdate.getTargetDeliveryDate())
                 .bind(
@@ -81,6 +118,76 @@ public class DeliveryDao {
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
                 .bind("publicUrlKey", deliveryUpdate.getPublicUrlKey())
+                .bind(
+                    "pickupSiteName",
+                    deliveryUpdate.getPickupSiteName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupSiteName().getFirst())
+                .bind(
+                    "pickupContactName",
+                    deliveryUpdate.getPickupContactName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupContactName().getFirst())
+                .bind(
+                    "pickupContactPhone",
+                    deliveryUpdate.getPickupContactPhone().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupContactPhone().getFirst())
+                .bind(
+                    "pickupHours",
+                    deliveryUpdate.getPickupHours().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupHours().getFirst())
+                .bind(
+                    "pickupAddress",
+                    deliveryUpdate.getPickupAddress().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupAddress().getFirst())
+                .bind(
+                    "pickupCity",
+                    deliveryUpdate.getPickupCity().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupCity().getFirst())
+                .bind(
+                    "pickupState",
+                    deliveryUpdate.getPickupState().isEmpty()
+                        ? null
+                        : deliveryUpdate.getPickupState().getFirst())
+                .bind(
+                    "dropoffSiteName",
+                    deliveryUpdate.getDropoffSiteName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffSiteName().getFirst())
+                .bind(
+                    "dropoffContactName",
+                    deliveryUpdate.getDropoffContactName().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffContactName().getFirst())
+                .bind(
+                    "dropoffContactPhone",
+                    deliveryUpdate.getDropoffContactPhone().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffContactPhone().getFirst())
+                .bind(
+                    "dropoffHours",
+                    deliveryUpdate.getDropoffHours().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffHours().getFirst())
+                .bind(
+                    "dropoffAddress",
+                    deliveryUpdate.getDropoffAddress().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffAddress().getFirst())
+                .bind(
+                    "dropoffCity",
+                    deliveryUpdate.getDropoffCity().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffCity().getFirst())
+                .bind(
+                    "dropoffState",
+                    deliveryUpdate.getDropoffState().isEmpty()
+                        ? null
+                        : deliveryUpdate.getDropoffState().getFirst())
                 .execute());
 
     String deletePreviousItems =
@@ -115,6 +222,25 @@ public class DeliveryDao {
                   .bind("itemWssId", itemWssId)
                   .execute());
     }
+    // insert items that are provided by name (sometimes items won't have a WSS-ID)
+    String insertByName =
+        """
+    insert into delivery_item(delivery_id, item_name)
+    values(
+      (select id from delivery where airtable_id = :airtableId),
+      :itemName
+    )
+    """;
+    List<String> itemNames = deliveryUpdate.getItemList();
+    for (String itemName : itemNames) {
+      jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(insertByName)
+                  .bind("airtableId", deliveryUpdate.getDeliveryId())
+                  .bind("itemName", itemName)
+                  .execute());
+    }
   }
 
   // get
@@ -134,7 +260,7 @@ public class DeliveryDao {
     String targetDeliveryDate;
 
     String fromSiteName;
-    long fromSiteId;
+    Long fromSiteId;
     private String fromAddress;
     private String fromCity;
     private String fromState;
@@ -143,7 +269,7 @@ public class DeliveryDao {
     private String fromHours;
 
     String toSiteName;
-    long toSiteId;
+    Long toSiteId;
     private String toAddress;
     private String toCity;
     private String toState;
@@ -189,28 +315,28 @@ public class DeliveryDao {
       d.driver_number driverNumber,
       d.driver_license_plates licensePlateNumbers,
 
-      fromSite.name fromSiteName,
+      coalesce(fromSite.name, d.pickup_site_name) fromSiteName,
       fromSite.id fromSiteId,
-      fromSite.address fromAddress,
-      fromSite.city fromCity,
-      fromCounty.state fromState,
-      fromSite.contact_name fromContactName,
-      fromSite.contact_number fromContactPhone,
-      fromSite.hours fromHours,
+      coalesce(fromSite.address, d.pickup_address) fromAddress,
+      coalesce(fromSite.city, d.pickup_city) fromCity,
+      coalesce(fromCounty.state, d.pickup_state) fromState,
+      coalesce(fromSite.contact_name, d.pickup_contact_name) fromContactName,
+      coalesce(fromSite.contact_number, d.pickup_contact_phone) fromContactPhone,
+      coalesce(fromSite.hours, d.pickup_hours) fromHours,
 
-      toSite.name toSiteName,
+      coalesce(toSite.name, d.dropoff_site_name) toSiteName,
       toSite.id toSiteId,
-      toSite.address toAddress,
-      toSite.city toCity,
-      toCounty.state toState,
-      toSite.contact_name toContactName,
-      toSite.contact_number toContactPhone,
-      toSite.hours toHours
+      coalesce(toSite.address, d.dropoff_address) toAddress,
+      coalesce(toSite.city, d.dropoff_city) toCity,
+      coalesce(toCounty.state, d.dropoff_state) toState,
+      coalesce(toSite.contact_name, d.dropoff_contact_name) toContactName,
+      coalesce(toSite.contact_number, d.dropoff_contact_phone) toContactPhone,
+      coalesce(toSite.hours, d.dropoff_hours) toHours
     from delivery d
-    join site fromSite on fromSite.id = d.from_site_id
-    join county fromCounty on fromCounty.id = fromSite.county_id
-    join site toSite on toSite.id = d.to_site_id
-    join county toCounty on toCounty.id = toSite.county_id
+    left join site fromSite on fromSite.id = d.from_site_id
+    left join county fromCounty on fromCounty.id = fromSite.county_id
+    left join site toSite on toSite.id = d.to_site_id
+    left join county toCounty on toCounty.id = toSite.county_id
     where (%s)
     order by d.target_delivery_date desc
     """,
@@ -230,11 +356,21 @@ public class DeliveryDao {
 
     String selectDeliveryItems =
         """
+      select distinct A.name
+      from
+      (
       select
         i.name
       from delivery_item di
       join item i on i.id = di.item_id
       where di.delivery_id = (select id from delivery where airtable_id = :deliveryId)
+      union
+      select
+        di.item_name name
+      from delivery_item di
+      where di.delivery_id = (select id from delivery where airtable_id = :deliveryId)
+      ) A
+      order by A.name;
       """;
 
     for (Delivery delivery : deliveries) {
@@ -250,34 +386,5 @@ public class DeliveryDao {
     }
 
     return deliveries;
-  }
-
-  public static void deleteDelivery(Jdbi jdbi, long deliveryId) {
-    Long databaseId =
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createQuery("select id from delivery where airtable_id = :deliveryId")
-                    .bind("deliveryId", deliveryId)
-                    .mapTo(Long.class)
-                    .findOne()
-                    .orElse(null));
-
-    if (databaseId == null) {
-      return;
-    }
-
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate("delete from delivery_item where delivery_id = :databaseId")
-                .bind("databaseId", databaseId)
-                .execute());
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate("delete from delivery where id = :databaseId")
-                .bind("databaseId", databaseId)
-                .execute());
   }
 }

@@ -90,11 +90,6 @@ public class DeliveryController {
     log.info("Delivery update endpoint received: {}", body);
     DeliveryUpdate deliveryUpdate = DeliveryUpdate.parseJson(body);
 
-    // if either to or from site are gone, then we can remove the delivery.
-    if (deliveryUpdate.getPickupSiteWssId().isEmpty()
-        || deliveryUpdate.getDropOffSiteWssId().isEmpty()) {
-      DeliveryDao.deleteDelivery(jdbi, deliveryUpdate.deliveryId);
-    } else {
       DeliveryDao.upsert(jdbi, deliveryUpdate);
       if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
         log.info(
@@ -104,7 +99,6 @@ public class DeliveryController {
             deliveryUpdate.getItemListWssIds());
         InventoryDao.markItemsAsNotNeeded(
             jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
-      }
     }
 
     return ResponseEntity.ok("ok");

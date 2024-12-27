@@ -36,7 +36,7 @@ public class Delivery {
   private final String dispatcherNumber;
   private final String dispatcherNotes;
 
-  private final List<String> itemList = new ArrayList<>();
+  private List<String> itemList = new ArrayList<>();
 
   private final String fromAddress;
   private final String fromCity;
@@ -64,7 +64,10 @@ public class Delivery {
     this.dispatcherNumber = dbData.getDispatcherNumber();
     this.dispatcherNotes = dbData.getDispatcherNotes();
     this.fromSite = dbData.getFromSiteName();
-    this.fromSiteLink = SiteDetailController.buildSiteLink(dbData.getFromSiteId());
+    this.fromSiteLink =
+        dbData.getFromSiteId() == null
+            ? null
+            : SiteDetailController.buildSiteLink(dbData.getFromSiteId());
     this.fromAddress = dbData.getFromAddress();
     this.fromCity = dbData.getFromCity();
     this.fromState = dbData.getFromState();
@@ -72,7 +75,10 @@ public class Delivery {
     this.fromContactPhone = dbData.getFromContactPhone();
     this.fromHours = dbData.getFromHours();
     this.toSite = dbData.getToSiteName();
-    this.toSiteLink = SiteDetailController.buildSiteLink(dbData.getToSiteId());
+    this.toSiteLink =
+        dbData.getToSiteId() == null
+            ? null
+            : SiteDetailController.buildSiteLink(dbData.getToSiteId());
     this.toAddress = dbData.getToAddress();
     this.toCity = dbData.getToCity();
     this.toState = dbData.getToState();
@@ -81,7 +87,6 @@ public class Delivery {
     this.toHours = dbData.getToHours();
   }
 
-  //  int itemCount;
   public int getItemCount() {
     return itemList.size();
   }

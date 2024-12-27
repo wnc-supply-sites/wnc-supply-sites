@@ -2,21 +2,21 @@
   even if the sites are not registered in WSS (the website).
  */
 
-alter table delivery add column pickupSiteName varchar(128);
-alter table delivery add column pickupContactName varchar(128);
-alter table delivery add column pickupContactPhone varchar(32);
-alter table delivery add column pickupHours varchar(512);
-alter table delivery add column pickupAddress varchar(256);
-alter table delivery add column pickupCity varchar(128);
-alter table delivery add column pickupState varchar(16);
+alter table delivery add column pickup_site_name varchar(128);
+alter table delivery add column pickup_contact_name varchar(128);
+alter table delivery add column pickup_contact_phone varchar(32);
+alter table delivery add column pickup_hours varchar(512);
+alter table delivery add column pickup_address varchar(256);
+alter table delivery add column pickup_city varchar(128);
+alter table delivery add column pickup_state varchar(16);
 
-alter table delivery add column dropoffSiteName varchar(128);
-alter table delivery add column dropoffContactName varchar(128);
-alter table delivery add column dropoffContactPhone varchar(32);
-alter table delivery add column dropoffHours varchar(512);
-alter table delivery add column dropoffAddress varchar(256);
-alter table delivery add column dropoffCity varchar(128);
-alter table delivery add column dropoffState varchar(16);
+alter table delivery add column dropoff_site_name varchar(128);
+alter table delivery add column dropoff_contact_name varchar(128);
+alter table delivery add column dropoff_contact_phone varchar(32);
+alter table delivery add column dropoff_hours varchar(512);
+alter table delivery add column dropoff_address varchar(256);
+alter table delivery add column dropoff_city varchar(128);
+alter table delivery add column dropoff_state varchar(16);
 
 alter table delivery alter column from_site_id drop not null;
 alter table delivery alter column to_site_id drop not null;

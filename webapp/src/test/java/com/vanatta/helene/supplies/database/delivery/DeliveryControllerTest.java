@@ -106,8 +106,8 @@ class DeliveryControllerTest {
     assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
     assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
     assertThat(update.getLicensePlateNumbers()).isEmpty();
-    assertThat(update.getDropOffSiteWssId()).containsExactly(98L);
-    assertThat(update.getPickupSiteWssId()).containsExactly(101L);
+    assertThat(update.getDropOffSiteWssId()).isEmpty();
+    assertThat(update.getPickupSiteWssId()).isEmpty();
 
     assertThat(update.getPickupSiteName()).containsExactly("Valley Hope Foundation");
     List<String> nullContainer = new ArrayList<>();
@@ -250,85 +250,57 @@ class DeliveryControllerTest {
     assertThat(delivery.getDeliveryDate()).isEqualTo("2024-12-15");
   }
 
-  
   @Test
   void storeDeliveryWithSitesNotInLocalDatabase() {
-      var input = TestDataFile.DELIVERY_DATA_JSON.readData();
-    
-    
-    var response = deliveryController.upsertDelivery(new Gson().toJson(input));
+    var input = TestDataFile.DELIVERY_DATA_JSON.readData();
+
+    var response = deliveryController.upsertDelivery(input);
     assertThat(response.getStatusCode().value()).isEqualTo(200);
 
-    
-    var update  =
-        DeliveryDao.fetchDeliveryByPublicKey(
-            TestConfiguration.jdbiTest, "HHHH");
-    
-    
+    var update = DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, "HHHH");
+
     assertThat(update.getDeliveryNumber()).isEqualTo(5);
-      assertThat(update.getItemList())
-          .contains(
-              "Buddy heater adapter hose",
-              "Toilet Paper",
-              "Propane (20lb)",
-              "Propane (1lb)",
-              "Paper Towels",
-              "Kid friendly snacks",
-              "Gas Cans",
-              "Flashlights",
-              "Dog Food",
-              "Dish Soap",
-              "Cookware",
-              "Bedding",
-              "Baby Items");
-      
-      assertThat(update.getDriverNumber()).isEqualTo("(444) 333-7022");
-      assertThat(update.getDriverName()).isEqualTo("Jason");
-      assertThat(update.getDispatcherNumber()).isEqualTo("919.000.3344");
-      assertThat(update.getDispatcherName()).isEqualTo("Dan");
-      assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
-      assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
-      assertThat(update.getLicensePlateNumbers()).isNull();
-      assertThat(update.getDropOffSiteWssId()).isNull();
-      assertThat(update.getPickupSiteWssId()).isNull();
-      
-      assertThat(update.getPickupSiteName()).isEqualTo("Valley Hope Foundation");
-      assertThat(update.getPickupContactName()).isNull();
-      assertThat(update.getPickupContactPhone()).isEqualTo("(888) 333-0000");
-      assertThat(update.getPickupHours()).isEqualTo("Monday - Friday \n10am - 3pm");
-      assertThat(update.getPickupAddress()).isEqualTo("1035 I40");
-      assertThat(update.getPickupCity()).isEqualTo("Black Mountain");
-      assertThat(update.getPickupState()).isEqualTo("NC");
-      
-      assertThat(update.getDropoffSiteName()).isEqualTo("Hope");
-      assertThat(update.getDropoffContactName()).isEqualTo("dropoff contact");
-      assertThat(update.getDropoffContactPhone()).isEqualTo("(888) 222-4444");
-      assertThat(update.getDropoffHours()).isEqualTo("Monday - Friday \n10am - 5pm");
-      assertThat(update.getDropoffAddress()).isEqualTo("60 Flat");
-      assertThat(update.getDropoffCity()).isEqualTo("Elk Park");
-      assertThat(update.getDropoffState()).isEqualTo("NC");
-    
-  }
-  
-  /**
-   * Fetch deliveries for site2, we should have at least one inserted from TestData.sql. Delete a
-   * delivery, then assert there are one fewer deliveries.
-   */
-  @Test
-  void deleteDelivery() {
-    var deliveries =
-        DeliveryDao.fetchDeliveriesBySiteId(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site2"));
-    int deliveryCount = deliveries.size();
-    assertThat(deliveryCount).isGreaterThan(0);
-    long deliveryId = deliveries.getFirst().getDeliveryNumber();
+    assertThat(update.getItemList())
+        .contains(
+            "Buddy heater adapter hose",
+            "Toilet Paper",
+            "Propane (20lb)",
+            "Propane (1lb)",
+            "Paper Towels",
+            "Kid friendly snacks",
+            "Gas Cans",
+            "Flashlights",
+            "Dog Food",
+            "Dish Soap",
+            "Cookware",
+            "Bedding",
+            "Baby Items");
 
-    DeliveryDao.deleteDelivery(TestConfiguration.jdbiTest, deliveryId);
+    assertThat(update.getDriverNumber()).isEqualTo("(444) 333-7022");
+    assertThat(update.getDriverName()).isEqualTo("Jason");
+    assertThat(update.getDispatcherNumber()).isEqualTo("919.000.3344");
+    assertThat(update.getDispatcherName()).isEqualTo("Dan");
+    assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
+    assertThat(update.getDeliveryDate()).isEqualTo("2024-12-13");
+    assertThat(update.getDriverLicensePlate()).isNull();
+    assertThat(update.getToSiteLink()).isNull();
+    assertThat(update.getFromSiteLink()).isNull();
 
-    deliveries =
-        DeliveryDao.fetchDeliveriesBySiteId(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site2"));
-    assertThat(deliveries).hasSize(deliveryCount - 1);
+    assertThat(update.getFromSite()).isEqualTo("Valley Hope Foundation");
+    assertThat(update.getFromContactName()).isNull();
+    assertThat(update.getFromContactPhone()).isEqualTo("(888) 333-0000");
+    assertThat(update.getFromHours()).isEqualTo("Monday - Friday \n10am - 3pm");
+    assertThat(update.getFromAddress()).isEqualTo("1035 I40");
+    assertThat(update.getFromCity()).isEqualTo("Black Mountain");
+    assertThat(update.getFromState()).isEqualTo("NC");
+
+    assertThat(update.getToSite()).isEqualTo("Hope");
+    assertThat(update.getToContactName()).isEqualTo("dropoff contact");
+    assertThat(update.getToContactPhone()).isEqualTo("(888) 222-4444");
+    assertThat(update.getToHours()).isEqualTo("Monday - Friday \n10am - 5pm");
+    assertThat(update.getToAddress()).isEqualTo("60 Flat");
+    assertThat(update.getToCity()).isEqualTo("Elk Park");
+    assertThat(update.getToState()).isEqualTo("NC");
   }
 
   @Nested
