@@ -29,7 +29,7 @@ public class SendSiteUpdate {
   public static SendSiteUpdate newDisabled() {
     return new SendSiteUpdate(null, null, false);
   }
-  
+
   static long fetchWssIdByAirtableId(Jdbi jdbi, long airtableId) {
     String query = "select wss_id from site where airtable_id = :airtableId";
     return jdbi.withHandle(

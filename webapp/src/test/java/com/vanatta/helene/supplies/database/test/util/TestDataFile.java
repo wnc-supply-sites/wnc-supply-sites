@@ -23,9 +23,8 @@ public enum TestDataFile {
   DATA_CONTAINS_DOUBLE_QUOTE("/webhook/json/double-escaped-quote-in-value.json"),
 
   DELIVERY_TRAINING_DATA("/route-weighting/deliveries.json"),
-  
+
   DELIVERY_DATA_JSON("/delivery/full-delivery-data.json"),
-  
   ;
   private final String path;
 
