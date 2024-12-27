@@ -90,6 +90,7 @@
     </div>
   </div>
 
+  {{#googleMapLink}}
   <iframe
       width="380"
       height="420"
@@ -97,8 +98,9 @@
       loading="lazy"
       allowfullscreen
       referrerpolicy="no-referrer-when-downgrade"
-      src="{{googleMapLink}}">
+      src="{{.}}">
   </iframe>
+  {{/googleMapLink}}
 </div>
 
 </body>

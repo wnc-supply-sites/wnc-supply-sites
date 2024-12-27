@@ -9,7 +9,6 @@ import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -194,17 +193,19 @@ public class DeliveryController {
 
     templateParams.put(
         TemplateParams.googleMapLink.name(),
-        googleMapWidget.generateMapSrcRef(
-            SiteAddress.builder()
-                .address(delivery.getFromAddress())
-                .city(delivery.getFromCity())
-                .state(delivery.getFromState())
-                .build(),
-            SiteAddress.builder()
-                .address(delivery.getToAddress())
-                .city(delivery.getToCity())
-                .state(delivery.getToState())
-                .build()));
+        delivery.getFromAddress() == null || delivery.getToAddress() == null
+            ? null
+            : googleMapWidget.generateMapSrcRef(
+                SiteAddress.builder()
+                    .address(delivery.getFromAddress())
+                    .city(delivery.getFromCity())
+                    .state(delivery.getFromState())
+                    .build(),
+                SiteAddress.builder()
+                    .address(delivery.getToAddress())
+                    .city(delivery.getToCity())
+                    .state(delivery.getToState())
+                    .build()));
     List<List<String>> split = ListSplitter.splitItemList(delivery.getItemList());
 
     templateParams.put(TemplateParams.items1.name(), split.get(0));
