@@ -205,9 +205,7 @@ public class DeliveryController {
                 .city(delivery.getToCity())
                 .state(delivery.getToState())
                 .build()));
-    List<List<String>> split =
-        ListSplitter.splitItemList(
-            delivery.getItemList().stream().filter(Objects::nonNull).sorted().toList());
+    List<List<String>> split = ListSplitter.splitItemList(delivery.getItemList());
 
     templateParams.put(TemplateParams.items1.name(), split.get(0));
     templateParams.put(TemplateParams.items2.name(), split.size() > 1 ? split.get(1) : List.of());
