@@ -90,15 +90,29 @@ public class DeliveryController {
     log.info("Delivery update endpoint received: {}", body);
     DeliveryUpdate deliveryUpdate = DeliveryUpdate.parseJson(body);
 
+    String oldStatus =
+        Optional.ofNullable(
+                DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryUpdate.getPublicUrlKey())
+                    .getDeliveryStatus())
+            .orElse("");
+
     DeliveryDao.upsert(jdbi, deliveryUpdate);
-    if (deliveryUpdate.isComplete() && !deliveryUpdate.getItemListWssIds().isEmpty()) {
+
+    // if the delivery was already completed, and we get an update and the delivery is still complete, then
+    // we should skip any automations.
+    boolean deliveryWasNotComplete = !oldStatus.toLowerCase().contains("complete");
+    boolean deliveryIsNowComplete = deliveryUpdate.isComplete();
+    boolean deliveryContainsItems = !deliveryUpdate.getItemListWssIds().isEmpty();
+    if (deliveryWasNotComplete && deliveryIsNowComplete && deliveryContainsItems) {
       log.info(
           "Delivery completion received! Updating site inventory items to no longer be needed."
               + "Site WSS ID: {}, item WSS IDs: {}",
           deliveryUpdate.dropOffSiteWssId,
           deliveryUpdate.getItemListWssIds());
-      InventoryDao.markItemsAsNotNeeded(
-          jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
+      if (!deliveryUpdate.dropOffSiteWssId.isEmpty()) {
+        InventoryDao.markItemsAsNotNeeded(
+            jdbi, deliveryUpdate.dropOffSiteWssId.getFirst(), deliveryUpdate.getItemListWssIds());
+      }
     }
 
     return ResponseEntity.ok("ok");
