@@ -19,12 +19,26 @@ function addFiltersFromSession() {
     checkboxes: ["item-status", "site-status", "site-type"],
   }
 
-  filters.selections.forEach((filter) => {
+  addSelectionFiltersFromSession(filters.selections);
+  addCheckboxFiltersFromSession(filters.checkboxes);
+}
+
+function addSelectionFiltersFromSession(selections){
+  selections.forEach((filter) => {
     const currentFilterSet = readSelectionsFromSession(filter);
     currentFilterSet.forEach((filterValue) => {
       addSelection(filter, filterValue)
     }); 
   });
+}
+
+function addCheckboxFiltersFromSession(fieldsets){
+  fieldsets.forEach((fieldset) => {
+    const fieldsetElement = document.querySelector(`#${fieldset}`);
+    const inputs = fieldsetElement.querySelectorAll("input");
+    const currentSessionValue = JSON.parse(sessionStorage.getItem(fieldset));
+    inputs.forEach((input) => input.checked = currentSessionValue.includes(input.id))
+  })
 }
 
 function readSelectionsFromSession(filterCategory) {
@@ -73,7 +87,6 @@ function saveCheckboxToSession(fieldsetName, name, wasChecked) {
 }
 
 function getFieldsetValueFromSession(fieldsetName) {
-  // returns the current value of fieldset OR creates a new one and returns it
   const fieldsetInSession = sessionStorage.getItem(fieldsetName);
   if (!fieldsetInSession) {
     sessionStorage.setItem(fieldsetName, JSON.stringify([]));
@@ -136,7 +149,6 @@ function readSelections(selectionElement) {
 }
 
 function clearSelections(selectionElement) {
-  // todo: set all selections as empty arrays
   clearSelectionFromSession(selectionElement);
   document.getElementById(selectionElement + "-selections").innerHTML = "";
   document.getElementById(selectionElement + "-select").selectedIndex = 0;
