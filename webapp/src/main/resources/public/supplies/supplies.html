@@ -230,8 +230,9 @@
         emptyOption +
         filterData.items.map(v =>
             `<option value="${v}">${v}</option>`).join("\n");
-    // PrePopulate fieldset values
-    addSelectionsFromSession();
+
+    prePopulateCheckboxValuesIntoSession();
+    addFiltersFromSession();
     updateData();
   }).catch(error => {
     showError(error);

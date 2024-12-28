@@ -1,11 +1,24 @@
+function prePopulateCheckboxValuesIntoSession() {
+  const fieldsets = document.querySelectorAll("fieldset");
+  fieldsets.forEach((fieldset) => {
+    const currentValueInSession = sessionStorage.getItem(fieldset.id);
+    if (!currentValueInSession) {
+      const fieldsetCheckboxes = fieldset.querySelectorAll("input");
+      const fieldsetValue = []
+      fieldsetCheckboxes.forEach((checkbox) => {
+        if (checkbox.checked) fieldsetValue.push(checkbox.id);
+      });
+      sessionStorage.setItem(fieldset.id, JSON.stringify(fieldsetValue));
+    };
+  });
+};
 
-function addSelectionsFromSession() {
+function addFiltersFromSession() {
   const filters = {
     selections: ["site", "county", "item"],
     checkboxes: ["item-status", "site-status", "site-type"],
   }
 
-  // todo: set the checkbox value based on session data
   filters.selections.forEach((filter) => {
     const currentFilterSet = readSelectionsFromSession(filter);
     currentFilterSet.forEach((filterValue) => {
