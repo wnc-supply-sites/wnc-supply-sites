@@ -1,7 +1,12 @@
-function addSelectionsFromSession() {
-  const filters = ["site", "county", "item"];
 
-  filters.forEach((filter) => {
+function addSelectionsFromSession() {
+  const filters = {
+    selections: ["site", "county", "item"],
+    checkboxes: ["item-status", "site-status", "site-type"],
+  }
+
+  // todo: set the checkbox value based on session data
+  filters.selections.forEach((filter) => {
     const currentFilterSet = readSelectionsFromSession(filter);
     currentFilterSet.forEach((filterValue) => {
       addSelection(filter, filterValue)
@@ -9,9 +14,16 @@ function addSelectionsFromSession() {
   });
 }
 
-function readSelectionsFromSession (filterCategory) {
+function readSelectionsFromSession(filterCategory) {
   const currentFilterSet = JSON.parse(sessionStorage.getItem(`${filterCategory}-filter`));
   return currentFilterSet ? currentFilterSet : [];
+}
+
+function handleCheckboxSelection(element) {
+  const isChecked = element.checked;
+  const fieldset = element.closest("fieldset").id;
+  saveCheckboxToSession(fieldset, element.id, isChecked);
+  updateData();
 }
 
 function handleSelection(elementSelected) {
@@ -26,6 +38,35 @@ function handleSelection(elementSelected) {
   addSelection(elementSelected, selection);
   selectionBox.selectedIndex = 0;
   updateData();
+}
+
+function saveCheckboxToSession(fieldsetName, name, wasChecked) {
+  const fieldsetInSession = getFieldsetValueFromSession(fieldsetName);
+
+  const itemExistsInFieldset = fieldsetInSession.includes(name);
+   
+  if (wasChecked && !itemExistsInFieldset) {
+    fieldsetInSession.push(name);
+    sessionStorage.setItem(fieldsetName, JSON.stringify(fieldsetInSession));
+    return;
+  } else if (!wasChecked && itemExistsInFieldset ) {
+    const newFieldsetValue = JSON.stringify(fieldsetInSession.reduce((acc, cur) => {
+      if (cur !== name) acc.push(cur);
+      return acc;
+    }, []))
+    sessionStorage.setItem(fieldsetName, newFieldsetValue);
+  }
+
+}
+
+function getFieldsetValueFromSession(fieldsetName) {
+  // returns the current value of fieldset OR creates a new one and returns it
+  const fieldsetInSession = sessionStorage.getItem(fieldsetName);
+  if (!fieldsetInSession) {
+    sessionStorage.setItem(fieldsetName, JSON.stringify([]));
+    return JSON.parse(sessionStorage.getItem(fieldsetName));
+  } 
+  return JSON.parse(fieldsetInSession);
 }
 
 function saveToSession(elementSelected, value) {

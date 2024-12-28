@@ -102,19 +102,19 @@
 
         <!-- Filter: Urgently Needed -->
         <div>
-          <input type="checkbox" id="urgent-items" checked value="Urgently Needed" onchange="updateData()"/>
+          <input type="checkbox" id="urgent-items" checked value="Urgently Needed" onchange="handleCheckboxSelection(this, event)"/>
           <label for="urgent-items" class="urgent">Urgently Needed</label>
         </div>
 
         <!-- Filter: Needed -->
         <div>
-          <input type="checkbox" id="needed-items" checked value="Needed" onchange="updateData()"/>
+          <input type="checkbox" id="needed-items" checked value="Needed" onchange="handleCheckboxSelection(this, event)"/>
           <label for="needed-items" class="needed">Needed</label>
         </div>
 
         <!-- Filter: Available -->
         <div>
-          <input type="checkbox" id="available-items"  {{availableChecked}}  value="Available" onchange="updateData()"/>
+          <input type="checkbox" id="available-items"  {{availableChecked}}  value="Available" onchange="handleCheckboxSelection(this, event)"/>
           <label for="available-items" class="available">Available</label>
         </div>
 
@@ -122,7 +122,7 @@
         <div>
           {{! OversupplyValue is a variable so we can pre-toggle the value }}
           <input type="checkbox" id="oversupply-items" {{overSupplyChecked}} value="Oversupply"
-                 onchange="updateData()"/>
+                 onchange="handleCheckboxSelection(this, event)"/>
           <label for="oversupply-items" class="oversupply">Oversupply<br>(too many)</label>
         </div>
       </fieldset>
@@ -133,12 +133,12 @@
         <legend>Site Status</legend>
         <div>
           <input type="checkbox" id="accepting-donations" checked value="Accepting Donations"
-                 onchange="updateData()"/>
+                 onchange="handleCheckboxSelection(this, event)"/>
           <label for="accepting-donations">Accepting Donations</label>
         </div>
         <div>
           <input type="checkbox" id="not-accepting-donations" {{notAcceptingDonationsChecked}}
-                 value="Not Accepting Donations" onchange="updateData()"/>
+                 value="Not Accepting Donations" onchange="handleCheckboxSelection(this, event)"/>
           <label for="not-accepting-donations">Not Accepting Donations</label>
         </div>
       </fieldset>
@@ -153,7 +153,7 @@
               id="distribution-center"
               checked
               value="Distribution Center"
-              onchange="updateData()"/>
+              onchange="handleCheckboxSelection(this, event)"/>
           <label for="distribution-center">Distribution Center</label>
         </div>
         <div>
@@ -162,7 +162,7 @@
               id="supply-hub"
               checked
               value="Supply Hub"
-              onchange="updateData()"/>
+              onchange="handleCheckboxSelection(this, event)"/>
           <label for="supply-hub">Supply Warehouse</label>
         </div>
       </fieldset>
@@ -230,7 +230,7 @@
         emptyOption +
         filterData.items.map(v =>
             `<option value="${v}">${v}</option>`).join("\n");
-
+    // PrePopulate fieldset values
     addSelectionsFromSession();
     updateData();
   }).catch(error => {
