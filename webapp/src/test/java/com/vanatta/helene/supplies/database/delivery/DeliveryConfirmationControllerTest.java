@@ -51,6 +51,24 @@ class DeliveryConfirmationControllerTest {
     assertThat(confirmation.getConfirmed()).isTrue();
   }
 
+  @Test
+  void deliveryStatusChangesToConfirmed_afterAllConfirmationsReceived() {
+    Delivery delivery = DeliveryHelper.withNewDelivery();
+    DeliveryDao.updateDeliveryStatus(
+        jdbiTest, delivery.getPublicKey(), DeliveryStatus.CREATING_DISPATCH);
+
+    controller.confirmRequest(delivery.getPublicKey(), delivery.getDispatchCode());
+    delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
+    assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.CONFIRMING.getAirtableName());
+
+    final var publicKey = delivery.getPublicKey();
+    delivery
+        .getConfirmations()
+        .forEach(confirmation -> controller.confirmRequest(publicKey, confirmation.getCode()));
+    delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
+    assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.CONFIRMED.getAirtableName());
+  }
+
   @EnumSource(DeliveryConfirmation.ConfirmRole.class)
   @ParameterizedTest
   void cancel(DeliveryConfirmation.ConfirmRole role) {

@@ -405,9 +405,7 @@ class DeliveryControllerTest {
         delivery.getPublicKey(), delivery.getDispatchCode());
   }
 
-  /**
-   * Show confirmations table if dispatcher has confirmed, and if we are not fully confirmed.
-   */
+  /** Show confirmations table if dispatcher has confirmed, and if we are not fully confirmed. */
   @Test
   void showConfirmationFields() {
     Delivery delivery = DeliveryHelper.withNewDelivery();
