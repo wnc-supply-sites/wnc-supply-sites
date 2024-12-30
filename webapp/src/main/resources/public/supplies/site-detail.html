@@ -125,8 +125,8 @@
                     {{#incomingDeliveries}}
                     <tr>
                         <td><a href="{{detailLink}}">[Details]</a></td>
-                        <td>{{deliveryDate}}</td>
-                        <td><a href="{{fromSiteLink}}">{{fromSite}}</a></td>
+                        <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
+                        <td><a href="{{fromSiteLink}}">{{#fromSite}}{{.}}{{/fromSite}}</a></td>
                         <td>{{deliveryStatus}}</td>
                         <td>{{itemCount}}</td>
                         <td>{{itemListTruncated}}</td>
