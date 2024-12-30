@@ -133,3 +133,7 @@ pre {
     font-size: 1.0em;
     color: red;
 }
+
+.confirmation-checkbox-row {
+    height: 33px;
+}
