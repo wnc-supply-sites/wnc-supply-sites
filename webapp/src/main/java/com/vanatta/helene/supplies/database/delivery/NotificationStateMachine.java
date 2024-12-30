@@ -38,6 +38,7 @@ class NotificationStateMachine {
         Delivery #%s, Date: %s
         View details and confirm with this link:
         %s
+        Items (%s): %s
         """;
     messages.add(
         SmsMessage.builder()
@@ -48,7 +49,9 @@ class NotificationStateMachine {
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     websiteUri
-                        + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER)))
+                        + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER),
+                    delivery.getItemCount(),
+                    delivery.getItemListTruncated()))
             .build());
 
     messages.add(
@@ -61,7 +64,9 @@ class NotificationStateMachine {
                     delivery.getDeliveryDate(),
                     websiteUri
                         + DeliveryController.buildDeliveryPageLink(
-                            delivery, ConfirmRole.PICKUP_SITE)))
+                            delivery, ConfirmRole.PICKUP_SITE),
+                    delivery.getItemCount(),
+                    delivery.getItemListTruncated()))
             .build());
 
     messages.add(
@@ -74,7 +79,9 @@ class NotificationStateMachine {
                     delivery.getDeliveryDate(),
                     websiteUri
                         + DeliveryController.buildDeliveryPageLink(
-                            delivery, ConfirmRole.DROPOFF_SITE)))
+                            delivery, ConfirmRole.DROPOFF_SITE),
+                    delivery.getItemCount(),
+                    delivery.getItemListTruncated()))
             .build());
     return messages;
   }
