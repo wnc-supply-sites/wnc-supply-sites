@@ -245,9 +245,15 @@ class DeliveryController {
     templateParams.put(
         TemplateParams.deliveryStatus.name(), nullsToDash(delivery.getDeliveryStatus()));
 
-    var deliveryStatus =
+    DeliveryStatus deliveryStatus =
         EnumUtil.mapText(
-            DeliveryStatus.values(), DeliveryStatus::getAirtableName, delivery.getDeliveryStatus());
+                DeliveryStatus.values(),
+                DeliveryStatus::getAirtableName,
+                delivery.getDeliveryStatus())
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "Unrecognized enum value: " + delivery.getDeliveryStatus()));
 
     // show driver status only if the delivery is confirmed or in progress.
     if (List.of(
