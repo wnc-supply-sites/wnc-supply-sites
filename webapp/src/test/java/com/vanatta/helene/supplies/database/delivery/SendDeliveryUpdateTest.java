@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SendDeliveryUpdateTest {
+  SendDeliveryUpdate sendDeliveryUpdate =
+      new SendDeliveryUpdate(jdbiTest, "http://localhost:8080", false, "");
 
   @BeforeEach
   void setup() {
@@ -19,7 +21,7 @@ class SendDeliveryUpdateTest {
     var delivery = DeliveryHelper.withConfirmedDelivery();
 
     var payload =
-        SendDeliveryUpdate.createPayload(
+        sendDeliveryUpdate.createPayload(
             jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS);
 
     assertThat(payload.getAirtableId()).isEqualTo(delivery.getDeliveryNumber());
@@ -30,7 +32,7 @@ class SendDeliveryUpdateTest {
     assertThat(payload.getPickupConfirmLink())
         .isEqualTo(
             String.format(
-                "/delivery/%s?code=%s",
+                "http://localhost:8080/delivery/%s?code=%s",
                 delivery.getPublicKey(),
                 delivery
                     .getConfirmation(DeliveryConfirmation.ConfirmRole.PICKUP_SITE)
@@ -40,7 +42,7 @@ class SendDeliveryUpdateTest {
     assertThat(payload.getDropOffConfirmLink())
         .isEqualTo(
             String.format(
-                "/delivery/%s?code=%s",
+                "http://localhost:8080/delivery/%s?code=%s",
                 delivery.getPublicKey(),
                 delivery
                     .getConfirmation(DeliveryConfirmation.ConfirmRole.DROPOFF_SITE)
@@ -50,7 +52,7 @@ class SendDeliveryUpdateTest {
     assertThat(payload.getDriverConfirmLink())
         .isEqualTo(
             String.format(
-                "/delivery/%s?code=%s",
+                "http://localhost:8080/delivery/%s?code=%s",
                 delivery.getPublicKey(),
                 delivery
                     .getConfirmation(DeliveryConfirmation.ConfirmRole.DRIVER)

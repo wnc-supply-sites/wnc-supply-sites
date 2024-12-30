@@ -20,7 +20,10 @@ class DeliveryConfirmationControllerTest {
 
   DeliveryConfirmationController controller =
       new DeliveryConfirmationController(
-          jdbiTest, SmsSender.newDisabled(jdbiTest), SendDeliveryUpdate.disabled());
+          jdbiTest,
+          SmsSender.newDisabled(jdbiTest),
+          SendDeliveryUpdate.disabled(),
+          new NotificationStateMachine("http://localhost:8080"));
 
   @Test
   void dispatcherConfirm() {

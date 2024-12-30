@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class SendDeliveryUpdate {
 
   public static SendDeliveryUpdate disabled() {
-    return new SendDeliveryUpdate(null, false, null);
+    return new SendDeliveryUpdate(null, null, false, null);
   }
 
   @Builder
@@ -27,15 +27,18 @@ public class SendDeliveryUpdate {
   }
 
   private final Jdbi jdbi;
+  private final String websiteUri;
   private final boolean enabled;
   private final String airtableWebhookUrl;
 
   SendDeliveryUpdate(
       Jdbi jdbi,
+      @Value("{website.uri}") String websiteUri,
       @Value("${make.enabled}") boolean enabled,
       @Value("${airtable.webhook.delivery.update}") String airtableWebhookUrl) {
 
     this.jdbi = jdbi;
+    this.websiteUri = websiteUri;
     this.enabled = enabled;
     this.airtableWebhookUrl = airtableWebhookUrl;
   }
@@ -48,7 +51,7 @@ public class SendDeliveryUpdate {
     HttpPostSender.sendAsJson(airtableWebhookUrl, updateDeliveryJson);
   }
 
-  static UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus) {
+  UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicKey)
             .orElseThrow(
@@ -59,26 +62,29 @@ public class SendDeliveryUpdate {
         .deliveryStatus(newStatus.getAirtableName())
         .driverStatus(delivery.getDriverStatus())
         .driverConfirmLink(
-            DeliveryController.buildDeliveryPageLinkWithCode(
-                publicKey,
-                delivery
-                    .getConfirmation(DeliveryConfirmation.ConfirmRole.DRIVER)
-                    .orElseThrow()
-                    .getCode()))
+            websiteUri
+                + DeliveryController.buildDeliveryPageLinkWithCode(
+                    publicKey,
+                    delivery
+                        .getConfirmation(DeliveryConfirmation.ConfirmRole.DRIVER)
+                        .orElseThrow()
+                        .getCode()))
         .pickupConfirmLink(
-            DeliveryController.buildDeliveryPageLinkWithCode(
-                publicKey,
-                delivery
-                    .getConfirmation(DeliveryConfirmation.ConfirmRole.PICKUP_SITE)
-                    .orElseThrow()
-                    .getCode()))
+            websiteUri
+                + DeliveryController.buildDeliveryPageLinkWithCode(
+                    publicKey,
+                    delivery
+                        .getConfirmation(DeliveryConfirmation.ConfirmRole.PICKUP_SITE)
+                        .orElseThrow()
+                        .getCode()))
         .dropOffConfirmLink(
-            DeliveryController.buildDeliveryPageLinkWithCode(
-                publicKey,
-                delivery
-                    .getConfirmation(DeliveryConfirmation.ConfirmRole.DROPOFF_SITE)
-                    .orElseThrow()
-                    .getCode()))
+            websiteUri
+                + DeliveryController.buildDeliveryPageLinkWithCode(
+                    publicKey,
+                    delivery
+                        .getConfirmation(DeliveryConfirmation.ConfirmRole.DROPOFF_SITE)
+                        .orElseThrow()
+                        .getCode()))
         .build();
   }
 }

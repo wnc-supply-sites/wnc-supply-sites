@@ -8,6 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class NotificationStateMachineTest {
+  NotificationStateMachine notificationStateMachine =
+      new NotificationStateMachine("http://localhost:8080");
 
   static final String dispatcherNumber = "0000";
   static final String driverNumber = "1111";
@@ -70,7 +72,7 @@ class NotificationStateMachineTest {
   /** When dispatcher confirms we send a confirmation request to driver & sites */
   @Test
   void confirm_dispatcherConfirm() {
-    var results = NotificationStateMachine.requestConfirmations(withPendingConfirmations);
+    var results = notificationStateMachine.requestConfirmations(withPendingConfirmations);
 
     // confirmation request to driver & sites
     assertThat(results).hasSize(3);
@@ -88,27 +90,27 @@ class NotificationStateMachineTest {
   @ParameterizedTest
   @ValueSource(strings = {driverCode, pickupCode, dropOffCode})
   void confirm_singleConfirmation(String code) {
-    var results = NotificationStateMachine.confirm(withPendingConfirmations);
+    var results = notificationStateMachine.confirm(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber);
   }
 
   @Test
   void confirm_fullyConfirmed() {
-    var results = NotificationStateMachine.confirm(withFullyConfirmed);
+    var results = notificationStateMachine.confirm(withFullyConfirmed);
     assertPhoneNumbers(results, dispatcherNumber, driverNumber, pickupNumber, dropOffNumber);
   }
 
   /** If we never started the confirmation process, then a cancel does not need to notify anyone */
   @Test
   void cancel_dispatcherNeverConfirmed() {
-    var results = NotificationStateMachine.cancel(sample);
+    var results = notificationStateMachine.cancel(sample);
     assertThat(results).isEmpty();
   }
 
   /** Once confirmations start, a cancel should notify everyone */
   @Test
   void cancel_confirmationsStarted() {
-    var results = NotificationStateMachine.cancel(withPendingConfirmations);
+    var results = notificationStateMachine.cancel(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, driverNumber, pickupNumber, dropOffNumber);
   }
 

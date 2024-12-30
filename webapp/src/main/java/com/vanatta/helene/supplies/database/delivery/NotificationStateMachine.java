@@ -7,22 +7,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Module to determine what SMS messages should be sent depending upon delivery state (confirmation)
  * changes.
  */
+@Component
 class NotificationStateMachine {
 
+  private final String websiteUri;
+
+  NotificationStateMachine(@Value("{website.uri}") String websiteUri) {
+    this.websiteUri = websiteUri;
+  }
+
   @Builder
-  @Value
+  @lombok.Value
   static class SmsMessage {
     @Nonnull String phone;
     @Nonnull String message;
   }
 
-  public static List<SmsMessage> requestConfirmations(Delivery delivery) {
+  List<SmsMessage> requestConfirmations(Delivery delivery) {
     List<SmsMessage> messages = new ArrayList<>();
     String messageTemplate =
         """
@@ -39,7 +47,8 @@ class NotificationStateMachine {
                     messageTemplate,
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
-                    DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER)))
+                    websiteUri
+                        + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER)))
             .build());
 
     messages.add(
@@ -50,7 +59,9 @@ class NotificationStateMachine {
                     messageTemplate,
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
-                    DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.PICKUP_SITE)))
+                    websiteUri
+                        + DeliveryController.buildDeliveryPageLink(
+                            delivery, ConfirmRole.PICKUP_SITE)))
             .build());
 
     messages.add(
@@ -61,12 +72,14 @@ class NotificationStateMachine {
                     messageTemplate,
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
-                    DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DROPOFF_SITE)))
+                    websiteUri
+                        + DeliveryController.buildDeliveryPageLink(
+                            delivery, ConfirmRole.DROPOFF_SITE)))
             .build());
     return messages;
   }
 
-  static List<SmsMessage> confirm(Delivery delivery) {
+  List<SmsMessage> confirm(Delivery delivery) {
     if (delivery.isConfirmed()) {
       // fully confirmed, send a message to everyone!
       String messageToDriver =
@@ -79,7 +92,7 @@ class NotificationStateMachine {
       """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
-              DeliveryController.buildDeliveryPageLinkForDriver(delivery));
+              websiteUri + DeliveryController.buildDeliveryPageLinkForDriver(delivery));
       String messageToOthers =
           String.format(
               """
@@ -88,7 +101,7 @@ class NotificationStateMachine {
       """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
-              DeliveryController.buildDeliveryPageLink(delivery.getPublicKey()));
+              websiteUri + DeliveryController.buildDeliveryPageLink(delivery.getPublicKey()));
 
       List<SmsMessage> messages = new ArrayList<>();
       messages.add(
@@ -147,7 +160,7 @@ class NotificationStateMachine {
     }
   }
 
-  static List<SmsMessage> cancel(Delivery delivery) {
+  List<SmsMessage> cancel(Delivery delivery) {
     if (delivery.getConfirmations().isEmpty()) {
       return List.of();
     } else {
@@ -168,7 +181,9 @@ class NotificationStateMachine {
                         """,
                               delivery.getDeliveryNumber(),
                               delivery.getDeliveryDate(),
-                              DeliveryController.buildDeliveryPageLink(delivery.getPublicKey())))
+                              websiteUri
+                                  + DeliveryController.buildDeliveryPageLink(
+                                      delivery.getPublicKey())))
                       .build())
           .toList();
     }

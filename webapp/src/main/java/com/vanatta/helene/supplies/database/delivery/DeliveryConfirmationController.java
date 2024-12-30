@@ -24,6 +24,7 @@ class DeliveryConfirmationController {
   private final Jdbi jdbi;
   private final SmsSender smsSender;
   private final SendDeliveryUpdate sendDeliveryUpdate;
+  private final NotificationStateMachine notificationStateMachine;
 
   public static String buildConfirmUrl(String deliveryPublicKey, String confirmationCode) {
     return String.format(
@@ -134,7 +135,7 @@ class DeliveryConfirmationController {
     if (delivery.getDispatchCode().equals(code)) {
       ConfirmationDao.dispatcherConfirm(jdbi, deliveryKey);
       var messages =
-          NotificationStateMachine.requestConfirmations(
+          notificationStateMachine.requestConfirmations(
               DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
       messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
       sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
@@ -153,7 +154,7 @@ class DeliveryConfirmationController {
                       deliveryKey,
                       DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
       var messages =
-          NotificationStateMachine.confirm(
+          notificationStateMachine.confirm(
               DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
       messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
       if (delivery.isConfirmed()) {
@@ -187,7 +188,7 @@ class DeliveryConfirmationController {
                     DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
 
     var messages =
-        NotificationStateMachine.cancel(
+        notificationStateMachine.cancel(
             DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
     messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
     sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_CANCELLED);
