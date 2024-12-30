@@ -18,8 +18,6 @@ update delivery set dispatch_code = '0000';
 alter table delivery alter column dispatch_code set not null;
 
 
-update site set contact_number = null where contact_number = '';
-
 alter table delivery add column driver_status varchar(32) not null default 'PENDING';
 alter table delivery add constraint delivery_route_status
   check (driver_status in ('PENDING', 'DRIVER_EN_ROUTE', 'ARRIVED_AT_PICKUP', 'DEPARTED_PICKUP', 'ARRIVED_AT_DROP_OFF'));
