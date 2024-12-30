@@ -36,6 +36,17 @@ class DeliveryController {
     return "/delivery/" + publicUrlKey + "?code=" + code;
   }
 
+  public static String buildDeliveryPageLinkForDriver(Delivery delivery) {
+    return buildDeliveryPageLink(delivery, DeliveryConfirmation.ConfirmRole.DRIVER);
+  }
+
+  public static String buildDeliveryPageLink(
+      Delivery delivery, DeliveryConfirmation.ConfirmRole role) {
+    String key = delivery.getPublicKey();
+    String code = delivery.getConfirmation(role).orElseThrow().getCode();
+    return buildDeliveryPageLinkForDriver(key, code);
+  }
+
   public static String buildDeliveryPageLinkForDriver(String publicUrlKey, String driverCode) {
     return "/delivery/" + publicUrlKey + "?code=" + driverCode;
   }

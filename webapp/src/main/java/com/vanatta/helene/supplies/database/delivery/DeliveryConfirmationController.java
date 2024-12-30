@@ -122,6 +122,11 @@ class DeliveryConfirmationController {
     if (delivery.getDispatchCode().equals(code)) {
       ConfirmationDao.dispatcherConfirm(jdbi, deliveryKey);
       sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
+
+      var messages =
+          NotificationStateMachine.requestConfirmations(
+              DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
+      messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
     } else if (!delivery.getConfirmations().isEmpty()) {
       Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
           .map(delivery::getConfirmation)
@@ -135,15 +140,13 @@ class DeliveryConfirmationController {
                       jdbi,
                       deliveryKey,
                       DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
+      var messages =
+          NotificationStateMachine.confirm(
+              DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
+      messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
     }
 
-    var messages =
-        NotificationStateMachine.confirm(
-            DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow(), code);
-    messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-
     sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
-
     return new ModelAndView("redirect:/delivery/" + deliveryKey);
   }
 

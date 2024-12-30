@@ -70,7 +70,7 @@ class NotificationStateMachineTest {
   /** When dispatcher confirms we send a confirmation request to driver & sites */
   @Test
   void confirm_dispatcherConfirm() {
-    var results = NotificationStateMachine.confirm(sample, dispatchCode);
+    var results = NotificationStateMachine.requestConfirmations(withPendingConfirmations);
 
     // confirmation request to driver & sites
     assertThat(results).hasSize(3);
@@ -88,13 +88,13 @@ class NotificationStateMachineTest {
   @ParameterizedTest
   @ValueSource(strings = {driverCode, pickupCode, dropOffCode})
   void confirm_singleConfirmation(String code) {
-    var results = NotificationStateMachine.confirm(withPendingConfirmations, dispatchCode);
+    var results = NotificationStateMachine.confirm(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber);
   }
 
   @Test
   void confirm_fullyConfirmed() {
-    var results = NotificationStateMachine.confirm(withFullyConfirmed, dispatchCode);
+    var results = NotificationStateMachine.confirm(withFullyConfirmed);
     assertPhoneNumbers(results, dispatcherNumber, driverNumber, pickupNumber, dropOffNumber);
   }
 
