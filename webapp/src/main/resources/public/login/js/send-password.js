@@ -32,9 +32,7 @@ function sendPassword() {
   .then(
       async function (response) {
         if (response.ok) {
-          window.location.href = "/";
-          // const responseJson = await response.json();
-          // document.getElementById("csrf").value = responseJson.csrf;
+          showPasswordUpdatedDiv();
         } else {
           const responseJson = await response.json();
           showPasswordError("Error: " + responseJson.error);

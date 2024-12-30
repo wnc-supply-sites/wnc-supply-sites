@@ -27,6 +27,7 @@ function sendSms() {
         if (response.ok) {
           const responseJson = await response.json();
           document.getElementById("csrf").value = responseJson.csrf;
+          showAccessCodeDiv();
         } else {
           const responseJson = await response.json();
           showSendAccessCodeError("Error from server: " + responseJson.error);
