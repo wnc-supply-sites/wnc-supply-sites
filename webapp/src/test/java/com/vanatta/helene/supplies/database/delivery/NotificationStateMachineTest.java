@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
+import com.vanatta.helene.supplies.database.data.SiteAddress;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +11,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class NotificationStateMachineTest {
   NotificationStateMachine notificationStateMachine =
-      new NotificationStateMachine("http://localhost:8080");
+      new NotificationStateMachine(
+          "http://localhost:8080",
+          new GoogleDistanceApi("") {
+            @Override
+            public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
+              return GoogleDistanceResponse.builder().distance(10.0).duration(3600L).build();
+            }
+          });
 
   static final String dispatcherNumber = "0000";
   static final String driverNumber = "1111";
@@ -116,19 +125,28 @@ class NotificationStateMachineTest {
 
   @Test
   void driverEnRoute() {
-    var results = NotificationStateMachine.driverEnRoute(withPendingConfirmations);
+    var results = notificationStateMachine.driverEnRoute(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, pickupNumber);
   }
 
   @Test
   void driverArrivedToPickup() {
-    var results = NotificationStateMachine.driverArrivedToPickup(withPendingConfirmations);
+    var results = notificationStateMachine.driverArrivedToPickup(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, pickupNumber);
   }
 
   @Test
   void driverLeavingPickup() {
-    var results = NotificationStateMachine.driverLeavingPickup(withPendingConfirmations);
+    var results =
+        notificationStateMachine.driverLeavingPickup(
+            withPendingConfirmations.toBuilder()
+                .fromState("NC")
+                .fromCity("Black Rock")
+                .fromAddress("Hell Ya")
+                .toState("NC")
+                .toCity("Elk Park")
+                .toAddress("Main St.")
+                .build());
     assertPhoneNumbers(results, dispatcherNumber, dropOffNumber);
   }
 

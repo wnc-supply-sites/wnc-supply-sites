@@ -81,7 +81,9 @@ public class Delivery {
   Delivery(DeliveryDao.DeliveryData dbData) {
     this.publicKey = dbData.getPublicUrlKey();
     this.deliveryNumber = dbData.getDeliveryId();
-    this.deliveryStatus = Optional.ofNullable(dbData.getDeliveryStatus()).orElse("Scheduling");
+    this.deliveryStatus =
+        Optional.ofNullable(dbData.getDeliveryStatus())
+            .orElse(DeliveryStatus.CREATING_DISPATCH.getAirtableName());
     this.detailLink = DeliveryController.buildDeliveryPageLink(dbData.getPublicUrlKey());
     this.deliveryDate = dbData.getTargetDeliveryDate();
     this.driverName = dbData.getDriverName();

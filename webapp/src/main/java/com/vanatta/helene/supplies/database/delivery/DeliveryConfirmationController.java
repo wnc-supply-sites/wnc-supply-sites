@@ -50,7 +50,6 @@ class DeliveryConfirmationController {
    * @param code Secret code value for drivers that allows them to access URLs that change driver
    *     status.
    * @param newDriverStatus the new confirmation status. Shoudl be
-   * @return
    */
   @GetMapping(driverPath)
   ModelAndView confirmDriverStatus(
@@ -78,19 +77,22 @@ class DeliveryConfirmationController {
     switch (newStatus) {
       case PENDING -> {}
       case DRIVER_EN_ROUTE -> {
-        NotificationStateMachine.driverEnRoute(delivery)
+        notificationStateMachine
+            .driverEnRoute(delivery)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
         sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
       }
       case ARRIVED_AT_PICKUP -> {
-        NotificationStateMachine.driverArrivedToPickup(delivery)
+        notificationStateMachine
+            .driverArrivedToPickup(delivery)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
         sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
       }
       case DEPARTED_PICKUP -> {
-        NotificationStateMachine.driverLeavingPickup(delivery)
+        notificationStateMachine
+            .driverLeavingPickup(delivery)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
         sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);

@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.delivery.DeliveryConfirmation.ConfirmRole;
 import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
@@ -18,9 +19,12 @@ import org.springframework.stereotype.Component;
 class NotificationStateMachine {
 
   private final String websiteUri;
+  private final GoogleDistanceApi googleDistanceApi;
 
-  NotificationStateMachine(@Value("${website.uri}") String websiteUri) {
+  NotificationStateMachine(
+      @Value("${website.uri}") String websiteUri, GoogleDistanceApi googleDistanceApi) {
     this.websiteUri = websiteUri;
+    this.googleDistanceApi = googleDistanceApi;
   }
 
   @Builder
@@ -196,27 +200,96 @@ class NotificationStateMachine {
     }
   }
 
-  static List<SmsMessage> driverEnRoute(Delivery delivery) {
+  List<SmsMessage> driverEnRoute(Delivery delivery) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
-        .map(number -> SmsMessage.builder().phone(number).message("driver en route").build())
+        .map(
+            number ->
+                SmsMessage.builder()
+                    .phone(number)
+                    .message(
+                        String.format(
+                            """
+                        Driver, %s, is now en route to %s, license plate: %s, to pick up %s items.
+                        Full Details: %s
+                        """,
+                            delivery.getDriverName(),
+                            delivery.getToSite(),
+                            delivery.getDriverLicensePlate(),
+                            delivery.getItemCount(),
+                            websiteUri
+                                + DeliveryController.buildDeliveryPageLink(
+                                    delivery.getPublicKey())))
+                    .build())
         .toList();
   }
 
-  static List<SmsMessage> driverArrivedToPickup(Delivery delivery) {
+  List<SmsMessage> driverArrivedToPickup(Delivery delivery) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
-        .map(number -> SmsMessage.builder().phone(number).message("arrived at pickup").build())
+        .map(
+            number ->
+                SmsMessage.builder()
+                    .phone(number)
+                    .message(
+                        String.format(
+                            """
+                Driver, %s, has arrived at %s, license plate: %s, to pick up %s items.
+                Full Details: %s
+                """,
+                            delivery.getDriverName(),
+                            delivery.getToSite(),
+                            delivery.getDriverLicensePlate(),
+                            delivery.getItemCount(),
+                            websiteUri
+                                + DeliveryController.buildDeliveryPageLink(
+                                    delivery.getPublicKey())))
+                    .build())
         .toList();
   }
 
-  static List<SmsMessage> driverLeavingPickup(Delivery delivery) {
+  List<SmsMessage> driverLeavingPickup(Delivery delivery) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getToContactPhoneNumber())
-        .map(number -> SmsMessage.builder().phone(number).message("leaving pickup").build())
+        .map(
+            number ->
+                SmsMessage.builder()
+                    .phone(number)
+                    .message(
+                        String.format(
+                            """
+                Inbound driver ETA: %s, driver %s is now on their way to %s,
+                they just left %s in %s, transporting %s items.
+                License plates: %s
+                Full Details: %s
+                """,
+                            googleDistanceApi.estimateEta(delivery),
+                            delivery.getDriverName(),
+                            delivery.getToSite(),
+                            delivery.getFromSite(),
+                            delivery.getFromCity(),
+                            delivery.getItemCount(),
+                            delivery.getDriverLicensePlate(),
+                            websiteUri
+                                + DeliveryController.buildDeliveryPageLink(
+                                    delivery.getPublicKey())))
+                    .build())
         .toList();
   }
 
   static List<SmsMessage> driverArrivedToDropOff(Delivery delivery) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getToContactPhoneNumber())
-        .map(number -> SmsMessage.builder().phone(number).message("arrived at drop off").build())
+        .map(
+            number ->
+                SmsMessage.builder()
+                    .phone(number)
+                    .message(
+                        String.format(
+                            """
+          Supplies driver %s, license plates: %s, has arrived at drop off site: %s
+          #wncStrong
+          """,
+                            delivery.getDriverName(),
+                            delivery.getDriverLicensePlate(),
+                            delivery.getToSite()))
+                    .build())
         .toList();
   }
 }

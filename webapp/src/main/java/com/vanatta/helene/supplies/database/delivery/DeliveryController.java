@@ -259,7 +259,7 @@ class DeliveryController {
     if (List.of(
             DeliveryStatus.CONFIRMED,
             DeliveryStatus.DELIVERY_IN_PROGRESS,
-            DeliveryStatus.DELIVERY_COMPLETED)
+            DeliveryStatus.DELIVERY_COMPLETED.getAirtableName())
         .contains(deliveryStatus)) {
       templateParams.put(TemplateParams.driverStatus.name(), delivery.getDriverStatus());
     } else {
