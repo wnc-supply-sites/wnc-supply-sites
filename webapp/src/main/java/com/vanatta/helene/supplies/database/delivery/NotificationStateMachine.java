@@ -39,9 +39,10 @@ class NotificationStateMachine {
     String messageTemplate =
         """
         WNC-supply-sites delivery requested. Please confirm.
-        Delivery #%s, Date: %s
-        View details and confirm with this link:
         %s
+
+        Delivery #%s
+        Date: %s
         Items (%s): %s
         """;
     messages.add(
@@ -50,10 +51,10 @@ class NotificationStateMachine {
             .message(
                 String.format(
                     messageTemplate,
-                    delivery.getDeliveryNumber(),
-                    delivery.getDeliveryDate(),
                     websiteUri
                         + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER),
+                    delivery.getDeliveryNumber(),
+                    delivery.getDeliveryDate(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());
@@ -64,11 +65,11 @@ class NotificationStateMachine {
             .message(
                 String.format(
                     messageTemplate,
-                    delivery.getDeliveryNumber(),
-                    delivery.getDeliveryDate(),
                     websiteUri
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.PICKUP_SITE),
+                    delivery.getDeliveryNumber(),
+                    delivery.getDeliveryDate(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());
@@ -79,11 +80,11 @@ class NotificationStateMachine {
             .message(
                 String.format(
                     messageTemplate,
-                    delivery.getDeliveryNumber(),
-                    delivery.getDeliveryDate(),
                     websiteUri
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.DROPOFF_SITE),
+                    delivery.getDeliveryNumber(),
+                    delivery.getDeliveryDate(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());
