@@ -156,7 +156,7 @@ class DeliveryConfirmationController {
           NotificationStateMachine.confirm(
               DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
       messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-      if(delivery.isConfirmed()) {
+      if (delivery.isConfirmed()) {
         sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMED);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.CONFIRMED);
       }

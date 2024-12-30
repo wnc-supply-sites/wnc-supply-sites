@@ -69,6 +69,7 @@ class DeliveryControllerTest {
                               TemplateParams.dispatcherPhone,
                               TemplateParams.driverConfirmed,
                               TemplateParams.driverPhone,
+                              TemplateParams.driverStatus,
                               TemplateParams.dropOffConfirmed,
                               TemplateParams.fromContactPhone,
                               TemplateParams.pickupConfirmed,

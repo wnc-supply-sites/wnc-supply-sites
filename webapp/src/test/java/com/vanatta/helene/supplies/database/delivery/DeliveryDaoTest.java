@@ -66,8 +66,7 @@ class DeliveryDaoTest {
     DeliveryDao.upsert(jdbiTest, update);
     // check that the driver code does not change.
     assertThat(
-            DeliveryDao.fetchDeliveryByPublicKey(
-                    jdbiTest, update.getPublicUrlKey())
+            DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, update.getPublicUrlKey())
                 .orElseThrow()
                 .getDriverCode())
         .isEqualTo(driverCode);
@@ -77,22 +76,28 @@ class DeliveryDaoTest {
   @ParameterizedTest
   @ValueSource(strings = {"BETA", "XKCD", "ABCD"})
   void fetchDeliveryByPublicUrl(String urlKey) {
-    var result =
-        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, urlKey).orElseThrow();
+    var result = DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, urlKey).orElseThrow();
     assertThat(result).isNotNull();
   }
-  
+
   @Test
   void updateDeliveryStatus() {
     var delivery = DeliveryHelper.withNewDelivery();
-    
-    DeliveryDao.updateDeliveryStatus(jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS);
-    var status = DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow().getDeliveryStatus();
+
+    DeliveryDao.updateDeliveryStatus(
+        jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS);
+    var status =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey())
+            .orElseThrow()
+            .getDeliveryStatus();
     assertThat(status).isEqualTo(DeliveryStatus.DELIVERY_IN_PROGRESS.getAirtableName());
-    
-    
-    DeliveryDao.updateDeliveryStatus(jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_CANCELLED);
-    status = DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow().getDeliveryStatus();
+
+    DeliveryDao.updateDeliveryStatus(
+        jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_CANCELLED);
+    status =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey())
+            .orElseThrow()
+            .getDeliveryStatus();
     assertThat(status).isEqualTo(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName());
   }
 }
