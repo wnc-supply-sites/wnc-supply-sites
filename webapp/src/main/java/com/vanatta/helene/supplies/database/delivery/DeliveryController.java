@@ -246,7 +246,20 @@ class DeliveryController {
     templateParams.put(TemplateParams.deliveryDate.name(), delivery.getDeliveryDate());
     templateParams.put(
         TemplateParams.deliveryStatus.name(), nullsToDash(delivery.getDeliveryStatus()));
-    templateParams.put(TemplateParams.driverStatus.name(), delivery.getDriverStatus());
+
+    var deliveryStatus = DeliveryStatus.valueOf(delivery.getDeliveryStatus());
+
+    // show driver status only if the delivery is confirmed or in progress.
+    if (List.of(
+            DeliveryStatus.CONFIRMED,
+            DeliveryStatus.DELIVERY_IN_PROGRESS,
+            DeliveryStatus.DELIVERY_COMPLETED)
+        .contains(deliveryStatus)) {
+      templateParams.put(TemplateParams.driverStatus.name(), delivery.getDriverStatus());
+    } else {
+      templateParams.put(TemplateParams.driverStatus.name(), null);
+    }
+
     templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());
     templateParams.put(TemplateParams.driverName.name(), nullsToDash(delivery.getDriverName()));
     templateParams.put(TemplateParams.driverPhone.name(), delivery.getDriverPhoneNumber());

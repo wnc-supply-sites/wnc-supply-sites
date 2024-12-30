@@ -19,9 +19,11 @@
     <div>
       Delivery Status: <span class="bold">{{deliveryStatus}}</span>
     </div>
+    {{#driverStatus}}
     <div>
-      Driver Status: <span class="bold">{{driverStatus}}</span>
+      Driver Status: <span class="bold">{{.}}</span>
     </div>
+    {{/driverStatus}}
     <div>
       Date: <span class="bold">{{#deliveryDate}}{{.}}{{/deliveryDate}}{{^deliveryDate}}Not yet set{{/deliveryDate}}</span>
     </div>
