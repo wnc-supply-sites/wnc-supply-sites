@@ -6,8 +6,14 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.delivery.ConfirmationDao;
+import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
+import com.vanatta.helene.supplies.database.delivery.DeliveryHelper;
+import com.vanatta.helene.supplies.database.delivery.DeliveryStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
 import java.util.List;
+import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
@@ -340,5 +346,60 @@ class SuppliesControllerTest {
         .stream()
         .map(SiteSupplyResponse.SiteSupplyData::getSite)
         .toList();
+  }
+
+  /**
+   * Integration test for site search.
+   *
+   * <pre>
+   *   1. add a site, validate it appears in the search
+   *   2. add inventory to the site, validate the inventory appears in the search
+   *   3. add an empty delivery for the site, validate the site still appears in the search
+   * </pre>
+   */
+  @Test
+  void sitesWithEmptyDeliveryShowUp() {
+    String siteName = TestConfiguration.addSite();
+    var searchResults =
+        suppliesController
+            .getSuppliesData(SiteSupplyRequest.builder().sites(List.of(siteName)).build(), false)
+            .getResults()
+            .stream()
+            .toList();
+    assertThat(searchResults).isNotEmpty();
+    assertThat(searchResults.getFirst().getNeededItems()).isEmpty();
+    ;
+
+    // add an item to the site
+    var itemName = UUID.randomUUID().toString();
+    InventoryDao.addNewItem(jdbiTest, itemName);
+    long siteId = TestConfiguration.getSiteId(siteName);
+    InventoryDao.updateSiteItemActive(jdbiTest, siteId, itemName, ItemStatus.NEEDED.getText());
+
+    // search again
+    assertSiteAppearsInSearchWithItems(siteName);
+
+    // add a delivery to the site
+    var delivery = DeliveryHelper.withNewDelivery(siteId, siteId);
+    assertSiteAppearsInSearchWithItems(siteName);
+
+    // check regression does not happen, sites that had deliveries in various statuses were not
+    // showing their inventory.
+    ConfirmationDao.dispatcherConfirm(jdbiTest, delivery.getPublicKey());
+    for (DeliveryStatus status : DeliveryStatus.values()) {
+      DeliveryDao.updateDeliveryStatus(jdbiTest, delivery.getPublicKey(), status);
+      assertSiteAppearsInSearchWithItems(siteName);
+    }
+  }
+
+  private void assertSiteAppearsInSearchWithItems(String siteName) {
+    var searchResults =
+        suppliesController
+            .getSuppliesData(SiteSupplyRequest.builder().sites(List.of(siteName)).build(), true)
+            .getResults()
+            .stream()
+            .toList();
+    assertThat(searchResults).isNotEmpty();
+    assertThat(searchResults.getFirst().getNeededItems()).isNotEmpty();
   }
 }

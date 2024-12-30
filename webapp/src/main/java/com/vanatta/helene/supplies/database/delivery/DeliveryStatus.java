@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-enum DeliveryStatus {
+public enum DeliveryStatus {
   CREATING_DISPATCH("Creating Dispatch"),
   ASSIGNING_DRIVER("Assigning Driver"),
   CONFIRMING("Confirming"),

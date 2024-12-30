@@ -38,7 +38,7 @@ public class SuppliesDao {
         i.name item,
         ist.name itemStatus,
         s.inventory_last_updated inventoryLastUpdated,
-        max(d.target_delivery_date) lastDeliveryDate
+        max(d.target_delivery_date) filter (where d.delivery_status = 'Delivery Completed') lastDeliveryDate
       from site s
       join site_type st on st.id = s.site_type_id
       join county c on c.id = s.county_id
@@ -47,8 +47,6 @@ public class SuppliesDao {
       left join item_status ist on ist.id = si.item_status_id
       left join delivery d on d.to_site_id = s.id
       where s.active = true
-         and (
-           d.delivery_status is null or d.delivery_status = 'Delivery Completed')
       """);
 
     if (!request.getSites().isEmpty()) {

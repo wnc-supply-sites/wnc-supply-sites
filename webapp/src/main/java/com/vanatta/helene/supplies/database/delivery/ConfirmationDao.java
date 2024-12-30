@@ -8,7 +8,7 @@ import org.jdbi.v3.core.Jdbi;
  * DAO specifically for updating the confirmation status of deliveries. In contrast 'DeliveryDao' is
  * more for storing the raw delivery data, while this DAO handles confirmation updates.
  */
-class ConfirmationDao {
+public class ConfirmationDao {
 
   public static void dispatcherConfirm(Jdbi jdbi, String publicUrlKey) {
     String insert =
