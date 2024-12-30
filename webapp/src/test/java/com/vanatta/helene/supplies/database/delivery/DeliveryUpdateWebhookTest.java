@@ -54,7 +54,7 @@ class DeliveryUpdateWebhookTest {
         "targetDeliveryDate" : "2024-12-13",
         "dispatcherNotes": "notes from dispatcher",
         "publicUrlKey": "QWER",
-        "dispatchCode": "DDDD"
+        "dispatcherCode": "DDDD"
      }
      """;
 

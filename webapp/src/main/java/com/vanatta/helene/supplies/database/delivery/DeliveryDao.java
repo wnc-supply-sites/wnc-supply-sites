@@ -184,6 +184,23 @@ public class DeliveryDao {
     return input == null || input.isEmpty() ? null : input.getFirst();
   }
 
+  public static void updateDeliveryStatus(
+      Jdbi jdbi, String publicKey, DeliveryStatus deliveryStatus) {
+    String update =
+        """
+      update delivery
+        set delivery_status = :deliveryStatus
+      where public_url_key = :publicKey
+      """;
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(update)
+                .bind("publicKey", publicKey)
+                .bind("deliveryStatus", deliveryStatus.getAirtableName())
+                .execute());
+  }
+
   // get
   @Data
   @AllArgsConstructor

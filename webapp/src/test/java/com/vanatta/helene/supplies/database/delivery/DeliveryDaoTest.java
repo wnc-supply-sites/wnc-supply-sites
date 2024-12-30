@@ -1,11 +1,13 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -18,7 +20,7 @@ class DeliveryDaoTest {
     "dispatcherName":["John"],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
     "targetDeliveryDate":"2024-12-16","licensePlateNumbers":[],
-    "publicUrlKey": "akey", "dispatchCode":"TTTT"}
+    "publicUrlKey": "akey", "dispatcherCode":"TTTT"}
     """;
 
   static final String upsertJson2 =
@@ -28,7 +30,7 @@ class DeliveryDaoTest {
     "dispatcherName":[],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
     "targetDeliveryDate":"","licensePlateNumbers":[],
-    "publicUrlKey": "bkey", "dispatchCode":"ZZZZ"}
+    "publicUrlKey": "bkey", "dispatcherCode":"ZZZZ"}
     """;
 
   static final long SITE1_WSS_ID = -10;
@@ -52,20 +54,20 @@ class DeliveryDaoTest {
                 .itemListWssIds(List.of(WATER_WSS_ID, GLOVES_WSS_ID))
                 .build();
 
-    DeliveryDao.upsert(TestConfiguration.jdbiTest, update);
+    DeliveryDao.upsert(jdbiTest, update);
 
     var driverCode =
-        DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, update.getPublicUrlKey())
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, update.getPublicUrlKey())
             .orElseThrow()
             .getDriverCode();
     assertThat(driverCode).isNotNull();
 
     // validate that we can do another upsert
-    DeliveryDao.upsert(TestConfiguration.jdbiTest, update);
+    DeliveryDao.upsert(jdbiTest, update);
     // check that the driver code does not change.
     assertThat(
             DeliveryDao.fetchDeliveryByPublicKey(
-                    TestConfiguration.jdbiTest, update.getPublicUrlKey())
+                    jdbiTest, update.getPublicUrlKey())
                 .orElseThrow()
                 .getDriverCode())
         .isEqualTo(driverCode);
@@ -76,7 +78,21 @@ class DeliveryDaoTest {
   @ValueSource(strings = {"BETA", "XKCD", "ABCD"})
   void fetchDeliveryByPublicUrl(String urlKey) {
     var result =
-        DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, urlKey).orElseThrow();
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, urlKey).orElseThrow();
     assertThat(result).isNotNull();
+  }
+  
+  @Test
+  void updateDeliveryStatus() {
+    var delivery = DeliveryHelper.withNewDelivery();
+    
+    DeliveryDao.updateDeliveryStatus(jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS);
+    var status = DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow().getDeliveryStatus();
+    assertThat(status).isEqualTo(DeliveryStatus.DELIVERY_IN_PROGRESS.getAirtableName());
+    
+    
+    DeliveryDao.updateDeliveryStatus(jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_CANCELLED);
+    status = DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow().getDeliveryStatus();
+    assertThat(status).isEqualTo(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName());
   }
 }
