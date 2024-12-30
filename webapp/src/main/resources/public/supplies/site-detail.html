@@ -221,7 +221,7 @@
 
         {{#loggedIn}}
         <a id="needs-matching"></a>
-        <h2>Needs Matching<span class="privately-visible">*</span> ({{matchCount}} sites)</h2>
+        <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
         <p>The below sites have supplies that are needed and can be transported to the current site.</p>
         <div class="table-container">
             <table class="needs-matching">
