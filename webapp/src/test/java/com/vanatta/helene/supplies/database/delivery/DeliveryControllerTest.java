@@ -406,8 +406,7 @@ class DeliveryControllerTest {
   }
 
   /**
-   * Show confirmations table if we have at least one confirmation, but are also not fully
-   * confirmed.
+   * Show confirmations table if dispatcher has confirmed, and if we are not fully confirmed.
    */
   @Test
   void showConfirmationFields() {
@@ -421,7 +420,7 @@ class DeliveryControllerTest {
 
     result = renderDispatcherDeliveryPage(delivery);
     assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
-        .isFalse();
+        .isTrue();
 
     // 1 confirmation -> now show confirmation table
     ConfirmationDao.confirmDelivery(

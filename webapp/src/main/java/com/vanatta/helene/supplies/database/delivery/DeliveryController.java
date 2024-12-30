@@ -238,10 +238,7 @@ class DeliveryController {
     templateParams.put(TemplateParams.dropOffConfirmed.name(), dropOffConfirm);
     templateParams.put(
         TemplateParams.hasConfirmations.name(),
-        !delivery.isConfirmed()
-            && ((driverConfirm != null && driverConfirm.getConfirmed() != null)
-                || (pickupConfirm != null && pickupConfirm.getConfirmed() != null)
-                || (dropOffConfirm != null && dropOffConfirm.getConfirmed() != null)));
+        !delivery.getConfirmations().isEmpty() && !delivery.isConfirmed());
 
     templateParams.put(TemplateParams.deliveryId.name(), delivery.getDeliveryNumber());
     templateParams.put(TemplateParams.deliveryDate.name(), delivery.getDeliveryDate());
