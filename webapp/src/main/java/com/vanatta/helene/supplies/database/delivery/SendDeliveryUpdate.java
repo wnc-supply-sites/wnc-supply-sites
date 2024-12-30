@@ -33,7 +33,7 @@ public class SendDeliveryUpdate {
 
   SendDeliveryUpdate(
       Jdbi jdbi,
-      @Value("{website.uri}") String websiteUri,
+      @Value("${website.uri}") String websiteUri,
       @Value("${make.enabled}") boolean enabled,
       @Value("${airtable.webhook.delivery.update}") String airtableWebhookUrl) {
 

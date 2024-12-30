@@ -19,7 +19,7 @@ class NotificationStateMachine {
 
   private final String websiteUri;
 
-  NotificationStateMachine(@Value("{website.uri}") String websiteUri) {
+  NotificationStateMachine(@Value("${website.uri}") String websiteUri) {
     this.websiteUri = websiteUri;
   }
 
