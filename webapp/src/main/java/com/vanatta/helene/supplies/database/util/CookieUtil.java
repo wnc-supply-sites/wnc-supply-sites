@@ -17,6 +17,9 @@ public class CookieUtil {
   }
 
   public static void deleteCookie(HttpServletResponse response, String cookieName) {
+    if (response == null) {
+      return;
+    }
     Cookie cookie = new Cookie(cookieName, null);
     cookie.setMaxAge(0);
     cookie.setSecure(true);

@@ -65,7 +65,7 @@ class SetPasswordControllerTest {
   @Test
   void setPassword() {
     // set password
-    var response = controller.setPassword(input);
+    var response = controller.setPassword(input, null);
 
     // validate password is set
     assertThat(response.getStatusCode().value()).isEqualTo(200);
@@ -84,7 +84,7 @@ class SetPasswordControllerTest {
             """,
             "bad token value, this is incorrect", newPassword);
 
-    var response = controller.setPassword(input);
+    var response = controller.setPassword(input, null);
 
     assertThat(response.getStatusCode().value()).isEqualTo(401);
     assertThat(response.getBody().getError()).isNotNull();
