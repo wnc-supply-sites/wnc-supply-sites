@@ -38,7 +38,7 @@ class SuppliesControllerTest {
     var result = suppliesController.getSuppliesData(SiteSupplyRequest.builder().build());
 
     // All active sites should be returned
-    assertThat(result.getResultCount()).isEqualTo(5);
+    assertThat(result.getResultCount()).isEqualTo(6);
   }
 
   @Test
