@@ -83,7 +83,7 @@ public class SiteDetailController {
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
     return siteDetail(
-        id, airtableId, wssId, cookieAuthenticator.isAuthenticatedWithUniversalPassword(request));
+        id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
   }
 
   // @VisibleForTesting
