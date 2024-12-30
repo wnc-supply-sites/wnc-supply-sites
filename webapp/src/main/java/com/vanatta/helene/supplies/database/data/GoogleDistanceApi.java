@@ -78,7 +78,7 @@ public class GoogleDistanceApi {
     long seconds = queryDistance(from, to).duration;
     var now = timeSupplier.get();
     now = now.plusSeconds(seconds);
-    return DateTimeFormat.format(now);
+    return DateTimeFormat.formatTime(now);
   }
 
   @Builder

@@ -256,14 +256,15 @@ class NotificationStateMachine {
                     .message(
                         String.format(
                             """
-                Inbound driver ETA: %s, driver %s is now on their way to %s,
-                they just left %s in %s, transporting %s items.
+                Driver %s is on their way to %s.
+                ETA: %s
+                They just left %s in %s, transporting %s items.
                 License plates: %s
                 Full Details: %s
                 """,
-                            googleDistanceApi.estimateEta(delivery),
                             delivery.getDriverName(),
                             delivery.getToSite(),
+                            googleDistanceApi.estimateEta(delivery),
                             delivery.getFromSite(),
                             delivery.getFromCity(),
                             delivery.getItemCount(),
