@@ -106,7 +106,7 @@ public class DeliveryDao {
                     firstValue(deliveryUpdate.getLicensePlateNumbers()))
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
-                .bind("dispatchCode", deliveryUpdate.getDispatchCode())
+                .bind("dispatchCode", deliveryUpdate.getDispatcherCode())
                 .bind("driverCode", SecretCodeGenerator.generateCode())
                 .bind("publicUrlKey", deliveryUpdate.getPublicUrlKey())
                 .bind("pickupSiteName", firstValue(deliveryUpdate.getPickupSiteName()))

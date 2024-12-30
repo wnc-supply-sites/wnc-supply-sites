@@ -25,7 +25,7 @@ class DeliveryUpdate {
    * Secret code for dispatchers to view delivery manifest page and have additional controls (eg:
    * send confirmation button).
    */
-  String dispatchCode;
+  String dispatcherCode;
 
   String deliveryStatus;
   List<String> dispatcherName;

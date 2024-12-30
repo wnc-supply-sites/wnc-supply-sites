@@ -107,7 +107,8 @@ class DeliveryControllerTest {
 
     // request delivery page with dispatch code, for dispatcher
     var response =
-        deliveryController.showDeliveryDetailPage(input.getPublicUrlKey(), input.getDispatchCode());
+        deliveryController.showDeliveryDetailPage(
+            input.getPublicUrlKey(), input.getDispatcherCode());
     // delivery is good to go, dispatcher should have the option to confirm the delivery.
     assertFieldsAreNotNull(
         response, TemplateParams.sendConfirmationVisible, TemplateParams.confirmMessage);
@@ -170,7 +171,7 @@ class DeliveryControllerTest {
 
     var response =
         deliveryController.showDeliveryDetailPage(
-            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatchCode());
+            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatcherCode());
 
     // should be showing messages indicating there is data missing
     // decline &c onfirm URL are always populated
@@ -242,7 +243,7 @@ class DeliveryControllerTest {
 
     var response =
         deliveryController.showDeliveryDetailPage(
-            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatchCode());
+            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatcherCode());
 
     // dispatcher has already confirmed, assert that the confirm button is disabled
     assertFieldsAreFalse(

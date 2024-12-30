@@ -63,6 +63,20 @@ class DeliveryUpdateWebhookTest {
   {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[],"publicUrlKey": "ASDF"}
   """;
 
+  static final String deliveryInput3 =
+      """
+          {"updateTimestampMs":"2024-12-30T03:30:07.471Z","deliveryId":130,"itemListWssIds":[],
+          "itemList":["AA Batteries"],"driverNumber":["(919) 000-0000"],"driverName":["Test"],
+          "dispatcherNumber":["919.000.0000"],"dispatcherName":["Test"],"deliveryStatus":"Creating Dispatch",
+          "targetDeliveryDate":"2024-12-30","licensePlateNumbers":["test-xyz,WXX-123"],"publicUrlKey":"AAAA",
+          "dispatcherCode":"VAAA","dropOffSiteWssId":[337],"pickupSiteWssId":[337],
+          "pickupSiteName":["zTest"],"pickupContactName":["zTest1"],"pickupContactPhone":["(919) 000-0000"],
+          "pickupHours":["zTest1"],"pickupAddress":["zTest1"],"pickupCity":["zTest12"],
+          "pickupState":["TN"],"dropoffSiteName":["zTest"],"dropoffContactName":["zTest1"],
+          "dropoffContactPhone":["(919) 360-0528"],"dropoffHours":["zTest1"],
+          "dropoffAddress":["zTest1"],"dropoffCity":["zTest12"],"dropoffState":["TN"]}
+    """;
+
   @Test
   void canParseInput() {
     DeliveryUpdate update = DeliveryUpdate.parseJson(deliveryUpdateInput);
@@ -78,7 +92,7 @@ class DeliveryUpdateWebhookTest {
     assertThat(update.getLicensePlateNumbers()).containsExactly("XYZ-123,ABC-333");
     assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
     assertThat(update.getDispatcherNotes()).isEqualTo("notes from dispatcher");
-    assertThat(update.getDispatchCode()).isEqualTo("DDDD");
+    assertThat(update.getDispatcherCode()).isEqualTo("DDDD");
   }
 
   @Test
@@ -135,6 +149,11 @@ class DeliveryUpdateWebhookTest {
   @Test
   void canParse2() {
     DeliveryUpdate.parseJson(deliveryInput2);
+  }
+
+  @Test
+  void canUpserSample3() {
+    deliveryUpdateWebhook.upsertDelivery(deliveryInput3);
   }
 
   @Test
