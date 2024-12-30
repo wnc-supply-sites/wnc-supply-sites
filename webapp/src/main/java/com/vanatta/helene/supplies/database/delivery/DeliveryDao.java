@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import com.vanatta.helene.supplies.database.util.SecretCodeGenerator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,13 +13,14 @@ import org.jdbi.v3.core.Jdbi;
 @Slf4j
 public class DeliveryDao {
 
-  public static void upsert(Jdbi jdbi, DeliveryController.DeliveryUpdate deliveryUpdate) {
+  public static void upsert(Jdbi jdbi, DeliveryUpdate deliveryUpdate) {
     String upsert =
         """
         insert into delivery(
           from_site_id, to_site_id, delivery_status, target_delivery_date,
           dispatcher_name, dispatcher_number, driver_name, driver_number,
           driver_license_plates, airtable_id, dispatcher_notes, public_url_key,
+          dispatch_code, driver_code,
           pickup_site_name, pickup_contact_name, pickup_contact_phone,
           pickup_hours, pickup_address, pickup_city, pickup_state,
           dropoff_site_name, dropoff_contact_name, dropoff_contact_phone,
@@ -36,6 +38,8 @@ public class DeliveryDao {
           :airtableId,
           :dispatcherNotes,
           :publicUrlKey,
+          :dispatchCode,
+          :driverCode,
           :pickupSiteName,
           :pickupContactName,
           :pickupContactPhone,
@@ -61,6 +65,7 @@ public class DeliveryDao {
           driver_number = :driverNumber,
           driver_license_plates = :driverLicensePlateNumbers,
           dispatcher_notes = :dispatcherNotes,
+          dispatch_code = :dispatchCode,
           pickup_site_name = :pickupSiteName,
           pickup_contact_name = :pickupContactName,
           pickup_contact_phone = :pickupContactPhone,
@@ -101,6 +106,8 @@ public class DeliveryDao {
                     firstValue(deliveryUpdate.getLicensePlateNumbers()))
                 .bind("airtableId", deliveryUpdate.getDeliveryId())
                 .bind("dispatcherNotes", deliveryUpdate.getDispatcherNotes())
+                .bind("dispatchCode", deliveryUpdate.getDispatchCode())
+                .bind("driverCode", SecretCodeGenerator.generateCode())
                 .bind("publicUrlKey", deliveryUpdate.getPublicUrlKey())
                 .bind("pickupSiteName", firstValue(deliveryUpdate.getPickupSiteName()))
                 .bind("pickupContactName", firstValue(deliveryUpdate.getPickupContactName()))
@@ -210,6 +217,15 @@ public class DeliveryDao {
     private String toContactName;
     private String toContactPhone;
     private String toHours;
+
+    private String dispatchCode;
+    private String driverStatus;
+
+    /**
+     * Driver code is used to update driverStatus. It is not used to do confirmations. The driver
+     * confirm code is used for confirmations.
+     */
+    private String driverCode;
   }
 
   public static Optional<Delivery> fetchDeliveryByPublicKey(Jdbi jdbi, String publicUrlKey) {
@@ -232,7 +248,6 @@ public class DeliveryDao {
   }
 
   private static List<Delivery> fetchDeliveries(Jdbi jdbi, String whereClause, Object idValue) {
-
     String select =
         String.format(
             """
@@ -264,7 +279,11 @@ public class DeliveryDao {
       coalesce(toCounty.state, d.dropoff_state) toState,
       coalesce(toSite.contact_name, d.dropoff_contact_name) toContactName,
       coalesce(toSite.contact_number, d.dropoff_contact_phone) toContactPhone,
-      coalesce(toSite.hours, d.dropoff_hours) toHours
+      coalesce(toSite.hours, d.dropoff_hours) toHours,
+
+      d.dispatch_code,
+      d.driver_status,
+      d.driver_code driverCode
     from delivery d
     left join site fromSite on fromSite.id = d.from_site_id
     left join county fromCounty on fromCounty.id = fromSite.county_id
@@ -306,6 +325,17 @@ public class DeliveryDao {
       order by A.name;
       """;
 
+    String selectConfirmations =
+        """
+      select
+         dc.confirm_type confirmRole,
+         dc.delivery_accepted confirmed,
+         dc.secret_code code
+      from delivery_confirmation dc
+      join delivery d on d.id = dc.delivery_id
+      where d.public_url_key = :publicUrlKey
+      """;
+
     for (Delivery delivery : deliveries) {
       List<String> items =
           jdbi.withHandle(
@@ -315,7 +345,17 @@ public class DeliveryDao {
                       .bind("deliveryId", delivery.getDeliveryNumber())
                       .mapTo(String.class)
                       .list());
-      delivery.getItemList().addAll(items.stream().filter(Objects::nonNull).sorted().toList());
+      delivery.addItems(items.stream().filter(Objects::nonNull).sorted().toList());
+
+      List<DeliveryConfirmation> confirmations =
+          jdbi.withHandle(
+              handle ->
+                  handle
+                      .createQuery(selectConfirmations)
+                      .bind("publicUrlKey", delivery.getPublicKey())
+                      .mapToBean(DeliveryConfirmation.class)
+                      .list());
+      delivery.addConfirmations(confirmations);
     }
 
     return deliveries;

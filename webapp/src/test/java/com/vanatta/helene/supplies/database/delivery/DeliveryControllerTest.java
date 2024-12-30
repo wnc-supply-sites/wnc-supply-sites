@@ -1,323 +1,51 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.gson.Gson;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.GoogleMapWidget;
-import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.delivery.DeliveryController.TemplateParams;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Test that focuses on how the delivery manifest page is rendered. Firstly we need to be sure the
+ * page renders all of the manifest data. Then we go into detailed tests that depending on DB state,
+ * that the confirmation buttons are shown.
+ */
 class DeliveryControllerTest {
 
-  @BeforeAll
-  static void setupDatabase() {
+  @BeforeEach
+  void setupDatabase() {
     TestConfiguration.setupDatabase();
   }
 
-  private static final String deliveryUpdateInput =
-      """
-     {
-        "deliveryId" : 68,
-        "deliveryStatus" : "Creating Dispatch",
-        "dispatcherName" : [
-           "Joe Doe"
-        ],
-        "dispatcherNumber" : [
-           "919.111.1111"
-        ],
-        "driverName" : ["Jane Doe"],
-        "driverNumber" : ["919.222.2222"],
-        "dropOffSiteWssId" : [
-           337
-        ],
-        "itemListWssIds" : [
-           161,
-           191,
-           192,
-           152
-        ],
-        "licensePlateNumbers" : ["XYZ-123,ABC-333"],
-        "pickupSiteWssId" : [
-           3088
-        ],
-        "targetDeliveryDate" : "2024-12-13",
-        "dispatcherNotes": "notes from dispatcher",
-        "publicUrlKey": "QWER"
-     }
-     """;
-
-  String deliveryInput2 =
-      """
-  {"deliveryId":91,"itemListWssIds":[296],"driverNumber":[],"driverName":[],"dispatcherNumber":["828.279.2054"],"dispatcherName":["John"],"deliveryStatus":"Creating Dispatch","dropOffSiteWssId":[107],"pickupSiteWssId":[101],"targetDeliveryDate":null,"licensePlateNumbers":[],"publicUrlKey": "ASDF"}
-  """;
-
-  @Test
-  void canParseInput() {
-    DeliveryController.DeliveryUpdate update =
-        DeliveryController.DeliveryUpdate.parseJson(deliveryUpdateInput);
-    assertThat(update.getDeliveryId()).isEqualTo(68L);
-    assertThat(update.getDeliveryStatus()).isEqualTo("Creating Dispatch");
-    assertThat(update.getDispatcherName()).containsExactly("Joe Doe");
-    assertThat(update.getDispatcherNumber()).containsExactly("919.111.1111");
-    assertThat(update.getDriverName()).containsExactly("Jane Doe");
-    assertThat(update.getDriverNumber()).containsExactly("919.222.2222");
-    assertThat(update.getDropOffSiteWssId()).containsExactly(337L);
-    assertThat(update.getPickupSiteWssId()).containsExactly(3088L);
-    assertThat(update.getItemListWssIds()).contains(161L, 191L, 192L, 152L);
-    assertThat(update.getLicensePlateNumbers()).containsExactly("XYZ-123,ABC-333");
-    assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
-    assertThat(update.getDispatcherNotes()).isEqualTo("notes from dispatcher");
-  }
-
-  @Test
-  void parseDeliveryData() {
-    var input = TestDataFile.DELIVERY_DATA_JSON.readData();
-    DeliveryController.DeliveryUpdate update = DeliveryController.DeliveryUpdate.parseJson(input);
-
-    assertThat(update.getDeliveryId()).isEqualTo(5);
-    assertThat(update.getItemList())
-        .contains(
-            "Buddy heater adapter hose",
-            "Toilet Paper",
-            "Propane (20lb)",
-            "Propane (1lb)",
-            "Paper Towels",
-            "Kid friendly snacks",
-            "Gas Cans",
-            "Flashlights",
-            "Dog Food",
-            "Dish Soap",
-            "Cookware",
-            "Bedding",
-            "Baby Items");
-
-    assertThat(update.getDriverNumber()).containsExactly("(444) 333-7022");
-    assertThat(update.getDriverName()).containsExactly("Jason");
-    assertThat(update.getDispatcherNumber()).containsExactly("919.000.3344");
-    assertThat(update.getDispatcherName()).containsExactly("Dan");
-    assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
-    assertThat(update.getTargetDeliveryDate()).isEqualTo("2024-12-13");
-    assertThat(update.getLicensePlateNumbers()).isEmpty();
-    assertThat(update.getDropOffSiteWssId()).isEmpty();
-    assertThat(update.getPickupSiteWssId()).isEmpty();
-
-    assertThat(update.getPickupSiteName()).containsExactly("Valley Hope Foundation");
-    List<String> nullContainer = new ArrayList<>();
-    nullContainer.add(null);
-    assertThat(update.getPickupContactName()).isEqualTo(nullContainer);
-    assertThat(update.getPickupContactPhone()).containsExactly("(888) 333-0000");
-    assertThat(update.getPickupHours()).containsExactly("Monday - Friday \n10am - 3pm");
-    assertThat(update.getPickupAddress()).containsExactly("1035 I40");
-    assertThat(update.getPickupCity()).containsExactly("Black Mountain");
-    assertThat(update.getPickupState()).containsExactly("NC");
-
-    assertThat(update.getDropoffSiteName()).containsExactly("Hope");
-    assertThat(update.getDropoffContactName()).containsExactly("dropoff contact");
-    assertThat(update.getDropoffContactPhone()).containsExactly("(888) 222-4444");
-    assertThat(update.getDropoffHours()).containsExactly("Monday - Friday \n10am - 5pm");
-    assertThat(update.getDropoffAddress()).containsExactly("60 Flat");
-    assertThat(update.getDropoffCity()).containsExactly("Elk Park");
-    assertThat(update.getDropoffState()).containsExactly("NC");
-  }
-
-  @Test
-  void canParse2() {
-    DeliveryController.DeliveryUpdate.parseJson(deliveryInput2);
-  }
-
-  @Test
-  void deliveryUpdateComplete() {
-    var input =
-        DeliveryController.DeliveryUpdate.builder().deliveryStatus("Delivery Completed").build();
-    assertThat(input.isComplete()).isTrue();
-
-    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus("complete").build();
-    assertThat(input.isComplete()).isTrue();
-
-    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus(null).build();
-    assertThat(input.isComplete()).isFalse();
-
-    input = DeliveryController.DeliveryUpdate.builder().deliveryStatus("pending").build();
-    assertThat(input.isComplete()).isFalse();
-  }
-
   DeliveryController deliveryController =
-      new DeliveryController(TestConfiguration.jdbiTest, new GoogleMapWidget("secret"));
-
-  @Test
-  void deliveriesStored() {
-    DeliveryController.DeliveryUpdate update =
-        DeliveryController.DeliveryUpdate.parseJson(deliveryUpdateInput);
-
-    var inputData =
-        update.toBuilder()
-            .pickupSiteWssId(List.of(TestConfiguration.SITE1_WSS_ID))
-            .dropOffSiteWssId(List.of(TestConfiguration.SITE2_WSS_ID))
-            .itemListWssIds(
-                List.of(TestConfiguration.WATER_WSS_ID, TestConfiguration.GLOVES_WSS_ID))
-            .build();
-
-    assertThat(
-            DeliveryDao.fetchDeliveriesBySiteId(
-                TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site1")))
-        .isEmpty();
-
-    var response = deliveryController.upsertDelivery(new Gson().toJson(inputData));
-    assertThat(response.getStatusCode().value()).isEqualTo(200);
-
-    var deliveries =
-        DeliveryDao.fetchDeliveriesBySiteId(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site1"));
-    assertThat(deliveries).hasSize(1);
-    var delivery = deliveries.getFirst();
-    assertThat(delivery.getDeliveryNumber()).isEqualTo(68L);
-    assertThat(delivery.getDeliveryStatus()).isEqualTo("Creating Dispatch");
-    assertThat(delivery.getDispatcherName()).isEqualTo("Joe Doe");
-    assertThat(delivery.getDispatcherNumber()).isEqualTo("919.111.1111");
-    assertThat(delivery.getDriverName()).isEqualTo("Jane Doe");
-    assertThat(delivery.getDriverNumber()).isEqualTo("919.222.2222");
-    assertThat(delivery.getFromSite()).isEqualTo("site1");
-    assertThat(delivery.getToSite()).isEqualTo("site2");
-    assertThat(delivery.getItemList()).contains("gloves", "water");
-    assertThat(delivery.getDriverLicensePlate()).isEqualTo("XYZ-123,ABC-333");
-    assertThat(delivery.getDeliveryDate()).isEqualTo("2024-12-13");
-
-    // validate site lookup details
-    var details =
-        SiteDetailDao.lookupSiteById(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site1"));
-    assertThat(delivery.getFromSite()).isEqualTo(details.getSiteName());
-    assertThat(delivery.getFromAddress()).isEqualTo(details.getAddress());
-    assertThat(delivery.getFromCity()).isEqualTo(details.getCity());
-    assertThat(delivery.getFromState()).isEqualTo(details.getState());
-    assertThat(delivery.getFromContactName()).isEqualTo(details.getContactName());
-    assertThat(delivery.getFromContactPhone()).isEqualTo(details.getContactNumber());
-
-    var toDetails =
-        SiteDetailDao.lookupSiteById(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site2"));
-    assertThat(delivery.getToSite()).isEqualTo(toDetails.getSiteName());
-    assertThat(delivery.getToAddress()).isEqualTo(toDetails.getAddress());
-    assertThat(delivery.getToCity()).isEqualTo(toDetails.getCity());
-    assertThat(delivery.getToState()).isEqualTo(toDetails.getState());
-    assertThat(delivery.getToContactName()).isEqualTo(toDetails.getContactName());
-    assertThat(delivery.getToContactPhone()).isEqualTo(toDetails.getContactNumber());
-
-    // now update the delivery that we just inserted
-    var updatedInput =
-        inputData.toBuilder()
-            .deliveryStatus("In Progress")
-            .dispatcherName(List.of("Jane Doe"))
-            .dispatcherNumber(List.of("555.555.5555"))
-            .driverName(List.of("driver"))
-            .driverNumber(List.of("333.333.3333"))
-            // we are flipping the to & from site IDs
-            .pickupSiteWssId(List.of(TestConfiguration.SITE2_WSS_ID))
-            .dropOffSiteWssId(List.of(TestConfiguration.SITE1_WSS_ID))
-            .licensePlateNumbers(List.of("Traveler"))
-            .targetDeliveryDate("2024-12-15")
-            // we are reducing the number of items from 2 to 1
-            .itemListWssIds(List.of(TestConfiguration.WATER_WSS_ID))
-            .build();
-
-    // now update the delivery that we just inserted
-    response = deliveryController.upsertDelivery(new Gson().toJson(updatedInput));
-    assertThat(response.getStatusCode().value()).isEqualTo(200);
-
-    deliveries =
-        DeliveryDao.fetchDeliveriesBySiteId(
-            TestConfiguration.jdbiTest, TestConfiguration.getSiteId("site1"));
-    assertThat(deliveries).hasSize(1);
-    delivery = deliveries.getFirst();
-    assertThat(delivery.getDeliveryNumber()).isEqualTo(68L);
-    assertThat(delivery.getDeliveryStatus()).isEqualTo("In Progress");
-    assertThat(delivery.getDispatcherName()).isEqualTo("Jane Doe");
-    assertThat(delivery.getDispatcherNumber()).isEqualTo("555.555.5555");
-    assertThat(delivery.getDriverName()).isEqualTo("driver");
-    assertThat(delivery.getDriverNumber()).isEqualTo("333.333.3333");
-    assertThat(delivery.getToSite()).isEqualTo("site1");
-    assertThat(delivery.getFromSite()).isEqualTo("site2");
-    assertThat(delivery.getItemList()).containsExactly("water");
-    assertThat(delivery.getDriverLicensePlate()).isEqualTo("Traveler");
-    assertThat(delivery.getDeliveryDate()).isEqualTo("2024-12-15");
-  }
-
-  @Test
-  void storeDeliveryWithSitesNotInLocalDatabase() {
-    var input = TestDataFile.DELIVERY_DATA_JSON.readData();
-
-    var response = deliveryController.upsertDelivery(input);
-    assertThat(response.getStatusCode().value()).isEqualTo(200);
-
-    var update =
-        DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, "HHHH").orElseThrow();
-
-    assertThat(update.getDeliveryNumber()).isEqualTo(5);
-    assertThat(update.getItemList())
-        .contains(
-            "Buddy heater adapter hose",
-            "Toilet Paper",
-            "Propane (20lb)",
-            "Propane (1lb)",
-            "Paper Towels",
-            "Kid friendly snacks",
-            "Gas Cans",
-            "Flashlights",
-            "Dog Food",
-            "Dish Soap",
-            "Cookware",
-            "Bedding",
-            "Baby Items");
-
-    assertThat(update.getDriverNumber()).isEqualTo("(444) 333-7022");
-    assertThat(update.getDriverName()).isEqualTo("Jason");
-    assertThat(update.getDispatcherNumber()).isEqualTo("919.000.3344");
-    assertThat(update.getDispatcherName()).isEqualTo("Dan");
-    assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
-    assertThat(update.getDeliveryDate()).isEqualTo("2024-12-13");
-    assertThat(update.getDriverLicensePlate()).isNull();
-    assertThat(update.getToSiteLink()).isNull();
-    assertThat(update.getFromSiteLink()).isNull();
-
-    assertThat(update.getFromSite()).isEqualTo("Valley Hope Foundation");
-    assertThat(update.getFromContactName()).isNull();
-    assertThat(update.getFromContactPhone()).isEqualTo("(888) 333-0000");
-    assertThat(update.getFromHours()).isEqualTo("Monday - Friday \n10am - 3pm");
-    assertThat(update.getFromAddress()).isEqualTo("1035 I40");
-    assertThat(update.getFromCity()).isEqualTo("Black Mountain");
-    assertThat(update.getFromState()).isEqualTo("NC");
-
-    assertThat(update.getToSite()).isEqualTo("Hope");
-    assertThat(update.getToContactName()).isEqualTo("dropoff contact");
-    assertThat(update.getToContactPhone()).isEqualTo("(888) 222-4444");
-    assertThat(update.getToHours()).isEqualTo("Monday - Friday \n10am - 5pm");
-    assertThat(update.getToAddress()).isEqualTo("60 Flat");
-    assertThat(update.getToCity()).isEqualTo("Elk Park");
-    assertThat(update.getToState()).isEqualTo("NC");
-  }
+      new DeliveryController(jdbiTest, new GoogleMapWidget("dummy api key"));
 
   @Nested
   class RenderDetailPage {
 
     @Test
     void detailPageHasAllParameters() {
-      ModelAndView result = deliveryController.showDeliveryDetailPage("XKCD");
+      ModelAndView result = deliveryController.showDeliveryDetailPage("XKCD", null);
       var templateDataMap = result.getModelMap();
 
       List<String> expectedTemplateParams =
-          Arrays.stream(DeliveryController.TemplateParams.values())
+          Arrays.stream(TemplateParams.values())
+              .filter(e -> e != TemplateParams.confirmMessage)
+              .filter(e -> e != TemplateParams.unableToConfirmMessages)
               .map(Enum::name)
               .sorted()
               .toList();
-
       assertThat(templateDataMap.keySet().stream().sorted().toList())
           .containsAll(expectedTemplateParams);
     }
@@ -326,21 +54,26 @@ class DeliveryControllerTest {
     void renderPageWithMostlyNull() {
       // delivery '-3' has almost all null values, it is minimum data
       // for us to store a delivery record
-      ModelAndView result = deliveryController.showDeliveryDetailPage("ABCD");
+      ModelAndView result = deliveryController.showDeliveryDetailPage("ABCD", null);
       var templateDataMap = result.getModelMap();
 
       List<String> expectedTemplateParams =
-          Arrays.stream(DeliveryController.TemplateParams.values())
+          Arrays.stream(TemplateParams.values())
               // phone number values are null when not set - this lets the front end handle
               // creating links around the phone number or not. We need to filter them out.
               .filter(
                   e ->
                       !List.of(
-                              DeliveryController.TemplateParams.dispatcherPhone,
-                              DeliveryController.TemplateParams.driverPhone,
-                              DeliveryController.TemplateParams.dispatcherPhone,
-                              DeliveryController.TemplateParams.fromContactPhone,
-                              DeliveryController.TemplateParams.toContactPhone)
+                              TemplateParams.confirmMessage,
+                              TemplateParams.deliveryDate,
+                              TemplateParams.dispatcherPhone,
+                              TemplateParams.driverConfirmed,
+                              TemplateParams.driverPhone,
+                              TemplateParams.dropOffConfirmed,
+                              TemplateParams.fromContactPhone,
+                              TemplateParams.pickupConfirmed,
+                              TemplateParams.toContactPhone,
+                              TemplateParams.unableToConfirmMessages)
                           .contains(e))
               .map(Enum::name)
               .sorted()
@@ -349,5 +82,364 @@ class DeliveryControllerTest {
         assertThat(templateDataMap.get(param)).describedAs(param).isNotNull();
       }
     }
+  }
+
+  /**
+   *
+   *
+   * <pre>
+   * Store data for a delivery.
+   * Request the delivery page using a correct dispatchCode.
+   * Validate that we have the "sendConfirmationUrl" populated.
+   * Request the delivery page using an incorrect dispatchCode
+   * Validate that the "sendConfirmationUrl" parameter is not populated.
+   * </pre>
+   */
+  @Test
+  void showConfirmationButton_forDispatcher() {
+    var input = readTestData();
+    DeliveryDao.upsert(jdbiTest, input);
+    assertThat(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, input.publicUrlKey)
+                .orElseThrow()
+                .missingData())
+        .isEmpty();
+
+    // request delivery page with dispatch code, for dispatcher
+    var response =
+        deliveryController.showDeliveryDetailPage(input.getPublicUrlKey(), input.getDispatchCode());
+    // delivery is good to go, dispatcher should have the option to confirm the delivery.
+    assertFieldsAreNotNull(
+        response, TemplateParams.sendConfirmationVisible, TemplateParams.confirmMessage);
+    assertFieldsAreNull(response, TemplateParams.unableToConfirmMessages);
+  }
+
+  /**
+   * 'code' is incorrect for any role. We should show a vanilla delivery page with no confirmation
+   * options.
+   */
+  @Test
+  void showConfirmationButton_forDispatcher_doesNotShowWithIncorrectCode() {
+    var input = readTestData();
+    DeliveryDao.upsert(jdbiTest, input);
+
+    // incorrect dispatchCode
+    var response = deliveryController.showDeliveryDetailPage(input.getPublicUrlKey(), "____");
+    assertFieldsAreNull(response, TemplateParams.unableToConfirmMessages);
+    assertFieldsAreFalse(
+        response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+
+    // no dispatch code
+    response = deliveryController.showDeliveryDetailPage(input.getPublicUrlKey(), null);
+    assertFieldsAreNull(response, TemplateParams.unableToConfirmMessages);
+    assertFieldsAreFalse(
+        response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+  }
+
+  /**
+   * Go through various scenarios where a delivery does not have full data yet, cannot offer
+   * dispatcher to confirm.
+   *
+   * <p>cases:
+   *
+   * <pre>
+   *   missing date
+   *   missing pickup/dropoff site
+   *   missing driver
+   *   missing items
+   *   missing dispatcher
+   * </pre>
+   */
+  @MethodSource
+  @ParameterizedTest
+  void doNotShowConfirmationButton_deliveryNotReadyForDispatcherConfirmation(
+      DeliveryUpdate deliveryUpdate) {
+    DeliveryDao.upsert(jdbiTest, deliveryUpdate);
+
+    // validate incoming test data is "missing data", indicating we are not ready to start
+    // confirmation process.
+    assertThat(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, deliveryUpdate.publicUrlKey)
+                .orElseThrow()
+                .missingData())
+        .describedAs(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, deliveryUpdate.publicUrlKey)
+                .orElseThrow()
+                .toString())
+        .isNotEmpty();
+
+    var response =
+        deliveryController.showDeliveryDetailPage(
+            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatchCode());
+
+    // should be showing messages indicating there is data missing
+    // decline &c onfirm URL are always populated
+    assertFieldsAreNotNull(
+        response,
+        TemplateParams.unableToConfirmMessages,
+        TemplateParams.confirmButton,
+        TemplateParams.sendDeclineUrl);
+
+    // confirm & decline button not visible.
+    assertFieldsAreFalse(
+        response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+  }
+
+  private static void assertFieldsAreNotNull(ModelAndView response, TemplateParams... params) {
+    for (TemplateParams field : Arrays.asList(params)) {
+      assertThat(response.getModelMap().getAttribute(field.name())).isNotNull();
+    }
+  }
+
+  private static void assertFieldsAreNull(ModelAndView response, TemplateParams... params) {
+    for (TemplateParams field : Arrays.asList(params)) {
+      assertThat(response.getModelMap().getAttribute(field.name())).isNull();
+    }
+  }
+
+  private static void assertFieldsAreTrue(ModelAndView response, TemplateParams... params) {
+    for (TemplateParams field : Arrays.asList(params)) {
+      assertThat((Boolean) response.getModelMap().getAttribute(field.name())).isTrue();
+    }
+  }
+
+  private static void assertFieldsAreFalse(ModelAndView response, TemplateParams... params) {
+    for (TemplateParams field : Arrays.asList(params)) {
+      assertThat((Boolean) response.getModelMap().getAttribute(field.name()))
+          .describedAs(field.name())
+          .isFalse();
+    }
+  }
+
+  /**
+   * Variety of cases where a delivery is not yet "ready"for and a dispatcher (missing data) cannot
+   * start the confirmation process yet.
+   */
+  static List<DeliveryUpdate>
+      doNotShowConfirmationButton_deliveryNotReadyForDispatcherConfirmation() {
+    return List.of(
+        readTestData().toBuilder().targetDeliveryDate(null).build(),
+        readTestData().toBuilder().dispatcherNumber(List.of()).build(),
+        readTestData().toBuilder().driverNumber(List.of()).build(),
+        readTestData().toBuilder().pickupContactPhone(List.of()).build(),
+        readTestData().toBuilder().dropoffContactPhone(List.of()).build(),
+        readTestData().toBuilder().itemList(List.of()).itemListWssIds(List.of()).build());
+  }
+
+  private static DeliveryUpdate readTestData() {
+    return DeliveryUpdate.parseJson(TestDataFile.DELIVERY_DATA_JSON.readData());
+  }
+
+  /**
+   * After a dispatcher confirms, the confirm button is no longer visible for the dispatcher. A
+   * confirm button should now be visible for driver & others.
+   */
+  @Test
+  void dispatcherHasConfirmed() {
+    var deliveryUpdate = readTestData();
+    DeliveryDao.upsert(jdbiTest, deliveryUpdate);
+    ConfirmationDao.dispatcherConfirm(jdbiTest, deliveryUpdate.getPublicUrlKey());
+
+    var response =
+        deliveryController.showDeliveryDetailPage(
+            deliveryUpdate.getPublicUrlKey(), deliveryUpdate.getDispatchCode());
+
+    // dispatcher has already confirmed, assert that the confirm button is disabled
+    assertFieldsAreFalse(
+        response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+    assertFieldsAreNull(response, TemplateParams.unableToConfirmMessages);
+
+    // loop through all of the confirmation codes and assert we will show 'accept' / 'decline'
+    // buttons.
+
+    Delivery delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, deliveryUpdate.getPublicUrlKey())
+            .orElseThrow();
+    for (String code :
+        List.of(
+            delivery.getDriverConfirmationCode(),
+            delivery.getPickupConfirmationCode(),
+            delivery.getDropOffConfirmationCode())) {
+      response = deliveryController.showDeliveryDetailPage(deliveryUpdate.getPublicUrlKey(), code);
+
+      assertFieldsAreTrue(
+          response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+      assertFieldsAreNull(response, TemplateParams.unableToConfirmMessages);
+    }
+  }
+
+  /**
+   * Confirm we accurately show confirmation values. When dispatcher confirms, confirm we populate
+   * confirmations.
+   */
+  @Test
+  void confirmationStates() {
+
+    var delivery = DeliveryHelper.withNewDelivery();
+
+    var response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), null);
+    assertFieldsAreNull(
+        response,
+        TemplateParams.driverConfirmed,
+        TemplateParams.pickupConfirmed,
+        TemplateParams.dropOffConfirmed);
+
+    // have the dispatcher confirm
+    ConfirmationDao.dispatcherConfirm(jdbiTest, delivery.getPublicKey());
+
+    response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), null);
+
+    // now all of the confirmations should be populated
+    for (TemplateParams confirmation :
+        List.of(
+            TemplateParams.driverConfirmed,
+            TemplateParams.pickupConfirmed,
+            TemplateParams.dropOffConfirmed)) {
+
+      // confirmation row should exist for all roles, but no confirmation decision yet made.
+      DeliveryConfirmation confirm = getConfirmation(response, confirmation);
+      assertThat(confirm).isNotNull();
+      assertThat(confirm.getConfirmed()).isNull();
+    }
+  }
+
+  private static DeliveryConfirmation getConfirmation(
+      ModelAndView response, TemplateParams confirmation) {
+    return (DeliveryConfirmation) response.getModelMap().getAttribute(confirmation.name());
+  }
+
+  /** Approve all and validate we show approval. */
+  @Test
+  void confirmationApprovals() {
+    var delivery = DeliveryHelper.withConfirmedDelivery();
+
+    var response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), null);
+
+    for (TemplateParams param :
+        List.of(
+            TemplateParams.driverConfirmed,
+            TemplateParams.pickupConfirmed,
+            TemplateParams.dropOffConfirmed)) {
+      assertThat(getConfirmation(response, param).getConfirmed()).isTrue();
+    }
+  }
+
+  /** Cancel all and validate we show cancels. */
+  @Test
+  void confirmationCancels() {
+    var delivery = DeliveryHelper.withDispatcherConfirmedDelivery();
+
+    Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
+        .forEach(role -> ConfirmationDao.cancelDelivery(jdbiTest, delivery.getPublicKey(), role));
+
+    var response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), null);
+
+    for (TemplateParams param :
+        List.of(
+            TemplateParams.driverConfirmed,
+            TemplateParams.pickupConfirmed,
+            TemplateParams.dropOffConfirmed)) {
+      assertThat(getConfirmation(response, param).getConfirmed()).isFalse();
+    }
+  }
+
+  /** Do not show confirmation buttons when cancelled. */
+  @Test
+  void doNotShowConfirmationWhenCancelled() {
+    Delivery delivery = DeliveryHelper.withDispatcherConfirmedDelivery();
+    ConfirmationDao.cancelDelivery(
+        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DRIVER);
+
+    delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
+    for (String code :
+        List.of(
+            delivery.getDriverConfirmationCode(),
+            delivery.getPickupConfirmationCode(),
+            delivery.getDropOffConfirmationCode())) {
+
+      var response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), code);
+      assertFieldsAreFalse(
+          response, TemplateParams.sendConfirmationVisible, TemplateParams.sendDeclineVisible);
+      // there should be a message that the delivery is cancel
+      assertFieldsAreNotNull(response, TemplateParams.unableToConfirmMessages);
+    }
+  }
+
+  /**
+   * After confirmations, driver can click "start delivery", then "arrived at pickup", "leaving
+   * pickup", "arrived to dropoff". This test validates that we cycle through these states.
+   */
+  @Test
+  void driverStatus() {
+    // setup a delivery to be confirmed & pending
+    Delivery delivery = DeliveryHelper.withConfirmedDelivery();
+
+    for (DriverStatus driverStatus : DriverStatus.values()) {
+      ConfirmationDao.updateDriverStatus(jdbiTest, delivery.getPublicKey(), driverStatus);
+      delivery =
+          DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
+      assertThat(delivery.getDriverStatus()).isEqualTo(driverStatus.name());
+
+      var response = renderDriverDeliveryPage(delivery);
+      DeliveryController.ConfirmButton confirmButton =
+          (DeliveryController.ConfirmButton)
+              response.getModelMap().getAttribute(TemplateParams.confirmButton.name());
+      assertThat(confirmButton.getText())
+          .isEqualTo(DriverStatus.nextStatus(driverStatus).getButtonText());
+      assertThat(confirmButton.getUrl())
+          .isEqualTo(DeliveryConfirmationController.buildDriverStatusLink(delivery));
+    }
+  }
+
+  private ModelAndView renderDriverDeliveryPage(Delivery delivery) {
+    return deliveryController.showDeliveryDetailPage(
+        delivery.getPublicKey(),
+        delivery.getConfirmation(DeliveryConfirmation.ConfirmRole.DRIVER).orElseThrow().getCode());
+  }
+
+  private ModelAndView renderDispatcherDeliveryPage(Delivery delivery) {
+    return deliveryController.showDeliveryDetailPage(
+        delivery.getPublicKey(), delivery.getDispatchCode());
+  }
+
+  /**
+   * Show confirmations table if we have at least one confirmation, but are also not fully
+   * confirmed.
+   */
+  @Test
+  void showConfirmationFields() {
+    Delivery delivery = DeliveryHelper.withNewDelivery();
+
+    var result = renderDispatcherDeliveryPage(delivery);
+    assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
+        .isFalse();
+
+    ConfirmationDao.dispatcherConfirm(jdbiTest, delivery.getPublicKey());
+
+    result = renderDispatcherDeliveryPage(delivery);
+    assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
+        .isFalse();
+
+    // 1 confirmation -> now show confirmation table
+    ConfirmationDao.confirmDelivery(
+        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DRIVER);
+    result = renderDispatcherDeliveryPage(delivery);
+    assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
+        .isTrue();
+
+    // 2 confirmations -> now show confirmation table
+    ConfirmationDao.confirmDelivery(
+        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.PICKUP_SITE);
+    result = renderDispatcherDeliveryPage(delivery);
+    assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
+        .isTrue();
+
+    // 3 confirmations -> fully confirmed - do NOT show confirmation table
+    ConfirmationDao.confirmDelivery(
+        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DROPOFF_SITE);
+    result = renderDispatcherDeliveryPage(delivery);
+    assertThat((boolean) result.getModelMap().getAttribute(TemplateParams.hasConfirmations.name()))
+        .isFalse();
   }
 }

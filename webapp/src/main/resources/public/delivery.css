@@ -2,8 +2,6 @@ body {
     margin: 3px;
 }
 
-
-
 .delivery-title {
     font-family: sans-serif;
     display: flex;
@@ -13,22 +11,13 @@ body {
 }
 
 .content-wrapper {
-  /*width: 380px;*/
-  /*  min-width: 360px;*/
-    /*max-width: 100%*/
-    /*width: 100vh;*/
     max-width: 380px;
 }
-
 
 .page-section {
     margin-bottom: 5px;
     margin-top: 5px;
-    /*background-color: #F0F0F0;*/
-    /*border: solid #111;*/
-    /*border-radius: 20px;*/
     font-size: 1.1em;
-    /*max-width: 500px;*/
 }
 
 .page-subsection {
@@ -37,9 +26,7 @@ body {
     background-color: #DDD;
     border: solid #111;
     border-radius: 20px;
-    /*font-size: 1.1em;*/
 }
-
 
 .left-column {
     margin-right: 10px;
@@ -69,4 +56,80 @@ body {
 
 pre {
     font-family: serif;
+}
+
+.confirmation-header {
+    margin-bottom: 2px;
+    margin-top: 10px;
+    font-size: 1.1em;
+}
+
+.confirm-buttons {
+    align-content: space-between;
+    align-items: center;
+    margin: 7px;
+}
+
+.confirm-buttons div{
+    margin-left: 30px;
+}
+
+.confirm-button,
+.decline-button {
+    width: 150px;
+    height: 50px;
+    border: 3px outset !important;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.confirm-button {
+    background-color: lightgreen !important;
+}
+
+.confirm-button:active {
+    background-color: green !important;
+}
+
+.decline-button {
+    background-color: pink !important;
+}
+
+.decline-button:active {
+    background-color: red !important;
+}
+
+.confirmations-table {
+    border-collapse: collapse;
+    width: 95%;
+}
+
+.confirmations-table th,
+.confirmations-table td {
+    border: solid 2px darkgray;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.confirmations-table td {
+    text-align: center;
+    font-size: 1.4em;
+}
+
+.meta-info-div {
+    align-items: center;
+}
+
+.confirm-message {
+    font-style: italic;
+    font-size: 1.0em;
+    color: green;
+}
+
+.unable-to-confirm-message {
+    font-style: italic;
+    font-size: 1.0em;
+    color: red;
 }

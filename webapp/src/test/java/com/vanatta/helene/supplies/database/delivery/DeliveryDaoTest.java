@@ -18,17 +18,17 @@ class DeliveryDaoTest {
     "dispatcherName":["John"],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
     "targetDeliveryDate":"2024-12-16","licensePlateNumbers":[],
-    "publicUrlKey": "akey"}
+    "publicUrlKey": "akey", "dispatchCode":"TTTT"}
     """;
 
   static final String upsertJson2 =
       """
-    {"deliveryId":90,"itemListWssIds":[],
+    {"deliveryId":95,"itemListWssIds":[],
     "driverNumber":[],"driverName":[],"dispatcherNumber":[],
     "dispatcherName":[],"deliveryStatus":"Assigning Driver",
     "dropOffSiteWssId":[99],"pickupSiteWssId":[101],
     "targetDeliveryDate":"","licensePlateNumbers":[],
-    "publicUrlKey": "bkey"}
+    "publicUrlKey": "bkey", "dispatchCode":"ZZZZ"}
     """;
 
   static final long SITE1_WSS_ID = -10;
@@ -44,15 +44,31 @@ class DeliveryDaoTest {
   @ParameterizedTest
   @ValueSource(strings = {upsertJson1, upsertJson2})
   void doUpserts(String inputJson) {
-    DeliveryController.DeliveryUpdate update =
+    DeliveryUpdate update =
         new Gson()
-            .fromJson(inputJson, DeliveryController.DeliveryUpdate.class).toBuilder()
+            .fromJson(inputJson, DeliveryUpdate.class).toBuilder()
                 .pickupSiteWssId(List.of(SITE1_WSS_ID))
                 .dropOffSiteWssId(List.of(SITE2_WSS_ID))
                 .itemListWssIds(List.of(WATER_WSS_ID, GLOVES_WSS_ID))
                 .build();
 
     DeliveryDao.upsert(TestConfiguration.jdbiTest, update);
+
+    var driverCode =
+        DeliveryDao.fetchDeliveryByPublicKey(TestConfiguration.jdbiTest, update.getPublicUrlKey())
+            .orElseThrow()
+            .getDriverCode();
+    assertThat(driverCode).isNotNull();
+
+    // validate that we can do another upsert
+    DeliveryDao.upsert(TestConfiguration.jdbiTest, update);
+    // check that the driver code does not change.
+    assertThat(
+            DeliveryDao.fetchDeliveryByPublicKey(
+                    TestConfiguration.jdbiTest, update.getPublicUrlKey())
+                .orElseThrow()
+                .getDriverCode())
+        .isEqualTo(driverCode);
   }
 
   /** Make sure we can do a lookup of a delivery by public URL key */

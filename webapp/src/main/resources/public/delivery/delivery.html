@@ -13,7 +13,114 @@
 
   <h2 class="delivery-title">
     <a href="/"><img alt="site-logo" src="/logo/WSS-logo-40x40.png" class="logo-image"/></a>
-    Delivery #{{deliveryId}} - {{deliveryDate}}</h2>
+    Delivery #{{deliveryId}}</h2>
+
+  <div class="vertical meta-info-div larger">
+    <div>
+      Delivery Status: <span class="bold">{{deliveryStatus}}</span>
+    </div>
+    <div>
+      Driver Status: <span class="bold">{{driverStatus}}</span>
+    </div>
+    <div>
+      Date: <span class="bold">{{#deliveryDate}}{{.}}{{/deliveryDate}}{{^deliveryDate}}Not yet set{{/deliveryDate}}</span>
+    </div>
+
+    <div class="confirm-buttons horizontal {{^sendConfirmationVisible}}hidden{{/sendConfirmationVisible}}">
+      {{#sendConfirmationVisible}}
+      <div class="nav-button-container">
+        {{#confirmButton}}
+        <a href="{{url}}">
+          <button class="nav-button confirm-button">{{text}}</button>
+        </a>
+        {{/confirmButton}}
+      </div>
+      {{/sendConfirmationVisible}}
+
+      {{#sendDeclineVisible}}
+      <div class="nav-button-container">
+        <a href="{{sendDeclineUrl}}">
+          <button class="nav-button decline-button">
+            CLICK TO CANCEL
+          </button>
+        </a>
+      </div>
+      {{/sendDeclineVisible}}
+    </div>
+
+    <ul {{^unableToConfirmMessages}}class="hidden"{{/unableToConfirmMessages}} >
+    {{#unableToConfirmMessages}}
+      <li>
+        <span class="unable-to-confirm-message">{{.}}</span>
+      </li>
+    {{/unableToConfirmMessages}}
+    </ul>
+
+    {{#confirmMessage}}
+    <span class="confirm-message">{{.}}</span>
+    {{/confirmMessage}}
+
+    {{#hasConfirmations}}
+    <h4 class="confirmation-header">Confirmations</h4>
+    <table class="confirmations-table">
+      <colgroup>
+        <col style="width:25%">
+        <col style="width:25%">
+        <col style="width:25%">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>Driver</th>
+        <th>Pickup Site</th>
+        <th>Drop Off Site</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          {{#driverConfirmed}}
+            {{#confirmed}}
+            <div class="green-check">&#10003;</div>
+            {{/confirmed}}
+            {{#cancelled}}
+            <div class="">&#x274c;</div>
+            {{/cancelled}}
+          {{/driverConfirmed}}
+        </td>
+        <td>
+          {{#pickupConfirmed}}
+            {{#confirmed}}
+            <div class="green-check">&#10003;</div>
+            {{/confirmed}}
+            {{#cancelled}}
+            <div class="">&#x274c;</div>
+            {{/cancelled}}
+          {{/pickupConfirmed}}
+        </td>
+        <td>
+          {{#dropOffConfirmed}}
+            {{#confirmed}}
+            <div class="green-check">&#10003;</div>
+            {{/confirmed}}
+            {{#cancelled}}
+            <div class="">&#x274c;</div>
+            {{/cancelled}}
+          {{/dropOffConfirmed}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    {{/hasConfirmations}}
+
+    {{#sendConfirmationRequestUrl}}
+    <div>
+      <a href="{{.}}">
+        <button>Send Confirmation Request</button>
+      </a>
+    </div>
+    {{/sendConfirmationRequestUrl}}
+  </div>
+
 
   <div class="horizontal page-section">
 

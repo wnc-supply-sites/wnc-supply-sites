@@ -1,5 +1,6 @@
 delete from site_distance_matrix;
 delete from delivery_item;
+delete from delivery_confirmation;
 delete from delivery;
 delete from site_item_audit;
 delete from site_item;
@@ -78,7 +79,7 @@ insert into delivery(
   airtable_id, from_site_id, to_site_id,
   delivery_status, target_delivery_date, dispatcher_name,
   dispatcher_number, driver_name, driver_number,
-  driver_license_plates, public_url_key)
+  driver_license_plates, public_url_key, dispatch_code, driver_code)
 values(
         -1,
         (select id from site where name = 'site2'),
@@ -90,7 +91,9 @@ values(
         'driver1',
         'call me anytime',
         'traveler',
-       'BETA'
+       'BETA',
+       'ATEB',
+       'DRIV'
       );
 
 
@@ -105,7 +108,7 @@ insert into delivery(
   airtable_id, from_site_id, to_site_id,
   delivery_status, target_delivery_date, dispatcher_name,
   dispatcher_number, driver_name, driver_number,
-  driver_license_plates, public_url_key)
+  driver_license_plates, public_url_key, dispatch_code, driver_code)
 values(
         -2,
         (select id from site where name = 'site3'),
@@ -117,19 +120,23 @@ values(
         'driver1',
         'call me anytime',
         'traveler',
-       'XKCD'
+       'XKCD',
+       'DCKX',
+       'PPPP'
       );
 
 
 -- create a delivery from site4 to site3
 -- this is a  minimal 'data', everything that can be null should be null
 insert into delivery(
-  airtable_id, from_site_id, to_site_id, public_url_key)
+  airtable_id, from_site_id, to_site_id, public_url_key, dispatch_code, driver_code)
 values(
         -3,
         (select id from site where name = 'site3'),
         (select id from site where name = 'site4'),
-       'ABCD'
+       'ABCD',
+       'DCBA',
+       'IIII'
       );
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
@@ -192,7 +199,5 @@ insert into site_item(site_id, item_id, item_status_id) values(
     (select id from item where name = 'water'),
     (select id from item_status where name = 'Needed')
    );
--- insert a "dummy" county, where no site is in that county (this county is considered
--- 'not active')
 
 

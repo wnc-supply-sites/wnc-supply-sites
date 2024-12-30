@@ -1,31 +1,178 @@
 package com.vanatta.helene.supplies.database.delivery;
 
-import org.springframework.http.ResponseEntity;
+import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
+import java.util.Arrays;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import org.jdbi.v3.core.Jdbi;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
-public class DeliveryConfirmationController {
+/** Has endpoints dedicated for handling delivery 'confirm' and 'cancel' button actions. */
+@AllArgsConstructor
+@Controller
+class DeliveryConfirmationController {
+  private static final String confirmPath = "/confirm/delivery";
+  private static final String cancelPath = "/confirm/cancel";
+  private static final String driverPath = "/confirm/driver";
 
-  /*
-  let response = await fetch('https://wnc-supply-sites.com/webhook/send-confirmations',
-    body: JSON.stringify({
-      deliveryId: inputConfig.deliveryId,
-      fromSiteWssId: inputConfig.fromSiteWssId,
-      toSiteWssId: inputConfig.toSiteWssId,
-      deliveryDate: inputConfig.deliveryDate,
-      driverPhoneNumber: inputConfig.driverPhoneNumber,
-      dispatcherPhoneNumber: inputConfig.dispatcherPhoneNumber
-      })
+  private final Jdbi jdbi;
+  private final SmsSender smsSender;
+  private final SendDeliveryUpdate sendDeliveryUpdate;
+
+  public static String buildConfirmUrl(String deliveryPublicKey, String confirmationCode) {
+    return String.format(
+        "%s?deliveryKey=%s&code=%s", confirmPath, deliveryPublicKey, confirmationCode);
   }
-  );
-  */
-  @PostMapping("/webhook/send-confirmations")
-  ResponseEntity<String> sendDeliveryConfirmationRequests(@RequestBody String input) {
 
-    // store the SMS requests
+  public static String buildCancelUrl(String deliveryPublicKey, String confirmationCode) {
+    return String.format(
+        "%s?deliveryKey=%s&code=%s", cancelPath, deliveryPublicKey, confirmationCode);
+  }
 
-    // delivery_id  | sms_sent | phone number | confirm code | confirmed
+  public static String buildDriverStatusLink(Delivery delivery) {
+    return String.format(
+        "%s?deliveryKey=%s&code=%s&newDriverStatus=%s",
+        driverPath,
+        delivery.getPublicKey(),
+        delivery.getDriverCode(),
+        DriverStatus.nextStatus(delivery.getDriverStatus()));
+  }
 
-    throw new UnsupportedOperationException("TODO");
+  /**
+   * @param deliveryKey The public URL key of the delivery.
+   * @param code Secret code value for drivers that allows them to access URLs that change driver
+   *     status.
+   * @param newDriverStatus the new confirmation status. Shoudl be
+   * @return
+   */
+  @GetMapping(driverPath)
+  ModelAndView confirmDriverStatus(
+      @RequestParam String deliveryKey,
+      @RequestParam String code,
+      @RequestParam String newDriverStatus) {
+    Delivery delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Invalid delivery code: " + deliveryKey));
+
+    if (!delivery.getDriverCode().equals(code)) {
+      throw new IllegalArgumentException("Invalid driver code: " + code);
+    }
+
+    DriverStatus newStatus = DriverStatus.valueOf(newDriverStatus);
+    ConfirmationDao.updateDriverStatus(jdbi, deliveryKey, newStatus);
+
+    switch (newStatus) {
+      case PENDING -> {}
+      case DRIVER_EN_ROUTE -> {
+        NotificationStateMachine.driverEnRoute(delivery)
+            .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+      }
+      case ARRIVED_AT_PICKUP -> {
+        NotificationStateMachine.driverArrivedToPickup(delivery)
+            .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+      }
+      case DEPARTED_PICKUP -> {
+        NotificationStateMachine.driverLeavingPickup(delivery)
+            .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+      }
+      case ARRIVED_AT_DROP_OFF -> {
+        NotificationStateMachine.driverArrivedToDropOff(delivery)
+            .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_COMPLETED);
+      }
+    }
+
+    String driverConfirmCode =
+        delivery
+            .getConfirmation(DeliveryConfirmation.ConfirmRole.DRIVER)
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "Unexpected state, updating driver status before a delivery is confirmed. "
+                            + "New driver status: "
+                            + newDriverStatus
+                            + ", Delivery: "
+                            + delivery))
+            .getCode();
+
+    String url = DeliveryController.buildDeliveryPageLinkForDriver(deliveryKey, driverConfirmCode);
+    return new ModelAndView("redirect:" + url);
+  }
+
+  /**
+   * All delivery confirmation 'accept' requests route through this controller: dispatcher, driver,
+   * pickup and drop off site. Once we have full confirmations, then we route 'driver status'
+   * requests to the confirm driver status endpoint.
+   */
+  @GetMapping(confirmPath)
+  ModelAndView confirmRequest(@RequestParam String deliveryKey, @RequestParam String code) {
+    Delivery delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Invalid delivery code: " + deliveryKey));
+
+    if (delivery.getDispatchCode().equals(code)) {
+      ConfirmationDao.dispatcherConfirm(jdbi, deliveryKey);
+      sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
+    } else if (!delivery.getConfirmations().isEmpty()) {
+      Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
+          .map(delivery::getConfirmation)
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .filter(c -> c.getCode().equals(code))
+          .findAny()
+          .ifPresent(
+              confirm ->
+                  ConfirmationDao.confirmDelivery(
+                      jdbi,
+                      deliveryKey,
+                      DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
+    }
+
+    var messages =
+        NotificationStateMachine.confirm(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow(), code);
+    messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+
+    sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
+
+    return new ModelAndView("redirect:/delivery/" + deliveryKey);
+  }
+
+  @PostMapping(cancelPath)
+  ModelAndView cancelRequest(@RequestParam String deliveryKey, @RequestParam String code) {
+
+    Delivery delivery =
+        DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Invalid delivery code: " + deliveryKey));
+
+    Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
+        .map(delivery::getConfirmation)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(c -> c.getCode().equals(code))
+        .findAny()
+        .ifPresent(
+            confirm ->
+                ConfirmationDao.cancelDelivery(
+                    jdbi,
+                    deliveryKey,
+                    DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
+
+    var messages =
+        NotificationStateMachine.cancel(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
+    messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
+    sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_CANCELLED);
+    return new ModelAndView("redirect:/delivery/" + deliveryKey);
   }
 }
