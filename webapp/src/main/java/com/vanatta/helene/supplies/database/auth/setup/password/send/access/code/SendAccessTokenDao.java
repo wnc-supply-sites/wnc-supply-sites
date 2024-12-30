@@ -14,6 +14,10 @@ public class SendAccessTokenDao {
         select 1
         from wss_user
         where phone = :phoneNumber
+        union
+        select 1
+        from site
+        where contact_number = :phoneNumber
         """;
     return jdbi.withHandle(
         handle ->

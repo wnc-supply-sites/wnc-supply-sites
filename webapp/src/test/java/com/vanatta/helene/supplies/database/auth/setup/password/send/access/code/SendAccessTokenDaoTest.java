@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ class SendAccessTokenDaoTest {
   }
 
   @Test
-  void phoneNumberIsRegistered() {
+  void phoneNumberIsRegistered_caseNotRegistered() {
     boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
 
     assertThat(result).isFalse();
@@ -27,6 +28,22 @@ class SendAccessTokenDaoTest {
     SetupPasswordHelper.withRegisteredNumber(number);
 
     boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
+
+    assertThat(result).isTrue();
+  }
+
+  /**
+   * Phone numbers that are listed as the primary contact for a site should appear as registered.
+   */
+  @Test
+  void phoneNumberIsRegistered_caseSiteManager() {
+    String siteName = TestConfiguration.addSite();
+    long siteId = TestConfiguration.getSiteId(siteName);
+    ManageSiteDao.updateSiteField(
+        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "1234560000");
+
+    boolean result =
+        SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, "1234560000");
 
     assertThat(result).isTrue();
   }
