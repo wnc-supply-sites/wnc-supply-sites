@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import com.vanatta.helene.supplies.database.data.GoogleMapWidget;
 import com.vanatta.helene.supplies.database.data.SiteAddress;
+import com.vanatta.helene.supplies.database.util.EnumUtil;
 import com.vanatta.helene.supplies.database.util.ListSplitter;
 import com.vanatta.helene.supplies.database.util.TruncateString;
 import java.util.HashMap;
@@ -247,7 +248,9 @@ class DeliveryController {
     templateParams.put(
         TemplateParams.deliveryStatus.name(), nullsToDash(delivery.getDeliveryStatus()));
 
-    var deliveryStatus = DeliveryStatus.valueOf(delivery.getDeliveryStatus());
+    var deliveryStatus =
+        EnumUtil.mapText(
+            DeliveryStatus.values(), DeliveryStatus::getAirtableName, delivery.getDeliveryStatus());
 
     // show driver status only if the delivery is confirmed or in progress.
     if (List.of(
