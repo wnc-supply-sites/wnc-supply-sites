@@ -43,6 +43,7 @@ class NotificationStateMachine {
 
         Delivery #%s
         Date: %s
+        Heading to: %s in %s
         Items (%s): %s
         """;
     messages.add(
@@ -55,6 +56,8 @@ class NotificationStateMachine {
                         + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
+                    delivery.getToSite(),
+                    delivery.getToCity(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());
@@ -98,21 +101,27 @@ class NotificationStateMachine {
           String.format(
               """
       Delivery #%s confirmed for %s
+      Heading to: %s in %s
       View the delivery and notify us
       when you get started with this link:
       %s
       """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
+              delivery.getToSite(),
+              delivery.getToCity(),
               websiteUri + DeliveryController.buildDeliveryPageLinkForDriver(delivery));
       String messageToOthers =
           String.format(
               """
       Delivery #%s confirmed for %s
+      Heading to: %s in %s
       %s
       """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
+              delivery.getToSite(),
+              delivery.getToCity(),
               websiteUri + DeliveryController.buildDeliveryPageLink(delivery.getPublicKey()));
 
       List<SmsMessage> messages = new ArrayList<>();
@@ -210,11 +219,12 @@ class NotificationStateMachine {
                     .message(
                         String.format(
                             """
-                        Driver, %s, is now en route to %s, license plate: %s, to pick up %s items.
+                        Driver is on the way to: %s
+                        Driver: %s, License plate: %s, to pick up %s items.
                         Full Details: %s
                         """,
-                            delivery.getDriverName(),
                             delivery.getToSite(),
+                            delivery.getDriverName(),
                             delivery.getDriverLicensePlate(),
                             delivery.getItemCount(),
                             websiteUri
@@ -233,10 +243,10 @@ class NotificationStateMachine {
                     .message(
                         String.format(
                             """
-                Driver, %s, has arrived at %s, license plate: %s, to pick up %s items.
+                Driver has arrived at pickup %s
+                License plate: %s, to pick up %s items.
                 Full Details: %s
                 """,
-                            delivery.getDriverName(),
                             delivery.getToSite(),
                             delivery.getDriverLicensePlate(),
                             delivery.getItemCount(),
@@ -256,19 +266,20 @@ class NotificationStateMachine {
                     .message(
                         String.format(
                             """
-                Driver %s is on their way to %s.
+                Driver is on the way to the drop off site: %s
                 ETA: %s
-                They just left %s in %s, transporting %s items.
+                Driver: %s
                 License plates: %s
+                They just left %s in %s, transporting %s items.
                 Full Details: %s
                 """,
-                            delivery.getDriverName(),
                             delivery.getToSite(),
                             googleDistanceApi.estimateEta(delivery),
+                            delivery.getDriverName(),
+                            delivery.getDriverLicensePlate(),
                             delivery.getFromSite(),
                             delivery.getFromCity(),
                             delivery.getItemCount(),
-                            delivery.getDriverLicensePlate(),
                             websiteUri
                                 + DeliveryController.buildDeliveryPageLink(
                                     delivery.getPublicKey())))
@@ -285,12 +296,13 @@ class NotificationStateMachine {
                     .message(
                         String.format(
                             """
-          Supplies driver %s, license plates: %s, has arrived at drop off site: %s
+          Driver has arrived at the drop off site: %s
+          Name: %s, license plate: %s
           #wncStrong
           """,
+                            delivery.getToSite(),
                             delivery.getDriverName(),
-                            delivery.getDriverLicensePlate(),
-                            delivery.getToSite()))
+                            delivery.getDriverLicensePlate()))
                     .build())
         .toList();
   }
