@@ -9,7 +9,7 @@ import org.jdbi.v3.core.Jdbi;
 
 public class ContactDao {
 
-  static long addAdditionalSiteManager(Jdbi jdbi, long siteId, String name, String phone) {
+  public static long addAdditionalSiteManager(Jdbi jdbi, long siteId, String name, String phone) {
 
     String insert =
         """
