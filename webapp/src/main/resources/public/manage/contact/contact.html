@@ -20,11 +20,13 @@
 </div>
 
 
-<h3>Contact Info - visible to authenticated users only</h3>
+<h3>Primary Contact Info - visible to authenticated users only</h3>
+
+
 
 <div class="data-entry-div vertical">
   <div class="data-field vertical">
-    <label for="Contact Name">Contact Name: </label>
+    <label for="Contact Name">Name: </label>
     <div class="horizontal">
       <input id="Contact Name" type="text" class="shortTextField" value="{{siteContactName}}" maxlength="24"
              placeholder="Contact person name"/>
@@ -35,7 +37,7 @@
   </div>
 
   <div class="data-field vertical">
-    <label for="Contact Number">Contact Number<span class="required">*</span>: </label>
+    <label for="Contact Number">Phone Number<span class="required">*</span>: </label>
     <div class="horizontal">
       <input id="Contact Number" type="text" class="shortTextField" value="{{siteContactNumber}}" maxlength="24"
              placeholder="555-555-5555"/>
@@ -44,20 +46,40 @@
     </div>
     <div id="Contact Number-update-confirm" class="confirm-text"></div>
   </div>
+</div>
 
-  <div class="data-field vertical">
-    <label for="Additional Contacts">Additional Contacts: </label>
-    <div class="horizontal">
-      <textarea cols="20" rows="4" id="Additional Contacts" maxlength="256">{{additionalContacts}}</textarea>
-      <div>
-        <button onclick="showUpdateConfirmation({{siteId}}, 'Additional Contacts')" class="update-button">Update
-        </button>
-      </div>
-      <div class="green-check hidden" id="Additional Contacts-update-confirm-checkmark">&#10003;</div>
+<div class="mission-statement">
+    The primary contact will receive SMS notifications for delivery confirmation requests. They will be the first
+    person contacted to set up deliveries.
+</div>
+
+
+<h3>Additional Site Managers</h3>
+<div class="data-entry-div vertical">
+  <div class="data-field vertical" id="add-managers-div">
+
+    {{#additionalContacts}}
+    <div class="horizontal additional-contact">
+      <input class="managerId" type="hidden" value="{{id}}">
+      Name: <input class="name" type="text" maxlength="32" value="{{name}}">
+      Phone: <input class="phone" type="text" maxlength="16" value="{{phone}}">
+      <button onclick="updateContact({{siteId}})">Update</button>
+      <div class="errorMessage"></div>
     </div>
-    <div id="Additional Contacts-update-confirm" class="confirm-text"></div>
+    {{/additionalContacts}}
+    <!--JS will add rows here -->
+
+  </div>
+  <button onclick="addAdditionalManager({{siteId}})">+</button>
+  <div class="mission-statement">
+    Any additional site managers will be granted access to WNC-supply-sites.com and will be able to register
+    using their phone number. They will have full access to manage this site.
   </div>
 </div>
+
+<script>
+  addAdditionalManager({{siteId}})
+</script>
 
 </body>
 </html>

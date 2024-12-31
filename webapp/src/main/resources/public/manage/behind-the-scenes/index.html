@@ -2,9 +2,9 @@
 <!-- Static HTML page, this is not a template! -->
 <head>
   <title>WNC Supply Sites - Behind the Scenes</title>
-  <link rel="stylesheet" href="behind-the-scenes.css"/>
   <link rel="stylesheet" href="../../style.css"/>
   <link rel="stylesheet" href="../../mobile.css"/>
+  <link rel="stylesheet" href="behind-the-scenes.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" sizes="16x16" href="/favicon/WSS16x16.png">
   <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon/WSS32x32.png">
@@ -32,6 +32,8 @@
     <li><a href="#needs-matching">Needs Matching</a></li>
     <li><a href="#setting-up-delivery">Setting up a Delivery</a></li>
     <li><a href="#assigningDriver">Assigning a Driver</a></li>
+    <li><a href="#confirmingDelivery">Confirming the Delivery</a></li>
+    <li><a href="#deliveryTracking">Delivery Tracking</a></li>
   </ul>
 </div>
 
@@ -120,14 +122,84 @@
 <div class="mission-statement larger">
   <p>
     Now that we have a delivery set up, next we need to arrange transportation. To do this, we need to find
-    and contact drivers from the driver listing. (This part is currently a bit laborious). Once done,
-    we have a delivery set up!
+    and contact drivers from the driver listing. (This part is currently a bit laborious). New options
+    for arranging drivers are coming online, for example a discord server where you can hop in and offer
+    availability and ask for drivers. Once done, we have a delivery set up!
+  </p>
+  <p>
+
   </p>
 </div>
 
 <div class="gfx-content">
   <video controls="controls" width="500" height="400">
     <source src="add-driver.mov">
+  </video>
+</div>
+
+
+<a id="confirmingDelivery"></a>
+<h2>Confirming the Delivery</h2>
+<div class="mission-statement larger">
+  <p>
+    Once the delivery is setup, we can send requests for confirmation from everyone involved.
+    The dispatcher clicks "confirm", this sends SMS messages to the driver & pickup & drop off sites.
+  </p>
+</div>
+
+<div class="gfx-content">
+  <video controls="controls" width="500" height="400">
+    <source src="clicking-confirm.mov">
+  </video>
+</div>
+
+<div class="mission-statement larger">
+  <p>
+    The driver, pickup and drop off sites are then sent SMS messages with a link to the delivery.
+    They can each in turn click "confirm". If anyone clicks cancel, everyone will get a cancellation SMS message.
+    Otherwise when all confirmations have come in, everyone will receive a "fully confirmed" SMS.
+  </p>
+</div>
+
+<div class="gfx-content">
+  <video controls="controls" width="500" height="400">
+    <source src="confirming.mov">
+  </video>
+</div>
+
+<div class="mission-statement larger">
+  <p>
+    The dispatcher has a copy of the confirmation links. If needed, they can jump in and help the confirmations
+    process.
+  </p>
+</div>
+
+<div class="gfx-content">
+  <video controls="controls" width="500" height="400">
+    <source src="dispatcher-has-links.mov">
+  </video>
+</div>
+
+
+
+
+<a id="deliveryTracking"></a>
+<h2>Tracking the Delivery</h2>
+<div class="mission-statement larger">
+  <p>
+    Now that the delivery is fully confirmed, the driver gets a special link where they can
+    start the actual delivery. They can first click to start the delivery and notify
+    the pickup site they are on the way. They can then click again to confirm when
+    they have arrived at the pickup site, when they are leaving, and when they have
+    arrived at the final drop off. Each confirmation triggers SMS messages to the
+    pickup sites notifying them the driver is on the way.
+  </p>
+</div>
+
+<h3>Special View of the Delivery available to the Driver</h3>
+<div class="gfx-content">
+  <video controls="controls" width="500" height="400">
+    <source src="driver-confirms.mov">
   </video>
 </div>
 
