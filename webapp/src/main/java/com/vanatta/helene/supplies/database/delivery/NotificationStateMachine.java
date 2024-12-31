@@ -43,7 +43,7 @@ class NotificationStateMachine {
 
         Delivery #%s
         Date: %s
-        Heading to: %s in %s
+        Heading to: %s, %s
         Items (%s): %s
         """;
     messages.add(
@@ -73,6 +73,8 @@ class NotificationStateMachine {
                             delivery, ConfirmRole.PICKUP_SITE),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
+                    delivery.getToSite(),
+                    delivery.getToCity(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());
@@ -88,6 +90,8 @@ class NotificationStateMachine {
                             delivery, ConfirmRole.DROPOFF_SITE),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
+                    delivery.getToSite(),
+                    delivery.getToCity(),
                     delivery.getItemCount(),
                     delivery.getItemListTruncated()))
             .build());

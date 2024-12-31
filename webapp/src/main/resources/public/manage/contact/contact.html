@@ -57,20 +57,25 @@
 <h3>Additional Site Managers</h3>
 <div class="data-entry-div vertical">
   <div class="data-field vertical" id="add-managers-div">
-
+    <!-- copy/paste warning: also update contact.js that has a similar block -->
     {{#additionalContacts}}
     <div class="horizontal additional-contact">
       <input class="managerId" type="hidden" value="{{id}}">
-      Name: <input class="name" type="text" maxlength="32" value="{{name}}">
-      Phone: <input class="phone" type="text" maxlength="16" value="{{phone}}">
+      Name: <input class="name" type="text" maxlength="32" value="{{name}}" size="18">
+      Phone: <input class="phone" type="text" maxlength="16" value="{{phone}}" size="12">
       <button onclick="updateContact({{siteId}})">Update</button>
+      <button onclick="removeContact({{siteId}})" class="remove-button">Remove</button>
       <div class="errorMessage"></div>
+      <div class="green-check hidden">&#10003;</div>
+      <div class="message"></div>
     </div>
     {{/additionalContacts}}
     <!--JS will add rows here -->
 
   </div>
-  <button onclick="addAdditionalManager({{siteId}})">+</button>
+  <div>
+    <button onclick="addAdditionalManager({{siteId}})">+</button>
+  </div>
   <div class="mission-statement">
     Any additional site managers will be granted access to WNC-supply-sites.com and will be able to register
     using their phone number. They will have full access to manage this site.

@@ -1,0 +1,19 @@
+.additional-contact {
+  margin-bottom: 10px;
+}
+
+.additional-contact input {
+  margin-right: 5px;
+}
+
+.message {
+  font-style: italic;
+}
+
+.remove-button {
+  width: 66px;
+}
+
+.are-you-sure {
+  border: darkred solid 2px;
+}
