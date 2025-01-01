@@ -34,7 +34,6 @@ public class AddSiteDao {
           hours,
           contact_name,
           contact_number,
-          additional_contacts,
           max_supply_load_id,
           receiving_notes
         ) values(
@@ -48,7 +47,6 @@ public class AddSiteDao {
           :hours,
           :contactName,
           :contactNumber,
-          :additionalContacts,
           (select id from max_supply_load where name = :maxSupplyLoadName),
           :receivingNotes
          )
@@ -71,7 +69,6 @@ public class AddSiteDao {
                       .bind("hours", siteData.getSiteHours())
                       .bind("contactName", siteData.getContactName())
                       .bind("contactNumber", siteData.getContactNumber())
-                      .bind("additionalContacts", siteData.getAdditionalContacts())
                       .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
                       .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
                       .bind("receivingNotes", siteData.getReceivingNotes())

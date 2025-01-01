@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class SelectSiteController {
 
   public static final String PATH_SELECT_SITE = "/manage/select-site";
+  public static final String PATH_SITE_SELECTED = "/manage/site-selected";
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
@@ -47,10 +48,16 @@ public class SelectSiteController {
     return new ModelAndView("manage/select-site", pageParams);
   }
 
+  
+  public static String buildSiteSelectedUrl(long siteId) {
+    return PATH_SITE_SELECTED + "?siteId=" + siteId;
+  }
+  
+  
   /**
    * After a site is selected, user selects which aspect they want to manage (eg: inventory, status)
    */
-  @GetMapping("/manage/site-selected")
+  @GetMapping(PATH_SITE_SELECTED)
   ModelAndView showSiteSelectedPage(@RequestParam String siteId) {
 
     String siteName = fetchSiteName(siteId);

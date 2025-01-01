@@ -192,11 +192,11 @@ async function updateData() {
   } catch (error) {
     document.getElementById('result-count').innerHTML = "";
     stopLoaderAnimation();
-    showError(error);
+    showSuppliesError(error);
   }
 }
 
-function showError(error) {
+function showSuppliesError(error) {
   console.error(error, error.stack);
   document.getElementById("error-div").innerHTML =
       `Error fetching data. Server is not available. Error: ${error.message}`;

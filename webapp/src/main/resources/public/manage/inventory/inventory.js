@@ -63,7 +63,7 @@ async function toggleInventory(siteId, itemName) {
       document.getElementById(`${itemName}Available`).disabled = !checked;
       document.getElementById(`${itemName}Oversupply`).disabled = !checked;
     } catch (error) {
-      showError(error);
+      showInventoryError(error);
       // revert checkbox update
       document.getElementById(`${itemName}Checkbox`).checked = false;
     }
@@ -88,7 +88,7 @@ async function toggleInventory(siteId, itemName) {
       document.getElementById(`${itemName}Available`).disabled = !checked;
       document.getElementById(`${itemName}Oversupply`).disabled = !checked;
     } catch (error) {
-      showError(error);
+      showInventoryError(error);
       // revert checkbox update
       document.getElementById(`${itemName}Checkbox`).checked = true;
     }
@@ -179,7 +179,7 @@ async function changeItemStatus(siteId, itemName) {
     await sendItemStatusChange(siteId, itemName, newStatus);
     showUpdateConfirmation(itemName);
   } catch (error) {
-    showError(error);
+    showInventoryError(error);
   }
 }
 
@@ -369,14 +369,14 @@ async function sendAddNewItem(siteId, itemName, itemStatus) {
         document.getElementById("addItemResult").style.display = 'block';
         return false;
       } else {
-        showError(new Error(`Response status: ${response.status}, ${response.text}`));
+        showInventoryError(new Error(`Response status: ${response.status}, ${response.text}`));
         return false;
       }
     }
     document.getElementById("addItemResult").style.display = 'none';
     return true;
   } catch (error) {
-    showError(error);
+    showInventoryError(error);
     return false;
   }
 }
@@ -414,7 +414,7 @@ function showUpdateConfirmation(itemName) {
       1000);
 }
 
-function showError(error) {
+function showInventoryError(error) {
   console.log(error);
   let errorDiv = document.getElementById("error-div");
   errorDiv.innerHTML = "Update failed. Error contacting server. " + error;

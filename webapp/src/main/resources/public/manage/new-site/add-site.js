@@ -26,11 +26,10 @@ async function saveNewSite() {
   const receivingNotes = document.getElementById('receivingNotes');
 
   const contactName = document.getElementById("Contact Name");
-  const additionalContacts = document.getElementById("Additional Contacts");
 
 
   if (!validData) {
-    showError("Missing required fields")
+    showAddSiteError("Missing required fields")
     return;
   }
 
@@ -57,62 +56,31 @@ async function saveNewSite() {
 
       contactName: contactName.value.trim(),
       contactNumber: contactNumber.value.trim(),
-      additionalContacts: additionalContacts.value.trim()
     })
   })
   .then(
       async function (response) {
         if (response.ok) {
           const responseJson = await response.json();
-          const editNewSiteInventoryUrl = responseJson.editSiteInventoryUrl;
-          showSuccess(editNewSiteInventoryUrl, siteName.value);
+          window.location.href = responseJson.manageSiteUrl;
         } else {
           const responseJson = await response.json();
-          showError("Failed to save: " + responseJson.error);
+          showAddSiteError("Failed to save: " + responseJson.error);
         }
         window.scrollTo(0, document.body.scrollHeight);
       },
       function (error) {
-        showError("Failed to save, server not available.");
+        showAddSiteError("Failed to save, server not available.");
         window.scrollTo(0, document.body.scrollHeight);
       });
 }
 
-function showError(text) {
-  const confirmation = document.getElementById("save-site-confirm");
+function showAddSiteError(text) {
   const redX = document.getElementById("red-x");
-  const greenCheck = document.getElementById("green-check")
-  const confirmMessage = document.getElementById("save-site-confirm");
-
-  greenCheck.classList.add("hidden");
   redX.classList.remove("hidden");
-  confirmMessage.classList.add("errorMessage");
-  confirmation.innerHTML = text;
-}
 
-function showSuccess(editSiteUrl, siteName) {
-  const confirmation = document.getElementById("save-site-confirm");
-  const redX = document.getElementById("red-x");
-  const greenCheck = document.getElementById("green-check")
-  const confirmMessage = document.getElementById("save-site-confirm");
-
-  greenCheck.classList.remove("hidden");
-  redX.classList.add("hidden");
-  confirmMessage.classList.remove("errorMessage");
-  confirmation.innerHTML = `${siteName} saved. <a href=${editSiteUrl}>Click to view site details</a>`
-
-  /** Clear data entry fields to facilitate adding more sites. */
-  document.getElementById("Site Name").value = "";
-  document.getElementById("Street Address").value = "";
-  document.getElementById("City").value = "";
-  document.getElementById("Website").value = "";
-  document.getElementById("Facebook").value = "";
-  document.getElementById("Site Hours").value = "";
-
-  document.getElementById('receivingNotes').value = "";
-  document.getElementById("Contact Name").value = "";
-  document.getElementById("Contact Number").value = "";
-  document.getElementById("Additional Contacts").value = "";
+  const errorMessage = document.getElementById("error-message");
+  errorMessage.innerHTML = text;
 }
 
 /** Returns false if field is not set, true if field is set */

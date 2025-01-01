@@ -83,7 +83,6 @@ public class AddSiteController {
             .receivingNotes(params.get("receivingNotes"))
             .contactName(params.get("contactName"))
             .contactNumber(params.get("contactNumber"))
-            .additionalContacts(params.get("additionalContacts"))
             .build();
     if (addSiteData.isMissingRequiredData()) {
       log.warn(
@@ -96,10 +95,14 @@ public class AddSiteController {
     try {
       long newSiteId = AddSiteDao.addSite(jdbi, addSiteData);
       sendSiteUpdate.sendFullUpdate(newSiteId);
+
+      String manageSiteUrl = SelectSiteController.buildSiteSelectedUrl(newSiteId);
       return ResponseEntity.ok(
-          "{\"result\": \"success\", \"editSiteInventoryUrl\": \"/manage/inventory?siteId="
-              + newSiteId
-              + "\"}");
+          String.format(
+              """
+           { "result": "success", "manageSiteUrl": "%s" }
+          """,
+              manageSiteUrl));
     } catch (AddSiteDao.DuplicateSiteException e) {
       return ResponseEntity.badRequest()
           .body("{\"result\": \"fail\", \"error\": \"site name already exists\"}");

@@ -14,7 +14,7 @@ async function updateSiteActive(siteId) {
       showConfirmation("Site status set to inactive" + (inactiveReason !== "" ? " with reason " + inactiveReason : ""));
     }
   } catch (error) {
-    showError(error, "site 'active' was not updated.")
+    showStatusError(error, "site 'active' was not updated.")
   }
 }
 
@@ -25,7 +25,7 @@ function showConfirmation(text) {
   document.getElementById("status-update-error").innerHTML = "";
 }
 
-function showError(error, messageText) {
+function showStatusError(error, messageText) {
   console.log(error);
   document.getElementById("updateStatusConfirmation")
       .innerHTML = "";
@@ -39,7 +39,7 @@ async function updateSiteAcceptingDonations(siteId) {
     await sendStatusUpdate(siteId, "acceptingSupplies", accepting);
     showConfirmation("Site status set to " + (accepting ? "" : "NOT ") + "accepting supplies");
   } catch (error) {
-    showError(error, "accepting supplies was not updated.");
+    showStatusError(error, "accepting supplies was not updated.");
   }
 }
 
@@ -49,7 +49,7 @@ async function updateSiteDistributingDonations(siteId) {
     await sendStatusUpdate(siteId, "distributingSupplies", distributing);
     showConfirmation("Site status set to " + (distributing ? "" : "NOT ") + "distributing supplies");
   } catch (error) {
-    showError(error, "distributing supplies was not updated");
+    showStatusError(error, "distributing supplies was not updated");
   }
 }
 
@@ -60,7 +60,7 @@ async function updateSiteSiteType(siteId) {
     await sendStatusUpdate(siteId, "distSite", isDistSite);
     showConfirmation("Site type set to " + (isDistSite ? "distribution site" : "supply warehouse"));
   } catch (error) {
-    showError(error, "site type was not updated");
+    showStatusError(error, "site type was not updated");
   }
 }
 
@@ -71,7 +71,7 @@ async function updatePubliclyVisible(siteId) {
     await sendStatusUpdate(siteId, "publiclyVisible", publicVisible);
     showConfirmation("Site set to " + (publicVisible ? "publicly visible" : "visible to logged in users only"));
   } catch (error) {
-    showError(error, "publicly visible was not updated");
+    showStatusError(error, "publicly visible was not updated");
   }
 }
 

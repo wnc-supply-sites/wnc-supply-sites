@@ -43,7 +43,7 @@ async function showUpdateConfirmation(siteId, field) {
     await sendSiteUpdate(siteId, field, newValue)
     showConfirmations(field, newValue);
   } catch (error) {
-    showError(field, error);
+    showSiteUpdateError(field, error);
   }
 }
 
@@ -70,7 +70,7 @@ function showConfirmations(field, newValue) {
   }
 }
 
-function showError(field, error) {
+function showSiteUpdateError(field, error) {
   console.log(error);
   document.getElementById(field + "-update-confirm").innerHTML =
       `An error occurred, ${field} was not updated`;
