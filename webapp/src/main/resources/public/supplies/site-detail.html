@@ -126,7 +126,10 @@
                     <tr>
                         <td><a href="{{detailLink}}">[Details]</a></td>
                         <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                        <td>{{#fromSite}}<a href="{{fromSiteLink}}">{{.}}</a>{{/fromSite}}</td>
+                        <td>
+                            {{#fromSiteLink}}<a href="{{.}}">{{fromSite}}</a>{{/fromSiteLink}}
+                            {{^fromSiteLink}}{{#fromSite}}.{{/fromSite}}{{^fromSite}}-{{/fromSite}}{{/fromSiteLink}}
+                        </td>
                         <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
                         <td>{{itemCount}}</td>
                         <td>{{itemListTruncated}}</td>
@@ -160,7 +163,10 @@
                     <tr>
                         <td><a href="{{detailLink}}">[Details]</a></td>
                         <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                        <td>{{#toSite}}<a href="{{toSiteLink}}">{{.}}</a>{{/toSite}}</td>
+                        <td>
+                            {{#toSiteLink}}<a href="{{.}}">{{toSite}}</a>{{/toSiteLink}}
+                            {{^toSiteLink}}{{#toSite}}.{{/toSite}}{{^toSite}}-{{/toSite}}{{/toSiteLink}}
+                        </td>
                         <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
                         <td>{{itemCount}}</td>
                         <td>{{itemListTruncated}}</td>
