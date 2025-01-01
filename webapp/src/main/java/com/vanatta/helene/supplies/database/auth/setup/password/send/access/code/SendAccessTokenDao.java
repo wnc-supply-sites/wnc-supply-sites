@@ -39,6 +39,25 @@ public class SendAccessTokenDao {
                 .isPresent());
   }
 
+  public static void createUser(Jdbi jdbi, String number) {
+    String insert =
+        """
+        insert into wss_user(phone) values(:phone)
+        """;
+    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("phone", number).execute());
+  }
+
+  static boolean userAccountExists(Jdbi jdbi, String phoneNumber) {
+    String query =
+        """
+        select 1 from wss_user where phone = :phone
+        """;
+    return jdbi.withHandle(
+            handle ->
+                handle.createQuery(query).bind("phone", phoneNumber).mapTo(Integer.class).findOne())
+        .isPresent();
+  }
+
   @Getter
   @Builder
   public static class InsertAccessCodeParams {

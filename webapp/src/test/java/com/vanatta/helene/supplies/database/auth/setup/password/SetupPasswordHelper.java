@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.auth.setup.password;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.setup.password.send.access.code.SendAccessTokenDao;
 import com.vanatta.helene.supplies.database.util.HashingUtil;
 
 public class SetupPasswordHelper {
@@ -17,12 +18,7 @@ public class SetupPasswordHelper {
   }
 
   public static void withRegisteredNumber(String number) {
-    String insert =
-        """
-        insert into wss_user(id, phone) values(-1, :phone)
-        """;
-    TestConfiguration.jdbiTest.withHandle(
-        handle -> handle.createUpdate(insert).bind("phone", number).execute());
+    SendAccessTokenDao.createUser(TestConfiguration.jdbiTest, number);
   }
 
   public static int countSendHistoryRecords() {

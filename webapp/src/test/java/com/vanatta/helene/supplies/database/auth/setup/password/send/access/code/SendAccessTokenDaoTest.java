@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
@@ -19,7 +20,7 @@ class SendAccessTokenDaoTest {
 
   @Test
   void phoneNumberIsRegistered_caseNotRegistered() {
-    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, number);
 
     assertThat(result).isFalse();
   }
@@ -28,11 +29,21 @@ class SendAccessTokenDaoTest {
   void registeredPhoneNumber() {
     SetupPasswordHelper.withRegisteredNumber(number);
 
-    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, number);
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, number);
 
     assertThat(result).isTrue();
   }
 
+  @Test
+  void userAccountExistsAndCreate() {
+    assertThat(SendAccessTokenDao.userAccountExists(jdbiTest, number)).isFalse();
+    
+    SendAccessTokenDao.createUser(jdbiTest, number);
+    
+    assertThat(SendAccessTokenDao.userAccountExists(jdbiTest, number)).isTrue();
+  }
+  
+  
   /**
    * Phone numbers that are listed as the primary contact for a site should appear as registered.
    */
@@ -41,10 +52,10 @@ class SendAccessTokenDaoTest {
     String siteName = TestConfiguration.addSite();
     long siteId = TestConfiguration.getSiteId(siteName);
     ManageSiteDao.updateSiteField(
-        TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "1234560000");
+        jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "1234560000");
 
     boolean result =
-        SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, "1234560000");
+        SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "1234560000");
 
     assertThat(result).isTrue();
   }
@@ -53,10 +64,10 @@ class SendAccessTokenDaoTest {
   void phoneNumberIsRegistered_caseAdditionalContact() {
     String siteName = TestConfiguration.addSite();
     long siteId = TestConfiguration.getSiteId(siteName);
-    ContactDao.addAdditionalSiteManager(TestConfiguration.jdbiTest, siteId, "name", "432.222.2222");
+    ContactDao.addAdditionalSiteManager(jdbiTest, siteId, "name", "432.222.2222");
 
     boolean result =
-        SendAccessTokenDao.isPhoneNumberRegistered(TestConfiguration.jdbiTest, "432 222 2222");
+        SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "432 222 2222");
 
     assertThat(result).isTrue();
   }
@@ -71,7 +82,7 @@ class SendAccessTokenDaoTest {
     assertThat(tokenExists).isFalse();
 
     SendAccessTokenDao.insertSmsPasscode(
-        TestConfiguration.jdbiTest,
+        jdbiTest,
         SendAccessTokenDao.InsertAccessCodeParams.builder()
             .phoneNumber(number)
             .accessCode(accessCode)
