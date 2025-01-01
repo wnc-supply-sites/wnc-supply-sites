@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-class DeliveryUpdate {
+public class DeliveryUpdate {
   long deliveryId;
 
   /**

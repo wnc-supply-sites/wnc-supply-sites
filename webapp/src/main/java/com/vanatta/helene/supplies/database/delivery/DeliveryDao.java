@@ -85,16 +85,8 @@ public class DeliveryDao {
         handle ->
             handle
                 .createUpdate(upsert)
-                .bind(
-                    "fromSiteWssId",
-                    deliveryUpdate.getPickupSiteWssId().isEmpty()
-                        ? null
-                        : deliveryUpdate.getPickupSiteWssId().getFirst())
-                .bind(
-                    "toSiteWssId",
-                    deliveryUpdate.getDropOffSiteWssId().isEmpty()
-                        ? null
-                        : deliveryUpdate.getDropOffSiteWssId().getFirst())
+                .bind("fromSiteWssId", firstValue(deliveryUpdate.getPickupSiteWssId()))
+                .bind("toSiteWssId", firstValue(deliveryUpdate.getDropOffSiteWssId()))
                 .bind("deliveryStatus", deliveryUpdate.getDeliveryStatus())
                 .bind("targetDeliveryDate", deliveryUpdate.getTargetDeliveryDate())
                 .bind("dispatcherName", firstValue(deliveryUpdate.getDispatcherName()))
@@ -148,14 +140,16 @@ public class DeliveryDao {
     )
     """;
     List<Long> itemIds = deliveryUpdate.getItemListWssIds();
-    for (long itemWssId : itemIds) {
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(insert)
-                  .bind("airtableId", deliveryUpdate.getDeliveryId())
-                  .bind("itemWssId", itemWssId)
-                  .execute());
+    if (itemIds != null) {
+      for (long itemWssId : itemIds) {
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(insert)
+                    .bind("airtableId", deliveryUpdate.getDeliveryId())
+                    .bind("itemWssId", itemWssId)
+                    .execute());
+      }
     }
     // insert items that are provided by name (sometimes items won't have a WSS-ID)
     String insertByName =
@@ -180,7 +174,7 @@ public class DeliveryDao {
     }
   }
 
-  private static String firstValue(List<String> input) {
+  private static <T> T firstValue(List<T> input) {
     return input == null || input.isEmpty() ? null : input.getFirst();
   }
 

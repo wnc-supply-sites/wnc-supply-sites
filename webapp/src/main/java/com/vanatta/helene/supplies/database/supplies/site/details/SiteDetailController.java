@@ -218,14 +218,14 @@ public class SiteDetailController {
 
       List<Delivery> incomingDeliveries =
           allDeliveries.stream()
-              .filter(d -> d.getToSite().equals(siteDetailData.getSiteName()))
+              .filter(d -> siteDetailData.getSiteName().equals(d.getToSite()))
               .toList();
       siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.INCOMING_DELIVERIES.text, incomingDeliveries);
 
       List<Delivery> outgoingDeliveries =
           allDeliveries.stream()
-              .filter(d -> d.getFromSite().equals(siteDetailData.getSiteName()))
+              .filter(d -> siteDetailData.getSiteName().equals(d.getFromSite()))
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
