@@ -26,7 +26,6 @@ async function saveNewSite() {
   const receivingNotes = document.getElementById('receivingNotes');
 
   const contactName = document.getElementById("Contact Name");
-  const contactEmail = document.getElementById("Contact Email");
   const additionalContacts = document.getElementById("Additional Contacts");
 
 
@@ -58,7 +57,6 @@ async function saveNewSite() {
 
       contactName: contactName.value.trim(),
       contactNumber: contactNumber.value.trim(),
-      contactEmail: contactEmail.value.trim(),
       additionalContacts: additionalContacts.value.trim()
     })
   })
@@ -114,7 +112,6 @@ function showSuccess(editSiteUrl, siteName) {
   document.getElementById('receivingNotes').value = "";
   document.getElementById("Contact Name").value = "";
   document.getElementById("Contact Number").value = "";
-  document.getElementById("Contact Email").value = "";
   document.getElementById("Additional Contacts").value = "";
 }
 
