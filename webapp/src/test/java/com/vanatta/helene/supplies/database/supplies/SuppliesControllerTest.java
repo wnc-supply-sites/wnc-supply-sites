@@ -101,35 +101,41 @@ class SuppliesControllerTest {
   void requestByCounty() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Haywood")).build());
+            SiteSupplyRequest.builder().counties(List.of("Haywood, NC")).build());
     assertThat(result.getResultCount()).isEqualTo(0);
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Buncombe")).build());
-    result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Buncombe"));
+            SiteSupplyRequest.builder().counties(List.of("Buncombe, NC")).build());
+    result.getResults().forEach(r -> {
+      assertThat(r.getCounty()).isEqualTo("Buncombe");
+      assertThat(r.getState()).isEqualTo("NC");
+    });
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Watauga")).build());
+            SiteSupplyRequest.builder().counties(List.of("Watauga, NC")).build());
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1");
-    result.getResults().forEach(r -> assertThat(r.getCounty()).isEqualTo("Watauga"));
+    result.getResults().forEach(r -> {
+      assertThat(r.getCounty()).isEqualTo("Watauga");
+      assertThat(r.getState()).isEqualTo("NC");
+    });
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Ashe", "Watauga", "Buncombe")).build());
+            SiteSupplyRequest.builder().counties(List.of("Ashe, NC", "Watauga, NC", "Buncombe, NC")).build());
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1", "site2", "site4");
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Ashe", "Buncombe")).build());
+            SiteSupplyRequest.builder().counties(List.of("Ashe, NC", "Buncombe, NC")).build());
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");

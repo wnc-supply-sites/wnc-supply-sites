@@ -2,7 +2,10 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.data.SiteType;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -18,6 +21,7 @@ public class SuppliesDao {
     String site;
     String siteType;
     String county;
+    String state;
     String item;
     String itemStatus;
     LocalDate inventoryLastUpdated;
@@ -35,6 +39,7 @@ public class SuppliesDao {
         s.name site,
         st.name siteType,
         c.name county,
+        c.state state,
         i.name item,
         ist.name itemStatus,
         s.inventory_last_updated inventoryLastUpdated,
@@ -53,7 +58,17 @@ public class SuppliesDao {
       query.append("and s.name in (<sites>)\n");
     }
     if (!request.getCounties().isEmpty()) {
-      query.append("and c.name in (<counties>)\n");
+      // build up a string to do a lot of "or" matching of county + state
+      // pairs. We encode the bind variable with a counter variable at the end
+      // to make it unique, so we can bind it later.
+      List<String> queryParts = new ArrayList<>();
+      for(int i = 0; i < request.getCounties().size(); i ++) {
+        queryParts.add("(c.name = :county" + i + " and c.state = :state" + i + ")");
+      }
+      
+      query.append("and (\n");
+      query.append(String.join("\n or ", queryParts));
+      query.append("\n)\n");
     }
     if (!request.getItems().isEmpty()) {
       query.append("and i.name in (<items>)\n");
@@ -92,6 +107,7 @@ public class SuppliesDao {
         s.name,
         st.name,
         c.name,
+        c.state,
         i.name,
         ist.name,
         s.inventory_last_updated,
@@ -109,7 +125,15 @@ public class SuppliesDao {
             queryBuilder.bindList("sites", decodedSites);
           }
           if (!request.getCounties().isEmpty()) {
-            queryBuilder.bindList("counties", request.getCounties());
+            
+            for(int i = 0; i < request.getCounties().size(); i ++) {
+              String c = request.getCounties().get(i);
+              String county = c.split(",")[0].trim();
+              String state = c.split(",")[1].trim();
+              
+              queryBuilder.bind("county" + i, county);
+              queryBuilder.bind("state" + i, state);
+            }
           }
           if (!request.getItems().isEmpty()) {
             queryBuilder.bindList("items", request.getItems());

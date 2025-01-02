@@ -21,9 +21,11 @@ public class CountyDao {
     String query =
         String.format(
             """
-        select c.name from county c
-        where exists (select 1 from site where county_id = c.id %s)
-        order by c.name;
+        select
+          c.name || ', ' || c.state
+        from county c
+        where exists (select 1 from site where county_id = c.id and active=true %s)
+        order by c.state, c.name;
         """,
             authenticatedFilter);
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());

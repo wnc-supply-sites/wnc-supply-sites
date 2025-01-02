@@ -20,6 +20,7 @@ public class SiteSupplyResponse {
     String site;
     String siteType;
     String county;
+    String state;
     // includes all needed items, whether urgently needed or just needed
     @Builder.Default List<SiteItem> neededItems = new ArrayList<>();
     // includes all available items, whether just available or oversupply

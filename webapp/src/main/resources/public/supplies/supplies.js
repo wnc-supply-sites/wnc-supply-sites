@@ -171,7 +171,7 @@ async function updateData() {
                       <span>
                         <a href='site-detail?id=${r.id}'><span class="site-name">${r.site}</span></a>
                       </span>
-                      <span>${r.county} County</span>
+                      <span>${r.county} County, ${r.state}</span>
                       <span>${r.siteType === "Supply Hub" ? supplyHubHtml : ''}</span>
                       <span>${r.acceptingDonations ? '' : notAcceptingDonationsHtml}</span>
                       <div class="vertical">

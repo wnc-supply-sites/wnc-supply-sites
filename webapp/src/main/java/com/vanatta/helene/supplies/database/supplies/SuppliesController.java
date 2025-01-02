@@ -92,6 +92,7 @@ public class SuppliesController {
                           .site(result.getSite())
                           .siteType(result.getSiteType())
                           .county(result.getCounty())
+                          .state(result.getState())
                           .acceptingDonations(result.isAcceptingDonations())
                           .inventoryLastUpdated(
                               result.getInventoryLastUpdated().format(dateTimeFormatter))
