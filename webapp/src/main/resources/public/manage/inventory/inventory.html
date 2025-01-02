@@ -25,6 +25,11 @@
   <li>Favor using generic terms for items (eg: 'Food' instead of 'canned goods', 'First Aid' instead of 'Band Aids')
 </ul>
 
+<div>
+  Filter by name
+  <input type="text" id="filter-text-input"/>
+</div>
+
 <div id="data-entry">
   <div class="data-entry-div vertical">
     <div class="data-entry-body">
@@ -39,7 +44,7 @@
         <tbody id="inventoryTableBody">
 
         {{#inventoryList}}
-        <tr>
+        <tr class="inventory-item">
           <td>
             <input type="checkbox" id="{{itemName}}Checkbox"
                    onclick="toggleInventory('{{siteId}}', '{{itemName}}')" {{itemChecked}}/>
@@ -151,5 +156,8 @@
   </div>
 </div>
 
+<script> 
+  instantiateInputEventListener();
+</script>
 </body>
 </html>

@@ -435,3 +435,24 @@ function htmlEncode(input) {
   input = input.replace(/>/g, '&gt;');
   return input;
 }
+
+function filterItemsByName(text) {
+  const inventoryItems = document.getElementsByClassName("inventory-item");
+  for(let i = 0; i < inventoryItems.length; i++) {
+    const itemName = inventoryItems[i].getElementsByClassName("inventoryLabel")[0].textContent.trim();
+    const inventoryItem = inventoryItems[i];
+    if (itemName.includes(text)){ 
+      console.log(`Item ${itemName} contains ${text}`)
+      inventoryItem.classList.remove("hidden")
+    } else {
+      inventoryItem.classList.add("hidden")
+    }
+  }
+}
+
+function instantiateInputEventListener() {
+  const input = document.getElementById("filter-text-input");
+  input.addEventListener("keyup", (e) => {
+    filterItemsByName(e.target.value);
+  })
+}

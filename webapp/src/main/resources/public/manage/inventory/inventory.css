@@ -69,3 +69,7 @@ table.inventoryTable td {
   padding: 5px;
 }
 
+.hidden {
+  display: "none"
+}
+
