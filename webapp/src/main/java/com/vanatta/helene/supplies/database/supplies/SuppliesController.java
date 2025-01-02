@@ -27,14 +27,13 @@ public class SuppliesController {
   private final CookieAuthenticator cookieAuthenticator;
 
   @GetMapping("/supplies/needs")
-  public ModelAndView needs(HttpServletRequest request) {
-    return supplies("donate", request);
+  public ModelAndView needs() {
+    return supplies("donate");
   }
 
   /** GET requests should be coming from the home page. */
   @GetMapping(PATH_SUPPLY_SEARCH)
-  public ModelAndView supplies(
-      @RequestParam(required = false) String mode, HttpServletRequest request) {
+  public ModelAndView supplies(@RequestParam(required = false) String mode) {
     if (mode == null) {
       mode = "view";
     }
@@ -65,7 +64,7 @@ public class SuppliesController {
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(
       HttpServletRequest httpRequest, @RequestBody SiteSupplyRequest request) {
-    boolean authenticated = cookieAuthenticator.isAuthenticatedWithUniversalPassword(httpRequest);
+    boolean authenticated = cookieAuthenticator.isAuthenticated(httpRequest);
     return getSuppliesData(request, authenticated);
   }
 

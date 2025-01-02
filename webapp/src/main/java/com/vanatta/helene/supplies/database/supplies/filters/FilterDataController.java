@@ -25,7 +25,7 @@ public class FilterDataController {
   @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData(HttpServletRequest request) {
     AuthenticatedMode authenticatedMode =
-        cookieAuthenticator.isAuthenticatedWithUniversalPassword(request)
+        cookieAuthenticator.isAuthenticated(request)
             ? AuthenticatedMode.AUTHENTICATED
             : AuthenticatedMode.NOT_AUTHENTICATED;
     return getFilterData(authenticatedMode);
