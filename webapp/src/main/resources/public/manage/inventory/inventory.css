@@ -7,7 +7,6 @@
   display: none;
   font-style: italic;
   font-size: 0.95em;
-  width: 150px;
 }
 
 .table-title {
@@ -73,3 +72,27 @@ table.inventoryTable td {
   display: "none"
 }
 
+.search-input-container {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+}
+
+.search-input-label {
+  font-size: larger;
+  font-weight: 900;
+}
+
+#filter-text-input {
+  margin-top: .5rem;
+  margin-bottom: 1rem;
+}
+
+
+
+@media only screen and (max-width: 632px) {
+  .search-input-container {
+    width: 80%;
+  }
+}
