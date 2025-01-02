@@ -193,6 +193,17 @@ public class MergeItemsController {
                   .bind("itemId", deleteItemId)
                   .execute());
     }
+
+    // now remove the items from the 'item' table to complete the merge
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(
+                    """
+                    delete from item where id in (<itemIds>)
+                    """)
+                .bindList("itemIds", itemsToMergeIds)
+                .execute());
   }
 
   private static String itemNameById(Jdbi jdbi, long id) {

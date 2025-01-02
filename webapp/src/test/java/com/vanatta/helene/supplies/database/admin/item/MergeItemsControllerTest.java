@@ -117,6 +117,9 @@ class MergeItemsControllerTest {
         .contains(itemA.getName(), itemB.getName());
     assertThat(DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, "ZAQZ").orElseThrow().getItemList())
         .containsExactly(itemB.getName(), itemC.getName());
+
+    // validate that the item is removed from the master item list
+    assertThat(fetchAllItems()).doesNotContain(itemB.getName(), itemC.getName());
   }
 
   static List<String> fetchItemsForSite(long siteId) {
@@ -131,5 +134,10 @@ class MergeItemsControllerTest {
     """;
     return jdbiTest.withHandle(
         handle -> handle.createQuery(query).bind("siteId", siteId).mapTo(String.class).list());
+  }
+
+  static List<String> fetchAllItems() {
+    return jdbiTest.withHandle(
+        h -> h.createQuery("select name from item").mapTo(String.class).list());
   }
 }
