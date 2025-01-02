@@ -41,7 +41,7 @@ public class SmsSender {
     this.jdbi = jdbi;
   }
 
-  public void send(String phoneNumber, String message) {
+  public boolean send(String phoneNumber, String message) {
     if (phoneNumber == null || message == null) {
       throw new IllegalArgumentException(
           String.format("Null input, phoneNumber: %s, message: %s", phoneNumber, message));
@@ -59,16 +59,32 @@ public class SmsSender {
               .errorCode(-1)
               .errorMessage("SMS not enabled")
               .build());
+      return true;
     } else {
       log.info("Sending SMS to: {}, message length: {}", phoneNumber, message.length());
 
-      Message smsMessage =
-          Message.creator(
-                  new PhoneNumber(phoneNumber.startsWith("+1") ? phoneNumber : "+1" + phoneNumber),
-                  new PhoneNumber(twilioFromNumber),
-                  message)
-              .create();
-      recordMessage(jdbi, new MessageResult(smsMessage, message.length()));
+      try {
+        Message smsMessage =
+            Message.creator(
+                    new PhoneNumber(
+                        phoneNumber.startsWith("+1") ? phoneNumber : "+1" + phoneNumber),
+                    new PhoneNumber(twilioFromNumber),
+                    message)
+                .create();
+        recordMessage(jdbi, new MessageResult(smsMessage, message.length()));
+        return true;
+      } catch (Exception e) {
+        log.warn("Failed to send SMS to: {}, with message: {}", phoneNumber, message, e);
+        recordMessage(
+            jdbi,
+            MessageResult.builder()
+                .toNumber(phoneNumber)
+                .messageLength(message.length())
+                .errorMessage(
+                    "Potentially invalid phone number. Failed to send SMS: " + e.getMessage())
+                .build());
+        return false;
+      }
     }
   }
 

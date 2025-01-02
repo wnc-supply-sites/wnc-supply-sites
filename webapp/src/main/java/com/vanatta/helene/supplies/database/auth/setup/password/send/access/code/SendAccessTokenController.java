@@ -82,7 +82,7 @@ public class SendAccessTokenController {
             .build());
 
     // send the passcode via SMS
-    smsSender.send(
+    boolean success = smsSender.send(
         phoneNumber,
         String.format(
             """
@@ -93,9 +93,21 @@ public class SendAccessTokenController {
             """,
             accessCode));
 
-    // return the CRF token
-    SendAccessCodeResponse response = SendAccessCodeResponse.valid(csrf);
-    return ResponseEntity.ok(response);
+    if (success) {
+      // return the CRF token
+      SendAccessCodeResponse response = SendAccessCodeResponse.valid(csrf);
+      return ResponseEntity.ok(response);
+    } else {
+      return ResponseEntity.status(400)
+          .body(
+              SendAccessCodeResponse.invalid(
+                  """
+                    Potentially invalid phone number. Failed to send SMS message.
+                    Please double check the phone number. If the phone number is for sure
+                    valid, please <a href="/registration/registration.html">contact us</a>.
+                  """));
+      
+    }
   }
 
   @Value
