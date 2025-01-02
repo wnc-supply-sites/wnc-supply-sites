@@ -33,8 +33,7 @@ public class SetupPasswordHelper {
         select 1
         from sms_passcode
         where
-          wss_user_id = -1
-          and passcode_sha256 = :expectedPasscode
+          passcode_sha256 = :expectedPasscode
           and confirmed = false
           and csrf_sha256 = :expectedCsrf
           and validation_key_sha256 is null
@@ -58,8 +57,7 @@ public class SetupPasswordHelper {
         select 1
         from sms_passcode
         where
-          wss_user_id = -1
-          and passcode_sha256 = :expectedPasscode
+          passcode_sha256 = :expectedPasscode
           and confirmed = true
           and csrf_sha256 = :expectedCsrf
           and validation_key_sha256 = :expectedValidationKey

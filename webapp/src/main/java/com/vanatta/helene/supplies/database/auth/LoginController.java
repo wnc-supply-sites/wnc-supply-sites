@@ -71,6 +71,7 @@ public class LoginController {
       LoginDao.recordLoginSuccess(jdbi, user);
       String authToken = LoginDao.generateAuthToken(jdbi, user);
       CookieUtil.setCookie(response, "auth", authToken);
+      CookieUtil.setCookie(response, "user", user);
       return new ModelAndView("redirect:" + redirectUri);
     } else if (universalUser.equalsIgnoreCase(user.trim())
         && universalPassword.equalsIgnoreCase(password.trim())) {

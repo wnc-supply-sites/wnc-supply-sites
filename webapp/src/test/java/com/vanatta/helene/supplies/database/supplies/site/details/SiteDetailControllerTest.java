@@ -9,7 +9,6 @@ import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import com.vanatta.helene.supplies.database.delivery.DeliveryUpdate;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 class SiteDetailControllerTest {
@@ -37,7 +36,7 @@ class SiteDetailControllerTest {
     String site = TestConfiguration.addSite();
     long siteId = TestConfiguration.getSiteId(site);
     long wssId = SiteDetailDao.lookupSiteById(jdbiTest, siteId).getWssId();
-    
+
     DeliveryDao.upsert(
         jdbiTest,
         DeliveryUpdate.builder()

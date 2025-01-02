@@ -14,7 +14,8 @@ public class LoginDao {
         (:phoneNumber, true);
         """;
 
-    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
+    jdbi.withHandle(
+        handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
   }
 
   public static void recordLoginFailure(Jdbi jdbi, String phoneNumber) {
@@ -24,7 +25,8 @@ public class LoginDao {
         (:phoneNumber, false);
         """;
 
-    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
+    jdbi.withHandle(
+        handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
   }
 
   public static String generateAuthToken(Jdbi jdbi, String user) {

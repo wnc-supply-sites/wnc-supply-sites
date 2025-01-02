@@ -37,13 +37,12 @@ class SendAccessTokenDaoTest {
   @Test
   void userAccountExistsAndCreate() {
     assertThat(SendAccessTokenDao.userAccountExists(jdbiTest, number)).isFalse();
-    
+
     SendAccessTokenDao.createUser(jdbiTest, number);
-    
+
     assertThat(SendAccessTokenDao.userAccountExists(jdbiTest, number)).isTrue();
   }
-  
-  
+
   /**
    * Phone numbers that are listed as the primary contact for a site should appear as registered.
    */
@@ -54,8 +53,7 @@ class SendAccessTokenDaoTest {
     ManageSiteDao.updateSiteField(
         jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, "1234560000");
 
-    boolean result =
-        SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "1234560000");
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "1234560000");
 
     assertThat(result).isTrue();
   }
@@ -66,8 +64,7 @@ class SendAccessTokenDaoTest {
     long siteId = TestConfiguration.getSiteId(siteName);
     ContactDao.addAdditionalSiteManager(jdbiTest, siteId, "name", "432.222.2222");
 
-    boolean result =
-        SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "432 222 2222");
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "432 222 2222");
 
     assertThat(result).isTrue();
   }

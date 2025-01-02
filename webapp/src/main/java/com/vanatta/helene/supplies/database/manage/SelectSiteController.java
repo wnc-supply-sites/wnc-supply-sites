@@ -48,12 +48,10 @@ public class SelectSiteController {
     return new ModelAndView("manage/select-site", pageParams);
   }
 
-  
   public static String buildSiteSelectedUrl(long siteId) {
     return PATH_SITE_SELECTED + "?siteId=" + siteId;
   }
-  
-  
+
   /**
    * After a site is selected, user selects which aspect they want to manage (eg: inventory, status)
    */

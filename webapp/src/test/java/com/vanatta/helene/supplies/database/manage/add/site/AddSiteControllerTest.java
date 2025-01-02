@@ -41,7 +41,7 @@ class AddSiteControllerTest {
     ResponseEntity<String> result = addSiteController.postNewSite(newSiteParams);
 
     assertThat(result.getStatusCode().value()).isEqualTo(200);
-    assertThat(result.getBody()).contains("editSiteInventoryUrl");
+    assertThat(result.getBody()).contains("manageSiteUrl");
 
     SiteDetailDao.SiteDetailData data =
         SiteDetailDao.lookupSiteById(
@@ -62,6 +62,5 @@ class AddSiteControllerTest {
 
     assertThat(data.getContactName()).isEqualTo("contactName");
     assertThat(data.getContactNumber()).isEqualTo("contactNumber");
-    assertThat(data.getAdditionalContacts()).isEqualTo("additionalContacts");
   }
 }

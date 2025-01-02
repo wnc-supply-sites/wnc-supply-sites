@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
-import com.vanatta.helene.supplies.database.manage.contact.ContactDao;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -73,10 +72,10 @@ class SendAccessTokenControllerTest {
     assertThat(SetupPasswordHelper.countSendHistoryRecords()).isEqualTo(numberOfSmsSendsRow + 1);
     assertThat(SetupPasswordHelper.accessTokenExists(accessCode, csrf)).isTrue();
   }
-  
+
   /**
    * Validates a bug fix where a user is trying to log in, they are white listed because they belong
-   * to a site and not because they  already exist in the table 'wss_user'.
+   * to a site and not because they already exist in the table 'wss_user'.
    */
   @Test
   void sendAccessCode_case_userWhiteListed_butDoesNotExistInWssUser() {
@@ -84,12 +83,13 @@ class SendAccessTokenControllerTest {
     String siteManagerNumber = "0001113344";
     String siteName = TestConfiguration.addSite();
     long siteId = TestConfiguration.getSiteId(siteName);
-    ManageSiteDao.updateSiteField(jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, siteManagerNumber);
-    
+    ManageSiteDao.updateSiteField(
+        jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, siteManagerNumber);
+
     // now try to register with that phone number
     ResponseEntity<SendAccessTokenController.SendAccessCodeResponse> response =
         controller.sendAccessCode(String.format("{\"number\":\"%s\"}", siteManagerNumber));
-    
+
     assertThat(response.getStatusCode().value()).isEqualTo(200);
     assertThat(response.getBody().getError()).isNull();
   }

@@ -64,10 +64,10 @@ public class SendAccessTokenController {
                   """));
     }
 
-    if(!SendAccessTokenDao.userAccountExists(jdbi, phoneNumber)) {
+    if (!SendAccessTokenDao.userAccountExists(jdbi, phoneNumber)) {
       SendAccessTokenDao.createUser(jdbi, phoneNumber);
     }
-    
+
     // generate an access code & CRF token
     String accessCode = accessTokenGenerator.generate();
     String csrf = csrfGenerator.get();
