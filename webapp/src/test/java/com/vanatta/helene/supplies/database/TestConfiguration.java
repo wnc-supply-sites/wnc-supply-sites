@@ -9,6 +9,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.Builder;
+import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
 
 public class TestConfiguration {
@@ -53,8 +55,16 @@ public class TestConfiguration {
     return addSite(SiteType.DISTRIBUTION_CENTER);
   }
 
+  public static String addSite(String namePrefix) {
+    return addSite(namePrefix, SiteType.DISTRIBUTION_CENTER);
+  }
+
   public static String addSite(SiteType siteType) {
-    String name = "test-name " + UUID.randomUUID().toString();
+    return addSite("" + SiteType.DISTRIBUTION_CENTER, siteType);
+  }
+
+  public static String addSite(String namePrefix, SiteType siteType) {
+    String name = (namePrefix + " site " + UUID.randomUUID().toString()).trim();
     AddSiteDao.addSite(
         jdbiTest,
         AddSiteData.builder()
@@ -88,6 +98,42 @@ public class TestConfiguration {
                 .bind("siteName", siteName)
                 .mapTo(Long.class)
                 .one());
+  }
+
+  @Value
+  @Builder
+  public static class ItemResult {
+    String name;
+    long id;
+    long wssId;
+  }
+
+  /** Creates a random item and returns the ID of the created item. */
+  public static ItemResult addItem(String prefix) {
+    String name = prefix + " item " + UUID.randomUUID().toString();
+    String insert =
+        """
+      insert into item(name)
+      values(:name)
+      """;
+    long id =
+        jdbiTest.withHandle(
+            handle ->
+                handle
+                    .createUpdate(insert)
+                    .bind("name", name)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(Long.class)
+                    .one());
+    long wssId =
+        jdbiTest.withHandle(
+            h ->
+                h.createQuery("select wss_id from item where id = :id")
+                    .bind("id", id)
+                    .mapTo(Long.class)
+                    .one());
+
+    return ItemResult.builder().name(name).id(id).wssId(wssId).build();
   }
 
   public static void addItemToSite(

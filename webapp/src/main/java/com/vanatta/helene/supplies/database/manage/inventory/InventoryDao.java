@@ -70,7 +70,7 @@ public class InventoryDao {
 
   /** Adds a record to the site item change table. */
   // @VisibleForTesting
-  static void updateSiteItemAudit(
+  public static void updateSiteItemAudit(
       Jdbi jdbi, long siteId, String itemName, String oldValue, String newValue) {
 
     String insertIntoAudit =

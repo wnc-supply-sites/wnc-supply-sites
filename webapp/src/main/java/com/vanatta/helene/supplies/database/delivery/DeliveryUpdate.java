@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.google.gson.Gson;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryUpdate {
-  long deliveryId;
+  @Nonnull Long deliveryId;
 
   /**
    * Code that is suffixed on the delivery manifest page, ie: /delivery/{publicUrlKey}<br>

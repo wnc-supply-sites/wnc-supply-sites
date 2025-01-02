@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+  <title>WNC Supply Sites - Home</title>
+  <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="../mobile.css"/>
+  <link rel="stylesheet" href="merge-items.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="merge-items.js"></script>
+  {{> header-include }}
+</head>
+<body>
+{{> header }}
+<h2>Merge Items</h2>
+
+<div class="centered">
+  <button disabled id="mergeButton" onclick="doMerge()">Merge!</button>
+</div>
+
+<div id="message"></div>
+
+<div id="confirmation-message"></div>
+
+<fieldSet>
+<table id="itemTable">
+  <thead>
+  <tr>
+    <th>Item</th>
+    <th class="date-column">Date Created</th>
+    <th>Merge Into (keep)</th>
+    <th>Merge (delete)</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  {{#items}}
+  <tr>
+    <td>{{itemName}}</td>
+    <td>{{dateCreated}}</td>
+    <td class="centered">
+      <label class="hidden" id="{{id}}-radio-label" for="{{id}}-radio">{{itemName}}</label>
+      <input type="radio" name="mergeKeepItem" id="{{id}}-radio" value="{{id}}" onclick="selectRadio()"></td>
+    <td class="centered">
+      <label class="hidden" id="{{id}}-checkbox-label" for="{{id}}-checkbox">{{itemName}}</label>
+      <input type="checkbox" id="{{id}}-checkbox" value="{{id}}" onclick="selectCheckbox()">
+    </td>
+  </tr>
+  {{/items}}
+  </tbody>
+</table>
+</fieldSet>
+
+
+</body>
+</html>

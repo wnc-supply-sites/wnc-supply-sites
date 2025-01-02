@@ -158,16 +158,17 @@ class DeliveryUpdateWebhookTest {
 
   @Test
   void deliveryUpdateComplete() {
-    var input = DeliveryUpdate.builder().deliveryStatus("Delivery Completed").build();
+    var input =
+        DeliveryUpdate.builder().deliveryId(-600L).deliveryStatus("Delivery Completed").build();
     assertThat(input.isComplete()).isTrue();
 
-    input = DeliveryUpdate.builder().deliveryStatus("complete").build();
+    input = DeliveryUpdate.builder().deliveryId(-601L).deliveryStatus("complete").build();
     assertThat(input.isComplete()).isTrue();
 
-    input = DeliveryUpdate.builder().deliveryStatus(null).build();
+    input = DeliveryUpdate.builder().deliveryId(-602L).deliveryStatus(null).build();
     assertThat(input.isComplete()).isFalse();
 
-    input = DeliveryUpdate.builder().deliveryStatus("pending").build();
+    input = DeliveryUpdate.builder().deliveryId(-603L).deliveryStatus("pending").build();
     assertThat(input.isComplete()).isFalse();
   }
 

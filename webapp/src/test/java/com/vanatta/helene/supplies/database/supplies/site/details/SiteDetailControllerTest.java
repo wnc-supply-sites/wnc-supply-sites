@@ -40,6 +40,7 @@ class SiteDetailControllerTest {
     DeliveryDao.upsert(
         jdbiTest,
         DeliveryUpdate.builder()
+            .deliveryId(-800L)
             .dropOffSiteWssId(List.of(wssId))
             .publicUrlKey("keyA")
             .dispatcherCode("DZAA")

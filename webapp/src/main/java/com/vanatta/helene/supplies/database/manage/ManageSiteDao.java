@@ -367,12 +367,12 @@ public class ManageSiteDao {
                 .execute());
   }
 
-  /** Fetches all items, items requested/needed for a given site are listed as active. */
+  /** Fetches ALL items. Indicates which items are active / inactive for a given site. */
   public static List<SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
     String query =
         """
         with inventory as (
-          select
+         select
               i.id item_id,
               s.id site_id,
               stat.name status_name

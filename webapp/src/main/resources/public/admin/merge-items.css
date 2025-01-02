@@ -1,0 +1,24 @@
+.centered {
+    text-align: center;
+}
+
+.date-column {
+    width: 100px;
+}
+
+.merge-keep-row {
+    background-color: lightgreen;
+}
+
+.merge-delete-row {
+    background-color: lightcoral;
+}
+
+#mergeButton {
+    margin-bottom: 5px;
+}
+
+.confirm-message {
+    font-style: italic;
+    color: green;
+}
