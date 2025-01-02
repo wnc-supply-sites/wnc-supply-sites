@@ -18,6 +18,7 @@ public class EnvLoggingConfiguration {
       @Value("${make.webhook.newItem}") String newItemWebhook,
       @Value("${make.webhook.updateInventory}") String updateInventoryWebhook,
       @Value("${airtable.webhook.delivery.update}") String updateDeliveryWebhook,
+      @Value("${airtable.webhook.item.merge}") String itemMergeWebhook,
       @Value("${make.webhook.dispatch.new}") String dispatchWebhook,
       @Value("${distance.calculator.enabled}") boolean distanceCalculatorEnabled,
       @Value("${distance.calculator.delay.ms}") int distanceCalculatorDelayMs,
@@ -34,6 +35,7 @@ public class EnvLoggingConfiguration {
     log.info("ENV - NEW ITEM WEBHOOK: {}", newItemWebhook);
     log.info("ENV - UPDATE INVENTORY WEBHOOK: {}", updateInventoryWebhook);
     log.info("ENV - UPDATE DELIVERY WEBHOOK: {}", updateDeliveryWebhook);
+    log.info("ENV - ITEM MERGE WEBHOOK: {}", itemMergeWebhook);
     log.info("ENV - DISPATCH WEBHOOK: {}", dispatchWebhook);
     log.info("ENV - DISTANCE CALCULATOR ENABLED: {}", distanceCalculatorEnabled);
     log.info("ENV - DISTANCE CALCULATOR DELAY: {}", distanceCalculatorDelayMs);

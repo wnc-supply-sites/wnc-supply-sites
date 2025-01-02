@@ -96,7 +96,7 @@ class MergeItemsControllerTest {
             .itemListWssIds(List.of(itemB.getWssId(), itemC.getWssId()))
             .build());
 
-    new MergeItemsController(jdbiTest)
+    new MergeItemsController(jdbiTest, SendItemMergedUpdate.disabled())
         .doMerge(
             Map.of(
                 "mergeInto", itemA.getId(), "mergeItems", List.of(itemB.getId(), itemC.getId())));
@@ -139,5 +139,14 @@ class MergeItemsControllerTest {
   static List<String> fetchAllItems() {
     return jdbiTest.withHandle(
         h -> h.createQuery("select name from item").mapTo(String.class).list());
+  }
+
+  @Test
+  void fetchWssIds() {
+    var newItem = TestConfiguration.addItem("new item");
+
+    var result = MergeItemsController.fetchWssIdsOfItems(jdbiTest, List.of(newItem.getId()));
+
+    assertThat(result).containsExactly(newItem.getWssId());
   }
 }

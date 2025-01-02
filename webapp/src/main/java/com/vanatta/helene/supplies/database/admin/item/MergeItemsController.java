@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MergeItemsController {
 
   private final Jdbi jdbi;
+  private final SendItemMergedUpdate sendItemMergedUpdate;
 
   @GetMapping("/admin/merge-items")
   ModelAndView showMergeItems() {
@@ -85,8 +86,23 @@ public class MergeItemsController {
         mergeItemsId.stream().map(itemId -> itemNameById(jdbi, itemId)).toList();
     log.info("Merging into item: {}, items: {}", mergeItemName, toMergeItemNames);
 
+    List<Long> itemsMergedWssIds = fetchWssIdsOfItems(jdbi, mergeItemsId);
     merge(jdbi, mergeIntoItemId, mergeItemsId);
+    sendItemMergedUpdate.sendMergedItems(itemsMergedWssIds);
     return ResponseEntity.ok("{\"result\": \"success\"}");
+  }
+
+  static List<Long> fetchWssIdsOfItems(Jdbi jdbi, List<Long> itemIds) {
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(
+                    """
+                select wss_id from item where id in (<itemIds>)
+                """)
+                .bindList("itemIds", itemIds)
+                .mapTo(Long.class)
+                .list());
   }
 
   @SuppressWarnings("SqlSourceToSinkFlow")
