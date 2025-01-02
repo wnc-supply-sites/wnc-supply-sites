@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -168,7 +167,7 @@ class DeliveryConfirmationController {
     return new ModelAndView("redirect:/delivery/" + deliveryKey);
   }
 
-  @PostMapping(cancelPath)
+  @GetMapping(cancelPath)
   ModelAndView cancelRequest(@RequestParam String deliveryKey, @RequestParam String code) {
 
     Delivery delivery =
