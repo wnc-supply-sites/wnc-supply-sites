@@ -7,24 +7,24 @@ import org.jdbi.v3.core.Jdbi;
 
 public class LoginDao {
 
-  public static void recordLoginSuccess(Jdbi jdbi, String ip) {
+  public static void recordLoginSuccess(Jdbi jdbi, String phoneNumber) {
     String insert =
         """
-        insert into login_history(ip, result) values
-        (:ip, true);
+        insert into login_history(phone_number, result) values
+        (:phoneNumber, true);
         """;
 
-    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("ip", ip).execute());
+    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
   }
 
-  public static void recordLoginFailure(Jdbi jdbi, String ip) {
+  public static void recordLoginFailure(Jdbi jdbi, String phoneNumber) {
     String insert =
         """
-        insert into login_history(ip, result) values
-        (:ip, false);
+        insert into login_history(phone_number, result) values
+        (:phoneNumber, false);
         """;
 
-    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("ip", ip).execute());
+    jdbi.withHandle(handle -> handle.createUpdate(insert).bind("phoneNumber", phoneNumber).execute());
   }
 
   public static String generateAuthToken(Jdbi jdbi, String user) {

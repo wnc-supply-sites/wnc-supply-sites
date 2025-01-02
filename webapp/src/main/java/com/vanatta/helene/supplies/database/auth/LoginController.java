@@ -68,14 +68,14 @@ public class LoginController {
       pageParams.put("errorMessage", "Invalid Login");
       return new ModelAndView("login/login", pageParams);
     } else if (PasswordDao.confirmPassword(jdbi, user, password)) {
-      LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
+      LoginDao.recordLoginSuccess(jdbi, user);
       String authToken = LoginDao.generateAuthToken(jdbi, user);
       CookieUtil.setCookie(response, "auth", authToken);
       return new ModelAndView("redirect:" + redirectUri);
     } else if (universalUser.equalsIgnoreCase(user.trim())
         && universalPassword.equalsIgnoreCase(password.trim())) {
       if (allowUniversalLogin) {
-        LoginDao.recordLoginSuccess(jdbi, request.getRemoteAddr());
+        LoginDao.recordLoginSuccess(jdbi, user);
         String authToken = LoginDao.getAuthKeyOrGenerateIt(jdbi);
         CookieUtil.setCookie(response, "auth", authToken);
         return new ModelAndView("redirect:" + redirectUri);
@@ -83,7 +83,7 @@ public class LoginController {
         return new ModelAndView("redirect:/login/setup-password");
       }
     } else {
-      LoginDao.recordLoginFailure(jdbi, request.getRemoteAddr());
+      LoginDao.recordLoginFailure(jdbi, user);
       log.info("User login failed: {}, IP: {}", user, request.getRemoteAddr());
       Map<String, String> pageParams = new HashMap<>();
       pageParams.put("redirectUri", redirectUri);
