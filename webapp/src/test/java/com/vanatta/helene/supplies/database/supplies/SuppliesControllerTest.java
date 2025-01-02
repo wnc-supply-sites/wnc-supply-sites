@@ -107,10 +107,13 @@ class SuppliesControllerTest {
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Buncombe, NC")).build());
-    result.getResults().forEach(r -> {
-      assertThat(r.getCounty()).isEqualTo("Buncombe");
-      assertThat(r.getState()).isEqualTo("NC");
-    });
+    result
+        .getResults()
+        .forEach(
+            r -> {
+              assertThat(r.getCounty()).isEqualTo("Buncombe");
+              assertThat(r.getState()).isEqualTo("NC");
+            });
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");
@@ -121,14 +124,19 @@ class SuppliesControllerTest {
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1");
-    result.getResults().forEach(r -> {
-      assertThat(r.getCounty()).isEqualTo("Watauga");
-      assertThat(r.getState()).isEqualTo("NC");
-    });
+    result
+        .getResults()
+        .forEach(
+            r -> {
+              assertThat(r.getCounty()).isEqualTo("Watauga");
+              assertThat(r.getState()).isEqualTo("NC");
+            });
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Ashe, NC", "Watauga, NC", "Buncombe, NC")).build());
+            SiteSupplyRequest.builder()
+                .counties(List.of("Ashe, NC", "Watauga, NC", "Buncombe, NC"))
+                .build());
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1", "site2", "site4");
@@ -186,7 +194,7 @@ class SuppliesControllerTest {
     var result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
-                .counties(List.of("Haywood"))
+                .counties(List.of("Haywood, NC"))
                 .items(List.of("Random stuff"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(0);
@@ -195,7 +203,7 @@ class SuppliesControllerTest {
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
-                .counties(List.of("Watauga"))
+                .counties(List.of("Watauga, NC"))
                 .items(List.of("Random stuff"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(0);
@@ -205,7 +213,7 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
                 .sites(List.of("site1"))
-                .counties(List.of("Watauga"))
+                .counties(List.of("Watauga, NC"))
                 .items(List.of("Random stuff"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(0);
@@ -215,7 +223,7 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
                 .sites(List.of("site1"))
-                .counties(List.of("Watauga"))
+                .counties(List.of("Watauga, NC"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(1);
 
@@ -224,7 +232,7 @@ class SuppliesControllerTest {
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder()
                 .items(List.of("water"))
-                .counties(List.of("Watauga"))
+                .counties(List.of("Watauga, NC"))
                 .build());
     assertThat(result.getResultCount()).isEqualTo(1);
   }

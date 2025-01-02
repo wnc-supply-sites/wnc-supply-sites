@@ -44,8 +44,8 @@ class CountyDaoTest {
     assertThat(activeCounties.size()).isGreaterThan(0);
     assertThat(fullCountyCount).isGreaterThan(activeCounties.size());
 
-    assertThat(activeCounties).contains("Watauga");
-    assertThat(activeCounties).doesNotContain("dummy");
+    assertThat(activeCounties).contains("Watauga, NC");
+    assertThat(activeCounties).doesNotContain("dummy, NC");
   }
 
   @Test

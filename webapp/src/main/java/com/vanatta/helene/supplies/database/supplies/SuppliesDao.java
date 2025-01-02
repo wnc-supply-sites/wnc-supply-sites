@@ -4,8 +4,6 @@ import com.vanatta.helene.supplies.database.data.SiteType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -62,10 +60,10 @@ public class SuppliesDao {
       // pairs. We encode the bind variable with a counter variable at the end
       // to make it unique, so we can bind it later.
       List<String> queryParts = new ArrayList<>();
-      for(int i = 0; i < request.getCounties().size(); i ++) {
+      for (int i = 0; i < request.getCounties().size(); i++) {
         queryParts.add("(c.name = :county" + i + " and c.state = :state" + i + ")");
       }
-      
+
       query.append("and (\n");
       query.append(String.join("\n or ", queryParts));
       query.append("\n)\n");
@@ -125,12 +123,12 @@ public class SuppliesDao {
             queryBuilder.bindList("sites", decodedSites);
           }
           if (!request.getCounties().isEmpty()) {
-            
-            for(int i = 0; i < request.getCounties().size(); i ++) {
+
+            for (int i = 0; i < request.getCounties().size(); i++) {
               String c = request.getCounties().get(i);
               String county = c.split(",")[0].trim();
               String state = c.split(",")[1].trim();
-              
+
               queryBuilder.bind("county" + i, county);
               queryBuilder.bind("state" + i, state);
             }

@@ -26,7 +26,7 @@ class FilterDataControllerTest {
     var response = filterDataController.getFilterData();
 
     // spot check we return a few expected values, counties of sites that are known to be active
-    assertThat(response.getCounties()).contains("Buncombe", "Watauga");
+    assertThat(response.getCounties()).contains("Buncombe, NC", "Watauga, NC");
   }
 
   @Test
@@ -77,7 +77,7 @@ class FilterDataControllerTest {
         TestConfiguration.jdbiTest, siteId, ManageSiteDao.SiteField.COUNTY, "unique,AA");
 
     var response = filterDataController.getFilterData(AuthenticatedMode.AUTHENTICATED);
-    assertThat(response.getCounties()).contains("unique");
+    assertThat(response.getCounties()).contains("unique, AA");
 
     //  site should drop off the filter list if user is not authenticated
     response = filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED);
