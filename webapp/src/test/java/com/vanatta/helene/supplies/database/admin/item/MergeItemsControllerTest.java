@@ -70,6 +70,9 @@ class MergeItemsControllerTest {
 
     // now set up site2 with a delivery of item A, B
     // set up site3 with a delivery of items: B, C
+    // After merge we expect all of these deliveries to contain the same item names!
+    // Deliveries can store items by name, rather than ID. In the merge, we should
+    // move the items from ID to be a denormalized name that is now part of the delivery.
     long site2WssId = SiteDetailDao.lookupSiteById(jdbiTest, site2Id).getWssId();
     long site3WssId = SiteDetailDao.lookupSiteById(jdbiTest, site2Id).getWssId();
 
@@ -111,9 +114,9 @@ class MergeItemsControllerTest {
 
     // verify the site delivery data is updated
     assertThat(DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, "ZAQW").orElseThrow().getItemList())
-        .containsExactly(itemA.getName());
+        .contains(itemA.getName(), itemB.getName());
     assertThat(DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, "ZAQZ").orElseThrow().getItemList())
-        .containsExactly(itemA.getName());
+        .containsExactly(itemB.getName(), itemC.getName());
   }
 
   static List<String> fetchItemsForSite(long siteId) {

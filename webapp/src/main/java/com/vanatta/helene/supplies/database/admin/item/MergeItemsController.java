@@ -64,17 +64,26 @@ public class MergeItemsController {
     log.info("/admin/merge-items/do-merge received merge request: {}", params);
     long mergeIntoItemId = Long.parseLong(String.valueOf(params.get("mergeInto")));
     if (mergeIntoItemId == 0) {
+      log.warn("Empty 'mergeInto' parameter, aborting merge.");
       return ResponseEntity.badRequest()
           .body("{\"result\": \"no item to merge into was specified\"}");
     }
 
     if (params.get("mergeItems") == null || ((List<Object>) params.get("mergeItems")).isEmpty()) {
+      log.warn("Empty 'mergeItems' list received, aborting merge");
       return ResponseEntity.badRequest()
           .body("{\"result\": \"no items to be merged were specified\"}");
     }
+
     List<Long> mergeItemsId =
         ((List<Object>) params.get("mergeItems"))
             .stream().map(String::valueOf).map(Long::parseLong).toList();
+
+    // do some logging, get the item names so we know what is being merged
+    String mergeItemName = itemNameById(jdbi, mergeIntoItemId);
+    List<String> toMergeItemNames =
+        mergeItemsId.stream().map(itemId -> itemNameById(jdbi, itemId)).toList();
+    log.info("Merging into item: {}, items: {}", mergeItemName, toMergeItemNames);
 
     merge(jdbi, mergeIntoItemId, mergeItemsId);
     return ResponseEntity.ok("{\"result\": \"success\"}");
@@ -96,6 +105,11 @@ public class MergeItemsController {
                       .bindList("itemIds", itemsToMergeIds)
                       .mapTo(Long.class)
                       .list());
+      log.info(
+          "Merging item ID: {}, name: {}, number of sites with that item: {}",
+          deleteItemId,
+          itemName,
+          sitesWithTheItem.size());
       for (long siteId : sitesWithTheItem) {
         jdbi.withHandle(
             handle ->
@@ -123,31 +137,8 @@ public class MergeItemsController {
                     .execute());
       }
 
-      // now for deliveries that had the item, insert, if conflict do nothing & then delte the old
-      // item
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(
-                      String.format(
-                          """
-                      insert into delivery_item(delivery_id, item_id)
-                      select delivery_id, %s from delivery_item where item_id = :itemId
-                      on conflict do nothing
-                      """,
-                          mergeIntoItemId))
-                  .bind("itemId", deleteItemId)
-                  .execute());
-      jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(
-                      """
-                      delete from delivery_item where item_id = :itemId
-                      """)
-                  .bind("itemId", deleteItemId)
-                  .execute());
-
+      // update site_item mapping, insert the 'toMerge' item
+      // and then next we'll delete the to-be merged items.
       jdbi.withHandle(
           handle ->
               handle
@@ -169,6 +160,35 @@ public class MergeItemsController {
                   .createUpdate(
                       """
                       delete from site_item where item_id = :itemId
+                      """)
+                  .bind("itemId", deleteItemId)
+                  .execute());
+
+      // for we want to move the item from the 'item_id' column to to the 'item_name'
+      // column. This way the delivery stays effectively the same and we can still
+      // delete 'item_id' later.
+      jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(
+                      String.format(
+                          """
+                      insert into delivery_item(delivery_id, item_name)
+                      select di.delivery_id, i.name
+                      from delivery_item di
+                      join item i on i.id = di.item_id
+                      where item_id = :itemId
+                      on conflict do nothing
+                      """,
+                          mergeIntoItemId))
+                  .bind("itemId", deleteItemId)
+                  .execute());
+      jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(
+                      """
+                      delete from delivery_item where item_id = :itemId
                       """)
                   .bind("itemId", deleteItemId)
                   .execute());
