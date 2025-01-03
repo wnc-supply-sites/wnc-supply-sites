@@ -8,4 +8,10 @@
     <a href="/log-out">Log Out</a>
   </div>
   {{/loggedIn}}
+  {{^loggedIn}}
+  <div class="logout">
+    <a href="/login/login">Log In</a>
+  </div>
+  {{/loggedIn}}
+
 </div>

@@ -40,7 +40,7 @@ public class LoginController {
   @GetMapping("/login/login")
   public ModelAndView login(@RequestParam(required = false) String redirectUri) {
     Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("redirectUri", Optional.ofNullable(redirectUri).orElse("/manage/select-site"));
+    pageParams.put("redirectUri", Optional.ofNullable(redirectUri).orElse("/"));
     pageParams.put("errorMessage", "");
     return new ModelAndView("login/login", pageParams);
   }
