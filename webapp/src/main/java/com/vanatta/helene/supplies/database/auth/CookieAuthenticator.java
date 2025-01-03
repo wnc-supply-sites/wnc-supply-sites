@@ -33,13 +33,13 @@ public class CookieAuthenticator {
     if (allowUniversalLogin && isAuthenticatedWithUniversalPassword(request)) {
       return true;
     }
-    return CookieUtil.readCookieValue(request, "auth")
+    return CookieUtil.readAuthCookie(request)
         .map(auth -> LoginDao.isLoggedIn(jdbi, auth))
         .orElse(false);
   }
 
   public boolean isAuthenticatedWithUniversalPassword(HttpServletRequest request) {
-    return CookieUtil.readCookieValue(request, "auth")
+    return CookieUtil.readAuthCookie(request)
         .map(auth -> auth.equals(authKey))
         .orElse(false);
   }

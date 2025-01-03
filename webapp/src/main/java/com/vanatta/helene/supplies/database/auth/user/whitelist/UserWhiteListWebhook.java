@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -27,8 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserWhiteListWebhook {
   private final Jdbi jdbi;
 
+  @Builder(toBuilder = true)
   @Value
-  static class UserWhiteListRequest {
+  public static class UserWhiteListRequest {
     String phoneNumber;
     List<String> roles;
     Boolean removed;
@@ -59,13 +61,18 @@ public class UserWhiteListWebhook {
       return ResponseEntity.badRequest().build();
     }
 
-    upsertUser(jdbi, request);
-    updateRoles(jdbi, request.getPhoneNumber(), request.getRoles());
+    updateUserAndRoles(jdbi, request);
 
     return ResponseEntity.ok().build();
   }
 
-  static void upsertUser(Jdbi jdbi, UserWhiteListRequest request) {
+  public static void updateUserAndRoles(Jdbi jdbi, UserWhiteListRequest request) {
+    upsertUser(jdbi, request);
+    updateRoles(jdbi, request.getPhoneNumber(), request.getRoles());
+  }
+
+  /** Adds a user to wss_user table, does *not* update roles. */
+  public static void upsertUser(Jdbi jdbi, UserWhiteListRequest request) {
     String script =
         """
         insert into wss_user(phone) values (:phone) on conflict(phone) do update set removed = :removed
@@ -79,7 +86,7 @@ public class UserWhiteListWebhook {
                 .execute());
   }
 
-  static void updateRoles(Jdbi jdbi, String phoneNumber, List<String> roles) {
+  private static void updateRoles(Jdbi jdbi, String phoneNumber, List<String> roles) {
     String removeOldRoles =
         """
       delete from wss_user_roles where wss_user_id = (select id from wss_user where phone = :phone);
@@ -112,13 +119,8 @@ public class UserWhiteListWebhook {
       return ResponseEntity.badRequest().build();
     }
 
-    upsertUser(jdbi, request);
-
-    if (request.getRemoved()) {
-      updateRoles(jdbi, request.getPhoneNumber(), List.of());
-    } else {
-      updateRoles(jdbi, request.getPhoneNumber(), request.getRoles());
-    }
+    updateUserAndRoles(
+        jdbi, request.getRemoved() ? request.toBuilder().roles(List.of()).build() : request);
     return ResponseEntity.ok().build();
   }
 }

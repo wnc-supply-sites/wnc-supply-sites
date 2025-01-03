@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database.driver;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class DriverControllerTest {
@@ -29,15 +28,16 @@ class DriverControllerTest {
     assertThat(driver.getLocation()).isEqualTo("nowheresville");
   }
 
-  @Disabled // TODO
   @Test
   void upsert() {
     DriverController driverController = new DriverController(TestConfiguration.jdbiTest);
     driverController.receiveDriverUpdates(exampleInput);
 
-    DriverDao.Driver driver = DriverDao.lookupByAirtableId(34L);
+    DriverDao.Driver driver =
+        DriverDao.lookupByPhone(TestConfiguration.jdbiTest, "(919) 111-1111").orElseThrow();
     assertThat(driver.getFullName()).isEqualTo("Test Driver");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");
+    assertThat(driver.getLocation()).isEqualTo("nowheresville");
     assertThat(driver.isActive()).isEqualTo(true);
     assertThat(driver.getLocation()).isEqualTo("nowheresville");
   }

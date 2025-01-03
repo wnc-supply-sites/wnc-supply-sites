@@ -27,6 +27,18 @@ public class CookieUtil {
     response.addCookie(cookie);
   }
 
+  public static Optional<String> readAuthCookie(HttpServletRequest request) {
+    return readCookieValue(request, "auth");
+  }
+
+  /**
+   * Warnings, do not use this cookie value for anything security related! Just convenience. The
+   * user can spoof cookies and set any value they want.
+   */
+  public static Optional<String> readUserCookie(HttpServletRequest request) {
+    return readCookieValue(request, "user");
+  }
+
   public static Optional<String> readCookieValue(HttpServletRequest request, String cookieName) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {

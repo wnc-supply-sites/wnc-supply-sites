@@ -1,6 +1,8 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
+import com.vanatta.helene.supplies.database.util.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,8 +27,7 @@ public class SelectSiteController {
   public static final String PATH_SELECT_SITE = "/manage/select-site";
   public static final String PATH_SITE_SELECTED = "/manage/site-selected";
   private final Jdbi jdbi;
-  private final SendSiteUpdate sendSiteUpdate;
-
+ 
   @Builder
   @Data
   @AllArgsConstructor
@@ -38,7 +39,7 @@ public class SelectSiteController {
 
   /** User will be shown a page to select the site they want to manage. */
   @GetMapping(PATH_SELECT_SITE)
-  ModelAndView showSelectSitePage() {
+  ModelAndView showSelectSitePage(HttpServletRequest request) {
     return showSelectSitePage(jdbi);
   }
 
@@ -56,11 +57,12 @@ public class SelectSiteController {
    * After a site is selected, user selects which aspect they want to manage (eg: inventory, status)
    */
   @GetMapping(PATH_SITE_SELECTED)
-  ModelAndView showSiteSelectedPage(@RequestParam String siteId) {
+  ModelAndView showSiteSelectedPage(
+      HttpServletRequest httpServletRequest, @RequestParam String siteId) {
 
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
-      return showSelectSitePage();
+      return showSelectSitePage(httpServletRequest);
     }
 
     Map<String, String> pageParams = new HashMap<>();

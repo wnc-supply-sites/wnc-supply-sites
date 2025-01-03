@@ -17,6 +17,11 @@
   <a href="/">[&larr; Go Back]</a>
 </div>
 
+{{#errorMessage}}
+<div class="errorMessage">{{.}}</div>
+{{/errorMessage}}
+
+
 <form action="/manage/site-selected" method="get">
   <div id="site-select-div" class="vertical">
 
@@ -45,25 +50,6 @@
     <button type="button" class="nav-button very-wide-button">Add New Site</button>
   </a>
 </div>
-
-<hr>
-
-<div class="nav-button-container">
-  <a href="/manage/behind-the-scenes/index.html">
-    <button type="button" class="nav-button very-wide-button">How Supplies Move</button>
-  </a>
-</div>
-
-<div class="larger button-blurb">
-  Learn how wnc-supply-sites.com works with partners to move supplies
-</div>
-
-
-<!--<div class="nav-button-container">-->
-<!--  <a href="/manage/items/">-->
-<!--    <button type="button" class="nav-button very-wide-button">Manage Items Database (rename/delete/merge)</button>-->
-<!--  </a>-->
-<!--</div>-->
 
 </body>
 </html>

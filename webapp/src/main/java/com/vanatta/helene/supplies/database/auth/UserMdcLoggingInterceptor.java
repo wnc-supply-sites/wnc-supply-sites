@@ -28,7 +28,7 @@ public class UserMdcLoggingInterceptor implements WebMvcConfigurer {
     @Override
     public boolean preHandle(
         HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-      CookieUtil.readCookieValue(request, "user").ifPresent(user -> MDC.put("user", user));
+      CookieUtil.readUserCookie(request).ifPresent(user -> MDC.put("user", user));
       return true;
     }
   }

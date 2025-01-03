@@ -12,6 +12,7 @@ public class SetupPasswordHelper {
         delete from wss_user_auth_key;
         delete from wss_user_pass_change_history;
         delete from sms_passcode;
+        delete from wss_user_roles;
         delete from wss_user;
         """;
     TestConfiguration.jdbiTest.withHandle(handle -> handle.createScript(script).execute());
