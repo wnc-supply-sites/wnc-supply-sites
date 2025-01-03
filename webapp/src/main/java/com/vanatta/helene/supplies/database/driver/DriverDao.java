@@ -1,13 +1,12 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.google.gson.Gson;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
-
-import java.util.Optional;
 
 public class DriverDao {
 
@@ -23,11 +22,10 @@ public class DriverDao {
     private boolean optedOut;
     private String location;
     private String licensePlates;
-    
+
     static Driver parseJson(String json) {
       return new Gson().fromJson(json, Driver.class);
     }
-    
   }
 
   public static Optional<Driver> lookupByPhone(Jdbi jdbi, String phoneNumber) {
@@ -51,7 +49,10 @@ public class DriverDao {
   }
 
   public static void upsert(Jdbi jdbi, Driver driver) {
-    jdbi.withHandle(h -> h.createUpdate("""
+    jdbi.withHandle(
+        h ->
+            h.createUpdate(
+                    """
             insert into driver(airtable_id, name, phone, location, active, opted_out, license_plates)
             values(
                :airtableId,
@@ -69,14 +70,13 @@ public class DriverDao {
                opted_out = :optedOut,
                license_plates = :licensePlates
             """)
-        .bind("airtableId", driver.getAirtableId())
-        .bind("name", driver.getFullName())
-        .bind("phone", driver.getPhone())
-        .bind("location", driver.getLocation())
-        .bind("active", driver.isActive())
-        .bind("optedOut", driver.isOptedOut())
-        .bind("licensePlates", driver.getLicensePlates())
-        .execute()
-    );
+                .bind("airtableId", driver.getAirtableId())
+                .bind("name", driver.getFullName())
+                .bind("phone", driver.getPhone())
+                .bind("location", driver.getLocation())
+                .bind("active", driver.isActive())
+                .bind("optedOut", driver.isOptedOut())
+                .bind("licensePlates", driver.getLicensePlates())
+                .execute());
   }
 }

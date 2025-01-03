@@ -28,7 +28,8 @@ class SiteReceivingControllerTest {
     // site1 should have every field populated.
     long siteId = TestConfiguration.getSiteId("site1");
 
-    var response = siteReceivingController.showSiteContactPage(String.valueOf(siteId));
+    var response =
+        siteReceivingController.showSiteContactPage(List.of(siteId), String.valueOf(siteId));
     assertThat(response.getModelMap()).containsKey(param.text);
     assertThat(response.getModelMap().get(param.text)).isNotNull();
   }
@@ -39,7 +40,8 @@ class SiteReceivingControllerTest {
     long siteId = TestConfiguration.getSiteId("site1");
     ManageSiteDao.updateMaxSupply(TestConfiguration.jdbiTest, siteId, "Car");
 
-    var response = siteReceivingController.showSiteContactPage(String.valueOf(siteId));
+    var response =
+        siteReceivingController.showSiteContactPage(List.of(siteId), String.valueOf(siteId));
 
     var items =
         (List<HtmlSelectOptionsUtil.ItemListing>)

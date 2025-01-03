@@ -1,8 +1,11 @@
 package com.vanatta.helene.supplies.database.manage.contact;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
+import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -11,8 +14,10 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -30,12 +35,15 @@ public class SiteContactController {
 
   /** Fetches data for the manage site page */
   @GetMapping(PATH_MANAGE_CONTACTS)
-  ModelAndView showSiteContactPage(String siteId) {
-    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
-    if (data == null) {
+  ModelAndView showSiteContactPage(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    SiteDetailDao.SiteDetailData siteData =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteData == null) {
       return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
+    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put(PageParam.SITE_ID.text, siteId);
     pageParams.put(PageParam.SITE_NAME.text, data.getSiteName());

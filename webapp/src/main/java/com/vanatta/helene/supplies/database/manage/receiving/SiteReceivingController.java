@@ -32,11 +32,11 @@ public class SiteReceivingController {
   @GetMapping("/manage/receiving/receiving")
   ModelAndView showSiteContactPage(
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi, sites);
+    SiteDetailDao.SiteDetailData data =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (data == null) {
+      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
-    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
 
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put(PageParam.SITE_ID.text, siteId);

@@ -35,10 +35,9 @@ class AddSiteControllerTest {
     newSiteParams.put("receivingNotes", "notes");
 
     newSiteParams.put("contactName", "contactName");
-    newSiteParams.put("contactNumber", "contactNumber");
     newSiteParams.put("additionalContacts", "additionalContacts");
 
-    ResponseEntity<String> result = addSiteController.postNewSite(newSiteParams);
+    ResponseEntity<String> result = addSiteController.postNewSite("contactNumber", newSiteParams);
 
     assertThat(result.getStatusCode().value()).isEqualTo(200);
     assertThat(result.getBody()).contains("manageSiteUrl");

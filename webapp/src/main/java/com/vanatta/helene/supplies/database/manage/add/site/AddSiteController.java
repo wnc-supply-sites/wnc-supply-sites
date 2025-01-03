@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.add.site;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
@@ -16,6 +17,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,7 +68,9 @@ public class AddSiteController {
   /** REST endpoint to create a new site */
   @PostMapping("/manage/add-site")
   @ResponseBody
-  ResponseEntity<String> postNewSite(@RequestBody Map<String, String> params) {
+  ResponseEntity<String> postNewSite(
+      @ModelAttribute(LoggedInAdvice.USER_PHONE) String phone,
+      @RequestBody Map<String, String> params) {
     log.info("Received add new site data: {}", params);
     var addSiteData =
         AddSiteData.builder()
@@ -82,7 +86,7 @@ public class AddSiteController {
             .maxSupplyLoad(params.get("maxSupplyLoad"))
             .receivingNotes(params.get("receivingNotes"))
             .contactName(params.get("contactName"))
-            .contactNumber(params.get("contactNumber"))
+            .contactNumber(phone)
             .build();
     if (addSiteData.isMissingRequiredData()) {
       log.warn(

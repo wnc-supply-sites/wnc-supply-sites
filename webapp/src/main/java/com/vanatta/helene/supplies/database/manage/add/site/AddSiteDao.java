@@ -34,6 +34,7 @@ public class AddSiteDao {
           hours,
           contact_name,
           contact_number,
+          og_contact_number,
           max_supply_load_id,
           receiving_notes
         ) values(
@@ -46,6 +47,7 @@ public class AddSiteDao {
           (select id from site_type where name = :siteType),
           :hours,
           :contactName,
+          :contactNumber,
           :contactNumber,
           (select id from max_supply_load where name = :maxSupplyLoadName),
           :receivingNotes

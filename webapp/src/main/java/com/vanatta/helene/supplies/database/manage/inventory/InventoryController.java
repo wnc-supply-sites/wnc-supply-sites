@@ -6,13 +6,13 @@ import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
+import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -68,14 +68,16 @@ public class InventoryController {
 
   /** Display inventory listing for a site. */
   @GetMapping(PATH_INVENTORY)
-  ModelAndView fetchSiteInventoryListing(@ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi, sites);
+  ModelAndView fetchSiteInventoryListing(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    SiteDetailDao.SiteDetailData data =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (data == null) {
+      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
     Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("siteName", siteName);
+    pageParams.put("siteName", data.getSiteName());
     pageParams.put("siteId", siteId);
 
     List<ItemInventoryDisplay> inventoryList =
@@ -158,7 +160,8 @@ public class InventoryController {
   @PostMapping("/manage/add-site-item")
   @ResponseBody
   ResponseEntity<String> addNewSiteItem(
-      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @RequestBody Map<String, String> params) {
 
     String itemName =
         Optional.ofNullable(params.get("itemName"))
@@ -182,10 +185,12 @@ public class InventoryController {
   @PostMapping("/manage/activate-site-item")
   @ResponseBody
   ResponseEntity<String> updateSiteItemActive(
-      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @RequestBody Map<String, String> params) {
     String siteId = params.get("siteId");
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
+    SiteDetailDao.SiteDetailData siteData =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteData == null) {
       return ResponseEntity.status(401).build();
     }
 
@@ -224,13 +229,15 @@ public class InventoryController {
   @PostMapping("/manage/deactivate-site-item")
   @ResponseBody
   ResponseEntity<String> updateSiteItemInactive(
-      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @RequestBody Map<String, String> params) {
     String siteId = params.get("siteId");
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
+    SiteDetailDao.SiteDetailData siteData =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteData == null) {
       return ResponseEntity.status(401).build();
     }
-    
+
     String itemName = params.get("itemName");
     if (siteId == null) {
       log.warn("Failed to deactivate item, no site id. Params: {}", params);
@@ -246,7 +253,10 @@ public class InventoryController {
     InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
         .ifPresent(
             wssId ->
-                new Thread(() -> sendInventoryUpdate.sendItemRemoval(itemName, siteName, wssId))
+                new Thread(
+                        () ->
+                            sendInventoryUpdate.sendItemRemoval(
+                                itemName, siteData.getSiteName(), wssId))
                     .start());
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     return ResponseEntity.ok("Updated");

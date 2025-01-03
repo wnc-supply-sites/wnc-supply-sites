@@ -39,8 +39,6 @@ public class CookieAuthenticator {
   }
 
   public boolean isAuthenticatedWithUniversalPassword(HttpServletRequest request) {
-    return CookieUtil.readAuthCookie(request)
-        .map(auth -> auth.equals(authKey))
-        .orElse(false);
+    return CookieUtil.readAuthCookie(request).map(auth -> auth.equals(authKey)).orElse(false);
   }
 }

@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.HashMap;
 import java.util.List;
@@ -37,13 +38,14 @@ public class SiteStatusController {
   @GetMapping("/manage/status/status")
   ModelAndView showManageStatusPage(
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi, sites);
+    SiteDetailDao.SiteDetailData siteDetailData =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteDetailData == null) {
+      return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
 
     Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("siteName", siteName);
+    pageParams.put("siteName", siteDetailData.getSiteName());
     pageParams.put("siteId", siteId);
 
     ManageSiteDao.SiteStatus siteStatus =

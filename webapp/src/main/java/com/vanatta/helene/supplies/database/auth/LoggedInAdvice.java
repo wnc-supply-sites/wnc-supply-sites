@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class LoggedInAdvice {
 
   public static final String USER_ROLES = "userRoles";
+  public static final String USER_PHONE = "userPhone";
   public static final String USER_SITES = "userSites";
   public static final String LOGGED_IN = "loggedIn";
 
@@ -26,6 +27,12 @@ public class LoggedInAdvice {
   public boolean loggedIn(HttpServletRequest request) {
     return cookieAuthenticator.isAuthenticated(request)
         || cookieAuthenticator.isAuthenticatedWithUniversalPassword(request);
+  }
+
+  @ModelAttribute(USER_PHONE)
+  public String userPhone(HttpServletRequest request) {
+    String auth = CookieUtil.readAuthCookie(request).orElse(null);
+    return fetchPhoneNumberFromAuth(jdbi, auth).orElse(null);
   }
 
   @ModelAttribute(USER_SITES)
@@ -62,6 +69,10 @@ public class LoggedInAdvice {
                                 select id siteId
                                 from site
                                 where regexp_replace(contact_number, '[^0-9]+', '', 'g') = :number
+                                union
+                                select id siteId
+                                from site
+                                where regexp_replace(og_contact_number, '[^0-9]+', '', 'g') = :number
                                 union
                                 select site_id siteId
                                 from additional_site_manager
@@ -151,6 +162,8 @@ public class LoggedInAdvice {
                     h.createQuery(
                             """
                           select 1 from site where regexp_replace(contact_number, '[^0-9]+', '', 'g')  = :phone
+                          union
+                          select 1 from site where regexp_replace(og_contact_number, '[^0-9]+', '', 'g')  = :phone
                           union
                           select 1 from additional_site_manager where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
                         """)

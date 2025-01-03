@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.manage;
 
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
+import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class SelectSiteController {
 
   public static ModelAndView showSelectSitePage(Jdbi jdbi, List<Long> sites) {
     Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("hasSites", sites.isEmpty() ? false : true );
+    pageParams.put("hasSites", sites.isEmpty() ? false : true);
     pageParams.put("sites", sites.isEmpty() ? null : ManageSiteDao.fetchSiteList(jdbi, sites));
     return new ModelAndView("manage/select-site", pageParams);
   }
@@ -59,18 +60,17 @@ public class SelectSiteController {
   @GetMapping(PATH_SITE_SELECTED)
   ModelAndView showSiteSelectedPage(
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
-    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
-    if (siteName == null) {
+    SiteDetailDao.SiteDetailData siteData =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteData == null) {
       return showSelectSitePage(jdbi, sites);
     }
 
     Map<String, String> pageParams = new HashMap<>();
-    pageParams.put("siteName", siteName);
+    pageParams.put("siteName", siteData.getSiteName());
     pageParams.put("siteId", siteId);
     return new ModelAndView("manage/site-selected", pageParams);
   }
-
-
 
   public static List<ItemListing> createItemListing(
       String selectedValue, Collection<String> allValues) {

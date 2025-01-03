@@ -26,12 +26,12 @@ class LoggedInAdviceTest {
     SetupPasswordHelper.withRegisteredNumber(number);
     token = LoginDao.generateAuthToken(jdbiTest, number);
   }
-  
+
   @Test
   void noAuth() {
     assertThat(LoggedInAdvice.computeUserRoles(jdbiTest, "bad token")).isEmpty();
   }
-  
+
   @Test
   void defaultUserRole() {
     assertThat(LoggedInAdvice.computeUserRoles(jdbiTest, token))

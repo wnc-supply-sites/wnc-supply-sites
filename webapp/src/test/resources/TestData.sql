@@ -32,6 +32,7 @@ insert into site(
   name,
   contact_name,
   contact_number,
+  og_contact_number,
   address,
   city,
   county_id,
@@ -50,6 +51,7 @@ insert into site(
 values (
         'site1',
         'contact me',
+        '111',
         '111',
         'address1',
         'city1',
@@ -70,16 +72,16 @@ values (
 
 
 -- site2, in Buncombe county, not accepting donations
-insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number) values(
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number) values(
 'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center'), -20, -100, 123
+(select id from site_type where name = 'Distribution Center'), -20, -100, '123', '123'
 );
 
 
 -- site3, in Buncombe county, not active
-insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id, contact_number) values(
+insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
 'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center'), -100, 222
+(select id from site_type where name = 'Distribution Center'), -100, '222', '222'
 );
 
 -- create a delivery from site2 to site3
@@ -107,9 +109,9 @@ values(
 
 
 -- site4, in Buncombe county, no items (but active), supply hub
-insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number) values(
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
    'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'),
-   (select id from site_type where name = 'Supply Hub'), -100, 333
+   (select id from site_type where name = 'Supply Hub'), -100, '333', '333'
 );
 -- create a delivery from site3 to site4
 insert into delivery(
@@ -149,14 +151,14 @@ values(
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
 -- data will not be stable.
-insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number) values(
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
    'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'),
-   (select id from site_type where name = 'Distribution Center'), -100, 444
+   (select id from site_type where name = 'Distribution Center'), -100, 444, 444
 );
 
-insert into site(name, address, city, county_id, website, site_type_id, max_supply_load_id, contact_number) values(
+insert into site(name, address, city, county_id, website, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
    'site6', 'address6', 'city6', (select id from county where name = 'Watauga'), 'site6website',
-   (select id from site_type where name = 'Distribution Center'), -100, 555
+   (select id from site_type where name = 'Distribution Center'), -100, 555, 555
 );
 
 

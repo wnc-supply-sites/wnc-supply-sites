@@ -1,7 +1,9 @@
 package com.vanatta.helene.supplies.database.manage.address;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
+import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import com.vanatta.helene.supplies.database.util.HtmlSelectOptionsUtil;
 import java.util.HashMap;
@@ -13,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -26,8 +30,10 @@ public class SiteAddressController {
 
   /** Fetches data for the manage site page */
   @GetMapping(MANAGE_ADDRESS_PATH)
-  ModelAndView showSiteContactPage(String siteId) {
-    SiteDetailDao.SiteDetailData data = SiteDetailDao.lookupSiteById(jdbi, Long.parseLong(siteId));
+  ModelAndView showSiteContactPage(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    SiteDetailDao.SiteDetailData data =
+        UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (data == null) {
       return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
