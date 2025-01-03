@@ -21,7 +21,7 @@
 <div class="errorMessage">{{.}}</div>
 {{/errorMessage}}
 
-
+{{#hasSites}}
 <form action="/manage/site-selected" method="get">
   <div id="site-select-div" class="vertical">
 
@@ -44,6 +44,7 @@
 </form>
 
 <hr>
+{{/hasSites}}
 
 <div class="nav-button-container">
   <a href="/manage/new-site/add-site">

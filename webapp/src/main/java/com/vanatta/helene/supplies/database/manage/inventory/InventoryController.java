@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.inventory;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +21,10 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -63,10 +68,10 @@ public class InventoryController {
 
   /** Display inventory listing for a site. */
   @GetMapping(PATH_INVENTORY)
-  ModelAndView fetchSiteInventoryListing(String siteId) {
-    String siteName = fetchSiteName(siteId);
+  ModelAndView fetchSiteInventoryListing(@ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi);
+      return SelectSiteController.showSelectSitePage(jdbi, sites);
     }
 
     Map<String, Object> pageParams = new HashMap<>();
@@ -152,7 +157,9 @@ public class InventoryController {
   /** Creates a brand new item, and adds that item to a given site. */
   @PostMapping("/manage/add-site-item")
   @ResponseBody
-  ResponseEntity<String> addNewSiteItem(@RequestBody Map<String, String> params) {
+  ResponseEntity<String> addNewSiteItem(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
+
     String itemName =
         Optional.ofNullable(params.get("itemName"))
             .orElseThrow(
@@ -168,14 +175,20 @@ public class InventoryController {
       return ResponseEntity.badRequest().body("Item not added, already exists");
     }
     sendNewItemUpdate.sendNewItem(itemName);
-    return updateSiteItemActive(params);
+    return updateSiteItemActive(sites, params);
   }
 
   /** Adds an item to a site */
   @PostMapping("/manage/activate-site-item")
   @ResponseBody
-  ResponseEntity<String> updateSiteItemActive(@RequestBody Map<String, String> params) {
+  ResponseEntity<String> updateSiteItemActive(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
     String siteId = params.get("siteId");
+    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteName == null) {
+      return ResponseEntity.status(401).build();
+    }
+
     String itemName =
         Optional.ofNullable(params.get("itemName"))
             .orElseThrow(
@@ -195,12 +208,6 @@ public class InventoryController {
       return ResponseEntity.badRequest().body("Invalid item status, none specified.");
     }
 
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn("Failed to activate item. Invalid site id: {}, params: {}", siteId, params);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
-
     if (!ItemStatus.allItemStatus().contains(itemStatus)) {
       log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
       return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
@@ -216,8 +223,14 @@ public class InventoryController {
   /** Removes an item from a site */
   @PostMapping("/manage/deactivate-site-item")
   @ResponseBody
-  ResponseEntity<String> updateSiteItemInactive(@RequestBody Map<String, String> params) {
+  ResponseEntity<String> updateSiteItemInactive(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestBody Map<String, String> params) {
     String siteId = params.get("siteId");
+    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+    if (siteName == null) {
+      return ResponseEntity.status(401).build();
+    }
+    
     String itemName = params.get("itemName");
     if (siteId == null) {
       log.warn("Failed to deactivate item, no site id. Params: {}", params);
@@ -229,11 +242,6 @@ public class InventoryController {
     }
 
     log.info("Deactivating item: {}, siteId: {}", itemName, siteId);
-    String siteName = fetchSiteName(siteId);
-    if (siteName == null) {
-      log.warn("Invalid site id: {}", siteId);
-      return ResponseEntity.badRequest().body("Invalid site id");
-    }
 
     InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
         .ifPresent(

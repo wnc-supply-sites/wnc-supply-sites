@@ -1,11 +1,14 @@
 package com.vanatta.helene.supplies.database.manage.status;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
+import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import com.vanatta.helene.supplies.database.util.EnumUtil;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -15,8 +18,10 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,10 +35,11 @@ public class SiteStatusController {
 
   /** Displays the 'manage-status' page. */
   @GetMapping("/manage/status/status")
-  ModelAndView showManageStatusPage(String siteId) {
-    String siteName = ManageSiteDao.fetchSiteName(jdbi, Long.parseLong(siteId));
+  ModelAndView showManageStatusPage(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (siteName == null) {
-      return SelectSiteController.showSelectSitePage(jdbi);
+      return SelectSiteController.showSelectSitePage(jdbi, sites);
     }
 
     Map<String, String> pageParams = new HashMap<>();

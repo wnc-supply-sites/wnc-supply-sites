@@ -1,8 +1,6 @@
 package com.vanatta.helene.supplies.database.manage;
 
-import com.vanatta.helene.supplies.database.export.update.SendSiteUpdate;
-import com.vanatta.helene.supplies.database.util.CookieUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,7 +26,7 @@ public class SelectSiteController {
   public static final String PATH_SELECT_SITE = "/manage/select-site";
   public static final String PATH_SITE_SELECTED = "/manage/site-selected";
   private final Jdbi jdbi;
- 
+
   @Builder
   @Data
   @AllArgsConstructor
@@ -39,13 +38,14 @@ public class SelectSiteController {
 
   /** User will be shown a page to select the site they want to manage. */
   @GetMapping(PATH_SELECT_SITE)
-  ModelAndView showSelectSitePage(HttpServletRequest request) {
-    return showSelectSitePage(jdbi);
+  ModelAndView showSelectSitePage(@ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites) {
+    return showSelectSitePage(jdbi, sites);
   }
 
-  public static ModelAndView showSelectSitePage(Jdbi jdbi) {
+  public static ModelAndView showSelectSitePage(Jdbi jdbi, List<Long> sites) {
     Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("sites", ManageSiteDao.fetchSiteList(jdbi));
+    pageParams.put("hasSites", sites.isEmpty() ? false : true );
+    pageParams.put("sites", sites.isEmpty() ? null : ManageSiteDao.fetchSiteList(jdbi, sites));
     return new ModelAndView("manage/select-site", pageParams);
   }
 
@@ -58,11 +58,10 @@ public class SelectSiteController {
    */
   @GetMapping(PATH_SITE_SELECTED)
   ModelAndView showSiteSelectedPage(
-      HttpServletRequest httpServletRequest, @RequestParam String siteId) {
-
-    String siteName = fetchSiteName(siteId);
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+    String siteName = UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (siteName == null) {
-      return showSelectSitePage(httpServletRequest);
+      return showSelectSitePage(jdbi, sites);
     }
 
     Map<String, String> pageParams = new HashMap<>();
@@ -71,10 +70,7 @@ public class SelectSiteController {
     return new ModelAndView("manage/site-selected", pageParams);
   }
 
-  /** Returns null if ID is not valid or DNE. */
-  private String fetchSiteName(String siteId) {
-    return ManageSiteDao.fetchSiteName(jdbi, siteId);
-  }
+
 
   public static List<ItemListing> createItemListing(
       String selectedValue, Collection<String> allValues) {

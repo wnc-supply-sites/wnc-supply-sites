@@ -16,18 +16,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class LoggedInAdvice {
 
   public static final String USER_ROLES = "userRoles";
+  public static final String USER_SITES = "userSites";
+  public static final String LOGGED_IN = "loggedIn";
 
   private final CookieAuthenticator cookieAuthenticator;
   private final Jdbi jdbi;
 
-  @ModelAttribute("loggedIn")
+  @ModelAttribute(LOGGED_IN)
   public boolean loggedIn(HttpServletRequest request) {
     return cookieAuthenticator.isAuthenticated(request)
         || cookieAuthenticator.isAuthenticatedWithUniversalPassword(request);
   }
 
-  //  @ModelAttribute("userPhone")
-  @ModelAttribute("userSites")
+  @ModelAttribute(USER_SITES)
   public List<Long> userSites(HttpServletRequest request) {
     String auth = CookieUtil.readAuthCookie(request).orElse(null);
     if (auth == null) {
@@ -58,14 +59,14 @@ public class LoggedInAdvice {
                 h ->
                     h.createQuery(
                             """
-                  select id siteId
-                  from site
-                  where contact_number = :number
-                  union
-                  select site_id siteId
-                  from additional_site_manager
-                  where phone = :number;
-                  """)
+                                select id siteId
+                                from site
+                                where regexp_replace(contact_number, '[^0-9]+', '', 'g') = :number
+                                union
+                                select site_id siteId
+                                from additional_site_manager
+                                where regexp_replace(phone, '[^0-9]+', '', 'g') = :number;
+                                """)
                         .bind("number", number)
                         .mapTo(Long.class)
                         .list())
@@ -123,6 +124,9 @@ public class LoggedInAdvice {
     if (whiteListedRoles.contains(UserRole.DATA_ADMIN)) {
       userRoles.add(UserRole.DATA_ADMIN);
     }
+    if (whiteListedRoles.contains(UserRole.SITE_MANAGER)) {
+      userRoles.add(UserRole.SITE_MANAGER);
+    }
 
     // check if they are a driver (exist in the driver table)
     boolean isDriver =
@@ -130,8 +134,8 @@ public class LoggedInAdvice {
                 h ->
                     h.createQuery(
                             """
-      select 1 from driver where phone = :phone
-    """)
+                            select 1 from driver where phone = :phone
+                          """)
                         .bind("phone", userPhone)
                         .mapTo(Long.class)
                         .findOne())
@@ -146,9 +150,9 @@ public class LoggedInAdvice {
                 h ->
                     h.createQuery(
                             """
-                          select 1 from site where contact_number = :phone
+                          select 1 from site where regexp_replace(contact_number, '[^0-9]+', '', 'g')  = :phone
                           union
-                          select 1 from additional_site_manager where phone = :phone
+                          select 1 from additional_site_manager where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
                         """)
                         .bind("phone", userPhone)
                         .mapTo(Long.class)
