@@ -209,10 +209,11 @@ public class SiteDetailController {
           TemplateParams.CONTACT_NUMBER.text,
           siteDetailData.getContactNumber() == null || siteDetailData.getContactNumber().isBlank()
               ? null
-              : ContactHref.newTelephone(siteDetailData.getContactNumber()));
+              : siteDetailData.getContactNumber());
 
       siteDetails.put(
-          TemplateParams.ADDITIONAL_CONTACTS.text, siteDetailData.getAdditionalContacts());
+          TemplateParams.ADDITIONAL_CONTACTS.text,
+          SiteDetailDao.lookupAdditionalSiteContacts(jdbi, id));
 
       List<Delivery> allDeliveries = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
 
@@ -270,25 +271,6 @@ public class SiteDetailController {
         href = "http://" + link;
         title = link;
       }
-    }
-  }
-
-  @Getter
-  static class ContactHref {
-    private final String href;
-    private final String title;
-
-    static ContactHref newTelephone(String number) {
-      return new ContactHref(number, "tel");
-    }
-
-    private ContactHref(String number, String contactType) {
-      if (number == null) {
-        throw new NullPointerException(
-            "number should not be null, do not create this object with null data.");
-      }
-      href = contactType + ":" + number;
-      title = number;
     }
   }
 

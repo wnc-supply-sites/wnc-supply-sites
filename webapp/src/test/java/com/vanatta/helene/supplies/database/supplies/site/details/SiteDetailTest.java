@@ -1,7 +1,11 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.manage.contact.ContactDao;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -55,15 +59,15 @@ public class SiteDetailTest {
     }
   }
 
-  @Nested
-  class ContactHref {
+  @Test
+  void fetchAdditionalContacts() {
+    String siteName = TestConfiguration.addSite();
+    long siteId = TestConfiguration.getSiteId(siteName);
 
-    @Test
-    void phoneNumber() {
-      String input = "555-555-5555";
-      var output = SiteDetailController.ContactHref.newTelephone(input);
-      assertThat(output.getHref()).isEqualTo("tel:555-555-5555");
-      assertThat(output.getTitle()).isEqualTo("555-555-5555");
-    }
+    ContactDao.addAdditionalSiteManager(jdbiTest, siteId, "name", "123-333-4444");
+
+    List<SiteDetailDao.SiteContact> contacts =
+        SiteDetailDao.lookupAdditionalSiteContacts(jdbiTest, siteId);
+    assertThat(contacts).containsExactly(new SiteDetailDao.SiteContact("name", "123-333-4444"));
   }
 }

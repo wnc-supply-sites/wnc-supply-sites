@@ -72,30 +72,18 @@
 
         <div class="mission-statement">
             <dl>
-                {{#contactName}}
-                <dt>Contact:</dt>
-                <dd class="bold">{{.}}</dd>
-                {{/contactName}}
 
-                <dt>Number:</dt>
+                <dt>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}</dt>
                 <dd class="detail-value bold">
-                    {{^contactNumber}} None listed {{/contactNumber}}
-                    {{#contactNumber}} {{#href}}
-                    <a href="{{.}}"> {{/href}} {{title}} {{#href}} </a>
-                    {{/href}} {{/contactNumber}}
+                    {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}}
                 </dd>
-            </dl>
-
-            {{#additionalContacts}}
-            <dl>
-                <dt>Additional Site Contacts:</dt>
-                <dd>
-                    <pre>
-                      {{.}}
-                    </pre>
+                {{#additionalContacts}}
+                <dt>{{#name}}{{.}}{{/name}}</dt>
+                <dd class="detail-value bold">
+                    {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}}
                 </dd>
+                {{/additionalContacts}}
             </dl>
-            {{/additionalContacts}}
         </div>
 
         <h2>

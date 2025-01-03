@@ -94,7 +94,6 @@ class ManageSiteDaoTest {
     assertThat(dataLookup.getHours()).isEqualTo("M-F 9-5pm");
     assertThat(dataLookup.getContactName()).isEqualTo("Smith Williams");
     assertThat(dataLookup.getContactNumber()).isEqualTo("999-596-111");
-    assertThat(dataLookup.getAdditionalContacts()).isEqualTo("More: 22-333");
     assertThat(dataLookup.getMaxSupply()).isEqualTo("Car");
   }
 

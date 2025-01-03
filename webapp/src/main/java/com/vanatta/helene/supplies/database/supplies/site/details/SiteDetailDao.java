@@ -1,6 +1,8 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import jakarta.annotation.Nullable;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -31,7 +33,6 @@ public class SiteDetailDao {
     String siteType;
     String contactName;
     String contactNumber;
-    String additionalContacts;
     String address;
     String city;
     String state;
@@ -87,5 +88,30 @@ public class SiteDetailDao {
                 .mapToBean(SiteDetailData.class)
                 .findOne()
                 .orElse(null));
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class SiteContact {
+    String name;
+    String phone;
+  }
+
+  public static List<SiteContact> lookupAdditionalSiteContacts(Jdbi jdbi, long siteId) {
+
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(
+                    """
+                    select
+                      name, phone
+                    from additional_site_manager
+                    where site_id = :siteId
+                    """)
+                .bind("siteId", siteId)
+                .mapToBean(SiteContact.class)
+                .list());
   }
 }
