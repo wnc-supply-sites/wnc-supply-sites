@@ -48,7 +48,7 @@ public class DriverDao {
     jdbi.withHandle(h -> h.createUpdate("""
             insert into driver(airtable_id, name, phone, location, active, opted_out, license_plates)
             values(
-               :airtable_id,
+               :airtableId,
                :name,
                :phone,
                :location,
@@ -57,16 +57,19 @@ public class DriverDao {
                :licensePlates
             ) on conflict(airtable_id) do update set
                name = :name,
+               phone = :phone,
                location = :location,
                active = :active,
                opted_out = :optedOut,
                license_plates = :licensePlates
             """)
+        .bind("airtableId", driver.getAirtableId())
         .bind("name", driver.getFullName())
+        .bind("phone", driver.getPhone())
         .bind("location", driver.getLocation())
         .bind("active", driver.isActive())
-        .bind("opted_out", driver.isOptedOut())
-        .bind("license_plates", driver.getLicensePlates())
+        .bind("optedOut", driver.isOptedOut())
+        .bind("licensePlates", driver.getLicensePlates())
         .execute()
     );
   }

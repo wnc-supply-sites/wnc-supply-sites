@@ -66,6 +66,7 @@ public class LoggedInAdvice {
                   from additional_site_manager
                   where phone = :number;
                   """)
+                        .bind("number", number)
                         .mapTo(Long.class)
                         .list())
             .stream()

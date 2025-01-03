@@ -9,3 +9,5 @@ alter table driver drop column default_start_time;
 alter table driver drop column default_end_time;
 
 alter table driver owner to wnc_helene;
+
+alter table driver add constraint driver_airtable_id_uk unique(airtable_id);

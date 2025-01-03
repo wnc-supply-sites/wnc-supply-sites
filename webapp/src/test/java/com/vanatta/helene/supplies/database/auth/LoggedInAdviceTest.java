@@ -162,7 +162,7 @@ class LoggedInAdviceTest {
    */
   @Test
   void dispatcherGetsAllSites() {
-    UserWhiteListWebhook.upsertUser(
+    UserWhiteListWebhook.updateUserAndRoles(
         jdbiTest,
         UserWhiteListWebhook.UserWhiteListRequest.builder()
             .roles(List.of(UserRole.DISPATCHER.name()))
@@ -175,7 +175,7 @@ class LoggedInAdviceTest {
   /** Similar to dispatcher test, data admin get god-mode access as well. */
   @Test
   void dataAdminGetsAllSites() {
-    UserWhiteListWebhook.upsertUser(
+    UserWhiteListWebhook.updateUserAndRoles(
         jdbiTest,
         UserWhiteListWebhook.UserWhiteListRequest.builder()
             .roles(List.of(UserRole.DATA_ADMIN.name()))
