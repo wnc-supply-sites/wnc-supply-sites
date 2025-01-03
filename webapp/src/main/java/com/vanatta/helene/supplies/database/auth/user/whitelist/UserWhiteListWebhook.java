@@ -85,7 +85,7 @@ public class UserWhiteListWebhook {
         handle ->
             handle
                 .createUpdate(script)
-                .bind("phone", PhoneNumberUtil.removeNonNumeric(request.getPhoneNumber()))
+                .bind("phone", request.getPhoneNumber())
                 .bind("removed", request.getRemoved())
                 .execute());
   }
