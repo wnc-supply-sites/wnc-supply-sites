@@ -439,10 +439,13 @@ function htmlEncode(input) {
 function filterItemsByName(text) {
   const inventoryItems = document.getElementsByClassName("inventory-item");
   for(let i = 0; i < inventoryItems.length; i++) {
-    const itemName = inventoryItems[i].getElementsByClassName("inventoryLabel")[0].textContent.trim();
+    const itemName = inventoryItems[i]
+        .getElementsByClassName("inventoryLabel")[0]
+        .textContent
+        .trim()
+        .toLowerCase();
     const inventoryItem = inventoryItems[i];
-    if (itemName.includes(text)){ 
-      console.log(`Item ${itemName} contains ${text}`)
+    if (itemName.includes(text.toLowerCase())){
       inventoryItem.classList.remove("hidden")
     } else {
       inventoryItem.classList.add("hidden")
