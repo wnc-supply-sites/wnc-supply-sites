@@ -32,7 +32,11 @@ public class LoggedInAdvice {
   @ModelAttribute(USER_PHONE)
   public String userPhone(HttpServletRequest request) {
     String auth = CookieUtil.readAuthCookie(request).orElse(null);
-    return fetchPhoneNumberFromAuth(jdbi, auth).orElse(null);
+    if (auth == null) {
+      return null;
+    } else {
+      return fetchPhoneNumberFromAuth(jdbi, auth).orElse(null);
+    }
   }
 
   @ModelAttribute(USER_SITES)

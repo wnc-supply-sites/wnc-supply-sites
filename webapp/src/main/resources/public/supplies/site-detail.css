@@ -114,3 +114,7 @@ table td {
 .padded {
     padding: 10px;
 }
+
+.align-top {
+    align-content: baseline;
+}

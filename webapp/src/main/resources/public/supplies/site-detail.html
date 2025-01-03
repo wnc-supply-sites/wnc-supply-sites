@@ -64,7 +64,7 @@
         <h2>
             Contact
             <span class="privately-visible">*</span>
-            <a class="edit-link" href="{{{editContactLink}}}">[edit]</a>
+            {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
         <div class="privately-visible">
             * Indicates field is visible because you are logged in
@@ -89,7 +89,7 @@
         <h2>
             Receiving Instructions
             <span class="privately-visible">*</span>
-            <a class="edit-link" href="{{{editContactLink}}}">[edit]</a>
+            {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
@@ -169,7 +169,7 @@
         <h2>
             Inventory
             {{#loggedIn}}
-            <a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>
+            {{#showEditLinks}}<a class="edit-link" href="{{{editInventoryLink}}}">[edit]</a>{{/showEditLinks}}
             <span class="privately-visible">*</span>
             {{/loggedIn}}
         </h2>
@@ -221,33 +221,15 @@
             <table class="needs-matching">
                 <thead>
                     <tr>
-                        <th>Map</th>
                         <th>Site Name</th>
                         <th>Distance</th>
                         <th class="wider-column">Item</th>
-                        <th>Item Count</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#needsMatching}}
                     <tr>
-                        <td>
-                            <div class="map">
-                                <iframe
-                                    width="300"
-                                    height="300"
-                                    class="gmap_iframe"
-                                    frameborder="0"
-                                    scrolling="no"
-                                    marginheight="0"
-                                    marginwidth="0"
-                                    src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-                                >
-                                </iframe>
-                            </div>
-                        </td>
-
-                        <td class="padded">
+                        <td class="padded align-top">
                             <div class="vertical site-title">
                                 <div class="bold site-name">
                                     <a href="{{{siteLink}}}">{{siteName}}</a>
@@ -255,13 +237,25 @@
                                 <div>{{siteAddress}}</div>
                                 <div class="city-name">{{city}}</div>
                                 <div>{{county}} county, {{state}}</div>
+                                <div class="map">
+                                    <iframe
+                                        width="300"
+                                        height="300"
+                                        class="gmap_iframe"
+                                        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+                                    >
+                                    </iframe>
+                                </div>
                             </div>
                         </td>
-                        <td>
+                        <td class="align-top">
                             {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
                             {{#driveTime}}{{.}}{{/driveTime}}
                         </td>
-                        <td>
+                        <td class="align-top">
+                            <div class="center bold">
+                                {{itemCount}} items
+                            </div>
                             <div class="horizontal">
                                 <ul>
                                     {{#items1}}
@@ -275,7 +269,6 @@
                                 </ul>
                             </div>
                         </td>
-                        <td class="center">{{itemCount}}</td>
                     </tr>
                     {{/needsMatching}}
                 </tbody>

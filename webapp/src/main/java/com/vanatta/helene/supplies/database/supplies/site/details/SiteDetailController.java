@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.delivery.Delivery;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
@@ -72,25 +73,26 @@ public class SiteDetailController {
 
     HAS_OUTGOING_DELIVERIES("hasOutgoingDeliveries"),
     OUTGOING_DELIVERIES("outgoingDeliveries"),
+    
+    showEditLinks("showEditLinks"),
     ;
     final String text;
   }
 
   @GetMapping(PATH_SITE_DETAIL)
   public ModelAndView siteDetail(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> userSites,
       @RequestParam(required = false) Long id,
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
-    return siteDetail(id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
+    return siteDetail(
+        userSites, id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
   }
 
   // @VisibleForTesting
   public ModelAndView siteDetail(
-      @RequestParam(required = false) Long id,
-      @RequestParam(required = false) Long airtableId,
-      @RequestParam(required = false) Long wssId,
-      @ModelAttribute("loggedIn") boolean isLoggedIn) {
+      List<Long> userSites, Long id, Long airtableId, Long wssId, boolean isLoggedIn) {
     if (id == null && airtableId == null && wssId == null) {
       return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
@@ -125,6 +127,7 @@ public class SiteDetailController {
 
     Map<String, Object> siteDetails = new HashMap<>();
 
+    siteDetails.put(TemplateParams.showEditLinks.text, userSites.contains(id));
     siteDetails.put(
         TemplateParams.EDIT_CONTACT_LINK.text, SiteContactController.buildManageContactsPath(id));
     siteDetails.put(
