@@ -78,6 +78,8 @@ public class Delivery {
    */
   private final String driverCode;
 
+  private final String cancelReason;
+
   Delivery(DeliveryDao.DeliveryData dbData) {
     this.publicKey = dbData.getPublicUrlKey();
     this.deliveryNumber = dbData.getDeliveryId();
@@ -118,6 +120,7 @@ public class Delivery {
     this.dispatchCode = dbData.getDispatchCode();
     this.driverStatus = dbData.getDriverStatus();
     this.driverCode = dbData.getDriverCode();
+    this.cancelReason = dbData.getCancelReason();
   }
 
   public int getItemCount() {

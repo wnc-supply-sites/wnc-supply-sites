@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.twilio.sms;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import com.vanatta.helene.supplies.database.util.TruncateString;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +70,7 @@ public class SmsSender {
                     new PhoneNumber(
                         phoneNumber.startsWith("+1") ? phoneNumber : "+1" + phoneNumber),
                     new PhoneNumber(twilioFromNumber),
-                    message)
+                    TruncateString.truncate(message, 1500))
                 .create();
         recordMessage(jdbi, new MessageResult(smsMessage, message.length()));
         return true;

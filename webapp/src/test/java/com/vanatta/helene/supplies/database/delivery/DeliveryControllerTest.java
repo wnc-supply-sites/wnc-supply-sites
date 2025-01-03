@@ -64,6 +64,7 @@ class DeliveryControllerTest {
               .filter(
                   e ->
                       !List.of(
+                              TemplateParams.cancelReason,
                               TemplateParams.confirmMessage,
                               TemplateParams.deliveryDate,
                               TemplateParams.dispatcherPhone,
@@ -332,7 +333,10 @@ class DeliveryControllerTest {
     var delivery = DeliveryHelper.withDispatcherConfirmedDelivery();
 
     Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
-        .forEach(role -> ConfirmationDao.cancelDelivery(jdbiTest, delivery.getPublicKey(), role));
+        .forEach(
+            role ->
+                ConfirmationDao.cancelDelivery(
+                    jdbiTest, delivery.getPublicKey(), "no reason", role));
 
     var response = deliveryController.showDeliveryDetailPage(delivery.getPublicKey(), null);
 
@@ -350,7 +354,10 @@ class DeliveryControllerTest {
   void doNotShowConfirmationWhenCancelled() {
     Delivery delivery = DeliveryHelper.withDispatcherConfirmedDelivery();
     ConfirmationDao.cancelDelivery(
-        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DRIVER);
+        jdbiTest,
+        delivery.getPublicKey(),
+        "cancel reason",
+        DeliveryConfirmation.ConfirmRole.DRIVER);
 
     delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();

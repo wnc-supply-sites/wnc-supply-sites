@@ -237,6 +237,8 @@ public class DeliveryDao {
      * confirm code is used for confirmations.
      */
     private String driverCode;
+
+    private String cancelReason;
   }
 
   public static Optional<Delivery> fetchDeliveryByPublicKey(Jdbi jdbi, String publicUrlKey) {
@@ -273,6 +275,7 @@ public class DeliveryDao {
       d.driver_name driverName,
       d.driver_number driverNumber,
       d.driver_license_plates licensePlateNumbers,
+      d.cancel_reason cancelReason,
 
       coalesce(fromSite.name, d.pickup_site_name) fromSiteName,
       fromSite.id fromSiteId,

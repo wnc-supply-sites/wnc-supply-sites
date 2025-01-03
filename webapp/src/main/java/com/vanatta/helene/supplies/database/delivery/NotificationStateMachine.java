@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.delivery.DeliveryConfirmation.ConfirmRole;
+import com.vanatta.helene.supplies.database.util.TruncateString;
 import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,11 +202,16 @@ class NotificationStateMachine {
                       .message(
                           String.format(
                               """
-                        Delivery #%s for date:%s is CANCELLED.
+                        Delivery #%s for date:%s is CANCELLED. %s
                         %s
                         """,
                               delivery.getDeliveryNumber(),
                               delivery.getDeliveryDate(),
+                              delivery.getCancelReason() == null
+                                      || delivery.getCancelReason().isBlank()
+                                  ? ""
+                                  : "\nReason: "
+                                      + TruncateString.truncate(delivery.getCancelReason(), 96),
                               websiteUri
                                   + DeliveryController.buildDeliveryPageLink(
                                       delivery.getPublicKey())))

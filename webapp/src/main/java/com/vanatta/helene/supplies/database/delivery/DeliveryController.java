@@ -104,6 +104,8 @@ class DeliveryController {
     confirmMessage,
     unableToConfirmMessages,
     confirmButton,
+
+    cancelReason,
     ;
   }
 
@@ -244,6 +246,8 @@ class DeliveryController {
     templateParams.put(TemplateParams.deliveryDate.name(), delivery.getDeliveryDate());
     templateParams.put(
         TemplateParams.deliveryStatus.name(), nullsToDash(delivery.getDeliveryStatus()));
+
+    templateParams.put(TemplateParams.cancelReason.name(), delivery.getCancelReason());
 
     DeliveryStatus deliveryStatus =
         EnumUtil.mapText(

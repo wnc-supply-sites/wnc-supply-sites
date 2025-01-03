@@ -75,11 +75,14 @@ class ConfirmationDaoTest {
     var delivery = DeliveryHelper.withDispatcherConfirmedDelivery();
 
     ConfirmationDao.cancelDelivery(
-        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DRIVER);
+        jdbiTest, delivery.getPublicKey(), "reason", DeliveryConfirmation.ConfirmRole.DRIVER);
     ConfirmationDao.cancelDelivery(
-        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.DROPOFF_SITE);
+        jdbiTest, delivery.getPublicKey(), null, DeliveryConfirmation.ConfirmRole.DROPOFF_SITE);
     ConfirmationDao.cancelDelivery(
-        jdbiTest, delivery.getPublicKey(), DeliveryConfirmation.ConfirmRole.PICKUP_SITE);
+        jdbiTest,
+        delivery.getPublicKey(),
+        "another reason",
+        DeliveryConfirmation.ConfirmRole.PICKUP_SITE);
 
     var confirmations =
         DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey())
@@ -88,6 +91,14 @@ class ConfirmationDaoTest {
 
     assertThat(confirmations).isNotEmpty();
     confirmations.forEach(confirmation -> assertThat(confirmation.getConfirmed()).isFalse());
+
+    // typically only one person can cancel. The last 'cancel' message received will win.
+    // The last cancellation had reason "another reason", so it should be the one we get back.
+    assertThat(
+            DeliveryDao.fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey())
+                .orElseThrow()
+                .getCancelReason())
+        .isEqualTo("another reason");
   }
 
   @ParameterizedTest

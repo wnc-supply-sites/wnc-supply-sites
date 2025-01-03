@@ -168,7 +168,10 @@ class DeliveryConfirmationController {
   }
 
   @GetMapping(cancelPath)
-  ModelAndView cancelRequest(@RequestParam String deliveryKey, @RequestParam String code) {
+  ModelAndView cancelRequest(
+      @RequestParam String deliveryKey,
+      @RequestParam String code,
+      @RequestParam(required = false) String cancelReason) {
 
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
@@ -186,6 +189,7 @@ class DeliveryConfirmationController {
                 ConfirmationDao.cancelDelivery(
                     jdbi,
                     deliveryKey,
+                    cancelReason,
                     DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
 
     var messages =

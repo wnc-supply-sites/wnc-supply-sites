@@ -137,3 +137,8 @@ pre {
 .confirmation-checkbox-row {
     height: 33px;
 }
+
+.confirm-cancel {
+    margin-bottom: 5px;
+}
+

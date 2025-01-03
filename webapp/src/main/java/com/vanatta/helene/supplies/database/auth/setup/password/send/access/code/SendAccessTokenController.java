@@ -82,16 +82,17 @@ public class SendAccessTokenController {
             .build());
 
     // send the passcode via SMS
-    boolean success = smsSender.send(
-        phoneNumber,
-        String.format(
-            """
+    boolean success =
+        smsSender.send(
+            phoneNumber,
+            String.format(
+                """
             Access code: %s
             Thank you! #wncStrong
             Use the passcode above to finish setting up your
             password with wnc-supply-sites.com
             """,
-            accessCode));
+                accessCode));
 
     if (success) {
       // return the CRF token
@@ -106,7 +107,6 @@ public class SendAccessTokenController {
                     Please double check the phone number. If the phone number is for sure
                     valid, please <a href="/registration/registration.html">contact us</a>.
                   """));
-      
     }
   }
 

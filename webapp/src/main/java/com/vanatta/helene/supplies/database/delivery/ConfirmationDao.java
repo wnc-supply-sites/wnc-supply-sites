@@ -35,21 +35,12 @@ public class ConfirmationDao {
 
   public static void confirmDelivery(
       Jdbi jdbi, String publicUrlKey, DeliveryConfirmation.ConfirmRole confirmRole) {
-    updateDeliveryConfirmation(jdbi, publicUrlKey, confirmRole, true);
-  }
-
-  public static void cancelDelivery(
-      Jdbi jdbi, String publicUrlKey, DeliveryConfirmation.ConfirmRole confirmRole) {
-    updateDeliveryConfirmation(jdbi, publicUrlKey, confirmRole, false);
-  }
-
-  private static void updateDeliveryConfirmation(
-      Jdbi jdbi, String publicUrlKey, DeliveryConfirmation.ConfirmRole confirmRole, boolean value) {
 
     String update =
         """
-        update delivery_confirmation
-          set delivery_accepted = :value
+        update delivery_confirmation set
+          delivery_accepted = true,
+          date_confirmed = now()
         where
           confirm_type = :confirmRole
           and delivery_id = (select id from delivery where public_url_key = :publicUrlKey)
@@ -58,8 +49,42 @@ public class ConfirmationDao {
         handle ->
             handle
                 .createUpdate(update)
-                .bind("value", value)
                 .bind("confirmRole", confirmRole.name())
+                .bind("publicUrlKey", publicUrlKey)
+                .execute());
+  }
+
+  public static void cancelDelivery(
+      Jdbi jdbi,
+      String publicUrlKey,
+      String cancelReason,
+      DeliveryConfirmation.ConfirmRole confirmRole) {
+    String update =
+        """
+        update delivery_confirmation set
+           delivery_accepted = false,
+           date_confirmed = now()
+        where
+          confirm_type = :confirmRole
+          and delivery_id = (select id from delivery where public_url_key = :publicUrlKey)
+        """;
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(update)
+                .bind("confirmRole", confirmRole.name())
+                .bind("publicUrlKey", publicUrlKey)
+                .execute());
+
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(
+                    """
+          update delivery set cancel_reason = :cancelReason
+            where public_url_key = :publicUrlKey
+        """)
+                .bind("cancelReason", cancelReason)
                 .bind("publicUrlKey", publicUrlKey)
                 .execute());
   }

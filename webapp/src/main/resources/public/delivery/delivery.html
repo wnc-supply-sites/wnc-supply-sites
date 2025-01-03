@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="../delivery.css"/>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
+  <script type="text/javascript" src="../delivery.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
@@ -41,11 +42,19 @@
 
       {{#sendDeclineVisible}}
       <div class="nav-button-container">
-        <a href="{{sendDeclineUrl}}">
-          <button class="nav-button decline-button">
+        <div id="cancel-button">
+          <button class="nav-button decline-button" onclick="toggleConfirmCancel()">
             CLICK TO CANCEL
           </button>
-        </a>
+        </div>
+
+        <div id="confirm-cancel" class="hidden vertical">
+          <button class="nav-button decline-button" onclick="sendCancel('{{sendDeclineUrl}}')">
+            ARE YOU SURE?
+          </button>
+          <label for="cancelReason">Cancel Reason:</label>
+          <textarea id="cancelReason" rows="2" cols="20"></textarea>
+        </div>
       </div>
       {{/sendDeclineVisible}}
     </div>
@@ -61,6 +70,9 @@
     {{#confirmMessage}}
     <span class="confirm-message">{{.}}</span>
     {{/confirmMessage}}
+    {{#cancelReason}}
+    <span class="errorMessage">Cancel Reason: {{.}}</span>
+    {{/cancelReason}}
 
     {{#hasConfirmations}}
     <h4 class="confirmation-header">Confirmations</h4>

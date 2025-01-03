@@ -77,7 +77,7 @@ class DeliveryConfirmationControllerTest {
     var confirmation = delivery.getConfirmation(role).orElseThrow();
     assertThat(confirmation.getConfirmed()).isNull();
 
-    controller.cancelRequest(delivery.getPublicKey(), confirmation.getCode());
+    controller.cancelRequest(delivery.getPublicKey(), confirmation.getCode(), "cancelReason");
 
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
     confirmation = delivery.getConfirmation(role).orElseThrow();
