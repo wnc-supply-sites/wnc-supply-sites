@@ -46,7 +46,6 @@ class LoggedInAdviceTest {
         DriverDao.Driver.builder()
             .location("city")
             .active(true)
-            .optedOut(false)
             .airtableId(-604L)
             .licensePlates("WXC444")
             .fullName("driver")
