@@ -36,6 +36,10 @@ table.results-table {
     width: 100%;
 }
 
+table.results-table thead th:nth-child(1) {
+  width: 25%;
+}
+
 table.results-table tbody {
     vertical-align: top;
 }
