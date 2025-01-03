@@ -1,77 +1,88 @@
 async function updateSiteActive(siteId) {
   const active = document.getElementById("activeYes").checked;
 
-
+  const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
+  const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
 
   try {
     await sendStatusUpdate(siteId, "active", active);
     if(active) {
       await sendStatusUpdate(siteId, "inactiveReason", "");
-      showConfirmation("Site status set to active");
+      showConfirmation(confirmationDiv, errorDiv,"Site status set to active");
     } else {
       const inactiveReason = document.getElementById("inactive-reason").value.trim();
       await sendStatusUpdate(siteId, "inactiveReason", inactiveReason);
-      showConfirmation("Site status set to inactive" + (inactiveReason !== "" ? " with reason " + inactiveReason : ""));
+      showConfirmation(confirmationDiv, errorDiv, "Site status set to inactive" + (inactiveReason !== "" ? " with reason " + inactiveReason : ""));
     }
   } catch (error) {
-    showStatusError(error, "site 'active' was not updated.")
+    showStatusError(confirmationDiv, errorDiv, error, "site 'active' was not updated.")
   }
 }
 
-function showConfirmation(text) {
-  document.getElementById("updateStatusConfirmation")
+function showConfirmation(confirmationDiv, errorDiv, text) {
+  confirmationDiv
       .innerHTML =
       `<span class="green-check" id="update-active-confirm">&#10003;</span> ${text}`;
-  document.getElementById("status-update-error").innerHTML = "";
+  errorDiv.innerHTML = "";
 }
 
-function showStatusError(error, messageText) {
+function showStatusError(confirmationDiv, errorDiv, error, messageText) {
   console.log(error);
-  document.getElementById("updateStatusConfirmation")
-      .innerHTML = "";
-  document.getElementById("status-update-error")
-      .innerHTML = "An error occurred, " + messageText;
+  confirmationDiv.innerHTML = "";
+  errorDiv.innerHTML = "An error occurred, " + messageText;
 }
 
 async function updateSiteAcceptingDonations(siteId) {
   const accepting = document.getElementById("acceptingYes").checked;
+  const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
+  const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
+
   try {
     await sendStatusUpdate(siteId, "acceptingSupplies", accepting);
-    showConfirmation("Site status set to " + (accepting ? "" : "NOT ") + "accepting supplies");
+    showConfirmation(confirmationDiv, errorDiv, "Site status set to " + (accepting ? "" : "NOT ") + "accepting supplies");
   } catch (error) {
-    showStatusError(error, "accepting supplies was not updated.");
+    showStatusError(confirmationDiv, errorDiv, error, "accepting supplies was not updated.");
   }
 }
 
 async function updateSiteDistributingDonations(siteId) {
   const distributing = document.getElementById("distributingYes").checked;
+  const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
+  const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
+
   try {
     await sendStatusUpdate(siteId, "distributingSupplies", distributing);
-    showConfirmation("Site status set to " + (distributing ? "" : "NOT ") + "distributing supplies");
+    showConfirmation(confirmationDiv, errorDiv, "Site status set to " + (distributing ? "" : "NOT ") + "distributing supplies");
   } catch (error) {
-    showStatusError(error, "distributing supplies was not updated");
+    showStatusError(confirmationDiv, errorDiv, error, "distributing supplies was not updated");
   }
 }
 
 
 async function updateSiteSiteType(siteId) {
   const isDistSite = document.getElementById("distributionCenter").checked;
+  const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
+  const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
   try {
     await sendStatusUpdate(siteId, "distSite", isDistSite);
-    showConfirmation("Site type set to " + (isDistSite ? "distribution site" : "supply warehouse"));
+    showConfirmation(confirmationDiv, errorDiv, "Site type set to " + (isDistSite ? "distribution site" : "supply warehouse"));
   } catch (error) {
-    showStatusError(error, "site type was not updated");
+    showStatusError(confirmationDiv, errorDiv, error, "site type was not updated");
   }
 }
 
 
 async function updatePubliclyVisible(siteId) {
   const publicVisible = document.getElementById("publicYes").checked;
+
+  const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
+  const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
+
   try {
     await sendStatusUpdate(siteId, "publiclyVisible", publicVisible);
-    showConfirmation("Site set to " + (publicVisible ? "publicly visible" : "visible to logged in users only"));
+    showConfirmation(confirmationDiv, errorDiv, "Site set to " + (publicVisible ? "publicly visible" : "visible to logged in users only"));
   } catch (error) {
-    showStatusError(error, "publicly visible was not updated");
+    showStatusError(confirmationDiv, errorDiv, error, "publicly visible was not updated");
   }
 }
 

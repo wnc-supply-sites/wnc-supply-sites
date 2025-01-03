@@ -237,3 +237,9 @@ h1, h2, h3, h4 {
     margin-left: 15px;
     font-size: 0.9em;
 }
+
+.confirm-message {
+    font-style: italic;
+    font-size: 0.95em;
+    color: green;
+}

@@ -122,12 +122,6 @@ pre {
     align-items: center;
 }
 
-.confirm-message {
-    font-style: italic;
-    font-size: 1.0em;
-    color: green;
-}
-
 .unable-to-confirm-message {
     font-style: italic;
     font-size: 1.0em;
