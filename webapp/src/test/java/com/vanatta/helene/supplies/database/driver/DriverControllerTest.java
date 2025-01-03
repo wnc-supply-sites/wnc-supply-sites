@@ -20,7 +20,7 @@ class DriverControllerTest {
 
   @Test
   void parseDriver() {
-    DriverController.DriverJson driver = DriverController.DriverJson.parseJson(exampleInput);
+    var driver = DriverDao.Driver.parseJson(exampleInput);
     assertThat(driver.getAirtableId()).isEqualTo(34);
     assertThat(driver.getFullName()).isEqualTo("Test Driver");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");

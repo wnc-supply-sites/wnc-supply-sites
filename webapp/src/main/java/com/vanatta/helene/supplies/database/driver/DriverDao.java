@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.driver;
 
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,11 @@ public class DriverDao {
     private boolean optedOut;
     private String location;
     private String licensePlates;
+    
+    static Driver parseJson(String json) {
+      return new Gson().fromJson(json, Driver.class);
+    }
+    
   }
 
   public static Optional<Driver> lookupByPhone(Jdbi jdbi, String phoneNumber) {
