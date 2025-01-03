@@ -17,16 +17,8 @@ public class DriverController {
 
   private final Jdbi jdbi;
 
-  @PostMapping("/webhook/driver/update")
-  ResponseEntity<String> receiveDriverUpdates(@RequestBody String driver) {
-    log.info("Received driver update: {}", driver);
 
-    DriverDao.Driver driverJson = DriverDao.Driver.parseJson(driver);
-    DriverDao.upsert(jdbi, driverJson);
-
-    return ResponseEntity.ok("ok");
-  }
-
+  
   @GetMapping("/driver/portal")
   ModelAndView showDriverPortal() {
 
