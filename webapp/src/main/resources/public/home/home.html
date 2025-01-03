@@ -25,13 +25,15 @@
     </a>
   </div>
 
+  {{^isAuthenticated}}
   <div class="nav-button-container">
-    <a href="manage/select-site">
+    <a href="login/login">
       <button type="button" class="nav-button wide-button">
-        Site Manager Portal
+        Login - Site Managers
       </button>
     </a>
   </div>
+  {{/isAuthenticated}}
 
 <!--  <div class="nav-button-container">-->
 <!--    <a href="driver/portal">-->
@@ -41,6 +43,20 @@
 <!--    </a>-->
 <!--  </div>-->
 
+  {{#isAuthenticated}}
+  <div class="nav-button-container">
+    <a href="/manage/select-site">
+      <button type="button" class="nav-button wide-button">Manager Portal</button>
+    </a>
+  </div>
+
+  <div class="nav-button-container">
+    <a href="/manage/behind-the-scenes/index.html">
+      <button type="button" class="nav-button wide-button">How Supplies Move</button>
+    </a>
+  </div>
+  {{/isAuthenticated}}
+
   <div class="nav-button-container">
     <a href="/about/about.html">
       <button type="button" class="nav-button wide-button">
@@ -49,21 +65,13 @@
     </a>
   </div>
 
-
-  {{#isAuthenticated}}
   <div class="nav-button-container">
-    <a href="/manage/behind-the-scenes/index.html">
-      <button type="button" class="nav-button wide-button">How Supplies Move</button>
+    <a href="https://form.jotform.com/243608573773062">
+      <button type="button" class="nav-button wide-button">Contact Us</button>
     </a>
   </div>
 
-  {{/isAuthenticated}}
-
 </div>
-<!--<iframe src="https://www.google.com/maps/d/embed?mid=1r3syxsZAfT7UnvMTfULAlluYKUTKUr8&ehbc=2E312F" width="640" height="480"></iframe>-->
-<!--<iframe src="https://www.google.com/maps/d/u/0/embed?mid=1r3syxsZAfT7UnvMTfULAlluYKUTKUr8&ehbc=2E312F&noprof=1" width="640" height="480"></iframe>-->
-<!--<iframe src="https://www.google.com/maps/d/embed?mid=17gTjPkEYX-GM_GI4ePm507-fdhlx1pw&ehbc=2E312F" width="640" height="480"></iframe>-->
-
 
 </body>
 </html>

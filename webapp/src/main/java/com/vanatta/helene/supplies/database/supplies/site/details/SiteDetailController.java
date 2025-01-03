@@ -73,7 +73,7 @@ public class SiteDetailController {
 
     HAS_OUTGOING_DELIVERIES("hasOutgoingDeliveries"),
     OUTGOING_DELIVERIES("outgoingDeliveries"),
-    
+
     showEditLinks("showEditLinks"),
     ;
     final String text;

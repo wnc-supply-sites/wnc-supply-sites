@@ -38,7 +38,7 @@ public class UserWhiteListWebhook {
     public String getPhoneNumber() {
       return PhoneNumberUtil.removeNonNumeric(phoneNumber);
     }
-    
+
     static UserWhiteListRequest parse(String input) {
       return new Gson().fromJson(input, UserWhiteListRequest.class);
     }
