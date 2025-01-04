@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.google.gson.Gson;
-
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
 public class DriverDao {
-  
+
   public static Optional<Driver> lookupByPhone(Jdbi jdbi, String phoneNumber) {
     return jdbi.withHandle(
         h ->
@@ -113,11 +112,26 @@ public class DriverDao {
                 .createUpdate(
                     String.format(
                         """
-                      update driver set %s = :newValue where airtable_id = :airtableId
+                      update driver set %s = :newValue, last_updated = now() where airtable_id = :airtableId
                       """,
                         driverUpdate.columnToUpdate()))
                 .bind("newValue", driverUpdate.getNewValue())
                 .bind("airtableId", driverUpdate.getAirtableId())
+                .execute());
+  }
+
+  static void toggleActiveStatus(Jdbi jdbi, String phone) {
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(
+                    """
+                        update driver set
+                          active = (select not active from driver where phone = :phone),
+                          last_updated = now()
+                        where phone = :phone
+                        """)
+                .bind("phone", phone)
                 .execute());
   }
 }

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
-// TODO: test-me
 /**
  * Whenever inventory is updated for a site, we send updates to Make. Inventory is updated when it
  * is added or removed to a site, or when its status is changed.
@@ -60,7 +59,7 @@ public class SendInventoryUpdate {
               .itemStatus("Removed")
               .itemNeedWssId(wssId)
               .build();
-      HttpPostSender.sendAsJson(webhookUrl, dataToSend);
+      new Thread(() -> HttpPostSender.sendAsJson(webhookUrl, dataToSend)).start();
     }
   }
 

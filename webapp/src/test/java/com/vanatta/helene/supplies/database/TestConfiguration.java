@@ -168,6 +168,8 @@ public class TestConfiguration {
         .licensePlates("WXC444")
         .fullName("driver")
         .phone(phoneNumber)
+        .availability("availability test driver")
+        .comments("comments test driver")
         .build();
   }
 }
