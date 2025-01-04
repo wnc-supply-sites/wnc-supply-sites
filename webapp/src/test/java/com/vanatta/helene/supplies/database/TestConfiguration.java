@@ -159,8 +159,8 @@ public class TestConfiguration {
                 .bind("wssId", wssId)
                 .execute());
   }
-  
-  public static Driver buildDriver(long airtableId, String phoneNumber ) {
+
+  public static Driver buildDriver(long airtableId, String phoneNumber) {
     return Driver.builder()
         .location("city")
         .active(true)

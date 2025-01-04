@@ -40,7 +40,8 @@ public class LoggedInAdvice {
   }
 
   @ModelAttribute(USER_SITES)
-  public List<Long> userSites(@ModelAttribute(USER_ROLES) List<UserRole> roles,  HttpServletRequest request) {
+  public List<Long> userSites(
+      @ModelAttribute(USER_ROLES) List<UserRole> roles, HttpServletRequest request) {
     String auth = CookieUtil.readAuthCookie(request).orElse(null);
     if (auth == null) {
       return List.of();

@@ -10,7 +10,7 @@ public class SendDriverUpdate {
   static SendDriverUpdate disabled() {
     return new SendDriverUpdate(false, null);
   }
-  
+
   final boolean enabled;
   final String airtableWebhookUrl;
 

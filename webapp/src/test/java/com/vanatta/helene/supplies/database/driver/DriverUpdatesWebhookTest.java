@@ -44,8 +44,7 @@ class DriverUpdatesWebhookTest {
 
     driverUpdatesWebhook.receiveDriverUpdates(newDriverInput);
 
-    Driver resultFromDb =
-        DriverDao.lookupByPhone(jdbiTest, driver.getPhone()).orElseThrow();
+    Driver resultFromDb = DriverDao.lookupByPhone(jdbiTest, driver.getPhone()).orElseThrow();
     assertThat(resultFromDb.getFullName()).isEqualTo(driver.getFullName());
     assertThat(resultFromDb.getPhone()).isEqualTo(driver.getPhone());
     assertThat(resultFromDb.getLocation()).isEqualTo(driver.getLocation());
