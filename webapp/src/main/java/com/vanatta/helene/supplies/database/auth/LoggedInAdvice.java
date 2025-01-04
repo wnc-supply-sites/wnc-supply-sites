@@ -40,22 +40,20 @@ public class LoggedInAdvice {
   }
 
   @ModelAttribute(USER_SITES)
-  public List<Long> userSites(HttpServletRequest request) {
+  public List<Long> userSites(@ModelAttribute(USER_ROLES) List<UserRole> roles,  HttpServletRequest request) {
     String auth = CookieUtil.readAuthCookie(request).orElse(null);
     if (auth == null) {
       return List.of();
     } else {
-      return computeUserSites(jdbi, auth);
+      return computeUserSites(jdbi, auth, roles);
     }
   }
 
-  public static List<Long> computeUserSites(Jdbi jdbi, String auth) {
+  public static List<Long> computeUserSites(Jdbi jdbi, String auth, List<UserRole> roles) {
     String number = fetchPhoneNumberFromAuth(jdbi, auth).orElse(null);
     if (number == null) {
       return List.of();
     } else {
-      List<UserRole> roles = computeUserRoles(jdbi, auth);
-
       if (UserRole.hasGodMode(roles)) {
         // get list of all sites
         return jdbi

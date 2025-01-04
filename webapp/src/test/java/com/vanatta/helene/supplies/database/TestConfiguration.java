@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
+import com.vanatta.helene.supplies.database.driver.Driver;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import com.vanatta.helene.supplies.database.manage.add.site.AddSiteData;
 import com.vanatta.helene.supplies.database.test.util.TestDataFile;
@@ -157,5 +158,16 @@ public class TestConfiguration {
                 .bind("itemName", itemName)
                 .bind("wssId", wssId)
                 .execute());
+  }
+  
+  public static Driver buildDriver(long airtableId, String phoneNumber ) {
+    return Driver.builder()
+        .location("city")
+        .active(true)
+        .airtableId(airtableId)
+        .licensePlates("WXC444")
+        .fullName("driver")
+        .phone(phoneNumber)
+        .build();
   }
 }

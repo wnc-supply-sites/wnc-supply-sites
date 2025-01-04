@@ -16,3 +16,9 @@ dt {
     font-weight: bold;
 }
 
+h3 {
+    font-family: sans-serif;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: 50px;
+}

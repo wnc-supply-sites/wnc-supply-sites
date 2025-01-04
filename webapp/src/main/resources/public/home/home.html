@@ -35,21 +35,25 @@
   </div>
   {{/isAuthenticated}}
 
-<!--  <div class="nav-button-container">-->
-<!--    <a href="driver/portal">-->
-<!--      <button type="button" class="nav-button wide-button">-->
-<!--        Driver Portal-->
-<!--      </button>-->
-<!--    </a>-->
-<!--  </div>-->
+  {{#isDriver}}
+  <div class="nav-button-container">
+    <a href="driver/portal">
+      <button type="button" class="nav-button wide-button">
+        Driver Portal
+      </button>
+    </a>
+  </div>
+  {{/isDriver}}
 
-  {{#isAuthenticated}}
+  {{#canManageSites}}
   <div class="nav-button-container">
     <a href="/manage/select-site">
       <button type="button" class="nav-button wide-button">Manager Portal</button>
     </a>
   </div>
+  {{/canManageSites}}
 
+  {{#isAuthenticated}}
   <div class="nav-button-container">
     <a href="/manage/behind-the-scenes/index.html">
       <button type="button" class="nav-button wide-button">How Supplies Move</button>

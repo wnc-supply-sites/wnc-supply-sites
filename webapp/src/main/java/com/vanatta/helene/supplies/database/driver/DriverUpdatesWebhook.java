@@ -18,7 +18,7 @@ public class DriverUpdatesWebhook {
   @PostMapping("/webhook/driver/upsert")
   ResponseEntity<String> receiveDriverUpdates(@RequestBody String driver) {
     log.info("Received driver upsert: {}", driver);
-    DriverDao.Driver driverJson = DriverDao.Driver.parseJson(driver);
+    Driver driverJson = Driver.parseJson(driver);
     DriverDao.upsert(jdbi, driverJson);
 
     return ResponseEntity.ok("ok");

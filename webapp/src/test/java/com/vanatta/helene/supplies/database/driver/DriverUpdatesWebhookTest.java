@@ -28,7 +28,7 @@ class DriverUpdatesWebhookTest {
 
   @Test
   void parseDriver() {
-    var driver = DriverDao.Driver.parseJson(newDriverInput);
+    var driver = Driver.parseJson(newDriverInput);
     assertThat(driver.getAirtableId()).isEqualTo(48);
     assertThat(driver.getFullName()).isEqualTo("Test2 Test");
     assertThat(driver.getPhone()).isEqualTo("(919) 111-1111");
@@ -40,11 +40,11 @@ class DriverUpdatesWebhookTest {
 
   @Test
   void upsert() {
-    var driver = DriverDao.Driver.parseJson(newDriverInput);
+    var driver = Driver.parseJson(newDriverInput);
 
     driverUpdatesWebhook.receiveDriverUpdates(newDriverInput);
 
-    DriverDao.Driver resultFromDb =
+    Driver resultFromDb =
         DriverDao.lookupByPhone(jdbiTest, driver.getPhone()).orElseThrow();
     assertThat(resultFromDb.getFullName()).isEqualTo(driver.getFullName());
     assertThat(resultFromDb.getPhone()).isEqualTo(driver.getPhone());

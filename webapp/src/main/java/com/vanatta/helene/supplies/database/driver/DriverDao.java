@@ -1,7 +1,7 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.google.gson.Gson;
-import com.vanatta.helene.supplies.database.util.TruncateString;
+
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,35 +10,7 @@ import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
 public class DriverDao {
-
-  @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Data
-  public static class Driver {
-    Long airtableId;
-    private String fullName;
-    private String phone;
-    private boolean active;
-    private boolean blacklisted;
-    private String location;
-    private String availability;
-    private String comments;
-    private String licensePlates;
-
-    public String getComments() {
-      return TruncateString.truncate(comments, 1000);
-    }
-
-    public String getAvailability() {
-      return TruncateString.truncate(availability, 1000);
-    }
-
-    static Driver parseJson(String json) {
-      return new Gson().fromJson(json, Driver.class);
-    }
-  }
-
+  
   public static Optional<Driver> lookupByPhone(Jdbi jdbi, String phoneNumber) {
     return jdbi.withHandle(
         h ->

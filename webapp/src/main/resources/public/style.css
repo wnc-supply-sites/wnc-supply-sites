@@ -243,3 +243,7 @@ h1, h2, h3, h4 {
     font-size: 0.95em;
     color: green;
 }
+
+.missingData {
+    background-color: lightcoral;
+}

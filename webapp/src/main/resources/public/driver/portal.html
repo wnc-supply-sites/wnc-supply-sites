@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
   <link rel="stylesheet" href="portal.css"/>
+  <script type="text/javascript" src="portal.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
@@ -11,44 +12,56 @@
 {{> header }}
 <h2>Driver Portal</h2>
 
-<div class="mission-statement">
-  <div class="nav-button-container">
-    <a href="/driver/delivery-sign-up">
-      <button type="button" class="nav-button wide-button">
-        Delivery Sign-Up
-      </button>
-    </a>
-  </div>
-  <span class="larger">
-  Sign up for deliveries. We will confirm the delivery with the supply sites and will contact you for scheduling.
-  </span>
-</div>
+<!--<div class="mission-statement">-->
+<!--  <div class="nav-button-container">-->
+<!--    <a href="/driver/delivery-sign-up">-->
+<!--      <button type="button" class="nav-button wide-button">-->
+<!--        Delivery Sign-Up-->
+<!--      </button>-->
+<!--    </a>-->
+<!--  </div>-->
+<!--  <span class="larger">-->
+<!--  Sign up for deliveries. We will confirm the delivery with the supply sites and will contact you for scheduling.-->
+<!--  </span>-->
+<!--</div>-->
 
-<h2>Your Info</h2>
+<h3>Your Info</h3>
 
 <div class="mission-statement vertical">
   <div class="vertical">
-    <label for="city" class="form-header">City, State<span class="required">*</span>:</label>
-    <input id="city" type="text" maxlength="64"></input>
+    <label for="location" class="form-header">City, State<span class="required">*</span>:</label>
+    <input id="location" type="text" maxlength="128" value="{{location}}"></input>
     <span class="smaller">We use your region information to prioritize deliveries closer to you.</span>
 
-    <label for="phone" class="form-header">Phone<span class="required">*</span>:</label>
-    <input id="phone" type="text" maxlength="32">
-    <span
-        class="smaller">We will send SMS messages to this number to contact you, confirm deliveries, and coordinate</span>
-
     <label for="licensePlates" class="form-header">License Plate Number(s)<span class="required">*</span>:</label>
-    <textarea rows="3" cols="10" id="licensePlates" maxlength="256"></textarea>
+    <textarea rows="3" cols="10" id="licensePlates" maxlength="256">{{licensePlates}}</textarea>
     <span class="smaller">
       List all license plate numbers for vehicles that you will be using.<br>
       License plate is the primary way for supply sites to confirm you are a driver within our network.
     </span>
+
+    <label for="availability" class="form-header">Availability:</label>
+    <textarea rows="4" cols="10" id="availability" maxlength="1024">{{availability}}</textarea>
+    <span class="smaller">
+      Which days or dates are you available? We will try to line up deliveries for you on these dates and days.
+    </span>
+
+    <label for="comments" class="form-header">Comments:</label>
+    <textarea rows="4" cols="10" id="comments" maxlength="1024">{{comments}}</textarea>
+    <span class="smaller">
+      Is there anything else that would be helpful for us to know?
+    </span>
   </div>
 
-  <button class="update-button">Update</button>
+  <button class="update-button" onclick="sendUpdate()">Update</button>
+  <div class="horizontal padding">
+    <div id="greenCheck" class="green-check hidden">&#10003;</div>
+    <div id="confirmation" class="confirm-message"></div>
+  </div>
+  <div id="errorMessage" class="errorMessage"></div>
 </div>
 
-<h2>Information Policy</h2>
+<h3>Information Policy</h3>
 
 <div class="mission-statement larger">
   <p>
@@ -59,33 +72,22 @@
   </p>
 </div>
 
-<h2>Go Inactive</h2>
+<h3>Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}</h3>
 <div class="mission-statement">
   <div class="nav-button-container">
-    <a href="/driver/go-inactive">
+    <a href="/driver/toggle-active">
       <button type="button" class="nav-button wide-button danger-fields">
-        Click Here to Go Inactive
+        Click Here to Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}
       </button>
     </a>
   </div>
   <span class="larger">
+     {{#active}}
   Going unavailable for a little while? Click to go inactive. You can re-activate your account later when you're ready.
-  </span>
-</div>
-
-
-<h2>Opt Out</h2>
-
-<div class="mission-statement">
-  <div class="nav-button-container">
-    <a href="/driver/opt-out">
-      <button type="button" class="nav-button wide-button danger-fields">
-        Click Here to Opt-Out
-      </button>
-    </a>
-  </div>
-  <span class="larger">
-  Click to opt-out if you no longer wish to be a driver within our network.
+     {{/active}}
+     {{^active}}
+  Ready to go active again? Click to go active.
+     {{/active}}
   </span>
 </div>
 

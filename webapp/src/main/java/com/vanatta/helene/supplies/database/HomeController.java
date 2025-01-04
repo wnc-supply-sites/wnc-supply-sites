@@ -20,6 +20,8 @@ public class HomeController {
   public ModelAndView home(@ModelAttribute(LoggedInAdvice.USER_ROLES) List<UserRole> roles) {
     Map<String, Object> params = new HashMap<>();
     params.put("isAuthenticated", roles.contains(UserRole.AUTHORIZED));
+    params.put("isDriver", roles.contains(UserRole.DRIVER));
+    params.put("canManageSites", UserRole.canManageSites(roles));
     return new ModelAndView("home/home", params);
   }
 

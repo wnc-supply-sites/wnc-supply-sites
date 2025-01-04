@@ -41,16 +41,7 @@ class LoggedInAdviceTest {
   /** Drivers get their role by being in the driver table. */
   @Test
   void driverUserRole() {
-    DriverDao.upsert(
-        jdbiTest,
-        DriverDao.Driver.builder()
-            .location("city")
-            .active(true)
-            .airtableId(-604L)
-            .licensePlates("WXC444")
-            .fullName("driver")
-            .phone(number)
-            .build());
+    DriverDao.upsert(jdbiTest, TestConfiguration.buildDriver(-604L, number));
 
     assertThat(LoggedInAdvice.computeUserRoles(jdbiTest, token))
         .containsExactly(UserRole.AUTHORIZED, UserRole.DRIVER);
@@ -105,7 +96,8 @@ class LoggedInAdviceTest {
   /** By default, no sites for a user. */
   @Test
   void noSites() {
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).isEmpty();
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.AUTHORIZED)))
+        .isEmpty();
   }
 
   /** Add a user as a primary manager to a few sites and validate we gain access. */
@@ -115,12 +107,14 @@ class LoggedInAdviceTest {
     long siteId = TestConfiguration.getSiteId(siteName);
     ManageSiteDao.updateSiteField(jdbiTest, siteId, ManageSiteDao.SiteField.CONTACT_NUMBER, number);
 
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).containsExactly(siteId);
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.SITE_MANAGER)))
+        .containsExactly(siteId);
 
     long anotherSiteId = TestConfiguration.getSiteId(TestConfiguration.addSite());
     ManageSiteDao.updateSiteField(
         jdbiTest, anotherSiteId, ManageSiteDao.SiteField.CONTACT_NUMBER, number);
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).contains(siteId, anotherSiteId);
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.SITE_MANAGER)))
+        .contains(siteId, anotherSiteId);
   }
 
   /**
@@ -130,11 +124,13 @@ class LoggedInAdviceTest {
   void sites_secondaryManager() {
     long siteId = TestConfiguration.getSiteId(TestConfiguration.addSite());
     ContactDao.addAdditionalSiteManager(jdbiTest, siteId, "name", number);
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).containsExactly(siteId);
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.SITE_MANAGER)))
+        .containsExactly(siteId);
 
     long anotherSiteId = TestConfiguration.getSiteId(TestConfiguration.addSite());
     ContactDao.addAdditionalSiteManager(jdbiTest, anotherSiteId, "name", number);
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).contains(siteId, anotherSiteId);
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.SITE_MANAGER)))
+        .contains(siteId, anotherSiteId);
   }
 
   /**
@@ -151,7 +147,7 @@ class LoggedInAdviceTest {
     long secondarySiteId = TestConfiguration.getSiteId(TestConfiguration.addSite());
     ContactDao.addAdditionalSiteManager(jdbiTest, secondarySiteId, "name", number);
 
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token))
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.SITE_MANAGER)))
         .contains(primarySiteId, secondarySiteId);
   }
 
@@ -161,26 +157,16 @@ class LoggedInAdviceTest {
    */
   @Test
   void dispatcherGetsAllSites() {
-    UserWhiteListWebhook.updateUserAndRoles(
-        jdbiTest,
-        UserWhiteListWebhook.UserWhiteListRequest.builder()
-            .roles(List.of(UserRole.DISPATCHER.name()))
-            .phoneNumber(number)
-            .build());
-    // data admin should get lots of sites, more than just a couple.
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).hasSizeGreaterThan(2);
+    // dispatchershould get lots of sites, more than just a couple.
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.DISPATCHER)))
+        .hasSizeGreaterThan(2);
   }
 
   /** Similar to dispatcher test, data admin get god-mode access as well. */
   @Test
   void dataAdminGetsAllSites() {
-    UserWhiteListWebhook.updateUserAndRoles(
-        jdbiTest,
-        UserWhiteListWebhook.UserWhiteListRequest.builder()
-            .roles(List.of(UserRole.DATA_ADMIN.name()))
-            .phoneNumber(number)
-            .build());
-    // dispatcher should get lots of sites, more than just a couple.
-    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token)).hasSizeGreaterThan(2);
+    // data admin should get lots of sites, more than just a couple.
+    assertThat(LoggedInAdvice.computeUserSites(jdbiTest, token, List.of(UserRole.DATA_ADMIN)))
+        .hasSizeGreaterThan(2);
   }
 }
