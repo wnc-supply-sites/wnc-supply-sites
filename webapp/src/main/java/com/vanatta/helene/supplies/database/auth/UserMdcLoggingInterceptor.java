@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
-
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.filter.OncePerRequestFilter;

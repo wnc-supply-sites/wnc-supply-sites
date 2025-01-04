@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
+import com.vanatta.helene.supplies.database.util.ThreadRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,6 @@ public class SendDriverUpdate {
       return;
     }
 
-    new Thread(() -> HttpPostSender.sendAsJson(airtableWebhookUrl, driver)).start();
+    ThreadRunner.run(() -> HttpPostSender.sendAsJson(airtableWebhookUrl, driver));
   }
 }

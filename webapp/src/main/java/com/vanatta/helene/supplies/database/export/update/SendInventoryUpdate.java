@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.export.update;
 
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
+import com.vanatta.helene.supplies.database.util.ThreadRunner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -59,7 +60,7 @@ public class SendInventoryUpdate {
               .itemStatus("Removed")
               .itemNeedWssId(wssId)
               .build();
-      new Thread(() -> HttpPostSender.sendAsJson(webhookUrl, dataToSend)).start();
+      ThreadRunner.run(() -> HttpPostSender.sendAsJson(webhookUrl, dataToSend));
     }
   }
 

@@ -8,6 +8,7 @@ import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
+import com.vanatta.helene.supplies.database.util.ThreadRunner;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -220,7 +221,7 @@ public class InventoryController {
 
     InventoryDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
 
-    new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
+    ThreadRunner.run(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName));
 
     return ResponseEntity.ok("Updated");
   }
@@ -253,11 +254,10 @@ public class InventoryController {
     InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
         .ifPresent(
             wssId ->
-                new Thread(
-                        () ->
-                            sendInventoryUpdate.sendItemRemoval(
-                                itemName, siteData.getSiteName(), wssId))
-                    .start());
+                ThreadRunner.run(
+                    () ->
+                        sendInventoryUpdate.sendItemRemoval(
+                            itemName, siteData.getSiteName(), wssId)));
     InventoryDao.updateSiteItemInactive(jdbi, Long.parseLong(siteId), itemName);
     return ResponseEntity.ok("Updated");
   }
@@ -287,7 +287,7 @@ public class InventoryController {
       InventoryDao.updateItemStatus(jdbi, Long.parseLong(siteId), itemName, newStatus);
       var latestStatus = ItemStatus.fromTextValue(newStatus);
       if (oldStatus != latestStatus) {
-        new Thread(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName)).start();
+        ThreadRunner.run(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName));
       }
     }
 

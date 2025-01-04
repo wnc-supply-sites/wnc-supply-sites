@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.export.update;
 import com.vanatta.helene.supplies.database.data.DonationStatus;
 import com.vanatta.helene.supplies.database.data.SiteType;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
+import com.vanatta.helene.supplies.database.util.ThreadRunner;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -45,12 +46,11 @@ public class SendSiteUpdate {
     if (!enabled) {
       return;
     }
-    new Thread(
-            () -> {
-              var siteExportJson = lookupSite(jdbi, siteId);
-              HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
-            })
-        .start();
+    ThreadRunner.run(
+        () -> {
+          var siteExportJson = lookupSite(jdbi, siteId);
+          HttpPostSender.sendAsJson(webhookUrl, siteExportJson);
+        });
   }
 
   static SiteExportJson lookupSite(Jdbi jdbi, long siteId) {
