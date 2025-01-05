@@ -148,7 +148,7 @@ public class LoggedInAdvice {
                 h ->
                     h.createQuery(
                             """
-                            select 1 from driver where phone = :phone
+                            select 1 from driver where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
                           """)
                         .bind("phone", userPhone)
                         .mapTo(Long.class)

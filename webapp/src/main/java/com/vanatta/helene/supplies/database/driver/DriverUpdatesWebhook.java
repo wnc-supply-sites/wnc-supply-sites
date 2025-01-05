@@ -19,7 +19,17 @@ public class DriverUpdatesWebhook {
   ResponseEntity<String> receiveDriverUpdates(@RequestBody String driver) {
     log.info("Received driver upsert: {}", driver);
     Driver driverJson = Driver.parseJson(driver);
-    DriverDao.upsert(jdbi, driverJson);
+    try {
+      DriverDao.upsert(jdbi, driverJson);
+    } catch (Exception e) {
+      if (e.getMessage().contains("duplicate key")) {
+        log.warn("Duplicate driver received: {}", driver);
+        return ResponseEntity.badRequest()
+            .body("Duplicate driver, phone number already exists with another driver");
+      } else {
+        throw e;
+      }
+    }
 
     return ResponseEntity.ok("ok");
   }
