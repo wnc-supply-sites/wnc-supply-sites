@@ -45,6 +45,13 @@ function sendUpdate() {
         if (response.ok) {
           document.getElementById("greenCheck").classList.remove("hidden");
           document.getElementById("confirmation").innerHTML = "Updated!";
+
+          setTimeout(function () {
+                document.getElementById("greenCheck").classList.add("hidden");
+                document.getElementById("confirmation").innerHTML = "";
+              },
+              2500);
+
           showPasswordUpdatedDiv();
         } else {
           const responseJson = await response.json();
