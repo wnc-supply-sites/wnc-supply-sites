@@ -416,4 +416,23 @@ class SuppliesControllerTest {
     assertThat(searchResults).isNotEmpty();
     assertThat(searchResults.getFirst().getNeededItems()).isNotEmpty();
   }
+
+  /**
+   * If someone has their web browser open for an absurdly long time, we can have county lists that
+   * have no comma.
+   *
+   * <p>If we have that, then just ignore the county.
+   */
+  @Test
+  void validateBug_oldCountyList() {
+    var searchResults =
+        suppliesController
+            .getSuppliesData(
+                SiteSupplyRequest.builder().counties(List.of("Polk", "Watauga, NC")).build())
+            .getResults()
+            .stream()
+            .toList();
+    assertThat(searchResults).isNotEmpty();
+    searchResults.forEach(result -> assertThat(result.getCounty()).isEqualTo("Watauga"));
+  }
 }

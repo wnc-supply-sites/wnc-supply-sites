@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
+@Slf4j
 public class SuppliesDao {
 
   @NoArgsConstructor
@@ -129,11 +131,20 @@ public class SuppliesDao {
 
             for (int i = 0; i < request.getCounties().size(); i++) {
               String c = request.getCounties().get(i);
-              String county = c.split(",")[0].trim();
-              String state = c.split(",")[1].trim();
+              if (c.contains(",")) {
+                String county = c.split(",")[0].trim();
+                String state = c.split(",")[1].trim();
 
-              queryBuilder.bind("county" + i, county);
-              queryBuilder.bind("state" + i, state);
+                queryBuilder.bind("county" + i, county);
+                queryBuilder.bind("state" + i, state);
+              } else {
+                log.warn(
+                    "Supply search, county filter, received unexpected county "
+                        + "result that was not in this format 'county,sate': {}",
+                    c);
+                queryBuilder.bind("county" + i, "");
+                queryBuilder.bind("state" + i, "");
+              }
             }
           }
           if (!request.getItems().isEmpty()) {
