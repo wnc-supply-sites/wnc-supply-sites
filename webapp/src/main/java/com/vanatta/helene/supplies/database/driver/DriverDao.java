@@ -1,9 +1,8 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.google.gson.Gson;
-import java.util.Optional;
-
 import com.vanatta.helene.supplies.database.util.PhoneNumberUtil;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -4,6 +4,7 @@ import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.util.PhoneNumberUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,8 @@ class DriverUpdatesWebhookTest {
 
     Driver resultFromDb = DriverDao.lookupByPhone(jdbiTest, driver.getPhone()).orElseThrow();
     assertThat(resultFromDb.getFullName()).isEqualTo(driver.getFullName());
-    assertThat(resultFromDb.getPhone()).isEqualTo(driver.getPhone());
+    assertThat(resultFromDb.getPhone())
+        .isEqualTo(PhoneNumberUtil.removeNonNumeric(driver.getPhone()));
     assertThat(resultFromDb.getLocation()).isEqualTo(driver.getLocation());
     assertThat(resultFromDb.getComments()).isEqualTo(driver.getComments());
     assertThat(resultFromDb.getAvailability()).isEqualTo(driver.getAvailability());
