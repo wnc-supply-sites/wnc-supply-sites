@@ -21,6 +21,7 @@ public class SuppliesDao {
     String county;
     String state;
     String item;
+    String itemTags;
     String itemStatus;
     LocalDate inventoryLastUpdated;
     LocalDate lastDeliveryDate;
@@ -41,12 +42,14 @@ public class SuppliesDao {
         i.name item,
         ist.name itemStatus,
         s.inventory_last_updated inventoryLastUpdated,
+        string_agg(it.tag_name, ',') itemTags,
         max(d.target_delivery_date) filter (where d.delivery_status = 'Delivery Completed') lastDeliveryDate
       from site s
       join site_type st on st.id = s.site_type_id
       join county c on c.id = s.county_id
       left join site_item si on si.site_id = s.id
       left join item i on i.id = si.item_id
+      left join item_tag it on it.item_id = i.id
       left join item_status ist on ist.id = si.item_status_id
       left join delivery d on d.to_site_id = s.id
       where s.active = true

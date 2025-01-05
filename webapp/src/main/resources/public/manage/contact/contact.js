@@ -159,7 +159,6 @@ function updateContact(siteId) {
     phone: phone.value.trim(),
     siteId: siteId
   });
-  console.log("sending: " + json);
 
   fetch("/manage/add-manager", {
     method: 'POST',

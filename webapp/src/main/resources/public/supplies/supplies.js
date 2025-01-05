@@ -9,7 +9,7 @@ function prePopulateCheckboxValuesIntoSession() {
         if (checkbox.checked) fieldsetValue.push(checkbox.id);
       });
       sessionStorage.setItem(fieldset.id, JSON.stringify(fieldsetValue));
-    };
+    }
   });
 };
 
@@ -280,9 +280,10 @@ function formatItems(items) {
 }
 
 function formatAsList(items) {
+
   return "<ul>\n" +
       items.map(i =>
-          `<li><div class="${i.displayClass}">${i.name}</div></li>\n`
+          `<li><input type="hidden" value="${i.tags}"><div class="${i.displayClass}">${i.name}</div></li>\n`
       ).join("\n")
       + "\n</ul>";
 }

@@ -35,6 +35,7 @@ public class SiteSupplyResponse {
   static class SiteItem {
     String name;
     String displayClass;
+    List<String> tags;
 
     public String getDisplayClass() {
       if (List.of("urgent", "needed", "available", "oversupply").contains(displayClass)) {

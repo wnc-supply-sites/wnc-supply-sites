@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.inventory;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
@@ -26,23 +27,23 @@ class InventoryDaoTest {
     long siteId = TestConfiguration.getSiteId("site1");
 
     // first make sure 'gloves' are not active
-    var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    var result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     ManageSiteDao.SiteInventory gloves = findItemByName(result, "gloves");
     assertThat(gloves.isActive()).isFalse();
 
     // set gloves to back to 'active'
-    InventoryDao.updateSiteItemActive(TestConfiguration.jdbiTest, siteId, "gloves", "Oversupply");
+    InventoryDao.updateSiteItemActive(jdbiTest, siteId, "gloves", "Oversupply");
 
     // verify gloves are active
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     gloves = findItemByName(result, "gloves");
     assertThat(gloves.isActive()).isTrue();
 
     // set gloves to back to 'inactive'
-    InventoryDao.updateSiteItemInactive(TestConfiguration.jdbiTest, siteId, "gloves");
+    InventoryDao.updateSiteItemInactive(jdbiTest, siteId, "gloves");
 
     // verify gloves are inactive
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     gloves = findItemByName(result, "gloves");
     assertThat(gloves.isActive()).isFalse();
   }
@@ -52,53 +53,49 @@ class InventoryDaoTest {
     long siteId = TestConfiguration.getSiteId("site1");
 
     // validate gloves status is 'Available'
-    var result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    var result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     ManageSiteDao.SiteInventory water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.AVAILABLE.getText());
 
     // change gloves status to 'Urgent Need'
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
+    InventoryDao.updateItemStatus(jdbiTest, siteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
 
     // validation (1)
-    var newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    var newStatus = InventoryDao.fetchItemStatus(jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.URGENTLY_NEEDED);
 
     // validation (2) water status is updated 'Urgent Need'
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.URGENTLY_NEEDED.getText());
 
     // change water status to 'Oversupply'
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.OVERSUPPLY.getText());
+    InventoryDao.updateItemStatus(jdbiTest, siteId, "water", ItemStatus.OVERSUPPLY.getText());
 
     // validate water status is updated 'Oversupply'
-    newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    newStatus = InventoryDao.fetchItemStatus(jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.OVERSUPPLY);
 
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.OVERSUPPLY.getText());
 
     // change water status to 'Need'
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.NEEDED.getText());
+    InventoryDao.updateItemStatus(jdbiTest, siteId, "water", ItemStatus.NEEDED.getText());
 
     // validate water status is updated 'Need'
-    newStatus = InventoryDao.fetchItemStatus(TestConfiguration.jdbiTest, siteId, "water");
+    newStatus = InventoryDao.fetchItemStatus(jdbiTest, siteId, "water");
     assertThat(newStatus).isEqualTo(ItemStatus.NEEDED);
 
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.NEEDED.getText());
 
     // change gloves status back to 'Available'
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, siteId, "water", ItemStatus.AVAILABLE.getText());
+    InventoryDao.updateItemStatus(jdbiTest, siteId, "water", ItemStatus.AVAILABLE.getText());
 
     // validate gloves status is updated 'Need'
-    result = ManageSiteDao.fetchSiteInventory(TestConfiguration.jdbiTest, siteId);
+    result = ManageSiteDao.fetchSiteInventory(jdbiTest, siteId);
     water = findItemByName(result, "water");
     assertThat(water.getItemStatus()).isEqualTo(ItemStatus.AVAILABLE.getText());
   }
@@ -107,7 +104,7 @@ class InventoryDaoTest {
   void addItem() {
     int itemCountPreInsert = countItems();
 
-    boolean result = InventoryDao.addNewItem(TestConfiguration.jdbiTest, "new item");
+    boolean result = InventoryDao.addNewItem(jdbiTest, "new item");
     assertThat(result).isTrue();
 
     int itemCountPostInsert = countItems();
@@ -115,14 +112,14 @@ class InventoryDaoTest {
   }
 
   private static int countItems() {
-    return TestConfiguration.jdbiTest.withHandle(
+    return jdbiTest.withHandle(
         handle -> handle.createQuery("select count(*) from item").mapTo(Integer.class).one());
   }
 
   @Test
   void duplicateItemIsNoOp() {
-    InventoryDao.addNewItem(TestConfiguration.jdbiTest, "some item");
-    boolean result = InventoryDao.addNewItem(TestConfiguration.jdbiTest, "SOME ITEM");
+    InventoryDao.addNewItem(jdbiTest, "some item");
+    boolean result = InventoryDao.addNewItem(jdbiTest, "SOME ITEM");
     assertThat(result).isFalse();
   }
 
@@ -139,29 +136,26 @@ class InventoryDaoTest {
     String name = UUID.randomUUID().toString();
     int startCount = countSiteItemAuditRecords();
 
-    InventoryDao.addNewItem(TestConfiguration.jdbiTest, name);
+    InventoryDao.addNewItem(jdbiTest, name);
 
     // adding a new item should not change the site_item_audit count
     assertThat(countSiteItemAuditRecords()).isEqualTo(startCount);
 
     long site1Id = TestConfiguration.getSiteId("site1");
-    InventoryDao.updateSiteItemActive(
-        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.AVAILABLE.getText());
+    InventoryDao.updateSiteItemActive(jdbiTest, site1Id, name, ItemStatus.AVAILABLE.getText());
     assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 1);
 
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.URGENTLY_NEEDED.getText());
+    InventoryDao.updateItemStatus(jdbiTest, site1Id, name, ItemStatus.URGENTLY_NEEDED.getText());
     assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 2);
-    InventoryDao.updateItemStatus(
-        TestConfiguration.jdbiTest, site1Id, name, ItemStatus.NEEDED.getText());
+    InventoryDao.updateItemStatus(jdbiTest, site1Id, name, ItemStatus.NEEDED.getText());
     assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 3);
 
-    InventoryDao.updateSiteItemInactive(TestConfiguration.jdbiTest, site1Id, name);
+    InventoryDao.updateSiteItemInactive(jdbiTest, site1Id, name);
     assertThat(countSiteItemAuditRecords()).isEqualTo(startCount + 4);
   }
 
   private static int countSiteItemAuditRecords() {
-    return TestConfiguration.jdbiTest.withHandle(
+    return jdbiTest.withHandle(
         handle ->
             handle.createQuery("select count(*) from site_item_audit").mapTo(Integer.class).one());
   }
@@ -185,23 +179,23 @@ class InventoryDaoTest {
     void markSiteItemsNotNeeded() {
       String newSiteName = TestConfiguration.addSite();
       long newSiteId = TestConfiguration.getSiteId(newSiteName);
-      var siteDetail = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, newSiteId);
+      var siteDetail = SiteDetailDao.lookupSiteById(jdbiTest, newSiteId);
 
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
+          jdbiTest, newSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
+          jdbiTest, newSiteId, "water", ItemStatus.URGENTLY_NEEDED.getText());
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "batteries", ItemStatus.NEEDED.getText());
+          jdbiTest, newSiteId, "batteries", ItemStatus.NEEDED.getText());
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "heater", ItemStatus.AVAILABLE.getText());
+          jdbiTest, newSiteId, "heater", ItemStatus.AVAILABLE.getText());
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "used clothes", ItemStatus.OVERSUPPLY.getText());
+          jdbiTest, newSiteId, "used clothes", ItemStatus.OVERSUPPLY.getText());
       InventoryDao.updateSiteItemActive(
-          TestConfiguration.jdbiTest, newSiteId, "new clothes", ItemStatus.OVERSUPPLY.getText());
+          jdbiTest, newSiteId, "new clothes", ItemStatus.OVERSUPPLY.getText());
 
       InventoryDao.markItemsAsNotNeeded(
-          TestConfiguration.jdbiTest,
+          jdbiTest,
           siteDetail.getWssId(),
           List.of(
               TestConfiguration.GLOVES_WSS_ID,
@@ -213,8 +207,7 @@ class InventoryDaoTest {
 
       var supplyResults =
           SuppliesDao.getSupplyResults(
-              TestConfiguration.jdbiTest,
-              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build());
+              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build());
       confirmItemStatus(supplyResults, "gloves", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "water", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "batteries", ItemStatus.AVAILABLE);
@@ -242,19 +235,32 @@ class InventoryDaoTest {
     void markItemsAsNotNeeded_inActiveItemsStayInactive() {
       String newSiteName = TestConfiguration.addSite();
       long newSiteId = TestConfiguration.getSiteId(newSiteName);
-      var siteDetail = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, newSiteId);
+      var siteDetail = SiteDetailDao.lookupSiteById(jdbiTest, newSiteId);
 
       InventoryDao.markItemsAsNotNeeded(
-          TestConfiguration.jdbiTest,
-          siteDetail.getWssId(),
-          List.of(TestConfiguration.GLOVES_WSS_ID));
+          jdbiTest, siteDetail.getWssId(), List.of(TestConfiguration.GLOVES_WSS_ID));
 
       // we added no inventory to this new site. Even after marking an item as not needed
       // the site should still have no inventory.
       SuppliesDao.getSupplyResults(
-              TestConfiguration.jdbiTest,
-              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
+              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
           .forEach(r -> assertThat(r.getItem()).isNull());
+    }
+
+    @Test
+    void itemTagsAreReturned() {
+      String newSiteName = TestConfiguration.addSite();
+      long newSiteId = TestConfiguration.getSiteId(newSiteName);
+      InventoryDao.updateSiteItemActive(
+          jdbiTest, newSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
+      ItemTagDao.updateDescriptionTags(
+          jdbiTest, TestConfiguration.GLOVES_WSS_ID, List.of("toddler"));
+
+      // we added no inventory to this new site. Even after marking an item as not needed
+      // the site should still have no inventory.
+      SuppliesDao.getSupplyResults(
+              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
+          .forEach(r -> assertThat(r.getItemTags()).contains("toddler"));
     }
   }
 }

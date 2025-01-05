@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +78,7 @@ public class SuppliesController {
   SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, boolean isAuthenticated) {
     request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
 
-    var results = SuppliesDao.getSupplyResults(jdbi, request);
+    List<SuppliesDao.SuppliesQueryResult> results = SuppliesDao.getSupplyResults(jdbi, request);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
 
@@ -110,6 +111,13 @@ public class SuppliesController {
                 SiteItem.builder()
                     .name(result.getItem())
                     .displayClass(itemStatus.getCssClass())
+                    .tags(
+                        result.getItemTags() == null
+                            ? List.of()
+                            : Arrays.stream(result.getItemTags().split(","))
+                                .distinct()
+                                .sorted()
+                                .toList())
                     .build();
 
             if (itemStatus.isNeeded()) {
