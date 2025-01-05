@@ -2,6 +2,7 @@ package com.vanatta.helene.supplies.database.supplies;
 
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.manage.inventory.ItemTagDao;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +45,9 @@ public class SuppliesController {
         "notAcceptingDonationsChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("overSupplyChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put("availableChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
+    templateValues.put(
+        "tagList",
+        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> "\"" + tag + "\"").toList());
     return new ModelAndView("supplies/supplies", templateValues);
   }
 

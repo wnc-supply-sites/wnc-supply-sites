@@ -90,7 +90,9 @@ public class InventoryController {
             .toList();
 
     pageParams.put("inventoryList", inventoryList);
-    pageParams.put("tagList", ItemTagDao.fetchAllDescriptionTags(jdbi));
+    pageParams.put(
+        "tagList",
+        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> "\"" + tag + "\"").toList());
 
     return new ModelAndView("manage/inventory/inventory", pageParams);
   }
