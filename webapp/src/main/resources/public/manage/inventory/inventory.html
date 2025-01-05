@@ -51,6 +51,7 @@
           </td>
           <td onclick="checkAndToggleInventory('{{siteId}}', '{{itemName}}')">
             <div>
+              <input type="hidden" value="{{tags}}" />
               <span class="inventoryLabel {{itemLabelClass}} {{itemStatusDisabled}}"
                      id="{{itemName}}Label">
                 {{itemName}}

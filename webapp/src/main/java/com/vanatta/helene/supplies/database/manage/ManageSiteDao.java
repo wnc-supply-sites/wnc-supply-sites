@@ -390,9 +390,12 @@ public class ManageSiteDao {
             i.id item_id,
             i.name item_name,
             case when inv.site_id is null then false else true end active,
-            inv.status_name item_status
+            inv.status_name item_status,
+            string_agg(it.tag_name, ',') itemTags
         from item i
         left join inventory inv on inv.item_id = i.id
+        left join item_tag it on it.item_id = i.id
+        group by i.id, i.name, inv.site_id, inv.status_name
     """;
 
     return jdbi.withHandle(
@@ -411,7 +414,12 @@ public class ManageSiteDao {
     long itemId;
     String itemName;
     String itemStatus;
+    String itemTags;
     boolean active;
+
+    public List<String> getTags() {
+      return itemTags == null ? List.of() : Arrays.stream(itemTags.split(",")).sorted().toList();
+    }
   }
 
   /**

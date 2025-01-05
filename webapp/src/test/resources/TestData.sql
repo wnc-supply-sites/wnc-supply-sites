@@ -11,6 +11,7 @@ delete from delivery_confirmation;
 delete from delivery;
 delete from site_item_audit;
 delete from site_item;
+delete from item_tag;
 delete from item;
 delete from site_audit_trail;
 delete from additional_site_manager;

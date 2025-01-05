@@ -257,4 +257,9 @@ public class InventoryDao {
           handle -> handle.createUpdate(update).bindList("inventoryIds", inventoryIds).execute());
     }
   }
+
+  /** An 'alias' method for ManageSiteDao#fetchSiteInventory */
+  public static List<ManageSiteDao.SiteInventory> fetchSiteInventory(Jdbi jdbi, long siteId) {
+    return ManageSiteDao.fetchSiteInventory(jdbi, siteId);
+  }
 }

@@ -90,6 +90,7 @@ public class InventoryController {
             .toList();
 
     pageParams.put("inventoryList", inventoryList);
+    pageParams.put("tagList", ItemTagDao.fetchAllDescriptionTags(jdbi));
 
     return new ModelAndView("manage/inventory/inventory", pageParams);
   }
@@ -99,6 +100,7 @@ public class InventoryController {
   @AllArgsConstructor
   static class ItemInventoryDisplay {
     String itemName;
+    List<String> tags;
 
     /** Should either be blank or "checked" */
     @Builder.Default String itemChecked = "";
@@ -110,6 +112,7 @@ public class InventoryController {
 
     ItemInventoryDisplay(ManageSiteDao.SiteInventory siteInventory) {
       itemName = siteInventory.getItemName();
+      tags = siteInventory.getTags();
       itemChecked = siteInventory.isActive() ? "checked" : "";
 
       urgentChecked =
