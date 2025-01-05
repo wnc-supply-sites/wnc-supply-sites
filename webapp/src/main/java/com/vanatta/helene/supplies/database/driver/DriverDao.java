@@ -2,6 +2,8 @@ package com.vanatta.helene.supplies.database.driver;
 
 import com.google.gson.Gson;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.util.PhoneNumberUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +27,9 @@ public class DriverDao {
                       license_plates,
                       availability,
                       comments
-                    from driver where phone = :phone
+                    from driver where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
                     """)
-                .bind("phone", phoneNumber)
+                .bind("phone", PhoneNumberUtil.removeNonNumeric(phoneNumber))
                 .mapToBean(Driver.class)
                 .findOne());
   }
@@ -63,7 +65,7 @@ public class DriverDao {
             """)
                 .bind("airtableId", driver.getAirtableId())
                 .bind("name", driver.getFullName())
-                .bind("phone", driver.getPhone())
+                .bind("phone", PhoneNumberUtil.removeNonNumeric(driver.getPhone()))
                 .bind("location", driver.getLocation())
                 .bind("active", driver.isActive())
                 .bind("blacklisted", driver.isBlacklisted())
@@ -127,11 +129,15 @@ public class DriverDao {
                 .createUpdate(
                     """
                         update driver set
-                          active = (select not active from driver where phone = :phone),
+                          active = (
+                            select not active
+                            from driver
+                            where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
+                          ),
                           last_updated = now()
                         where phone = :phone
                         """)
-                .bind("phone", phone)
+                .bind("phone", PhoneNumberUtil.removeNonNumeric(phone))
                 .execute());
   }
 }

@@ -46,6 +46,20 @@ class DriverControllerTest {
   }
 
   @Test
+  void driverLookupWorksWithAnyFormatting() {
+    DriverDao.upsert(
+        jdbiTest, driver.toBuilder().airtableId(-10_000L).phone("(111) 111-1111").build());
+    var modelAndView = driverController.showDriverPortal("(111) 111-1111");
+    assertThat(modelAndView.getViewName()).isEqualTo("driver/portal");
+
+    modelAndView = driverController.showDriverPortal("111.111.1111");
+    assertThat(modelAndView.getViewName()).isEqualTo("driver/portal");
+
+    modelAndView = driverController.showDriverPortal("1111111111");
+    assertThat(modelAndView.getViewName()).isEqualTo("driver/portal");
+  }
+
+  @Test
   void updateDriver() {
     Map<String, String> params = new HashMap<>();
     params.put(DriverController.PageParams.comments.name(), "comments demo");
