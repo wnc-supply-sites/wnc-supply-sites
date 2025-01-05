@@ -194,15 +194,9 @@ sudo -u postgres psql wnc_helene < db-dump.sql
 
 DB dump from prod to staging:
 ```
-sudo -u postgres pg_dump -U postgres wnc_helene > db-dump.sql
-docker stop staging
-sudo -u postgres dropdb wnc_helene_test
-echo "create database wnc_helene_test;
-alter database wnc_helene_test owner to wnc_helene;
-" | sudo -u postgres psql
-sudo -u postgres psql wnc_helene_test < db-dump.sql
-docker start staging
-rm db-dump.sql
+# use the helper script, simply run the following
+
+/root/copy-prod-data-to-staging.sh
 ```
 
 ### HTTPS config (certbot)
@@ -279,3 +273,43 @@ page would have crashed for the user.
 <img src="bad-post.png">
 
 ----
+
+
+## Debugging Login Issues
+
+- check table `login_history` to see if the user has ever attempted to login with their phone number
+- check table `sms_passcode` to see if the user successfully generated a SMS passcode. If no, then
+  the problem is most likely a white listing problem. Check logs for error messages the error message:
+`      log.warn("Access code requested for unregistered phone number: {}", phoneNumber);` (SendAccessTokenController.java)
+  If we see that error message, the user is not on a white list.
+- The logic for whether a phone number is white listed is in: `SendAccessTokenDaa#isPhoneNumberRegistered`
+- Brand new site managers, dispatchers, and data-admins are white listed through airtable
+- Existing site managers are white listed by either being the primary contact for a site,
+  or if they are listed as an additional site manager. Use the WSS UI to add site-managers
+  as additional site managers.
+- Drivers are whitelisted by being in the 'drivers' table. Drivers are created in airtable by
+  submitting the 'driver volunteer' application, which creates a row in Airtable. Airtable
+  automation then sends the new driver record to the website. Check the drivers table for the driver
+  and check airtable automations for any failures. Check airtable that the driver row exists,
+  if the driver row exists in airtable but no in WSS, use the "manual trigger" checkbox to trigger
+  a data sync.
+
+
+## Copy prod database to local
+
+This is useful for reproducing errors from production
+
+On the server: `sudo -u postgres pg_dump -U postgres wnc_helene > db-dump.sql`
+
+Then SCP the file to localhost
+
+Locally, drop database and recreate:
+```
+drop database wnc_helene;
+create database wnc_helene;
+alter database wnc_helene owner to wnc_helene
+```
+
+Then import dump file:
+`sudo -u postgres psql wnc_helene < db-dump.sql`
+
