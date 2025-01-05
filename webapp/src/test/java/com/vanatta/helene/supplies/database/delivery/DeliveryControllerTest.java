@@ -67,6 +67,7 @@ class DeliveryControllerTest {
                               TemplateParams.cancelReason,
                               TemplateParams.confirmMessage,
                               TemplateParams.deliveryDate,
+                              TemplateParams.dispatcherNotes,
                               TemplateParams.dispatcherPhone,
                               TemplateParams.driverConfirmed,
                               TemplateParams.driverPhone,

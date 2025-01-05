@@ -187,7 +187,14 @@
   </div>
 
 
-  <!-- ITEMS -->
+  {{#dispatcherNotes}}
+  <div class="page-subsection">
+    <div class="large-section-header">Dispatcher Notes</div>
+    <div class="dispatcher-notes">{{.}}</div>
+  </div>
+  {{/dispatcherNotes}}
+
+    <!-- ITEMS -->
   <div class="page-subsection">
     <div class="large-section-header">Items ({{itemCount}})</div>
 

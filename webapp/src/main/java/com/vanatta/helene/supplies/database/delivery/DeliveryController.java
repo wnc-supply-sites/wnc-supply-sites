@@ -61,7 +61,6 @@ class DeliveryController {
     deliveryStatus,
     driverStatus,
 
-    itemCount,
     driverName,
     driverPhone,
     licensePlate,
@@ -87,6 +86,8 @@ class DeliveryController {
 
     googleMapLink,
 
+    dispatcherNotes,
+    itemCount,
     items1,
     items2,
     items3,
@@ -270,6 +271,11 @@ class DeliveryController {
       templateParams.put(TemplateParams.driverStatus.name(), null);
     }
 
+    templateParams.put(
+        TemplateParams.dispatcherNotes.name(),
+        delivery.getDispatcherNotes() == null || delivery.getDispatcherNotes().isBlank()
+            ? null
+            : delivery.getDispatcherNotes());
     templateParams.put(TemplateParams.itemCount.name(), delivery.getItemCount());
     templateParams.put(TemplateParams.driverName.name(), nullsToDash(delivery.getDriverName()));
     templateParams.put(TemplateParams.driverPhone.name(), delivery.getDriverPhoneNumber());
