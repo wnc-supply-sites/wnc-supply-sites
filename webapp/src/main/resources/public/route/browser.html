@@ -3,7 +3,7 @@
   <title>WNC Supply Sites - Driver Delivery Sign-Up</title>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
-  <link rel="stylesheet" href="delivery-sign-up.css"/>
+  <link rel="stylesheet" href="browser.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
@@ -56,10 +56,20 @@
 
   <tr>
     <td class="site">
+<!--      <iframe-->
+<!--        width="250"-->
+<!--        height="250"-->
+<!--        src="https://maps.google.com/maps?z=8&width=250&height=250&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">-->
+<!--      </iframe>-->
+
       <iframe
-        width="300"
-        height="300"
-        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+          width="250"
+          height="250"
+          style="border:0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed/v1/place?key={{apiKey}}&q={{fromGoogleMapsAddress}}&zoom=7">
       </iframe>
 
       <h4 class="sub-section-header">{{fromSiteName}}</h4>
@@ -71,10 +81,20 @@
     </td>
 
     <td class="site">
+<!--      <iframe-->
+<!--        width="250"-->
+<!--        height="250"-->
+<!--        src="https://maps.google.com/maps?z=8&width=250&height=250&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">-->
+<!--      </iframe>-->
+
       <iframe
-        width="300"
-        height="300"
-        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">
+          width="250"
+          height="250"
+          style="border:0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed/v1/place?key={{apiKey}}&q={{googleMapsAddress}}&zoom=7">
       </iframe>
 
       <h4 class="sub-section-header">{{toSiteName}}</h4>
@@ -86,7 +106,7 @@
 
     </td>
 
-    <td rowspan="2">
+    <td rowspan="2" class="item-column">
       <div class="vertical center">
         <div>
           {{itemCount}} items
@@ -108,14 +128,6 @@
     </td>
   </tr>
 
-
-  <tr>
-    <td colspan="2">
-      <div class="horizontal volunteer-button-row">
-        <button class="volunteer-button">Volunteer</button>
-      </div>
-    </td>
-  </tr>
   </tbody>
 </table>
 {{/deliveryOptions}}
