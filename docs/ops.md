@@ -316,6 +316,10 @@ Then import dump file:
 
 ## Log Configs
 
+Logs are set up to be available from: https://wnc-supply-sites.com/logs/
+(the trailing slash is important). The log file location is protected by username/password.
+
+
 - docker containers are configured via CLI options to send to logs to journald
 - journald is configured to forward logs to rsyslog
 - rsyslog is configured to send log files to `/var/log/docker/[container-name].log'
@@ -323,7 +327,28 @@ Then import dump file:
 The following blogpost was very helpful and contains the steps followed:
 - <https://chabik.com/rsyslog-and-docker/>
 
+### rsyslog conf file
 
+File: `/etc/rsyslog.d/22-docker.conf`:
+
+```
+$FileCreateMode 0666
+
+template(name="DockerLogFileName" type="list") {
+   constant(value="/var/log/docker/")
+   property(name="syslogtag" securepath="replace" regex.expression="docker/\\(.*\\)\\[" regex.submatch="1")
+   constant(value=".log")
+}
+
+if $programname == "docker" then {
+  if $syslogtag contains "docker/" then {
+    ?DockerLogFileName
+  } else {
+    action(type="omfile" file="/var/log/docker/no_tag.log")
+  }
+  stop
+}
+```
 
 ### NGINX config to serve logs
 
@@ -347,4 +372,6 @@ Add this block to `/etc/nginx/sites-enabled/default`:
     }
   }
 ```
+
+
 
