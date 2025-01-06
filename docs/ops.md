@@ -313,3 +313,38 @@ alter database wnc_helene owner to wnc_helene
 Then import dump file:
 `sudo -u postgres psql wnc_helene < db-dump.sql`
 
+
+## Log Configs
+
+- docker containers are configured via CLI options to send to logs to journald
+- journald is configured to forward logs to rsyslog
+- rsyslog is configured to send log files to `/var/log/docker/[container-name].log'
+
+The following blogpost was very helpful and contains the steps followed:
+- <https://chabik.com/rsyslog-and-docker/>
+
+
+
+### NGINX config to serve logs
+
+<https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-22-04>
+```
+echo -n 'USER-NAME:' >> /etc/nginx/.htpasswd"
+openssl passwd XXXXX  >> /etc/nginx/.htpasswd
+```
+
+Add this block to `/etc/nginx/sites-enabled/default`:
+
+```
+  location /logs/ {
+     default_type "text/plain";
+     autoindex         on;
+     alias             /var/log/docker/;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    types {
+      text/plain log;
+    }
+  }
+```
+
