@@ -195,9 +195,10 @@ public class RouteBrowserDao {
     Double distanceMiles;
   }
 
-  public static List<DeliveryOption> findDeliveryOptions(Jdbi jdbi) {
+  public static List<DeliveryOption> findDeliveryOptions(Jdbi jdbi, Long siteWssId) {
     String query =
-        """
+        String.format(
+            """
          WITH needy_items AS (
             SELECT s.id as site_id, si.item_id, ist.name urgency
             FROM site_item si
@@ -256,12 +257,38 @@ public class RouteBrowserDao {
               (sdm.site2_id = ni.site_id and sdm.site1_id = fromOverSupply.site_id)
         JOIN
             item i ON fromOverSupply.item_id = i.id
+        WHERE 1 = 1
+        %s
         order by lower(i.name)
-        """;
+        """,
+            siteWssId == null
+                ? ""
+                : "and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)\n");
+
     List<DeliveryOptionDbResult> dbResults =
         jdbi.withHandle(
-            handle -> handle.createQuery(query).mapToBean(DeliveryOptionDbResult.class).list());
+            handle -> {
+              var qb = handle.createQuery(query);
+              if (siteWssId != null) {
+                qb.bind("siteWssId", siteWssId);
+              }
+              return qb.mapToBean(DeliveryOptionDbResult.class).list();
+            });
 
     return aggregate(dbResults);
+  }
+
+  static List<RouteBrowserController.Site> fetchSites(Jdbi jdbi) {
+    return jdbi.withHandle(
+        h ->
+            h.createQuery(
+                    """
+                          select wss_id, name siteName
+                          from site
+                          where active = true
+                          order by name;
+                        """)
+                .mapToBean(RouteBrowserController.Site.class)
+                .list());
   }
 }

@@ -5,6 +5,10 @@
   <link rel="stylesheet" href="../mobile.css"/>
   <link rel="stylesheet" href="browser.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="browser.js"></script>
+  <script>
+    currentPage={{currentPage}};
+  </script>
   {{> header-include }}
 </head>
 <body>
@@ -18,7 +22,14 @@
   </div>
 
 <!--  <div class="larger">-->
-<!--  <h3>Filters</h3>-->
+  <h3>Filters</h3>
+
+  <label for="site">Site</label>
+  <select id="site" onchange="selectSite()">
+    {{#siteList}}
+    <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
+    {{/siteList}}
+  </select>
 
 <!--    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>-->
 <!--    <checkbox></checkbox>-->
@@ -83,7 +94,7 @@
       <div>{{fromCity}}, {{fromState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      <pre>{{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</pre>
+      <pre class="hours">{{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</pre>
     </td>
 
     <td class="site">
@@ -103,7 +114,7 @@
       <div>{{toCity}}, {{toState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      <pre>{{#toHours}}{{.}}{{/toHours}}{{^toHours}}Will Call{{/toHours}}</pre>
+      <pre class="hours">{{#toHours}}{{.}}{{/toHours}}{{^toHours}}Will Call{{/toHours}}</pre>
 
     </td>
 

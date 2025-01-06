@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.route.browser;
 
 import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
+import static org.assertj.core.api.Assertions.*;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
@@ -32,7 +33,10 @@ class RouteBrowserDaoTest {
     jdbiTest.withHandle(h -> h.createScript(clean).execute());
   }
 
-  /** Set up a site, validate that */
+  /**
+   * Set up a site with inventory, another with needs - validate that the site pairing are in the
+   * results for needs mathing.
+   */
   @Test
   void validateNeedsQuery() {
     /* From Site */
@@ -40,17 +44,18 @@ class RouteBrowserDaoTest {
     long hasNeedSiteId = TestConfiguration.getSiteId(newSiteWithNeed);
     InventoryDao.updateSiteItemActive(
         jdbiTest, hasNeedSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
-    ManageSiteDao.updateSiteField(jdbiTest, hasNeedSiteId, ManageSiteDao.SiteField.SITE_HOURS, "M-F");
-    
+    ManageSiteDao.updateSiteField(
+        jdbiTest, hasNeedSiteId, ManageSiteDao.SiteField.SITE_HOURS, "M-F");
+
     /* To Site */
     String newSiteWithInventory = TestConfiguration.addSite("warehouse");
     long newSiteWithInventoryId = TestConfiguration.getSiteId(newSiteWithInventory);
     InventoryDao.updateSiteItemActive(
         jdbiTest, newSiteWithInventoryId, "gloves", ItemStatus.OVERSUPPLY.getText());
-    ManageSiteDao.updateSiteField(jdbiTest, newSiteWithInventoryId, ManageSiteDao.SiteField.SITE_HOURS, "W-F");
-    
-    
-    var results = RouteBrowserDao.findDeliveryOptions(jdbiTest);
+    ManageSiteDao.updateSiteField(
+        jdbiTest, newSiteWithInventoryId, ManageSiteDao.SiteField.SITE_HOURS, "W-F");
+
+    var results = RouteBrowserDao.findDeliveryOptions(jdbiTest, null);
 
     Assertions.assertDoesNotThrow(
         () ->
@@ -64,5 +69,18 @@ class RouteBrowserDaoTest {
         String.format(
             "Expecting to have from-site: %s, going to to-site: %s,\nresults were: %s",
             newSiteWithInventory, newSiteWithNeed, results));
+  }
+
+  @Test
+  void fetchSites() {
+    TestConfiguration.setupDatabase();
+
+    var results = RouteBrowserDao.fetchSites(jdbiTest);
+    assertThat(results).isNotEmpty();
+    results.forEach(
+        r -> {
+          assertThat(r.getWssId()).isNotEqualTo(0L);
+          assertThat(r.getSiteName()).isNotNull();
+        });
   }
 }
