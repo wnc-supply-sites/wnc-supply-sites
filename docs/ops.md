@@ -301,7 +301,10 @@ This is useful for reproducing errors from production
 
 On the server: `sudo -u postgres pg_dump -U postgres wnc_helene > db-dump.sql`
 
-Then SCP the file to localhost
+Then SCP the file to localhost. From your localhost (laptop):
+```
+scp [user]@wnc-supply-sites.com:~/db-dump .
+```
 
 Locally, drop database and recreate:
 ```
