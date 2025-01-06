@@ -373,5 +373,27 @@ Add this block to `/etc/nginx/sites-enabled/default`:
   }
 ```
 
+## Disk Space Management
 
+- daily docker prune via cronjob
+```
+$ cat /etc/cron.daily/docker-prune 
+#!/bin/bash
+date >> /var/log/docker/docker-prune.log
+docker system prune -f >> /var/log/docker/docker-prune.log
+```
 
+- daily logrotate of application log files with 14 day retention
+```
+$ cat /etc/logrotate.d/docker 
+/var/log/docker/staging.log
+/var/log/docker/webapp.log
+{
+        rotate 14 
+        daily
+        missingok
+        notifempty
+        dateext
+        copytruncate
+}
+```
