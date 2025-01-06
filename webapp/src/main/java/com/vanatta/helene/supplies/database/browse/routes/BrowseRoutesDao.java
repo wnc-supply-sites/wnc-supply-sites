@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.route.browser;
+package com.vanatta.helene.supplies.database.browse.routes;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.data.SiteAddress;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
 
-public class RouteBrowserDao {
+public class BrowseRoutesDao {
 
   @Value
   @Builder
@@ -278,7 +278,7 @@ public class RouteBrowserDao {
     return aggregate(dbResults);
   }
 
-  static List<RouteBrowserController.Site> fetchSites(Jdbi jdbi) {
+  static List<BrowseRoutesController.Site> fetchSites(Jdbi jdbi) {
     return jdbi.withHandle(
         h ->
             h.createQuery(
@@ -288,7 +288,7 @@ public class RouteBrowserDao {
                           where active = true
                           order by name;
                         """)
-                .mapToBean(RouteBrowserController.Site.class)
+                .mapToBean(BrowseRoutesController.Site.class)
                 .list());
   }
 }

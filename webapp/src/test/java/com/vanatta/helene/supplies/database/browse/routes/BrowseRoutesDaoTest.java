@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.route.browser;
+package com.vanatta.helene.supplies.database.browse.routes;
 
 import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.*;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RouteBrowserDaoTest {
+class BrowseRoutesDaoTest {
 
   @BeforeEach
   void setup() {
@@ -55,7 +55,7 @@ class RouteBrowserDaoTest {
     ManageSiteDao.updateSiteField(
         jdbiTest, newSiteWithInventoryId, ManageSiteDao.SiteField.SITE_HOURS, "W-F");
 
-    var results = RouteBrowserDao.findDeliveryOptions(jdbiTest, null);
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null);
 
     Assertions.assertDoesNotThrow(
         () ->
@@ -75,7 +75,7 @@ class RouteBrowserDaoTest {
   void fetchSites() {
     TestConfiguration.setupDatabase();
 
-    var results = RouteBrowserDao.fetchSites(jdbiTest);
+    var results = BrowseRoutesDao.fetchSites(jdbiTest);
     assertThat(results).isNotEmpty();
     results.forEach(
         r -> {

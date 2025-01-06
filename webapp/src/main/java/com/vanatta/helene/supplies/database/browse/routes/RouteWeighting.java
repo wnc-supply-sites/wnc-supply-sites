@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.route.browser;
+package com.vanatta.helene.supplies.database.browse.routes;
 
 import java.util.List;
 import java.util.function.Function;
@@ -15,7 +15,7 @@ public class RouteWeighting {
     double distance;
     List<Item> items;
 
-    RouteData(RouteBrowserDao.DeliveryOption deliveryOption) {
+    RouteData(BrowseRoutesDao.DeliveryOption deliveryOption) {
       // if we don't know the distance between two sites.. just use a ballpark of about 100 miles.
       this.distance =
           deliveryOption.getDistanceMiles() == null ? 100.0 : deliveryOption.getDistanceMiles();
@@ -41,7 +41,7 @@ public class RouteWeighting {
     }
   }
 
-  public static boolean filter(RouteBrowserDao.DeliveryOption deliveryOption) {
+  public static boolean filter(BrowseRoutesDao.DeliveryOption deliveryOption) {
     return filter(new RouteData(deliveryOption));
   }
 

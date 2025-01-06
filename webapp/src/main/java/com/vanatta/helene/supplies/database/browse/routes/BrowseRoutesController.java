@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.route.browser;
+package com.vanatta.helene.supplies.database.browse.routes;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,13 +18,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 // @AllArgsConstructor
-public class RouteBrowserController {
+public class BrowseRoutesController {
 
   private final Jdbi jdbi;
   private final String mapsApiKey;
 
   private static final int PAGE_SIZE = 5;
 
+  static final String BROWSE_ROUTES_PATH = "/browse/routes";
+  
+  
   enum TemplateParams {
     deliveryOptions,
     lowCount,
@@ -34,16 +37,19 @@ public class RouteBrowserController {
     apiKey,
     siteList,
     currentPage,
+    currentSite,
+    currentPagePath,
+    
     ;
   }
 
-  RouteBrowserController(Jdbi jdbi, @Value("${google.maps.api.key}") String mapsApiKey) {
+  BrowseRoutesController(Jdbi jdbi, @Value("${google.maps.api.key}") String mapsApiKey) {
     this.jdbi = jdbi;
     this.mapsApiKey = mapsApiKey;
   }
 
-  @GetMapping("/route/browser")
-  ModelAndView routeBrowser(
+  @GetMapping(BROWSE_ROUTES_PATH)
+  ModelAndView browseRoutes(
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Long siteWssId) {
 
@@ -55,10 +61,10 @@ public class RouteBrowserController {
       siteWssId = 0L;
     }
 
-    List<RouteBrowserDao.DeliveryOption> deliveryOptions =
-        RouteBrowserDao.findDeliveryOptions(jdbi, siteWssId).stream()
+    List<BrowseRoutesDao.DeliveryOption> deliveryOptions =
+        BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssId).stream()
             .filter(RouteWeighting::filter)
-            .sorted(Comparator.comparingDouble(RouteBrowserDao.DeliveryOption::sortScore))
+            .sorted(Comparator.comparingDouble(BrowseRoutesDao.DeliveryOption::sortScore))
             .toList();
     int pageCount = (deliveryOptions.size() / PAGE_SIZE) + 1;
     page = Math.min(page, pageCount);
@@ -74,15 +80,21 @@ public class RouteBrowserController {
     templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
     templateParams.put(
         TemplateParams.deliveryOptions.name(), deliveryOptions.subList(lowCount, highCount));
-
+    templateParams.put(
+        TemplateParams.currentSite.name(), siteWssId);
+    templateParams.put(TemplateParams.currentPagePath.name(), BROWSE_ROUTES_PATH);
+    
     List<Site> sites = new ArrayList<>();
     sites.add(Site.BLANK);
 
     final long siteId = siteWssId;
     sites.addAll(
-        RouteBrowserDao.fetchSites(jdbi).stream()
-            .map(s -> s.getWssId() == siteId ? s.toBuilder().selected(true).build() : s)
-            .toList());
+        BrowseRoutesDao.fetchSites(jdbi).stream()
+            .map(
+                s ->
+                    s.getWssId() == siteId
+                        ? s.toBuilder().selected(true).build()
+                        : s).toList());
     templateParams.put(TemplateParams.siteList.name(), sites);
 
     List<PageNumber> pages = new ArrayList<>();
@@ -91,7 +103,7 @@ public class RouteBrowserController {
     }
     templateParams.put(TemplateParams.pageNumbers.name(), pages);
 
-    return new ModelAndView("route/browser", templateParams);
+    return new ModelAndView("browse/routes", templateParams);
   }
 
   @lombok.Value

@@ -1,11 +1,11 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
-  <title>WNC Supply Sites - Driver Delivery Sign-Up</title>
+  <title>WNC Supply Sites - Browse Routes</title>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
-  <link rel="stylesheet" href="browser.css"/>
+  <link rel="stylesheet" href="routes.css"/>
+  <script type="text/javascript" src="routes.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="text/javascript" src="browser.js"></script>
   <script>
     currentPage={{currentPage}};
   </script>
@@ -31,6 +31,18 @@
     {{/siteList}}
   </select>
 
+  <div class="vertical">
+    <div>
+      {{resultCount}} Results, Result {{lowCount}} through {{highCount}}
+    </div>
+    <div class="horizontal page-numbers-div">
+      {{#pageNumbers}}
+      <div class="page-number">
+        <a href="{{currentPagePath}}?siteWssId={{currentSite}}&page={{number}}" class="{{cssClasses}}">{{number}}</a>
+      </div>
+      {{/pageNumbers}}
+    </div>
+  </div>
 <!--    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>-->
 <!--    <checkbox></checkbox>-->
 <!--    <label for="county">Counties</label>-->
@@ -40,19 +52,7 @@
 <!--  </div>-->
 </div>
 
-<div class="vertical">
-  <div>
-  {{resultCount}} Results, Result {{lowCount}} through {{highCount}}
-  </div>
-  <div class="horizontal page-numbers-div">
-    {{#pageNumbers}}
-    <div class="page-number">
-      <a href="/route/browser?page={{number}}" class="{{cssClasses}}">{{number}}</a>
-    </div>
-    {{/pageNumbers}}
 
-  </div>
-</div>
 
 {{#deliveryOptions}}
 <table class="delivery-options">
