@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.auth;
 
+import com.vanatta.helene.supplies.database.browse.routes.BrowseRoutesController;
 import com.vanatta.helene.supplies.database.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +52,8 @@ public class AuthInterceptor implements WebMvcConfigurer {
       String requestUri = request.getRequestURI();
       if (requestUri.startsWith("/manage/")
           || requestUri.startsWith("/admin")
-          || requestUri.startsWith("/driver")) {
+          || requestUri.startsWith("/driver")
+          || requestUri.startsWith(BrowseRoutesController.BROWSE_ROUTES_PATH)) {
         String queryString = request.getQueryString();
         if (queryString != null) {
           requestUri += URLEncoder.encode("?" + queryString, StandardCharsets.UTF_8);

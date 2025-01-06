@@ -1,0 +1,9 @@
+<div class="vertical paging-div">
+  <div class="pagination-div">
+    {{#pageNumbers}}
+    <div class="pagination {{cssClasses}}">
+      <a href="{{currentPagePath}}?siteWssId={{currentSite}}&page={{number}}">{{number}}</a>
+    </div>
+    {{/pageNumbers}}
+  </div>
+</div>

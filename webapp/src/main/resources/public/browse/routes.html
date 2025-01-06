@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
-  <title>WNC Supply Sites - Browse Routes</title>
+  <title>Browse Routes</title>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
   <link rel="stylesheet" href="routes.css"/>
@@ -12,47 +12,43 @@
   {{> header-include }}
 </head>
 <body>
-
 <div class="sticky-header">
   {{> header }}
-  <h2>Delivery Signup</h2>
 
-  <div class="back-link">
-    <a href="/driver/portal">[&larr; Go Back]</a>
+  <div class="page-sub-header horizontal">
+    <div class="back-link">
+      <a href="/">[&larr; Go Back]</a>
+    </div>
+    <span class="page-title-sub-header">Browse Routes</span>
   </div>
 
-<!--  <div class="larger">-->
-  <h3>Filters</h3>
 
-  <label for="site">Site</label>
-  <select id="site" onchange="selectSite()">
-    {{#siteList}}
-    <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
-    {{/siteList}}
-  </select>
+  <div id="filters" class="horizontal">
+    <span class="filters-title">Filters:</span>
 
-  <div class="vertical">
     <div>
-      {{resultCount}} Results, Result {{lowCount}} through {{highCount}}
+      <label for="site">Site</label>
+      <select id="site" onchange="selectSite()">
+        {{#siteList}}
+        <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
+        {{/siteList}}
+      </select>
     </div>
-    <div class="horizontal page-numbers-div">
-      {{#pageNumbers}}
-      <div class="page-number">
-        <a href="{{currentPagePath}}?siteWssId={{currentSite}}&page={{number}}" class="{{cssClasses}}">{{number}}</a>
-      </div>
-      {{/pageNumbers}}
+    <div>
+      <label for="county">County</label>
+      <select id="county" onchange="selectSite()">
+        {{#countyList}}
+        <option value="{{countyId}}" {{#selected}}selected{{/selected}}>{{countyName}}</option>
+        {{/countyList}}
+      </select>
+    </div>
+    <div>
+      {{resultCount}} Results
     </div>
   </div>
-<!--    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>-->
-<!--    <checkbox></checkbox>-->
-<!--    <label for="county">Counties</label>-->
-<!--    <select id="county">-->
-<!--      <option>county</option>-->
-<!--    </select>-->
-<!--  </div>-->
 </div>
 
-
+{{> /browse/paging-include }}
 
 {{#deliveryOptions}}
 <table class="delivery-options">
@@ -71,7 +67,7 @@
   <tr>
     <th>From {{fromCounty}} County</th>
     <th>To {{toCounty}} County</th>
-    <th class="wider-column">Items</th>
+    <th class="wider-column">Items ({{itemCount}})</th>
   </tr>
   </thead>
   <tbody>
@@ -120,10 +116,6 @@
 
     <td rowspan="2" class="item-column">
       <div class="vertical center">
-        <div>
-          {{itemCount}} items
-        </div>
-
         <div class="horizontal">
           <ul>
             {{#items1}}
@@ -151,6 +143,8 @@
   </tbody>
 </table>
 {{/deliveryOptions}}
+
+{{> /browse/paging-include }}
 
 
 </body>

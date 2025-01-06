@@ -10,22 +10,14 @@
 .delivery-options th,
 .delivery-options td
 {
-    /*border: solid 1px gray;*/
-    /*border-spacing: 0;*/
-    /*border-collapse: collapse;*/
     padding: 5px;
-    /*outline: solid;*/
-    width: 600px;
+    /*width: 600px;*/
 }
 
 .page-section {
     margin-bottom: 5px;
     margin-top: 5px;
-    /*background-color: #F0F0F0;*/
-    /*border: solid #111;*/
-    /*border-radius: 20px;*/
-    font-size: 1.1em;
-    /*max-width: 500px;*/
+    font-size: 1.05em;
 }
 
 .large-section-header {
@@ -72,12 +64,15 @@
 
 .sticky-header {
     position: sticky;
-    /*background-color: inherit;*/
     top: 0px;
     background-color: #F5F5F5;
     border-bottom: 4px #333 ridge;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.paging-div {
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 .volunteer-button-row {
@@ -92,10 +87,64 @@
 .page-numbers-div {
 }
 
-.page-number {
-    margin-right: 5px;
+.pagination {
+    text-align: center;
+}
+
+.pagination a {
+    color: #33B;
+    float: left;
+    padding: 4px;
+    min-width: 14px;
+    margin-bottom: 4px;
+    border: 1px solid #ddd; /* Gray */
+
+    text-decoration: none;
+    font-family: sans-serif;
+}
+
+.pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+.current-page a {
+    font-weight: bold;
+    background-color: #CCC;
 }
 
 .hours {
     max-width: 250px;
+}
+
+.hide-filters {
+    font-size: 0.7em;
+    color: blue;
+    cursor: pointer;
+}
+
+#filters {
+    margin-top: -5px;
+    margin-bottom: 1px;
+    align-items: center;
+}
+
+.filters-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+#site {
+    width: 200px;
+    margin-right: 10px;
+}
+
+#county {
+    width: 200px;
+    margin-right: 5px;
 }

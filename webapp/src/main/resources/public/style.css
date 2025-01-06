@@ -232,9 +232,9 @@ h1, h2, h3, h4 {
 }
 
 .back-link {
-    margin-top: 0px;
-    margin-bottom: 10px;
-    margin-left: 15px;
+    margin-top: 3px;
+    margin-bottom: 20px;
+    margin-left: 10px;
     font-size: 0.9em;
 }
 
@@ -246,4 +246,16 @@ h1, h2, h3, h4 {
 
 .missingData {
     background-color: lightcoral;
+}
+
+.page-title-sub-header {
+    font-size: 1.3em;
+    font-weight: bold;
+    font-family: sans-serif;
+    margin-left: 15px;
+}
+
+.page-sub-header {
+    margin-top: 3px;
+    margin-bottom: 3px;
 }

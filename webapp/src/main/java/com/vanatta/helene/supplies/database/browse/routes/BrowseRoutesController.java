@@ -25,9 +25,8 @@ public class BrowseRoutesController {
 
   private static final int PAGE_SIZE = 5;
 
-  static final String BROWSE_ROUTES_PATH = "/browse/routes";
-  
-  
+  public static final String BROWSE_ROUTES_PATH = "/browse/routes";
+
   enum TemplateParams {
     deliveryOptions,
     lowCount,
@@ -39,7 +38,6 @@ public class BrowseRoutesController {
     currentPage,
     currentSite,
     currentPagePath,
-    
     ;
   }
 
@@ -71,35 +69,30 @@ public class BrowseRoutesController {
 
     Map<String, Object> templateParams = new HashMap<>();
 
+    templateParams.put(TemplateParams.currentSite.name(), siteWssId);
+    templateParams.put(TemplateParams.currentPagePath.name(), BROWSE_ROUTES_PATH);
     templateParams.put(TemplateParams.apiKey.name(), mapsApiKey);
     templateParams.put(TemplateParams.currentPage.name(), page);
+    templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
+
     int lowCount = (page - 1) * PAGE_SIZE;
     int highCount = Math.min((page) * PAGE_SIZE, deliveryOptions.size());
-    templateParams.put(TemplateParams.lowCount.name(), lowCount + 1);
-    templateParams.put(TemplateParams.highCount.name(), highCount);
-    templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
     templateParams.put(
         TemplateParams.deliveryOptions.name(), deliveryOptions.subList(lowCount, highCount));
-    templateParams.put(
-        TemplateParams.currentSite.name(), siteWssId);
-    templateParams.put(TemplateParams.currentPagePath.name(), BROWSE_ROUTES_PATH);
-    
+
     List<Site> sites = new ArrayList<>();
     sites.add(Site.BLANK);
 
     final long siteId = siteWssId;
     sites.addAll(
         BrowseRoutesDao.fetchSites(jdbi).stream()
-            .map(
-                s ->
-                    s.getWssId() == siteId
-                        ? s.toBuilder().selected(true).build()
-                        : s).toList());
+            .map(s -> s.getWssId() == siteId ? s.toBuilder().selected(true).build() : s)
+            .toList());
     templateParams.put(TemplateParams.siteList.name(), sites);
 
     List<PageNumber> pages = new ArrayList<>();
     for (int i = 1; i <= pageCount; i++) {
-      pages.add(PageNumber.builder().number(i).build());
+      pages.add(PageNumber.builder().number(i).cssClasses(i == page ? "current-page" : "").build());
     }
     templateParams.put(TemplateParams.pageNumbers.name(), pages);
 
@@ -110,7 +103,7 @@ public class BrowseRoutesController {
   @Builder
   static class PageNumber {
     int number;
-    String cssClasses = "";
+    @Builder.Default String cssClasses = "";
   }
 
   @Builder(toBuilder = true)

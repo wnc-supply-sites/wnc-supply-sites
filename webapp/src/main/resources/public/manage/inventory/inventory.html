@@ -15,11 +15,14 @@
 
 <body>
 {{> header }}
-<h2>{{siteName}} Inventory</h2>
 
-<div class="back-link">
-  <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
+<div class="page-sub-header horizontal">
+  <div class="back-link">
+    <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
+  </div>
+  <span class="page-title-sub-header">{{siteName}} - Inventory</span>
 </div>
+
 <div id="error-div"></div>
 
 <ul>
