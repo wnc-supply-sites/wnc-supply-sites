@@ -13,20 +13,33 @@
   {{> header }}
   <h2>Delivery Signup</h2>
 
-
   <div class="back-link">
     <a href="/driver/portal">[&larr; Go Back]</a>
   </div>
 
-  <div class="larger">
-  <h3>Filters</h3>
+<!--  <div class="larger">-->
+<!--  <h3>Filters</h3>-->
 
-    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>
+<!--    <input type="checkbox" /> Within <input type="text" size="4" value="100"> miles of: <select><option>Buncombe - GracePoint Church</option></select>-->
 <!--    <checkbox></checkbox>-->
 <!--    <label for="county">Counties</label>-->
 <!--    <select id="county">-->
 <!--      <option>county</option>-->
 <!--    </select>-->
+<!--  </div>-->
+</div>
+
+<div class="vertical">
+  <div>
+  {{resultCount}} Results, Result {{lowCount}} through {{highCount}}
+  </div>
+  <div class="horizontal page-numbers-div">
+    {{#pageNumbers}}
+    <div class="page-number">
+      <a href="/route/browser?page={{number}}" class="{{cssClasses}}">{{number}}</a>
+    </div>
+    {{/pageNumbers}}
+
   </div>
 </div>
 
@@ -46,9 +59,7 @@
 
   <tr>
     <th>From {{fromCounty}} County</th>
-    <th>To {{county}} County</th>
-    <!--      <th>From Site</th>-->
-    <!--      <th>To Site</th>-->
+    <th>To {{toCounty}} County</th>
     <th class="wider-column">Items</th>
   </tr>
   </thead>
@@ -56,11 +67,6 @@
 
   <tr>
     <td class="site">
-<!--      <iframe-->
-<!--        width="250"-->
-<!--        height="250"-->
-<!--        src="https://maps.google.com/maps?z=8&width=250&height=250&hl=en&q={{fromGoogleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">-->
-<!--      </iframe>-->
 
       <iframe
           width="250"
@@ -72,20 +78,15 @@
           src="https://www.google.com/maps/embed/v1/place?key={{apiKey}}&q={{fromGoogleMapsAddress}}&zoom=7">
       </iframe>
 
-      <h4 class="sub-section-header">{{fromSiteName}}</h4>
+      <h4 class="sub-section-header"><a href="{{fromSiteLink}}">{{fromSiteName}}</a></h4>
       <div>{{fromAddress}}</div>
       <div>{{fromCity}}, {{fromState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+      <pre>{{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</pre>
     </td>
 
     <td class="site">
-<!--      <iframe-->
-<!--        width="250"-->
-<!--        height="250"-->
-<!--        src="https://maps.google.com/maps?z=8&width=250&height=250&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed">-->
-<!--      </iframe>-->
 
       <iframe
           width="250"
@@ -97,12 +98,12 @@
           src="https://www.google.com/maps/embed/v1/place?key={{apiKey}}&q={{googleMapsAddress}}&zoom=7">
       </iframe>
 
-      <h4 class="sub-section-header">{{toSiteName}}</h4>
+      <h4 class="sub-section-header"><a href="{{toSiteLink}}">{{toSiteName}}</a></h4>
       <div>{{toAddress}}</div>
-      <div>{{city}}, {{state}}</div>
+      <div>{{toCity}}, {{toState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      {{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}
+      <pre>{{#toHours}}{{.}}{{/toHours}}{{^toHours}}Will Call{{/toHours}}</pre>
 
     </td>
 
@@ -127,6 +128,14 @@
       </div>
     </td>
   </tr>
+
+<!--    <tr>-->
+<!--        <td colspan="2">-->
+<!--          <div class="horizontal volunteer-button-row">-->
+<!--            <button class="volunteer-button">Volunteer</button>-->
+<!--          </div>-->
+<!--        </td>-->
+<!--      </tr>-->
 
   </tbody>
 </table>

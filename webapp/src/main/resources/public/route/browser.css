@@ -90,3 +90,10 @@
 .item-column {
     align-content: flex-start;
 }
+
+.page-numbers-div {
+}
+
+.page-number {
+    margin-right: 5px;
+}

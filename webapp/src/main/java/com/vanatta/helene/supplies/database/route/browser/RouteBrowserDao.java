@@ -58,10 +58,10 @@ public class RouteBrowserDao {
                                 SiteDetailController.buildSiteLink(deliveryOptionDbResult.siteId))
                             .toSiteName(deliveryOptionDbResult.siteName)
                             .toAddress(deliveryOptionDbResult.siteAddress)
-                            .city(deliveryOptionDbResult.city)
-                            .county(deliveryOptionDbResult.county)
-                            .state(deliveryOptionDbResult.state)
-                            .hours(deliveryOptionDbResult.hours)
+                            .toCity(deliveryOptionDbResult.city)
+                            .toCounty(deliveryOptionDbResult.county)
+                            .toState(deliveryOptionDbResult.state)
+                            .toHours(deliveryOptionDbResult.hours)
                             .driveTimeSeconds(deliveryOptionDbResult.driveTimeSeconds)
                             .distanceMiles(deliveryOptionDbResult.distanceMiles)
                             .build())
@@ -102,10 +102,10 @@ public class RouteBrowserDao {
     String toSiteName;
     String toSiteLink;
     String toAddress;
-    String city;
-    String county;
-    String state;
-    String hours;
+    String toCity;
+    String toCounty;
+    String toState;
+    String toHours;
 
     Integer driveTimeSeconds;
     Double distanceMiles;
@@ -132,8 +132,8 @@ public class RouteBrowserDao {
     String getGoogleMapsAddress() {
       return SiteAddress.builder()
           .address(toAddress)
-          .city(city)
-          .state(state)
+          .city(toCity)
+          .state(toState)
           .build()
           .toEncodedUrlValue();
     }
@@ -226,36 +226,36 @@ public class RouteBrowserDao {
             fromCounty.state fromState,
             fromSite.hours fromHours,
 
-            s.name AS siteName,
-            s.id AS siteId,
-            s.address AS siteAddress,
-            s.city as city,
-            c.name as county,
-            c.state as state,
-            s.hours as hours,
+            toSite.name AS siteName,
+            toSite.id AS siteId,
+            toSite.address AS siteAddress,
+            toSite.city as city,
+            toCounty.name as county,
+            toCounty.state as state,
+            toSite.hours as hours,
 
             i.name AS itemName,
             ni.urgency AS urgency,
             sdm.drive_time_seconds AS driveTimeSeconds,
             sdm.distance_miles AS distanceMiles
         FROM
-            oversupply_sites os
+            oversupply_sites fromOverSupply
         JOIN
-            site s ON os.site_id = s.id
+            site fromSite ON fromOverSupply.site_id = fromSite.id
         JOIN
-            county c on c.id = s.county_id
+            county fromCounty on fromCounty.id = fromSite.county_id
         JOIN
-            needy_items ni ON os.item_id = ni.item_id
+            needy_items ni ON fromOverSupply.item_id = ni.item_id
         JOIN
-            site fromSite ON ni.site_id = fromSite.id
+            site toSite ON ni.site_id = toSite.id
         JOIN
-            county fromCounty ON fromSite.county_id = fromCounty.id
+            county toCounty ON toSite.county_id = toCounty.id
         LEFT JOIN
             site_distance_matrix sdm on
-              (sdm.site1_id = ni.site_id and sdm.site2_id = os.site_id) or
-              (sdm.site2_id = ni.site_id and sdm.site1_id = os.site_id)
+              (sdm.site1_id = ni.site_id and sdm.site2_id = fromOverSupply.site_id) or
+              (sdm.site2_id = ni.site_id and sdm.site1_id = fromOverSupply.site_id)
         JOIN
-            item i ON os.item_id = i.id
+            item i ON fromOverSupply.item_id = i.id
         order by lower(i.name)
         """;
     List<DeliveryOptionDbResult> dbResults =
