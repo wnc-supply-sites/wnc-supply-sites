@@ -261,15 +261,15 @@ public class RouteBrowserDao {
         %s
         order by lower(i.name)
         """,
-            siteWssId == null
-                ? ""
-                : "and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)\n");
+            siteWssId != null && siteWssId != 0L
+                ? "and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)\n"
+                : "");
 
     List<DeliveryOptionDbResult> dbResults =
         jdbi.withHandle(
             handle -> {
               var qb = handle.createQuery(query);
-              if (siteWssId != null) {
+              if (siteWssId != null && siteWssId != 0L) {
                 qb.bind("siteWssId", siteWssId);
               }
               return qb.mapToBean(DeliveryOptionDbResult.class).list();
