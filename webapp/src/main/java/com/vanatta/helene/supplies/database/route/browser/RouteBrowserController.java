@@ -53,9 +53,9 @@ public class RouteBrowserController {
     templateParams.put(TemplateParams.apiKey.name(), mapsApiKey);
 
     int lowCount = (page - 1) * PAGE_SIZE;
-    int highCount = (page) * PAGE_SIZE;
-    templateParams.put(TemplateParams.lowCount.name(), (page - 1) * PAGE_SIZE);
-    templateParams.put(TemplateParams.highCount.name(), page * PAGE_SIZE);
+    int highCount = Math.min((page) * PAGE_SIZE, deliveryOptions.size());
+    templateParams.put(TemplateParams.lowCount.name(), lowCount);
+    templateParams.put(TemplateParams.highCount.name(), highCount);
     templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
     templateParams.put(
         TemplateParams.deliveryOptions.name(), deliveryOptions.subList(lowCount, highCount));
