@@ -1,7 +1,8 @@
-package com.vanatta.helene.supplies.database.driver;
+package com.vanatta.helene.supplies.database.route.browser;
 
 import java.util.List;
 import java.util.function.Function;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;

@@ -1,4 +1,4 @@
-package com.vanatta.helene.supplies.database.driver;
+package com.vanatta.helene.supplies.database.route.browser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

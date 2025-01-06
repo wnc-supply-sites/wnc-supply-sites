@@ -1,9 +1,10 @@
-package com.vanatta.helene.supplies.database.driver;
+package com.vanatta.helene.supplies.database.route.browser;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
@@ -20,8 +21,8 @@ public class DeliverySignupController {
     deliveryOptions
   }
 
-  @GetMapping("/driver/delivery-sign-up")
-  ModelAndView deliverySignUp() {
+  @GetMapping("/route/browser")
+  ModelAndView routeBrowser() {
 
     List<DeliverySignupDao.DeliveryOption> deliveryOptions =
         DeliverySignupDao.findDeliveryOptions(jdbi).stream()
