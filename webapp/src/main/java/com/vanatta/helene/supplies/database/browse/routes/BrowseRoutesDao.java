@@ -11,12 +11,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.Query;
+import org.jdbi.v3.core.statement.SqlStatement;
 
 public class BrowseRoutesDao {
 
@@ -49,14 +52,16 @@ public class BrowseRoutesDao {
                             .fromSiteLink(
                                 SiteDetailController.buildSiteLink(
                                     deliveryOptionDbResult.fromSiteId))
+                            .fromSiteWssId(deliveryOptionDbResult.fromSiteWssId)
                             .fromAddress(deliveryOptionDbResult.fromAddress)
                             .fromCity(deliveryOptionDbResult.fromCity)
                             .fromCounty(deliveryOptionDbResult.fromCounty)
                             .fromState(deliveryOptionDbResult.fromState)
                             .fromHours(deliveryOptionDbResult.fromHours)
+                            .toSiteName(deliveryOptionDbResult.siteName)
                             .toSiteLink(
                                 SiteDetailController.buildSiteLink(deliveryOptionDbResult.siteId))
-                            .toSiteName(deliveryOptionDbResult.siteName)
+                            .toSiteWssId(deliveryOptionDbResult.toSiteWssId)
                             .toAddress(deliveryOptionDbResult.siteAddress)
                             .toCity(deliveryOptionDbResult.city)
                             .toCounty(deliveryOptionDbResult.county)
@@ -92,6 +97,7 @@ public class BrowseRoutesDao {
     }
 
     String fromSiteName;
+    long fromSiteWssId;
     String fromSiteLink;
     String fromAddress;
     String fromCity;
@@ -100,6 +106,7 @@ public class BrowseRoutesDao {
     String fromHours;
 
     String toSiteName;
+    long toSiteWssId;
     String toSiteLink;
     String toAddress;
     String toCity;
@@ -174,6 +181,7 @@ public class BrowseRoutesDao {
   public static class DeliveryOptionDbResult {
     long fromSiteId;
     String fromSiteName;
+    long fromSiteWssId;
     String fromAddress;
     String fromCity;
     String fromCounty;
@@ -182,6 +190,7 @@ public class BrowseRoutesDao {
 
     long siteId;
     String siteName;
+    long toSiteWssId;
     String siteAddress;
     String city;
     String county;
@@ -195,7 +204,63 @@ public class BrowseRoutesDao {
     Double distanceMiles;
   }
 
-  public static List<DeliveryOption> findDeliveryOptions(Jdbi jdbi, Long siteWssId) {
+  // TODO: improve testing
+  public static List<DeliveryOption> findDeliveryOptions(
+      Jdbi jdbi, Long siteWssId, String currentCounty) {
+    String county =
+        (currentCounty != null && currentCounty.contains(","))
+            ? currentCounty.split(",")[0].trim()
+            : null;
+    String state =
+        (currentCounty != null && currentCounty.contains(","))
+            ? currentCounty.split(",")[1].trim()
+            : null;
+
+    final String whereFilter;
+    final Consumer<SqlStatement<?>> bindings;
+
+    if (siteWssId != null
+        && siteWssId != 0L
+        && (currentCounty == null || currentCounty.isBlank())) {
+      whereFilter = "and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)\n";
+      bindings = q -> q.bind("siteWssId", siteWssId);
+    } else if ((siteWssId == null || siteWssId == 0L)
+        && (currentCounty != null && !currentCounty.isBlank())) {
+      whereFilter =
+          """
+          and (
+              (toCounty.name = :county and toCounty.state = :state)
+              or (fromCounty.name = :county and fromCounty.state = :state)
+          )
+        """;
+      bindings =
+          q ->
+              q.bind("county", county) //
+                  .bind("state", state);
+    } else if (siteWssId != null
+        && siteWssId != 0L
+        && currentCounty != null
+        && !currentCounty.isBlank()) {
+      // both site && county selected
+      whereFilter =
+          """
+          and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)
+          and (
+              (toCounty.name = :county and toCounty.state = :state)
+              or (fromCounty.name = :county and fromCounty.state = :state)
+          )
+        """;
+
+      bindings =
+          q ->
+              q.bind("siteWssId", siteWssId) //
+                  .bind("county", county)
+                  .bind("state", state);
+    } else {
+      whereFilter = "";
+      bindings = _ -> {};
+    }
+
     String query =
         String.format(
             """
@@ -221,14 +286,16 @@ public class BrowseRoutesDao {
         SELECT
             fromSite.id fromSiteId,
             fromSite.name fromSiteName,
+            fromSite.wss_id fromSiteWssId,
             fromSite.address fromAddress,
             fromSite.city fromCity,
             fromCounty.name fromCounty,
             fromCounty.state fromState,
             fromSite.hours fromHours,
 
-            toSite.name AS siteName,
             toSite.id AS siteId,
+            toSite.name AS siteName,
+            toSite.wss_id AS toSiteWssId,
             toSite.address AS siteAddress,
             toSite.city as city,
             toCounty.name as county,
@@ -261,17 +328,13 @@ public class BrowseRoutesDao {
         %s
         order by lower(i.name)
         """,
-            siteWssId != null && siteWssId != 0L
-                ? "and (toSite.wss_id = :siteWssId or fromSite.wss_id = :siteWssId)\n"
-                : "");
+            whereFilter);
 
     List<DeliveryOptionDbResult> dbResults =
         jdbi.withHandle(
             handle -> {
-              var qb = handle.createQuery(query);
-              if (siteWssId != null && siteWssId != 0L) {
-                qb.bind("siteWssId", siteWssId);
-              }
+              Query qb = handle.createQuery(query);
+              bindings.accept(qb);
               return qb.mapToBean(DeliveryOptionDbResult.class).list();
             });
 

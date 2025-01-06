@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
     currentPage={{currentPage}};
+    currentCounty="{{currentCounty}}";
+    currentSite={{currentSite}};
   </script>
   {{> header-include }}
 </head>
@@ -28,7 +30,7 @@
 
     <div>
       <label for="site">Site</label>
-      <select id="site" onchange="selectSite()">
+      <select id="site" onchange="selectSiteFilter()">
         {{#siteList}}
         <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
         {{/siteList}}
@@ -36,11 +38,14 @@
     </div>
     <div>
       <label for="county">County</label>
-      <select id="county" onchange="selectSite()">
+      <select id="county" onchange="selectCountyFilter()">
         {{#countyList}}
-        <option value="{{countyId}}" {{#selected}}selected{{/selected}}>{{countyName}}</option>
+        <option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/countyList}}
       </select>
+    </div>
+    <div class="clear-button">
+      <button onclick="clearFilters()">Clear</button>
     </div>
     <div>
       {{resultCount}} Results
@@ -48,7 +53,13 @@
   </div>
 </div>
 
+{{^hasDeliveries}}
+<div class="no-routes">No Routes Available</div>
+{{/hasDeliveries}}
+
+{{#hasPaging}}
 {{> /browse/paging-include }}
+{{/hasPaging}}
 
 {{#deliveryOptions}}
 <table class="delivery-options">
@@ -56,7 +67,8 @@
   <tr>
     <th colspan="3">
       <div class="large-section-header">
-        {{fromSiteName}} &#8594; {{toSiteName}}
+        <a class="clickable" onclick="selectSite({{fromSiteWssId}})">{{fromSiteName}}</a> &#8594;
+        <a class="clickable" onclick="selectSite({{toSiteWssId}})">{{toSiteName}}</a>
       </div>
       <div class="sub-section-header">
         {{#distanceMiles}}{{.}} miles{{/distanceMiles}} {{#driveTime}}({{.}}){{/driveTime}}
@@ -65,16 +77,16 @@
   </tr>
 
   <tr>
-    <th>From {{fromCounty}} County</th>
-    <th>To {{toCounty}} County</th>
+    <th>From <a class="clickable" onclick="selectCounty('{{fromCounty}}, {{fromState}}')">{{fromCounty}} County ({{fromState}})</a></th>
+    <th>To <a class="clickable" onclick="selectCounty('{{toCounty}}, {{toState}}')">{{toCounty}} County ({{toState}})</a></th>
     <th class="wider-column">Items ({{itemCount}})</th>
   </tr>
   </thead>
   <tbody>
 
   <tr>
+    <!-- FROM SITE -->
     <td class="site">
-
       <iframe
           width="250"
           height="250"
@@ -93,8 +105,8 @@
       <pre class="hours">{{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</pre>
     </td>
 
+    <!-- TO SITE -->
     <td class="site">
-
       <iframe
           width="250"
           height="250"
@@ -144,7 +156,9 @@
 </table>
 {{/deliveryOptions}}
 
+{{#hasPaging}}
 {{> /browse/paging-include }}
+{{/hasPaging}}
 
 
 </body>

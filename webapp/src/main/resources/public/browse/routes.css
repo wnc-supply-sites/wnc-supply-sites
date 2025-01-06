@@ -140,11 +140,30 @@
 }
 
 #site {
-    width: 200px;
+    width: 150px;
     margin-right: 10px;
 }
 
 #county {
-    width: 200px;
+    width: 100px;
     margin-right: 5px;
+}
+
+.no-routes {
+    margin-top: 30px;
+    margin-left: 120px;
+    font-size: 2.0em;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+.clickable {
+    color: #113;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.clear-button {
+    margin-left: 10px;
+    margin-right: 15px;
 }

@@ -1,10 +1,15 @@
 package com.vanatta.helene.supplies.database.browse.routes;
 
+import com.vanatta.helene.supplies.database.data.CountyDao;
+import com.vanatta.helene.supplies.database.supplies.filters.AuthenticatedMode;
+import com.vanatta.helene.supplies.database.util.HtmlSelectOptionsUtil;
+import com.vanatta.helene.supplies.database.util.PhoneNumberUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,20 +28,22 @@ public class BrowseRoutesController {
   private final Jdbi jdbi;
   private final String mapsApiKey;
 
-  private static final int PAGE_SIZE = 5;
+  static final int PAGE_SIZE = 5;
 
   public static final String BROWSE_ROUTES_PATH = "/browse/routes";
 
   enum TemplateParams {
     deliveryOptions,
-    lowCount,
-    highCount,
+    hasDeliveries,
+    hasPaging,
     resultCount,
     pageNumbers,
     apiKey,
     siteList,
+    countyList,
     currentPage,
     currentSite,
+    currentCounty,
     currentPagePath,
     ;
   }
@@ -49,44 +56,68 @@ public class BrowseRoutesController {
   @GetMapping(BROWSE_ROUTES_PATH)
   ModelAndView browseRoutes(
       @RequestParam(required = false) Integer page,
-      @RequestParam(required = false) Long siteWssId) {
+      @RequestParam(required = false) String siteWssId,
+      @RequestParam(required = false) String county) {
 
     if (page == null) {
       page = 1;
+    } else {
+      page = Math.max(1, page);
     }
 
-    if (siteWssId == null) {
-      siteWssId = 0L;
-    }
-
-    List<BrowseRoutesDao.DeliveryOption> deliveryOptions =
-        BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssId).stream()
-            .filter(RouteWeighting::filter)
-            .sorted(Comparator.comparingDouble(BrowseRoutesDao.DeliveryOption::sortScore))
-            .toList();
-    int pageCount = (deliveryOptions.size() / PAGE_SIZE) + 1;
-    page = Math.min(page, pageCount);
+    final long siteWssIdCleaned =
+        (siteWssId == null
+                || siteWssId.isBlank()
+                || PhoneNumberUtil.removeNonNumeric(siteWssId).isBlank())
+            ? 0L
+            : Long.parseLong(siteWssId);
 
     Map<String, Object> templateParams = new HashMap<>();
 
-    templateParams.put(TemplateParams.currentSite.name(), siteWssId);
+    List<String> counties = new ArrayList<>();
+    counties.add("");
+    counties.addAll(CountyDao.fetchActiveCountyList(jdbi, AuthenticatedMode.AUTHENTICATED));
+    templateParams.put(
+        TemplateParams.countyList.name(),
+        HtmlSelectOptionsUtil.createItemListingWithFuzzyStartsWith(county, counties));
+    String currentCounty =
+        (county == null || county.isBlank())
+            ? null
+            : counties.stream().filter(c -> c.startsWith(county)).findAny().orElse(null);
+
+    List<BrowseRoutesDao.DeliveryOption> deliveryOptions =
+        BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssIdCleaned, currentCounty).stream()
+            .filter(RouteWeighting::filter)
+            .sorted(Comparator.comparingDouble(BrowseRoutesDao.DeliveryOption::sortScore))
+            .toList();
+    int pageCount = (int) Math.ceil(((double) deliveryOptions.size()) / PAGE_SIZE);
+    page = Math.min(page, pageCount);
+
+    templateParams.put(TemplateParams.currentSite.name(), siteWssIdCleaned);
+    templateParams.put(TemplateParams.currentCounty.name(), Optional.ofNullable(county).orElse(""));
     templateParams.put(TemplateParams.currentPagePath.name(), BROWSE_ROUTES_PATH);
+    templateParams.put(TemplateParams.hasDeliveries.name(), !deliveryOptions.isEmpty());
+    templateParams.put(TemplateParams.hasPaging.name(), pageCount > 1);
+
     templateParams.put(TemplateParams.apiKey.name(), mapsApiKey);
     templateParams.put(TemplateParams.currentPage.name(), page);
     templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
 
-    int lowCount = (page - 1) * PAGE_SIZE;
-    int highCount = Math.min((page) * PAGE_SIZE, deliveryOptions.size());
-    templateParams.put(
-        TemplateParams.deliveryOptions.name(), deliveryOptions.subList(lowCount, highCount));
+    if (page > 0) {
+      int lowCount = (page - 1) * PAGE_SIZE;
+      int highCount = Math.min((page) * PAGE_SIZE, deliveryOptions.size());
+      templateParams.put(
+          TemplateParams.deliveryOptions.name(), deliveryOptions.subList(lowCount, highCount));
+    } else {
+      templateParams.put(TemplateParams.deliveryOptions.name(), null);
+    }
 
     List<Site> sites = new ArrayList<>();
     sites.add(Site.BLANK);
 
-    final long siteId = siteWssId;
     sites.addAll(
         BrowseRoutesDao.fetchSites(jdbi).stream()
-            .map(s -> s.getWssId() == siteId ? s.toBuilder().selected(true).build() : s)
+            .map(s -> s.getWssId() == siteWssIdCleaned ? s.toBuilder().selected(true).build() : s)
             .toList());
     templateParams.put(TemplateParams.siteList.name(), sites);
 

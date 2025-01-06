@@ -13,6 +13,12 @@ import org.junit.jupiter.api.Test;
 
 class BrowseRoutesDaoTest {
 
+  String newSiteWithNeed;
+  long hasNeedSiteId;
+
+  String newSiteWithInventory;
+  long newSiteWithInventoryId;
+
   @BeforeEach
   void setup() {
     TestConfiguration.setupDatabase();
@@ -31,6 +37,22 @@ class BrowseRoutesDaoTest {
         delete from site;
         """;
     jdbiTest.withHandle(h -> h.createScript(clean).execute());
+
+    /* From Site */
+    newSiteWithNeed = TestConfiguration.addSite("needs");
+    hasNeedSiteId = TestConfiguration.getSiteId(newSiteWithNeed);
+    InventoryDao.updateSiteItemActive(
+        jdbiTest, hasNeedSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
+    ManageSiteDao.updateSiteField(
+        jdbiTest, hasNeedSiteId, ManageSiteDao.SiteField.SITE_HOURS, "M-F");
+
+    /* To Site */
+    newSiteWithInventory = TestConfiguration.addSite("warehouse");
+    newSiteWithInventoryId = TestConfiguration.getSiteId(newSiteWithInventory);
+    InventoryDao.updateSiteItemActive(
+        jdbiTest, newSiteWithInventoryId, "gloves", ItemStatus.OVERSUPPLY.getText());
+    ManageSiteDao.updateSiteField(
+        jdbiTest, newSiteWithInventoryId, ManageSiteDao.SiteField.SITE_HOURS, "W-F");
   }
 
   /**
@@ -39,23 +61,7 @@ class BrowseRoutesDaoTest {
    */
   @Test
   void validateNeedsQuery() {
-    /* From Site */
-    String newSiteWithNeed = TestConfiguration.addSite("needs");
-    long hasNeedSiteId = TestConfiguration.getSiteId(newSiteWithNeed);
-    InventoryDao.updateSiteItemActive(
-        jdbiTest, hasNeedSiteId, "gloves", ItemStatus.URGENTLY_NEEDED.getText());
-    ManageSiteDao.updateSiteField(
-        jdbiTest, hasNeedSiteId, ManageSiteDao.SiteField.SITE_HOURS, "M-F");
-
-    /* To Site */
-    String newSiteWithInventory = TestConfiguration.addSite("warehouse");
-    long newSiteWithInventoryId = TestConfiguration.getSiteId(newSiteWithInventory);
-    InventoryDao.updateSiteItemActive(
-        jdbiTest, newSiteWithInventoryId, "gloves", ItemStatus.OVERSUPPLY.getText());
-    ManageSiteDao.updateSiteField(
-        jdbiTest, newSiteWithInventoryId, ManageSiteDao.SiteField.SITE_HOURS, "W-F");
-
-    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null);
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null);
 
     Assertions.assertDoesNotThrow(
         () ->
@@ -82,5 +88,18 @@ class BrowseRoutesDaoTest {
           assertThat(r.getWssId()).isNotEqualTo(0L);
           assertThat(r.getSiteName()).isNotNull();
         });
+  }
+
+  @Test
+  void fetchDeliveryOptionsWithCounty() {
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Watauga,NC");
+    assertThat(results).isNotEmpty();
+    results.forEach(
+        r ->
+            assertThat(r.getToCounty().equals("Watauga") || r.getFromCounty().equals("Watauaga"))
+                .isTrue());
+
+    results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Polk,TN");
+    assertThat(results).isEmpty();
   }
 }

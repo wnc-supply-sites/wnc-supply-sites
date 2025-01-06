@@ -1,19 +1,23 @@
-function toggleFiltersVisibility() {
-  const filtersDiv = document.getElementById("filters");
-  let isVisible = (filtersDiv.style.display !== "none");
-
-  if(isVisible) {
-    filtersDiv.style.display = "none";
-    document.getElementById("filterDisplayToggle").innerHTML = "[show]";
-  } else {
-    filtersDiv.style.display = "block";
-    document.getElementById("filterDisplayToggle").innerHTML = "[hide]";
-  }
+function selectSiteFilter() {
+  const selectedSite = document.getElementById("site").value;
+  selectSite(selectedSite);
 }
 
+function selectSite(wssId) {
+  location.href = `?siteWssId=${wssId}&page=1&county=${currentCounty}`
+}
 
-function selectSite() {
-  const selectedSite = document.getElementById("site").value;
+function selectCountyFilter() {
+  const selectedCounty = document.getElementById("county").value;
+  selectCounty(selectedCounty);
+}
 
-  location.href = `?siteWssId=${selectedSite}&page=${currentPage}`
+function selectCounty(selection) {
+  location.href = `?siteWssId=${currentSite}&page=1&county=${selection}`
+}
+
+function clearFilters() {
+  document.getElementById("site").value = '';
+  document.getElementById("county").value = '';
+  location.href = `?page=1`
 }
