@@ -102,7 +102,7 @@
       <div>{{fromCity}}, {{fromState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      <pre class="hours">{{#fromHours}}{{.}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</pre>
+      <span class="hours">{{#fromHours}}{{{.}}}{{/fromHours}}{{^fromHours}}Will Call{{/fromHours}}</span>
     </td>
 
     <!-- TO SITE -->
@@ -122,14 +122,15 @@
       <div>{{toCity}}, {{toState}}</div>
 
       <h4 class="sub-section-header">Hours</h4>
-      <pre class="hours">{{#toHours}}{{.}}{{/toHours}}{{^toHours}}Will Call{{/toHours}}</pre>
+      <span class="hours">{{#toHours}}{{{.}}}{{/toHours}}{{^toHours}}Will Call{{/toHours}}</span>
 
     </td>
 
+    <!-- Item List -->
     <td rowspan="2" class="item-column">
       <div class="vertical center">
         <div class="horizontal">
-          <ul>
+          <ul class="needs-list">
             {{#items1}}
             <li class="{{urgencyCssClass}}">{{name}}</li>
             {{/items1}}
@@ -144,13 +145,51 @@
     </td>
   </tr>
 
-<!--    <tr>-->
-<!--        <td colspan="2">-->
-<!--          <div class="horizontal volunteer-button-row">-->
-<!--            <button class="volunteer-button">Volunteer</button>-->
-<!--          </div>-->
-<!--        </td>-->
-<!--      </tr>-->
+  {{#isDriver}}
+  <tr>
+      <td colspan="2">
+        <!-- Volunteer Button -->
+        <div class="horizontal volunteer-button-row">
+          <button class="volunteer-button" onclick="volunteerClicked()">Volunteer</button>
+        </div>
+
+        <!-- Confirm Button -->
+        <div class="confirm-volunteer" style="display: none">
+          <div>
+            <span>First Possible Date</span>
+            <select class="fromDates">
+              {{#fromVolunteerDates}}
+              <option>{{.}}</option>
+              {{/fromVolunteerDates}}
+            </select>
+          </div>
+          <div>
+            <span>Last Possible Date</span>
+            <select class="toDates">
+              {{#toVolunteerDates}}
+              <option>{{.}}</option>
+              {{/toVolunteerDates}}
+            </select>
+          </div>
+          <div>
+            <button
+                class="volunteer-button"
+                onclick="volunteerConfirmClicked('{{fromSiteWssId}}', '{{toSiteWssId}}', '{{itemWssIds}}')">
+              Confirm
+            </button>
+          </div>
+        </div>
+
+        <div class="volunteer-confirm-message"  style="display: none">
+          Thank you for volunteering! A dispatcher will begin arranging the route and will
+          contact you if everything lines up.
+        </div>
+
+        <div class="errorMessage"></div>
+      </td>
+    </tr>
+    {{/isDriver}}
+
 
   </tbody>
 </table>

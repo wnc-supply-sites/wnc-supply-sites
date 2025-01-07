@@ -4,9 +4,11 @@ import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
+import com.vanatta.helene.supplies.database.auth.UserRole;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +63,7 @@ class BrowseRoutesControllerTest {
   void validatePageRenders() {
     var controller = new BrowseRoutesController(TestConfiguration.jdbiTest, "");
 
-    ModelAndView modelAndView = controller.browseRoutes(null, null, null);
+    ModelAndView modelAndView = controller.browseRoutes(null, null, null, List.of(UserRole.DRIVER));
 
     assertThat(modelAndView.getViewName()).isEqualTo("browse/routes");
 
@@ -72,7 +74,7 @@ class BrowseRoutesControllerTest {
                     .describedAs(param.name())
                     .isNotNull());
     assertThat(
-            (List<BrowseRoutesDao.DeliveryOption>)
+            (List<DeliveryOption>)
                 modelAndView
                     .getModelMap()
                     .getAttribute(BrowseRoutesController.TemplateParams.deliveryOptions.name()))
@@ -80,5 +82,9 @@ class BrowseRoutesControllerTest {
   }
 
   @Test
-  void filterByCounty() {}
+  void getVolunteerDays() {
+    List<String> results = BrowseRoutesController.getVolunteerDays(LocalDate.of(2020, 12, 30));
+    assertThat(results)
+        .contains("Dec-30", "Dec-31", "Jan-01", "Jan-02", "Jan-03", "Jan-04", "Jan-05");
+  }
 }

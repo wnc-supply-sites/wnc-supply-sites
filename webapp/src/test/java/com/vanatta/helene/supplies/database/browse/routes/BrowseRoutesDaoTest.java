@@ -102,4 +102,12 @@ class BrowseRoutesDaoTest {
     results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Polk,TN");
     assertThat(results).isEmpty();
   }
+
+  /** Make sure that the item WSS-ID values are all set in return results of delivery options. */
+  @Test
+  void deliveryOptions_returnsItemWssIdsThatAreSet() {
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null);
+    assertThat(results).isNotEmpty();
+    results.forEach(r -> assertThat(r.getItemWssIds()).doesNotContain(0L));
+  }
 }

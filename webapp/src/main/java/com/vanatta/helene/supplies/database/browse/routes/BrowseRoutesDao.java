@@ -1,12 +1,7 @@
 package com.vanatta.helene.supplies.database.browse.routes;
 
 import com.vanatta.helene.supplies.database.data.ItemStatus;
-import com.vanatta.helene.supplies.database.data.SiteAddress;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailController;
-import com.vanatta.helene.supplies.database.util.DurationFormatter;
-import com.vanatta.helene.supplies.database.util.ListSplitter;
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +70,7 @@ public class BrowseRoutesDao {
                         .name(deliveryOptionDbResult.itemName)
                         .urgencyCssClass(
                             ItemStatus.fromTextValue(deliveryOptionDbResult.urgency).getCssClass())
+                        .wssId(deliveryOptionDbResult.itemWssId)
                         .build()));
 
     return needsMatchingResult.values().stream()
@@ -83,95 +79,6 @@ public class BrowseRoutesDao {
                 .reversed()
                 .thenComparing(DeliveryOption::getToSiteName))
         .toList();
-  }
-
-  @Value
-  @Builder(toBuilder = true)
-  @AllArgsConstructor
-  public static class DeliveryOption {
-    @Value
-    @Builder
-    static class Item {
-      String name;
-      String urgencyCssClass;
-    }
-
-    String fromSiteName;
-    long fromSiteWssId;
-    String fromSiteLink;
-    String fromAddress;
-    String fromCity;
-    String fromCounty;
-    String fromState;
-    String fromHours;
-
-    String toSiteName;
-    long toSiteWssId;
-    String toSiteLink;
-    String toAddress;
-    String toCity;
-    String toCounty;
-    String toState;
-    String toHours;
-
-    Integer driveTimeSeconds;
-    Double distanceMiles;
-    @Builder.Default List<Item> items = new ArrayList<>();
-
-    /** lower numbers sort first */
-    double sortScore() {
-      if (distanceMiles == null) {
-        return 1000.0 - items.size();
-      } else {
-        return distanceMiles;
-      }
-    }
-
-    String getFromGoogleMapsAddress() {
-      return SiteAddress.builder()
-          .address(fromAddress)
-          .city(fromCity)
-          .state(fromState)
-          .build()
-          .toEncodedUrlValue();
-    }
-
-    String getGoogleMapsAddress() {
-      return SiteAddress.builder()
-          .address(toAddress)
-          .city(toCity)
-          .state(toState)
-          .build()
-          .toEncodedUrlValue();
-    }
-
-    String getDriveTime() {
-      return driveTimeSeconds == null
-          ? null
-          : DurationFormatter.formatDuration(Duration.ofSeconds(driveTimeSeconds));
-    }
-
-    List<Item> getItems1() {
-      List<List<Item>> splitLists =
-          ListSplitter.splitItemList(
-              items.stream().sorted(Comparator.comparing(i -> i.name)).toList(), 5);
-      return splitLists.getFirst();
-    }
-
-    List<Item> getItems2() {
-      List<List<Item>> splitLists =
-          ListSplitter.splitItemList(
-              items.stream().sorted(Comparator.comparing(i -> i.name)).toList(), 5);
-      return splitLists.size() > 1 ? splitLists.get(1) : List.of();
-    }
-
-    void addItem(Item item) {
-      this.items.add(item);
-    }
-
-    int getItemCount() {
-      return items.size();
-    }
   }
 
   @Data
@@ -198,6 +105,7 @@ public class BrowseRoutesDao {
     String hours;
 
     String itemName;
+    long itemWssId;
     String urgency;
     int itemCount;
     Integer driveTimeSeconds;
@@ -303,6 +211,7 @@ public class BrowseRoutesDao {
             toSite.hours as hours,
 
             i.name AS itemName,
+            i.wss_id AS itemWssId,
             ni.urgency AS urgency,
             sdm.drive_time_seconds AS driveTimeSeconds,
             sdm.distance_miles AS distanceMiles

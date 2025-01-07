@@ -4,14 +4,12 @@
     border-radius: 30px;
     border: solid;
     background-color: #E3E3E3;
-    width: 600px;
+    width: 725px;
 }
 
 .delivery-options th,
-.delivery-options td
-{
+.delivery-options td {
     padding: 5px;
-    /*width: 600px;*/
 }
 
 .page-section {
@@ -38,9 +36,10 @@
 }
 
 .flex {
-    display:flex;
-    flex-grow:1;
+    display: flex;
+    flex-grow: 1;
 }
+
 .site {
     align-content: baseline;
     text-align: center;
@@ -54,20 +53,13 @@
     background-color: lightyellow;
 }
 
-
-.table-background {
-    background-color: #AAA;
-    border-radius: 20px;
-    width: 600px;
-    padding: 20px;
-}
-
 .sticky-header {
     position: sticky;
     top: 0px;
     background-color: #F5F5F5;
     border-bottom: 4px #333 ridge;
     padding-bottom: 5px;
+    width: 100%;
 }
 
 .paging-div {
@@ -166,4 +158,24 @@
 .clear-button {
     margin-left: 10px;
     margin-right: 15px;
+}
+
+.confirm-volunteer {
+    justify-items: center
+}
+
+.confirm-volunteer div {
+    margin-top: 5px;
+}
+
+.volunteer-confirm-message {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.needs-list {
+    margin-top: 0px;
+    margin-left: 4px;
+    padding: 0px;
 }

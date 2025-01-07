@@ -1,9 +1,14 @@
 package com.vanatta.helene.supplies.database.browse.routes;
 
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
+import com.vanatta.helene.supplies.database.auth.UserRole;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.supplies.filters.AuthenticatedMode;
 import com.vanatta.helene.supplies.database.util.HtmlSelectOptionsUtil;
 import com.vanatta.helene.supplies.database.util.PhoneNumberUtil;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,11 +23,11 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-// @AllArgsConstructor
 public class BrowseRoutesController {
 
   private final Jdbi jdbi;
@@ -45,6 +50,9 @@ public class BrowseRoutesController {
     currentSite,
     currentCounty,
     currentPagePath,
+    isDriver,
+    fromVolunteerDates,
+    toVolunteerDates,
     ;
   }
 
@@ -57,7 +65,8 @@ public class BrowseRoutesController {
   ModelAndView browseRoutes(
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) String siteWssId,
-      @RequestParam(required = false) String county) {
+      @RequestParam(required = false) String county,
+      @ModelAttribute(LoggedInAdvice.USER_ROLES) List<UserRole> userRoles) {
 
     if (page == null) {
       page = 1;
@@ -85,10 +94,10 @@ public class BrowseRoutesController {
             ? null
             : counties.stream().filter(c -> c.startsWith(county)).findAny().orElse(null);
 
-    List<BrowseRoutesDao.DeliveryOption> deliveryOptions =
+    List<DeliveryOption> deliveryOptions =
         BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssIdCleaned, currentCounty).stream()
             .filter(RouteWeighting::filter)
-            .sorted(Comparator.comparingDouble(BrowseRoutesDao.DeliveryOption::sortScore))
+            .sorted(Comparator.comparingDouble(DeliveryOption::sortScore))
             .toList();
     int pageCount = (int) Math.ceil(((double) deliveryOptions.size()) / PAGE_SIZE);
     page = Math.min(page, pageCount);
@@ -99,6 +108,11 @@ public class BrowseRoutesController {
     templateParams.put(TemplateParams.hasDeliveries.name(), !deliveryOptions.isEmpty());
     templateParams.put(TemplateParams.hasPaging.name(), pageCount > 1);
 
+    List<String> volunteerDates = getVolunteerDays(LocalDate.now(ZoneId.of("America/New_York")));
+    templateParams.put(TemplateParams.fromVolunteerDates.name(), volunteerDates);
+    templateParams.put(TemplateParams.toVolunteerDates.name(), volunteerDates);
+
+    templateParams.put(TemplateParams.isDriver.name(), userRoles.contains(UserRole.DRIVER));
     templateParams.put(TemplateParams.apiKey.name(), mapsApiKey);
     templateParams.put(TemplateParams.currentPage.name(), page);
     templateParams.put(TemplateParams.resultCount.name(), deliveryOptions.size());
@@ -146,5 +160,13 @@ public class BrowseRoutesController {
     Long wssId;
     String siteName;
     Boolean selected;
+  }
+
+  static List<String> getVolunteerDays(LocalDate fromDate) {
+    List<String> days = new ArrayList<>();
+    for (long i = 0L; i < 15L; i++) {
+      days.add(fromDate.plusDays(i).format(DateTimeFormatter.ofPattern("MMM-dd")));
+    }
+    return days;
   }
 }

@@ -15,7 +15,7 @@ public class RouteWeighting {
     double distance;
     List<Item> items;
 
-    RouteData(BrowseRoutesDao.DeliveryOption deliveryOption) {
+    RouteData(DeliveryOption deliveryOption) {
       // if we don't know the distance between two sites.. just use a ballpark of about 100 miles.
       this.distance =
           deliveryOption.getDistanceMiles() == null ? 100.0 : deliveryOption.getDistanceMiles();
@@ -41,7 +41,7 @@ public class RouteWeighting {
     }
   }
 
-  public static boolean filter(BrowseRoutesDao.DeliveryOption deliveryOption) {
+  public static boolean filter(DeliveryOption deliveryOption) {
     return filter(new RouteData(deliveryOption));
   }
 
