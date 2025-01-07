@@ -79,7 +79,7 @@ table.inventoryTable td {
   width: 45%;
 }
 
-.search-input-label {
+.filter-title {
   font-size: larger;
   font-weight: 900;
 }
@@ -90,12 +90,14 @@ table.inventoryTable td {
 }
 
 #item-tags-container {
-  height: 100px; 
+  height: 150px; 
   border:1px solid gray; 
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   overflow-y: auto;
+  margin-top: .5rem;
+  margin-bottom: 1rem;
 }
 
 .item-tag {
@@ -117,8 +119,6 @@ table.inventoryTable td {
 .tag-selected {
   box-shadow: inset 2px 2px 5px gray;
 }
-
-
 
 @media only screen and (max-width: 632px) {
   .filter-container {

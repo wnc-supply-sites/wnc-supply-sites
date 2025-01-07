@@ -32,14 +32,17 @@
 </ul>
 
 <div class="filter-container">
-  <label class="search-input-label" for="filter-text-input"> Search for items by name: </label>
+  <label class="filter-title" for="filter-text-input"> Search for items by name: </label>
   <input type="text" id="filter-text-input"/>
 </div>
 
-<div class="filter-container" id="item-tags-container">
-  {{#tagList}}
-  <div class="item-tag"> <button class="item-tag-inner"> {{.}} </button> </div>
-  {{/tagList}}
+<div class="filter-container">
+  <label class="filter-title" for="item-tags-container"> Filter items by tag: </label>
+  <div id="item-tags-container">
+    {{#tagList}}
+    <div class="item-tag"> <button class="item-tag-inner"> {{.}} </button> </div>
+    {{/tagList}}
+  </div>
 </div>
 
 <div id="data-entry">
