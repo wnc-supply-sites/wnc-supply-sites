@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="../../mobile.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    tagList = {{{tagList}}};
+    const tagList = {{{tagList}}};
   </script>
   {{> header-include }}
 </head>
@@ -31,9 +31,15 @@
   <li>Favor using generic terms for items (eg: 'First Aid' instead of 'Band Aids')
 </ul>
 
-<div class="search-input-container">
+<div class="filter-container">
   <label class="search-input-label" for="filter-text-input"> Search for items by name: </label>
   <input type="text" id="filter-text-input"/>
+</div>
+
+<div class="filter-container" id="item-tags-container">
+  {{#tagList}}
+  <div class="item-tag"> <button class="item-tag-inner"> {{.}} </button> </div>
+  {{/tagList}}
 </div>
 
 <div id="data-entry">
@@ -165,6 +171,7 @@
 
 <script> 
   instantiateInputEventListener();
+  instantiateTagsEventListener();
 </script>
 </body>
 </html>

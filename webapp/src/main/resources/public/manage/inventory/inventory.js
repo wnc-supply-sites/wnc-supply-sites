@@ -459,3 +459,14 @@ function instantiateInputEventListener() {
     filterItemsByName(e.target.value);
   })
 }
+
+function instantiateTagsEventListener() {
+  const tags = document.getElementsByClassName("item-tag-inner");
+  
+  for (let i = 0; i < tags.length; i++) {
+    const tag = tags[i];
+    tag.addEventListener("click", (e) => {
+      tag.classList.toggle("tag-selected");
+    })
+  }
+}
