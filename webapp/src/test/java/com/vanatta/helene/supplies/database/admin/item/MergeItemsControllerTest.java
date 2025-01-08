@@ -9,6 +9,7 @@ import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import com.vanatta.helene.supplies.database.delivery.DeliveryUpdate;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
+import com.vanatta.helene.supplies.database.manage.inventory.ItemTagDao;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,11 @@ class MergeItemsControllerTest {
     ItemResult itemA = TestConfiguration.addItem("A");
     ItemResult itemB = TestConfiguration.addItem("B");
     ItemResult itemC = TestConfiguration.addItem("C");
+
+    // add a tags, we do not expect tags to be merged, but we need to be sure we handle the FK
+    // constraints.
+    ItemTagDao.updateDescriptionTags(jdbiTest, itemA.getWssId(), List.of("Tag 1"));
+    ItemTagDao.updateDescriptionTags(jdbiTest, itemB.getWssId(), List.of("Tag 2"));
 
     TestConfiguration.addItemToSite(site1Id, ItemStatus.AVAILABLE, itemA.getName(), -500);
     TestConfiguration.addItemToSite(site2Id, ItemStatus.AVAILABLE, itemB.getName(), -501);

@@ -210,6 +210,17 @@ public class MergeItemsController {
                   .execute());
     }
 
+    // delete tags
+    jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(
+                    """
+                    delete from item_tag where item_id in (<itemIds>)
+                    """)
+                .bindList("itemIds", itemsToMergeIds)
+                .execute());
+
     // now remove the items from the 'item' table to complete the merge
     jdbi.withHandle(
         handle ->
