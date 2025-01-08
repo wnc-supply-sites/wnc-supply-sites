@@ -7,9 +7,6 @@
   <link rel="stylesheet" href="inventory.css"/>
   <link rel="stylesheet" href="../../mobile.css"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    const tagList = {{{tagList}}};
-  </script>
   {{> header-include }}
 </head>
 
@@ -37,10 +34,10 @@
 </div>
 
 <div class="filter-container">
-  <label class="filter-title" for="item-tags-container"> Filter items by tag: </label>
+  <span class="filter-title"> Filter items by tag: </span>
   <div id="item-tags-container">
     {{#tagList}}
-    <div class="item-tag"> <button class="item-tag-inner"> {{.}} </button> </div>
+    <div class="item-tag"> <button class="item-tag-inner" value="{{.}}">{{.}}</button> </div>
     {{/tagList}}
   </div>
 </div>
@@ -66,7 +63,7 @@
           </td>
           <td onclick="checkAndToggleInventory('{{siteId}}', '{{itemName}}')">
             <div>
-              <input type="hidden" value="{{tags}}" />
+              <input type="hidden" class="item-tags" value="{{tags}}" />
               <span class="inventoryLabel {{itemLabelClass}} {{itemStatusDisabled}}"
                      id="{{itemName}}Label">
                 {{itemName}}

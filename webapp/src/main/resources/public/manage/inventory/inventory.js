@@ -436,16 +436,52 @@ function htmlEncode(input) {
   return input;
 }
 
-function filterItemsByName(text) {
+/**
+ * Filter functionality
+ */
+
+function instantiateInputEventListener() {
+  const input = document.getElementById("filter-text-input");
+  input.addEventListener("keyup", (e) => {
+    filterItems();
+  })
+}
+
+function instantiateTagsEventListener() {
+  const tags = document.getElementsByClassName("item-tag-inner");
+  for (let i = 0; i < tags.length; i++) {
+    const tag = tags[i];
+    const formattedTag = formatTagElementValue(tag);
+
+    formattedTag.addEventListener("click", (e) => {
+      formattedTag.classList.toggle("tag-selected");
+      filterItems();
+    })
+  }
+}
+
+function filterItems() {
+  const textInputValue = document.getElementById("filter-text-input").value;
+  const selectedTags = getListOfSelectedTags();
+  
+  hideElementsBasedOnFilters(textInputValue, selectedTags);
+}
+
+function hideElementsBasedOnFilters(filterText, filterTags) {
   const inventoryItems = document.getElementsByClassName("inventory-item");
   for(let i = 0; i < inventoryItems.length; i++) {
-    const itemName = inventoryItems[i]
+    const inventoryItem = inventoryItems[i];
+    const itemName = inventoryItem
         .getElementsByClassName("inventoryLabel")[0]
         .textContent
         .trim()
         .toLowerCase();
-    const inventoryItem = inventoryItems[i];
-    if (itemName.includes(text.toLowerCase())){
+    const itemTags = getTagListFromItem(inventoryItem);
+
+    const filterTagsContainItemTags = itemTags.some((tag) => filterTags.length === 0 ? true : filterTags.includes(tag));
+    
+    const filterContainsItemName = itemName.includes(filterText.toLowerCase());
+    if (filterContainsItemName && filterTagsContainItemTags){
       inventoryItem.classList.remove("hidden")
     } else {
       inventoryItem.classList.add("hidden")
@@ -453,20 +489,34 @@ function filterItemsByName(text) {
   }
 }
 
-function instantiateInputEventListener() {
-  const input = document.getElementById("filter-text-input");
-  input.addEventListener("keyup", (e) => {
-    filterItemsByName(e.target.value);
+function arrayElementsAreInFilterArray(array, filterArray) {
+  return array.some((element) => {
+    filterArray.contains(element)
   })
 }
 
-function instantiateTagsEventListener() {
-  const tags = document.getElementsByClassName("item-tag-inner");
-  
-  for (let i = 0; i < tags.length; i++) {
-    const tag = tags[i];
-    tag.addEventListener("click", (e) => {
-      tag.classList.toggle("tag-selected");
-    })
+function getListOfSelectedTags() {
+  const tags = []
+  const selectedTags = document.getElementsByClassName("tag-selected");
+  for(let i = 0; i < selectedTags.length; i++) {
+    const tag = selectedTags[i];
+    tags.push(tag.value);
   }
+  return tags;
 }
+
+function getTagListFromItem(element) {
+  const itemTags = element.getElementsByClassName("item-tags")[0].value.slice(1, -1).split(",");
+  const cleanedItemTags = itemTags.map((tag) => {return tag.trim()});
+  return cleanedItemTags;
+}
+
+// Remove the quotes from tag string value
+function formatTagElementValue(tag){
+  const tagText = tag.textContent;
+  const formattedString = tagText.trim().slice(1,-1);
+  tag.textContent = formattedString;
+  tag.value = formattedString;
+  return tag;
+}
+
