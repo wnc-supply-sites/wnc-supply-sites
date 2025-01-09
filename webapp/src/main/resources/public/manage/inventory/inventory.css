@@ -90,7 +90,7 @@ table.inventoryTable td {
 }
 
 #item-tags-container {
-  height: 150px; 
+  max-height: 150px; 
   border:1px solid gray; 
   display: flex;
   flex-direction: row;
@@ -104,7 +104,7 @@ table.inventoryTable td {
   font-size: smaller;
   width: max-content;
   height: max-content;
-  padding: .5rem;
+  padding: .30rem;
 }
 
 .item-tag-inner {
