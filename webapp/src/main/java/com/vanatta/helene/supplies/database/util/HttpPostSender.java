@@ -22,7 +22,6 @@ public class HttpPostSender {
     if (!url.startsWith("http")) {
       throw new IllegalArgumentException("Invalid url: " + url);
     }
-    log.info("Sending to url: {}, JSON: {}", url, json);
 
     try (var client = HttpClient.newHttpClient()) {
       var uri = URI.create(url);
@@ -35,13 +34,18 @@ public class HttpPostSender {
       try {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 200) {
-          log.info("Successfully sent!");
+          log.info("Successfully sent to url: {}, JSON: {}", url, json);
         } else {
-          log.error("Failed, bad response received: {}, {}", response, response.body());
+          log.error(
+              "Failed to send JSON: {}, to URL: {}, bad response received: {}, {}",
+              json,
+              url,
+              response,
+              response.body());
         }
       } catch (IOException | InterruptedException e) {
-        log.error("Failed to send data to URL: {}, data: {}", url, json, e);
-        throw new RuntimeException(e);
+        throw new RuntimeException(
+            String.format("Error sending JSON: %s, to URL: %s", json, url), e);
       }
     }
   }

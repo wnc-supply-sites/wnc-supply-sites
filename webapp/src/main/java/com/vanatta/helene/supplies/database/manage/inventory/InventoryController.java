@@ -199,6 +199,11 @@ public class InventoryController {
     if (siteData == null) {
       return ResponseEntity.status(401).build();
     }
+    String itemStatus = params.get("itemStatus");
+    if (itemStatus == null || !ItemStatus.allItemStatus().contains(itemStatus)) {
+      log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
+      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
+    }
 
     String itemName =
         Optional.ofNullable(params.get("itemName"))
@@ -207,25 +212,9 @@ public class InventoryController {
                     new IllegalArgumentException(
                         "Failed to activate item for site, item name missing in params: " + params))
             .trim();
-    String itemStatus = params.get("itemStatus");
-    log.info("Activating item: {}, siteId: {}, status: {}", itemName, siteId, itemStatus);
-    if (siteId == null) {
-      log.warn("Failed to activate item. No site id. Params: {}", params);
-      return ResponseEntity.badRequest().body("Invalid site id, none specified.");
-    }
-
-    if (itemStatus == null) {
-      log.warn("Failed to activate item. No item name. No item status: {}", params);
-      return ResponseEntity.badRequest().body("Invalid item status, none specified.");
-    }
-
-    if (!ItemStatus.allItemStatus().contains(itemStatus)) {
-      log.warn("Failed to activate item. Invalid item status: {}, params: {}", itemStatus, params);
-      return ResponseEntity.badRequest().body("Invalid item status: " + itemStatus);
-    }
-
+    log.info(
+        "Activating item: {}, site: {}, status: {}", itemName, siteData.getSiteName(), itemStatus);
     InventoryDao.updateSiteItemActive(jdbi, Long.parseLong(siteId), itemName, itemStatus);
-
     ThreadRunner.run(() -> sendInventoryUpdate.send(Long.parseLong(siteId), itemName));
 
     return ResponseEntity.ok("Updated");
@@ -245,16 +234,12 @@ public class InventoryController {
     }
 
     String itemName = params.get("itemName");
-    if (siteId == null) {
-      log.warn("Failed to deactivate item, no site id. Params: {}", params);
-      throw new IllegalArgumentException("Invalid site id, none specified.");
-    }
     if (itemName == null) {
       log.warn("Failed to deactivate item, no item name. Params: {}", params);
       throw new IllegalArgumentException("Invalid item name, none specified.");
     }
 
-    log.info("Deactivating item: {}, siteId: {}", itemName, siteId);
+    log.info("Deactivating item: {}, site: {}", itemName, siteData.getSiteName());
 
     InventoryDao.getInventoryWssId(jdbi, Long.parseLong(siteId), itemName)
         .ifPresent(
@@ -275,16 +260,14 @@ public class InventoryController {
     String itemName = params.get("itemName");
     String newStatus = params.get("newStatus");
 
-    log.info(
-        "Updating item status, site id: {}, item name: {}, status: {}",
-        siteId,
-        itemName,
-        newStatus);
     String siteName = fetchSiteName(siteId);
     if (siteName == null) {
       log.warn("Failed to update item status. Invalid site id: {}, params: {}", siteId, params);
       return ResponseEntity.badRequest().body("Invalid site id");
     }
+
+    log.info(
+        "Updating item status, site: {}, item name: {}, status: {}", siteName, itemName, newStatus);
 
     ItemStatus oldStatus = InventoryDao.fetchItemStatus(jdbi, Long.parseLong(siteId), itemName);
 
