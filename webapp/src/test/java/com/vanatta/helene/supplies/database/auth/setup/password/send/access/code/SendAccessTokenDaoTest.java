@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.auth.setup.password.SetupPasswordHelper;
+import com.vanatta.helene.supplies.database.driver.DriverDao;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.contact.ContactDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,16 @@ class SendAccessTokenDaoTest {
     ContactDao.addAdditionalSiteManager(jdbiTest, siteId, "name", "432.222.2222");
 
     boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "432 222 2222");
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void phoneNumberIsRegistered_caseDriver() {
+    var driver = TestConfiguration.buildDriver(-8973L, "(333) 999 6666");
+    DriverDao.upsert(jdbiTest, driver);
+
+    boolean result = SendAccessTokenDao.isPhoneNumberRegistered(jdbiTest, "333 999 6666");
 
     assertThat(result).isTrue();
   }

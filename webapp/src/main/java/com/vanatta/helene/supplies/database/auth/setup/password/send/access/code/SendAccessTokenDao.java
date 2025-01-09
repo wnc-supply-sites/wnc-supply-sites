@@ -28,6 +28,10 @@ public class SendAccessTokenDao {
         select 1
         from additional_site_manager
         where regexp_replace(phone, '[^0-9]+', '', 'g') = :phoneNumber
+        union
+        select 1
+        from driver
+        where regexp_replace(phone, '[^0-9]+', '', 'g') = :phoneNumber
         """;
     return jdbi.withHandle(
         handle ->
