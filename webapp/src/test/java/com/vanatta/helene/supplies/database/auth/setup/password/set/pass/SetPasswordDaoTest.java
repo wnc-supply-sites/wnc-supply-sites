@@ -53,4 +53,12 @@ class SetPasswordDaoTest {
     assertThat(PasswordDao.confirmPassword(jdbiTest, "123.000.4223", newPassword)).isTrue();
     assertThat(PasswordDao.confirmPassword(jdbiTest, "(123) 000-4223", newPassword)).isTrue();
   }
+
+  @Test
+  void hasPassword() {
+    String testNumber = "3336219999";
+    assertThat(PasswordDao.hasPassword(jdbiTest, testNumber)).isFalse();
+    SetupPasswordHelper.withRegisteredNumber(testNumber);
+    assertThat(PasswordDao.hasPassword(jdbiTest, testNumber)).isTrue();
+  }
 }

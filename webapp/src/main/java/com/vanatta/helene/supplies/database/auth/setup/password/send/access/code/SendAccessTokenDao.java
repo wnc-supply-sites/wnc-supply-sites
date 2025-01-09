@@ -9,7 +9,7 @@ import org.jdbi.v3.core.Jdbi;
 
 public class SendAccessTokenDao {
 
-  static boolean isPhoneNumberRegistered(Jdbi jdbi, String inputPhoneNumber) {
+  public static boolean isPhoneNumberRegistered(Jdbi jdbi, String inputPhoneNumber) {
     if (inputPhoneNumber == null || inputPhoneNumber.isBlank()) {
       return false;
     }

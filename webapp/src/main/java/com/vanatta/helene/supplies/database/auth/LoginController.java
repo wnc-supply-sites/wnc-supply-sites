@@ -1,9 +1,10 @@
 package com.vanatta.helene.supplies.database.auth;
 
+import com.vanatta.helene.supplies.database.auth.setup.password.send.access.code.SendAccessTokenDao;
 import com.vanatta.helene.supplies.database.util.CookieUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -55,12 +56,11 @@ public class LoginController {
       path = "/doLogin",
       consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
   public ModelAndView doLogin(
-      @RequestParam MultiValueMap<String, String> params,
-      HttpServletRequest request,
-      HttpServletResponse response) {
+      @RequestParam MultiValueMap<String, String> params, HttpServletResponse response) {
     String user = params.get("user").getFirst();
     String password = params.get("password").getFirst();
-    String redirectUri = params.get("redirectUri").getFirst();
+    String redirectUri =
+        Optional.ofNullable(params.get("redirectUri")).map(List::getFirst).orElse("/");
 
     if (user == null || user.isEmpty() || password == null || password.isEmpty()) {
       Map<String, String> pageParams = new HashMap<>();
@@ -83,9 +83,12 @@ public class LoginController {
       } else {
         return new ModelAndView("redirect:/login/setup-password");
       }
+    } else if (!PasswordDao.hasPassword(jdbi, user)
+        && SendAccessTokenDao.isPhoneNumberRegistered(jdbi, user)) {
+      return new ModelAndView("redirect:/login/setup-password");
     } else {
       LoginDao.recordLoginFailure(jdbi, user);
-      log.info("User login failed: {}, IP: {}", user, request.getRemoteAddr());
+      log.info("User login failed: {}", user);
       Map<String, String> pageParams = new HashMap<>();
       pageParams.put("redirectUri", redirectUri);
       pageParams.put("errorMessage", "Invalid Login");

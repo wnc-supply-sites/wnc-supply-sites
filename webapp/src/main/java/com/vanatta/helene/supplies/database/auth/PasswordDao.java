@@ -16,7 +16,12 @@ public class PasswordDao {
       return false;
     }
 
-    String select = "select password_bcrypt from wss_user where phone = :phoneNumber";
+    String select =
+        """
+        select password_bcrypt
+        from wss_user
+        where regexp_replace(phone, '[^0-9]+', '', 'g') = :phoneNumber
+    """;
     String passwordHash =
         jdbi.withHandle(
                 handle ->
@@ -31,5 +36,18 @@ public class PasswordDao {
     }
 
     return HashingUtil.verifyBCryptHash(password, passwordHash);
+  }
+
+  public static boolean hasPassword(Jdbi jdbi, String phoneNumber) {
+    String select =
+        "select 1 from wss_user where regexp_replace(phone, '[^0-9]+', '', 'g') = :phoneNumber";
+    return jdbi.withHandle(
+            handle ->
+                handle
+                    .createQuery(select)
+                    .bind("phoneNumber", PhoneNumberUtil.removeNonNumeric(phoneNumber))
+                    .mapTo(Long.class)
+                    .findOne())
+        .isPresent();
   }
 }
