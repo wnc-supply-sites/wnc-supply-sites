@@ -19,15 +19,7 @@
 }
 
 .inventoryTable th:nth-child(1) {
-  width: 10%;
-}
-
-.inventoryTable th:nth-child(2) {
-  width: 35%;
-}
-
-.inventoryTable th:nth-child(3) {
-  width: 65%;
+  width: 30px;
 }
 
 tbody#inventoryTableBody tr {
@@ -59,9 +51,13 @@ tbody#inventoryTableBody td {
   font-size: 1.4em;
 }
 
+.item-status-fieldset {
+  width: 100%;
+}
+
 .item-status-div {
   margin-bottom: 5px;
-  font-size: 1.2em;
+  font-size: 1.2rem;
 }
 
 #newItemForm {
@@ -84,11 +80,11 @@ tbody#inventoryTableBody td {
 
 #add-item-button {
   width: 130px;
-  font-size: 1.1em;
+  font-size: 1.1rem;
 }
 
 .new-item-status-div {
-  font-size: 1.1em;
+  font-size: 1.1rem;
   display: flex;
   flex-direction: column;
 }
@@ -151,10 +147,23 @@ table.inventoryTable td {
 
 @media only screen and (max-width: 632px) {
   .content-container {
-    width: 90%;
+    width: 100%;
+    margin-left: 0px;
   }
 
   #item-tags-container {
     max-height: 100px;
+  }
+
+  .inventoryLabel {
+    font-size: 1em;
+  }
+
+  .item-status-div {
+    font-size: 1em;
+  }
+
+  #add-item-button {
+    font-size: 1rem;
   }
 }
