@@ -124,55 +124,47 @@
       </table>
 
       <hr>
-
+      
       <div id="addItemResult" class="update-confirm-div">
       </div>
 
       <!-- Add new item table -->
-      <table id="newItemTable">
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tr>
-          <td>
-            <button onclick="addItem('{{siteId}}')" id="add-item-button">+ Add Item</button>
-          </td>
-          <td>
-            <input type="text" id="newItemText" maxlength="128"/>
-          </td>
-          <td>
-            <fieldset class="vertical new-item-status-div">
-              <!-- Urgently Needed (new item) -->
-              <div class="horizontal new-item-status-div">
-                <input type="radio" id="urgentlyNeededRadioNew" name="newItemStatus"/>
-                <label for="urgentlyNeededRadioNew" class="urgent">Urgently Needed</label>
-              </div>
+      <div id="newItemForm">
+        
+        <span class="new-item-form-label"> Add a new item: </span>
 
-              <!-- Needed (new item) -->
-              <div class="horizontal">
-                <input type="radio" id="neededRadioNew" name="newItemStatus"/>
-                <label for="neededRadioNew" class="needed">Needed</label>
-              </div>
-
-              <!--Available (new item) -->
-              <div class="horizontal">
-                <input type="radio" id="availableRadioNew" name="newItemStatus" checked/>
-                <label for="availableRadioNew" class="available">Available</label>
-              </div>
-
-              <!-- Oversupply (new item) -->
-              <div class="horizontal new-item-status-div">
-                <input type="radio" id="oversupplyRadioNew" name="newItemStatus"/>
-                <label for="oversupplyRadioNew" class="oversupply">Oversupply (too much)</label>
-              </div>
-            </fieldset>
-          </td>
-        </tr>
-      </table>
+        <label for="newItemText" style="text-decoration: underline;">Item Name</label>
+        <input type="text" id="newItemText" maxlength="128"/>
+        <fieldset class="vertical new-item-status-div" id="newItemStatus">
+          <legend>item status</legend>
+          <!-- Urgently Needed (new item) -->
+          <div class="horizontal">
+            <input type="radio" id="urgentlyNeededRadioNew" name="newItemStatus"/>
+            <label for="urgentlyNeededRadioNew" class="urgent">Urgently Needed</label>
+          </div>
+          
+          <!-- Needed (new item) -->
+          <div class="horizontal">
+            <input type="radio" id="neededRadioNew" name="newItemStatus"/>
+            <label for="neededRadioNew" class="needed">Needed</label>
+          </div>
+          
+          <!--Available (new item) -->
+          <div class="horizontal">
+            <input type="radio" id="availableRadioNew" name="newItemStatus" checked/>
+            <label for="availableRadioNew" class="available">Available</label>
+          </div>
+          
+          <!-- Oversupply (new item) -->
+          <div class="horizontal">
+            <input type="radio" id="oversupplyRadioNew" name="newItemStatus"/>
+            <label for="oversupplyRadioNew" class="oversupply">Oversupply (too much)</label>
+          </div>
+        </fieldset>
+        <div class="add-item-button-container">
+          <button onclick="addItem('{{siteId}}')" id="add-item-button">+ Add Item</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

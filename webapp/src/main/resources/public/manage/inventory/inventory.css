@@ -64,21 +64,22 @@ tbody#inventoryTableBody td {
   font-size: 1.2em;
 }
 
-#newItemTable {
+#newItemForm {
   width: 100%;
-  table-layout: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }
 
-.newItemTable th:nth-child(1) {
-  width: 10%;
+.new-item-form-label {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: .5rem;
 }
 
-.newItemTable th:nth-child(2) {
-  width: 35%;
-}
-
-.newItemTable th:nth-child(3) {
-  width: 65%;
+.add-item-button-container {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 #add-item-button {
@@ -88,6 +89,8 @@ tbody#inventoryTableBody td {
 
 .new-item-status-div {
   font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
 }
 
 table.inventoryTable td {
