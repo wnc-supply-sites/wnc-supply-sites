@@ -14,7 +14,20 @@
 }
 
 .inventoryTable {
-  /*width: 600px;*/
+  width: 100%;
+  table-layout: fixed;
+}
+
+.inventoryTable th:nth-child(1) {
+  width: 10%;
+}
+
+.inventoryTable th:nth-child(2) {
+  width: 35%;
+}
+
+.inventoryTable th:nth-child(3) {
+  width: 65%;
 }
 
 tbody#inventoryTableBody tr {
@@ -52,7 +65,20 @@ tbody#inventoryTableBody td {
 }
 
 #newItemTable {
-  /*width: 600px;*/
+  width: 100%;
+  table-layout: fixed;
+}
+
+.newItemTable th:nth-child(1) {
+  width: 10%;
+}
+
+.newItemTable th:nth-child(2) {
+  width: 35%;
+}
+
+.newItemTable th:nth-child(3) {
+  width: 65%;
 }
 
 #add-item-button {
@@ -72,11 +98,11 @@ table.inventoryTable td {
   display: "none"
 }
 
-.filter-container {
+.content-container {
   margin-left: 15px;
   display: flex;
   flex-direction: column;
-  width: 45%;
+  width: 50%;
 }
 
 .filter-title {
@@ -90,7 +116,7 @@ table.inventoryTable td {
 }
 
 #item-tags-container {
-  max-height: 150px; 
+  max-height: 200px; 
   border:1px solid gray; 
   display: flex;
   flex-direction: row;
@@ -121,7 +147,11 @@ table.inventoryTable td {
 }
 
 @media only screen and (max-width: 632px) {
-  .filter-container {
-    width: 80%;
+  .content-container {
+    width: 90%;
+  }
+
+  #item-tags-container {
+    max-height: 100px;
   }
 }

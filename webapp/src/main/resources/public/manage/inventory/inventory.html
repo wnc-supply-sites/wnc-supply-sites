@@ -28,12 +28,12 @@
   <li>Favor using generic terms for items (eg: 'First Aid' instead of 'Band Aids')
 </ul>
 
-<div class="filter-container">
+<div class="content-container">
   <label class="filter-title" for="filter-text-input"> Search for items by name: </label>
   <input type="text" id="filter-text-input"/>
 </div>
 
-<div class="filter-container">
+<div class="content-container">
   <span class="filter-title"> Filter items by tag: </span>
   <div id="item-tags-container">
     {{#tagList}}
@@ -42,8 +42,9 @@
   </div>
 </div>
 
+<div class="content-container">
 <div id="data-entry">
-  <div class="data-entry-div vertical">
+  <div class="vertical">
     <div class="data-entry-body">
       <table class="inventoryTable">
         <thead>
@@ -129,6 +130,13 @@
 
       <!-- Add new item table -->
       <table id="newItemTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
         <tr>
           <td>
             <button onclick="addItem('{{siteId}}')" id="add-item-button">+ Add Item</button>
@@ -168,7 +176,7 @@
     </div>
   </div>
 </div>
-
+</div>
 <script> 
   instantiateInputEventListener();
   instantiateTagsEventListener();
