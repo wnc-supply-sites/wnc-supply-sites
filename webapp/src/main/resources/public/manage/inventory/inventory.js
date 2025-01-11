@@ -541,8 +541,6 @@ function instantiateScrollToTopEvenListener() {
 
   window.addEventListener("scroll", (e) => {
     const scrollTop = document.body.scrollTop
-    console.log(scrollTop);
-    console.log(`window height: ${window.innerHeight}`)
 
     if (scrollTop > .5 * window.innerHeight) {
       scrollToTopButton.classList.remove("hidden")
