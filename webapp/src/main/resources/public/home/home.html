@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
-  <title>WNC Supply Sites - Home</title>
+  <title>{{deploymentShortName}} Supply Sites - Home</title>
   <link rel="stylesheet" href="home/home.css"/>
   <link rel="stylesheet" href="../style.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
@@ -8,12 +8,11 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
   />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   {{> header-include }}
 </head>
 <body>
 {{> header }}
-<h2>Hurricane Helene Disaster Relief</h2>
+<h2>{{siteDescription}}</h2>
 
 <div class="nav-buttons-container">
 
@@ -63,22 +62,22 @@
   </div>
 
   <div class="nav-button-container">
-    <a href="/behind-the-scenes/index.html">
+    <a href="/behind-the-scenes/">
       <button type="button" class="nav-button wide-button">How Supplies Move</button>
     </a>
   </div>
   {{/isAuthenticated}}
 
   <div class="nav-button-container">
-    <a href="/about/about.html">
+    <a href="/about/">
       <button type="button" class="nav-button wide-button">
-        About WNC-Supply-Sites.com
+        About {{deploymentShortName}}-Supply-Sites.com
       </button>
     </a>
   </div>
 
   <div class="nav-button-container">
-    <a href="https://form.jotform.com/243608573773062">
+    <a href="{{contactUsLink}}">
       <button type="button" class="nav-button wide-button">Contact Us</button>
     </a>
   </div>

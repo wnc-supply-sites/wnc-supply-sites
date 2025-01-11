@@ -60,7 +60,7 @@ public class SendAccessTokenController {
                   """
                     Phone number is not registered.
                     The phone number associated with the site or that you used during driver sign up is required.
-                    Please <a href="/registration/registration.html">contact us</a> to get your number registered.
+                    Please <a href="/registration/">contact us</a> to get your number registered.
                   """));
     }
 
@@ -105,7 +105,7 @@ public class SendAccessTokenController {
                   """
                     Potentially invalid phone number. Failed to send SMS message.
                     Please double check the phone number. If the phone number is for sure
-                    valid, please <a href="/registration/registration.html">contact us</a>.
+                    valid, please <a href="/registration/">contact us</a>.
                   """));
     }
   }

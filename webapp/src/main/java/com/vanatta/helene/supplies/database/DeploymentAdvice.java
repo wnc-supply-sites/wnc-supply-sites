@@ -1,20 +1,63 @@
 package com.vanatta.helene.supplies.database;
 
+import com.vanatta.helene.supplies.database.data.HostNameLookup;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
- * Configures parameters based upon the requested domain. Different deployments are partitioned by
- * the domain name.
+ * A 'deployment' is a different geographical deployment of the software. It is a different region,
+ * conceptually a different 'instance.' (except not, we run just one website instance). Each
+ * deployment typically will have a unique domain name associated with it.
+ *
+ * <p>Configures parameters based upon the requested domain. Different deployments are partitioned
+ * by the domain name.
  */
 @ControllerAdvice
 @Slf4j
+@AllArgsConstructor
 public class DeploymentAdvice {
-  @ModelAttribute("domain")
-  public String domain(HttpServletRequest request) {
-    //    log.info("Host header: {}", request.getHeader("host"));
-    return "";
+
+  public static final String DEPLOYMENT_SHORT_NAME = "deploymentShortName";
+  public static final String DEPLOYMENT_STATE_LIST = "deploymentStateList";
+  private final Jdbi jdbi;
+  private final HostNameLookup hostNameLookup;
+
+  @ModelAttribute(DEPLOYMENT_SHORT_NAME)
+  public String shortName(HttpServletRequest request) {
+    return getShortNameForHost(jdbi, hostNameLookup.lookupHostName(request));
+  }
+
+  // @VisibleForTesting
+  static String getShortNameForHost(Jdbi jdbi, String domain) {
+    return jdbi.withHandle(
+        h ->
+            h.createQuery("select short_name from deployment where domain = :domain")
+                .bind("domain", domain)
+                .mapTo(String.class)
+                .one());
+  }
+
+  @ModelAttribute(DEPLOYMENT_STATE_LIST)
+  public List<String> stateList(HttpServletRequest request) {
+    return fetchStateListForHost(jdbi, request.getHeader("host"));
+  }
+
+  static List<String> fetchStateListForHost(Jdbi jdbi, String domain) {
+    return jdbi.withHandle(
+        h ->
+            h.createQuery(
+                    """
+              select state
+              from deployment_states
+              where deployment_id = (select id from deployment where domain = :domain)
+            """)
+                .bind("domain", domain)
+                .mapTo(String.class)
+                .list());
   }
 }

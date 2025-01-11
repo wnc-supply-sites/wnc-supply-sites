@@ -218,6 +218,23 @@ ufw allow 443
 certbot --nginx -d staging.wnc-supply-sites.com
 ```
 
+### Configuring a new Domain
+- Buy the domain (namecheap is a VERY good option, use namecheap.com)
+- Set up three DNS records: A, AAAA, CAA record (use existing domains for examples)
+  - specify the existing server IP address for the A & AAAA records, and the same 'letencrypt' value for the CAA record
+  - It's actually 5 records to setup, two for A, and two for AAAA records
+- Hop onto the server
+- cd into `/etc/nginx`, do a git status and check in any pending changes
+- edit /etc/nginx/sites-enabled/default
+  - Copy paste a server block that is currently for port 443 & has a reverse proxy block in it
+  - Update port 443 to be 80, and remove the lines mentioning lets encrypt, and remove the SSL keyword
+  - Run certbot, (replacing domain name as approprate), eg: ` certbot --nginx -d socal-supply-sites.com
+- validate new site is up and running on the new URL
+- do a git diff, review updates and check them in.
+
+Next up, configure the application. This is a matter of setting up a set of various DB entries.
+Check the existing SQL migration files for examples. Create a new one, add the appropriate inserts,
+and then commit & redeploy the application (see redeploy process).
 
 #### Create cron entry (renew cert)
 
