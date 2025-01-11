@@ -156,7 +156,6 @@ table.inventoryTable td {
 }
 
 .item-tag-inner {
-  background-color: aquamarine;
   padding: .25rem .5rem;
   border-radius: 30px;
   cursor: pointer;

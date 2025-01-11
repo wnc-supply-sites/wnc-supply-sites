@@ -17,6 +17,7 @@ import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
@@ -92,9 +93,16 @@ public class InventoryController {
     pageParams.put("inventoryList", inventoryList);
     pageParams.put(
         "tagList",
-        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> "\"" + tag + "\"").toList());
-
+        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> new TagData(tag ,"#7fffd4" )).toList());
     return new ModelAndView("manage/inventory/inventory", pageParams);
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  static class TagData {
+    private String tagName;
+    private String tagColor;
   }
 
   @Data

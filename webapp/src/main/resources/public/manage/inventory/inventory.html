@@ -41,7 +41,7 @@
   <span class="filter-title"> Filter items by tag: </span>
   <div id="item-tags-container">
     {{#tagList}}
-    <div class="item-tag"> <button class="item-tag-inner" value="{{.}}">{{.}}</button> </div>
+    <div class="item-tag"> <button class="item-tag-inner" value="{{tagName}}" data-tag-color="{{tagColor}}">{{tagName}}</button> </div>
     {{/tagList}}
   </div>
 </div>
@@ -173,7 +173,7 @@
   </div>
 </div>
 </div>
-<script> 
+<script>
   instantiateInputEventListener();
   instantiateTagsEventListener();
   instantiateScrollToTopEvenListener();

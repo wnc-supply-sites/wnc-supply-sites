@@ -451,10 +451,11 @@ function instantiateTagsEventListener() {
   const tags = document.getElementsByClassName("item-tag-inner");
   for (let i = 0; i < tags.length; i++) {
     const tag = tags[i];
-    const formattedTag = formatTagElementValue(tag);
+    const tagColor = tag.getAttribute("data-tag-color");
+    tag.style.backgroundColor = tagColor; 
 
-    formattedTag.addEventListener("click", (e) => {
-      formattedTag.classList.toggle("tag-selected");
+    tag.addEventListener("click", (e) => {
+      tag.classList.toggle("tag-selected");
       filterItems();
     })
   }
