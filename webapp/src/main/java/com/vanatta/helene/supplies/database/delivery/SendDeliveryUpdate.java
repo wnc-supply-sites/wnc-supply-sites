@@ -48,7 +48,8 @@ public class SendDeliveryUpdate {
     HttpPostSender.sendAsJson(airtableWebhookUrl, updateDeliveryJson);
   }
 
-  UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus, String domainName) {
+  UpdateDeliveryJson createPayload(
+      Jdbi jdbi, String publicKey, DeliveryStatus newStatus, String domainName) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicKey)
             .orElseThrow(

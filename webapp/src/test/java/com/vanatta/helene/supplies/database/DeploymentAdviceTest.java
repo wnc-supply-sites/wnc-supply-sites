@@ -3,7 +3,6 @@ package com.vanatta.helene.supplies.database;
 import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.vanatta.helene.supplies.database.data.HostNameLookup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
