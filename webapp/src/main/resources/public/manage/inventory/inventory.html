@@ -13,6 +13,10 @@
 <body>
 {{> header }}
 
+<button class="scroll-to-top-btn hidden">
+  &#8679;
+</button>
+
 <div class="page-sub-header horizontal">
   <div class="back-link">
     <a href="/manage/site-selected?siteId={{siteId}}">[&larr; Go Back]</a>
@@ -172,6 +176,7 @@
 <script> 
   instantiateInputEventListener();
   instantiateTagsEventListener();
+  instantiateScrollToTopEvenListener();
 </script>
 </body>
 </html>
