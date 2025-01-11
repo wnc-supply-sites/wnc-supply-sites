@@ -51,8 +51,8 @@ public class SimpleHtmlController {
     return jdbi.withHandle(
         h ->
             h.createQuery(
-                    "select deployment.contact_us_link, site_description from deployment where domain = :domain")
-                .bind("domain", domain)
+                    "select deployment.contact_us_link, site_description from deployment where lower(domain) = :domain")
+                .bind("domain", domain.toLowerCase())
                 .mapToBean(DeploymentDescription.class)
                 .one());
   }
@@ -80,7 +80,7 @@ public class SimpleHtmlController {
   
   @GetMapping("/about/partners/")
   ModelAndView showPartners() {
-    return new ModelAndView("about/partners/patners");
+    return new ModelAndView("about/partners/partners");
   }
   @GetMapping("/about/thestory/")
   ModelAndView showTheStory() {

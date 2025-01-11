@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,12 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 class NotificationStateMachine {
 
-  private final String websiteUri;
   private final GoogleDistanceApi googleDistanceApi;
 
-  NotificationStateMachine(
-      @Value("${website.uri}") String websiteUri, GoogleDistanceApi googleDistanceApi) {
-    this.websiteUri = websiteUri;
+  NotificationStateMachine(GoogleDistanceApi googleDistanceApi) {
     this.googleDistanceApi = googleDistanceApi;
   }
 
@@ -35,26 +31,26 @@ class NotificationStateMachine {
     @Nonnull String message;
   }
 
-  List<SmsMessage> requestConfirmations(Delivery delivery) {
+  List<SmsMessage> requestConfirmations(Delivery delivery, String domainName) {
     List<SmsMessage> messages = new ArrayList<>();
-    String messageTemplate =
-        """
-        WNC-supply-sites delivery requested. Please confirm.
-        %s
 
-        Delivery #%s
-        Date: %s
-        Heading to: %s, %s
-        Items (%s): %s
-        """;
     messages.add(
         SmsMessage.builder()
             .phone(delivery.getDriverPhoneNumber())
             .message(
                 String.format(
-                    messageTemplate,
-                    websiteUri
+                    """
+                    %s delivery requested. Please confirm.
+                    %s
+
+                    Delivery #%s
+                    Date: %s
+                    Heading to: %s, %s
+                    Items (%s): %s
+                    """,
+                    domainName
                         + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER),
+                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -68,10 +64,19 @@ class NotificationStateMachine {
             .phone(delivery.getFromContactPhoneNumber())
             .message(
                 String.format(
-                    messageTemplate,
-                    websiteUri
+                    """
+                    %s delivery requested. Please confirm.
+                    %s
+
+                    Delivery #%s
+                    Date: %s
+                    Heading to: %s, %s
+                    Items (%s): %s
+                    """,
+                    domainName
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.PICKUP_SITE),
+                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -85,10 +90,19 @@ class NotificationStateMachine {
             .phone(delivery.getToContactPhoneNumber())
             .message(
                 String.format(
-                    messageTemplate,
-                    websiteUri
+                    """
+                    %s delivery requested. Please confirm.
+                    %s
+
+                    Delivery #%s
+                    Date: %s
+                    Heading to: %s, %s
+                    Items (%s): %s
+                    """,
+                    domainName
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.DROPOFF_SITE),
+                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -99,7 +113,7 @@ class NotificationStateMachine {
     return messages;
   }
 
-  List<SmsMessage> confirm(Delivery delivery) {
+  List<SmsMessage> confirm(Delivery delivery, String domainName) {
     if (delivery.isConfirmed()) {
       // fully confirmed, send a message to everyone!
       String messageToDriver =
@@ -115,7 +129,7 @@ class NotificationStateMachine {
               delivery.getDeliveryDate(),
               delivery.getToSite(),
               delivery.getToCity(),
-              websiteUri + DeliveryController.buildDeliveryPageLinkForDriver(delivery));
+              domainName + DeliveryController.buildDeliveryPageLinkForDriver(delivery));
       String messageToOthers =
           String.format(
               """
@@ -127,7 +141,7 @@ class NotificationStateMachine {
               delivery.getDeliveryDate(),
               delivery.getToSite(),
               delivery.getToCity(),
-              websiteUri + DeliveryController.buildDeliveryPageLink(delivery.getPublicKey()));
+              domainName + DeliveryController.buildDeliveryPageLink(delivery.getPublicKey()));
 
       List<SmsMessage> messages = new ArrayList<>();
       messages.add(
@@ -186,7 +200,7 @@ class NotificationStateMachine {
     }
   }
 
-  List<SmsMessage> cancel(Delivery delivery) {
+  List<SmsMessage> cancel(Delivery delivery, String domainName) {
     if (delivery.getConfirmations().isEmpty()) {
       return List.of();
     } else {
@@ -212,7 +226,7 @@ class NotificationStateMachine {
                                   ? ""
                                   : "\nReason: "
                                       + TruncateString.truncate(delivery.getCancelReason(), 96),
-                              websiteUri
+                              domainName
                                   + DeliveryController.buildDeliveryPageLink(
                                       delivery.getPublicKey())))
                       .build())
@@ -220,7 +234,7 @@ class NotificationStateMachine {
     }
   }
 
-  List<SmsMessage> driverEnRoute(Delivery delivery) {
+  List<SmsMessage> driverEnRoute(Delivery delivery, String domainName) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
         .map(
             number ->
@@ -237,14 +251,14 @@ class NotificationStateMachine {
                             delivery.getDriverName(),
                             delivery.getDriverLicensePlate(),
                             delivery.getItemCount(),
-                            websiteUri
+                            domainName
                                 + DeliveryController.buildDeliveryPageLink(
                                     delivery.getPublicKey())))
                     .build())
         .toList();
   }
 
-  List<SmsMessage> driverArrivedToPickup(Delivery delivery) {
+  List<SmsMessage> driverArrivedToPickup(Delivery delivery, String domainName) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
         .map(
             number ->
@@ -260,14 +274,14 @@ class NotificationStateMachine {
                             delivery.getToSite(),
                             delivery.getDriverLicensePlate(),
                             delivery.getItemCount(),
-                            websiteUri
+                            domainName
                                 + DeliveryController.buildDeliveryPageLink(
                                     delivery.getPublicKey())))
                     .build())
         .toList();
   }
 
-  List<SmsMessage> driverLeavingPickup(Delivery delivery) {
+  List<SmsMessage> driverLeavingPickup(Delivery delivery, String domainName) {
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getToContactPhoneNumber())
         .map(
             number ->
@@ -290,7 +304,7 @@ class NotificationStateMachine {
                             delivery.getFromSite(),
                             delivery.getFromCity(),
                             delivery.getItemCount(),
-                            websiteUri
+                            domainName
                                 + DeliveryController.buildDeliveryPageLink(
                                     delivery.getPublicKey())))
                     .build())
@@ -308,11 +322,12 @@ class NotificationStateMachine {
                             """
           Driver has arrived at the drop off site: %s
           Name: %s, license plate: %s
-          #wncStrong
+          %s
           """,
                             delivery.getToSite(),
                             delivery.getDriverName(),
-                            delivery.getDriverLicensePlate()))
+                            delivery.getDriverLicensePlate(),
+                            HashTagGenerator.generate()))
                     .build())
         .toList();
   }

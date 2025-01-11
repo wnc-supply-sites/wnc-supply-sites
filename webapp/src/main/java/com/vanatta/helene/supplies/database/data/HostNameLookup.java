@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class HostNameLookup {
   private final String defaultDeployment;
 
-  HostNameLookup(@Value("${dev.default.deployment}") String deployment) {
+  public HostNameLookup(@Value("${dev.default.deployment}") String deployment) {
     this.defaultDeployment = deployment;
   }
 
@@ -20,7 +20,7 @@ public class HostNameLookup {
     if (defaultDeployment != null && !defaultDeployment.isEmpty()) {
       return defaultDeployment;
     } else {
-      return request.getHeader("host");
+      return request.getHeader("host").toLowerCase();
     }
   }
 }

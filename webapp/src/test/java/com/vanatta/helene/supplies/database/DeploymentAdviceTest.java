@@ -1,39 +1,26 @@
 package com.vanatta.helene.supplies.database;
 
+import static com.vanatta.helene.supplies.database.TestConfiguration.jdbiTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.jdbi.v3.core.Jdbi;
-import org.junit.jupiter.api.BeforeAll;
+import com.vanatta.helene.supplies.database.data.HostNameLookup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.util.List;
 
 class DeploymentAdviceTest {
-  
+
   @ParameterizedTest
-  @CsvSource({
-      "wnc-supply-sites.com,WNC",
-      "socal-supply-sites.com,SoCal"
-  })
-  // @VisibleForTesting
+  @CsvSource({"wnc-supply-sites.com,WNC", "socal-supply-sites.com,SoCal"})
   void getShortNameForHost(String input, String output) {
-    
-    return "";
+    assertThat(DeploymentAdvice.getShortNameForHost(jdbiTest, input)).isEqualTo(output);
   }
-  
-  
-  @ParameterizedTest
-  @CsvSource({
-      "wnc-supply-sites.com,NC,TN",
-      "socal-supply-sites.com,SoCal"
-  })
-  void fetchStateListForHost(String input, String... states) {
-    return List.of();
+
+  @Test
+  void fetchStateListForHost() {
+    assertThat(DeploymentAdvice.fetchStateListForHost(jdbiTest, "wnc-supply-sites.com"))
+        .contains("NC", "TN");
+    assertThat(DeploymentAdvice.fetchStateListForHost(jdbiTest, "socal-supply-sites.com"))
+        .contains("CA");
   }
-  
-  
 }

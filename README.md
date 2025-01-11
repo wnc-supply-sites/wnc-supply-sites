@@ -1,6 +1,7 @@
 # WNC Supply Sites
 
-Live URL: [https://wnc-supply-sites.com]
+Live URL: [https://WNC-Supply-Sites.com]
+Live URL: [https://SoCal-Supply-Sites.com]
 
 Staging: [https://staging.wnc-supply-sites.com]
 

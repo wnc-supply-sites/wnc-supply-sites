@@ -16,7 +16,7 @@ class SimpleHtmlControllerTest {
 
     result =
         SimpleHtmlController.fetchDeploymentDescription(
-            TestConfiguration.jdbiTest, "\"SoCal-Supply-Sites.com");
+            TestConfiguration.jdbiTest, "SoCal-Supply-Sites.com");
     assertThat(result.getSiteDescription()).isEqualTo("LA Fires Disaster Relief");
     assertThat(result.getContactUsLink()).isNotNull();
   }

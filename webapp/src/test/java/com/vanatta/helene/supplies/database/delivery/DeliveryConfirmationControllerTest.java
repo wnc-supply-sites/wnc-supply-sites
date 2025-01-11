@@ -14,6 +14,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class DeliveryConfirmationControllerTest {
+  private static final String domain = "localhost:8080";
+
   @BeforeEach
   void setup() {
     TestConfiguration.setupDatabase();
@@ -24,14 +26,14 @@ class DeliveryConfirmationControllerTest {
           jdbiTest,
           SmsSender.newDisabled(jdbiTest),
           SendDeliveryUpdate.disabled(),
-          new NotificationStateMachine("http://localhost:8080", GoogleDistanceApi.stubbed()));
+          new NotificationStateMachine(GoogleDistanceApi.stubbed()));
 
   @Test
   void dispatcherConfirm() {
     Delivery delivery = DeliveryHelper.withNewDelivery();
     assertThat(delivery.getConfirmations()).isEmpty();
 
-    controller.confirmRequest(delivery.getPublicKey(), delivery.getDispatchCode());
+    controller.confirmRequest(delivery.getPublicKey(), delivery.getDispatchCode(), domain);
 
     // after dispatcher confirms, we should then generate confirmations.
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
@@ -45,7 +47,7 @@ class DeliveryConfirmationControllerTest {
     var confirmation = delivery.getConfirmation(role).orElseThrow();
     assertThat(confirmation.getConfirmed()).isNull();
 
-    controller.confirmRequest(delivery.getPublicKey(), confirmation.getCode());
+    controller.confirmRequest(delivery.getPublicKey(), confirmation.getCode(), domain);
 
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
     confirmation = delivery.getConfirmation(role).orElseThrow();
@@ -58,14 +60,15 @@ class DeliveryConfirmationControllerTest {
     DeliveryDao.updateDeliveryStatus(
         jdbiTest, delivery.getPublicKey(), DeliveryStatus.CREATING_DISPATCH);
 
-    controller.confirmRequest(delivery.getPublicKey(), delivery.getDispatchCode());
+    controller.confirmRequest(delivery.getPublicKey(), delivery.getDispatchCode(), domain);
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
     assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.CONFIRMING.getAirtableName());
 
     final var publicKey = delivery.getPublicKey();
     delivery
         .getConfirmations()
-        .forEach(confirmation -> controller.confirmRequest(publicKey, confirmation.getCode()));
+        .forEach(
+            confirmation -> controller.confirmRequest(publicKey, confirmation.getCode(), domain));
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
     assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.CONFIRMED.getAirtableName());
   }
@@ -77,7 +80,8 @@ class DeliveryConfirmationControllerTest {
     var confirmation = delivery.getConfirmation(role).orElseThrow();
     assertThat(confirmation.getConfirmed()).isNull();
 
-    controller.cancelRequest(delivery.getPublicKey(), confirmation.getCode(), "cancelReason");
+    controller.cancelRequest(
+        delivery.getPublicKey(), confirmation.getCode(), "cancelReason", domain);
 
     delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
     confirmation = delivery.getConfirmation(role).orElseThrow();
@@ -105,7 +109,7 @@ class DeliveryConfirmationControllerTest {
 
     for (DriverStatus status : DriverStatus.values()) {
       controller.confirmDriverStatus(
-          delivery.getPublicKey(), delivery.getDriverCode(), status.name());
+          delivery.getPublicKey(), delivery.getDriverCode(), status.name(), domain);
       delivery = fetchDeliveryByPublicKey(jdbiTest, delivery.getPublicKey()).orElseThrow();
       assertThat(delivery.getDriverStatus()).isEqualTo(status.name());
     }
@@ -120,6 +124,6 @@ class DeliveryConfirmationControllerTest {
         IllegalArgumentException.class,
         () ->
             controller.confirmDriverStatus(
-                delivery.getPublicKey(), "INCORRECT", DriverStatus.DRIVER_EN_ROUTE.name()));
+                delivery.getPublicKey(), "INCORRECT", DriverStatus.DRIVER_EN_ROUTE.name(), domain));
   }
 }

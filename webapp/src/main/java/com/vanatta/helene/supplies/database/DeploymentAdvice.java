@@ -22,10 +22,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @AllArgsConstructor
 public class DeploymentAdvice {
 
+  public static final String DEPLOYMENT_DOMAIN_NAME = "domainName";
   public static final String DEPLOYMENT_SHORT_NAME = "deploymentShortName";
   public static final String DEPLOYMENT_STATE_LIST = "deploymentStateList";
   private final Jdbi jdbi;
   private final HostNameLookup hostNameLookup;
+
+  @ModelAttribute(DEPLOYMENT_DOMAIN_NAME)
+  public String domainName(HttpServletRequest request) {
+    return hostNameLookup.lookupHostName(request);
+  }
 
   @ModelAttribute(DEPLOYMENT_SHORT_NAME)
   public String shortName(HttpServletRequest request) {
@@ -36,7 +42,7 @@ public class DeploymentAdvice {
   static String getShortNameForHost(Jdbi jdbi, String domain) {
     return jdbi.withHandle(
         h ->
-            h.createQuery("select short_name from deployment where domain = :domain")
+            h.createQuery("select short_name from deployment where lower(domain) = :domain")
                 .bind("domain", domain)
                 .mapTo(String.class)
                 .one());
@@ -44,7 +50,7 @@ public class DeploymentAdvice {
 
   @ModelAttribute(DEPLOYMENT_STATE_LIST)
   public List<String> stateList(HttpServletRequest request) {
-    return fetchStateListForHost(jdbi, request.getHeader("host"));
+    return fetchStateListForHost(jdbi, hostNameLookup.lookupHostName(request));
   }
 
   static List<String> fetchStateListForHost(Jdbi jdbi, String domain) {
@@ -54,7 +60,7 @@ public class DeploymentAdvice {
                     """
               select state
               from deployment_states
-              where deployment_id = (select id from deployment where domain = :domain)
+              where deployment_id = (select id from deployment where lower(domain) = :domain)
             """)
                 .bind("domain", domain)
                 .mapTo(String.class)

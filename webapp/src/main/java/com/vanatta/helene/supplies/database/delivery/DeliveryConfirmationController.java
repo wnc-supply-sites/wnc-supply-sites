@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import java.util.Arrays;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -55,7 +57,8 @@ class DeliveryConfirmationController {
   ModelAndView confirmDriverStatus(
       @RequestParam String deliveryKey,
       @RequestParam String code,
-      @RequestParam String newDriverStatus) {
+      @RequestParam String newDriverStatus,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
             .orElseThrow(
@@ -78,29 +81,29 @@ class DeliveryConfirmationController {
       case PENDING -> {}
       case DRIVER_EN_ROUTE -> {
         notificationStateMachine
-            .driverEnRoute(delivery)
+            .driverEnRoute(delivery, domainName)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS, domainName);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
       }
       case ARRIVED_AT_PICKUP -> {
         notificationStateMachine
-            .driverArrivedToPickup(delivery)
+            .driverArrivedToPickup(delivery, domainName)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS, domainName);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
       }
       case DEPARTED_PICKUP -> {
         notificationStateMachine
-            .driverLeavingPickup(delivery)
+            .driverLeavingPickup(delivery, domainName)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS, domainName);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_IN_PROGRESS);
       }
       case ARRIVED_AT_DROP_OFF -> {
         NotificationStateMachine.driverArrivedToDropOff(delivery)
             .forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_COMPLETED);
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_COMPLETED, domainName);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_COMPLETED);
       }
     }
@@ -128,7 +131,10 @@ class DeliveryConfirmationController {
    * requests to the confirm driver status endpoint.
    */
   @GetMapping(confirmPath)
-  ModelAndView confirmRequest(@RequestParam String deliveryKey, @RequestParam String code) {
+  ModelAndView confirmRequest(
+      @RequestParam String deliveryKey,
+      @RequestParam String code,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
             .orElseThrow(
@@ -138,9 +144,9 @@ class DeliveryConfirmationController {
       ConfirmationDao.dispatcherConfirm(jdbi, deliveryKey);
       var messages =
           notificationStateMachine.requestConfirmations(
-              DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
+              DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow(), domainName);
       messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-      sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING);
+      sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMING, domainName);
       DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.CONFIRMING);
     } else if (!delivery.getConfirmations().isEmpty()) {
       Arrays.stream(DeliveryConfirmation.ConfirmRole.values())
@@ -157,10 +163,10 @@ class DeliveryConfirmationController {
                       DeliveryConfirmation.ConfirmRole.valueOf(confirm.getConfirmRole())));
       delivery = DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow();
 
-      var messages = notificationStateMachine.confirm(delivery);
+      var messages = notificationStateMachine.confirm(delivery, domainName);
       messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
       if (delivery.isConfirmed()) {
-        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMED);
+        sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.CONFIRMED, domainName);
         DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.CONFIRMED);
       }
     }
@@ -172,7 +178,8 @@ class DeliveryConfirmationController {
   ResponseEntity<String> cancelRequest(
       @RequestParam String deliveryKey,
       @RequestParam String code,
-      @RequestParam(required = false) String cancelReason) {
+      @RequestParam(required = false) String cancelReason,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName) {
 
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey)
@@ -195,9 +202,9 @@ class DeliveryConfirmationController {
 
     var messages =
         notificationStateMachine.cancel(
-            DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow());
+            DeliveryDao.fetchDeliveryByPublicKey(jdbi, deliveryKey).orElseThrow(), domainName);
     messages.forEach(message -> smsSender.send(message.getPhone(), message.getMessage()));
-    sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_CANCELLED);
+    sendDeliveryUpdate.send(deliveryKey, DeliveryStatus.DELIVERY_CANCELLED, domainName);
     DeliveryDao.updateDeliveryStatus(jdbi, deliveryKey, DeliveryStatus.DELIVERY_CANCELLED);
     return ResponseEntity.ok(
         """

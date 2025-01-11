@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class SendDeliveryUpdate {
 
   public static SendDeliveryUpdate disabled() {
-    return new SendDeliveryUpdate(null, null, false, null);
+    return new SendDeliveryUpdate(null, false, null);
   }
 
   @Builder
@@ -27,31 +27,28 @@ public class SendDeliveryUpdate {
   }
 
   private final Jdbi jdbi;
-  private final String websiteUri;
   private final boolean enabled;
   private final String airtableWebhookUrl;
 
   SendDeliveryUpdate(
       Jdbi jdbi,
-      @Value("${website.uri}") String websiteUri,
       @Value("${make.enabled}") boolean enabled,
       @Value("${airtable.webhook.delivery.update}") String airtableWebhookUrl) {
 
     this.jdbi = jdbi;
-    this.websiteUri = websiteUri;
     this.enabled = enabled;
     this.airtableWebhookUrl = airtableWebhookUrl;
   }
 
-  void send(String publicKey, DeliveryStatus newStatus) {
+  void send(String publicKey, DeliveryStatus newStatus, String domainName) {
     if (!enabled) {
       return;
     }
-    UpdateDeliveryJson updateDeliveryJson = createPayload(jdbi, publicKey, newStatus);
+    UpdateDeliveryJson updateDeliveryJson = createPayload(jdbi, publicKey, newStatus, domainName);
     HttpPostSender.sendAsJson(airtableWebhookUrl, updateDeliveryJson);
   }
 
-  UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus) {
+  UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus, String domainName) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicKey)
             .orElseThrow(
@@ -62,7 +59,7 @@ public class SendDeliveryUpdate {
         .deliveryStatus(newStatus.getAirtableName())
         .driverStatus(delivery.getDriverStatus())
         .driverConfirmLink(
-            websiteUri
+            domainName
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery
@@ -70,7 +67,7 @@ public class SendDeliveryUpdate {
                         .orElseThrow()
                         .getCode()))
         .pickupConfirmLink(
-            websiteUri
+            domainName
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery
@@ -78,7 +75,7 @@ public class SendDeliveryUpdate {
                         .orElseThrow()
                         .getCode()))
         .dropOffConfirmLink(
-            websiteUri
+            domainName
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery

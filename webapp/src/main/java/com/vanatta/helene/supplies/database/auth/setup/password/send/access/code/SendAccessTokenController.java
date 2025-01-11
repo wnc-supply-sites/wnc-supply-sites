@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import com.google.gson.Gson;
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -10,6 +11,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -40,8 +42,10 @@ public class SendAccessTokenController {
   }
 
   @PostMapping("/send-access-code")
-  ResponseEntity<SendAccessCodeResponse> sendAccessCode(@RequestBody String request) {
-    log.info("Access code request for: " + request);
+  ResponseEntity<SendAccessCodeResponse> sendAccessCode(
+      @RequestBody String request,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName) {
+    log.info("Access code request for: {}", request);
 
     SendAccessCodeRequest sendAccessCodeRequest = SendAccessCodeRequest.parse(request);
     if (!sendAccessCodeRequest.isValid()) {
@@ -90,9 +94,9 @@ public class SendAccessTokenController {
             Access code: %s
             Thank you! #wncStrong
             Use the passcode above to finish setting up your
-            password with wnc-supply-sites.com
+            password with %s
             """,
-                accessCode));
+                accessCode, domainName));
 
     if (success) {
       // return the CRF token

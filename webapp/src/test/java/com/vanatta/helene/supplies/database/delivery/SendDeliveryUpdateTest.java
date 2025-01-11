@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SendDeliveryUpdateTest {
-  SendDeliveryUpdate sendDeliveryUpdate =
-      new SendDeliveryUpdate(jdbiTest, "http://localhost:8080", false, "");
+  String domain = "http://localhost:8080";
+  SendDeliveryUpdate sendDeliveryUpdate = new SendDeliveryUpdate(jdbiTest, false, "");
 
   @BeforeEach
   void setup() {
@@ -22,7 +22,7 @@ class SendDeliveryUpdateTest {
 
     var payload =
         sendDeliveryUpdate.createPayload(
-            jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS);
+            jdbiTest, delivery.getPublicKey(), DeliveryStatus.DELIVERY_IN_PROGRESS, domain);
 
     assertThat(payload.getAirtableId()).isEqualTo(delivery.getDeliveryNumber());
     assertThat(payload.getDeliveryStatus())
