@@ -48,7 +48,11 @@ public class DeploymentAdvice {
                   .mapTo(String.class)
                   .one());
     } catch (Exception e) {
-      log.error("Error looking up short name for domain: {}", domain, e);
+      log.warn(
+          "Unable to lookup short name for domain: {}, if the domain is legit (not an IP address),"
+              + "then this is a real problem. Otherwise ignore this error. Error: {}",
+          domain,
+          e.getMessage());
       throw e;
     }
   }
