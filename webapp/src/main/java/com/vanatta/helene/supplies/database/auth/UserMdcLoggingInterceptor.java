@@ -24,11 +24,14 @@ public class UserMdcLoggingInterceptor extends OncePerRequestFilter {
       throws ServletException, IOException {
     CookieUtil.readUserCookie(request).ifPresent(user -> MDC.put("user", user));
     MDC.put("requestId", UUID.randomUUID().toString().substring(0, 5));
+    MDC.put("domain", request.getHeader("host"));
+
     try {
       filterChain.doFilter(request, response);
     } finally {
       MDC.remove("user");
       MDC.remove("requestId");
+      MDC.remove("domain");
     }
   }
 }
