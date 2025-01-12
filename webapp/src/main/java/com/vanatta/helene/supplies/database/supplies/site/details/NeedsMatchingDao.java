@@ -162,9 +162,6 @@ public class NeedsMatchingDao {
             JOIN site s on s.id = si.site_id
             JOIN county c on c.id = s.county_id
             WHERE s.id = :siteId AND ist.name IN ('Urgently Needed', 'Needed')
-              and s.active = true
-              and s.accepting_donations = true
-              --and c.state in (<stateList>)
         ),
         oversupply_sites AS (
             SELECT si.site_id, si.item_id
