@@ -14,7 +14,7 @@ public class HostNameLookup {
   private final String defaultDeployment;
 
   public HostNameLookup(
-      @Value("${dev.default.deployment.enabled") boolean defaultDeploymentEnabled,
+      @Value("${dev.default.deployment.enabled}") boolean defaultDeploymentEnabled,
       @Value("${dev.default.deployment}") String deployment) {
     this.defaultDeploymentEnabled = defaultDeploymentEnabled;
     this.defaultDeployment = deployment;
