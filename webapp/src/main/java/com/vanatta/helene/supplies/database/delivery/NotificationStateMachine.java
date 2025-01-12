@@ -121,8 +121,7 @@ class NotificationStateMachine {
               """
               Delivery #%s confirmed for %s
               Heading to: %s in %s
-              View the delivery and notify us
-              when you get started with this link:
+              View the delivery and notify us when you get started with this link:
               %s
               """,
               delivery.getDeliveryNumber(),

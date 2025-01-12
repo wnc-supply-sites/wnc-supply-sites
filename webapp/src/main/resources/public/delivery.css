@@ -71,12 +71,12 @@ pre {
 }
 
 .confirm-buttons div{
-    margin-left: 20px;
+    margin-left: 15px;
 }
 
 .confirm-button,
 .decline-button {
-    width: 170px;
+    width: 160px;
     height: 60px;
     border: 3px outset !important;
     font-weight: bold;
