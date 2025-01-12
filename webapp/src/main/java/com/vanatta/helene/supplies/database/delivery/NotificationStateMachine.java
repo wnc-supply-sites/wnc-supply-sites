@@ -41,16 +41,16 @@ class NotificationStateMachine {
                 String.format(
                     """
                     %s delivery requested. Please confirm.
-                    %s
+                    https://%s
 
                     Delivery #%s
                     Date: %s
                     Heading to: %s, %s
                     Items (%s): %s
                     """,
+                    domainName,
                     domainName
                         + DeliveryController.buildDeliveryPageLink(delivery, ConfirmRole.DRIVER),
-                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -66,17 +66,17 @@ class NotificationStateMachine {
                 String.format(
                     """
                     %s delivery requested. Please confirm.
-                    %s
+                    https://%s
 
                     Delivery #%s
                     Date: %s
                     Heading to: %s, %s
                     Items (%s): %s
                     """,
+                    domainName,
                     domainName
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.PICKUP_SITE),
-                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -92,17 +92,17 @@ class NotificationStateMachine {
                 String.format(
                     """
                     %s delivery requested. Please confirm.
-                    %s
+                    https://%s
 
                     Delivery #%s
                     Date: %s
                     Heading to: %s, %s
                     Items (%s): %s
                     """,
+                    domainName,
                     domainName
                         + DeliveryController.buildDeliveryPageLink(
                             delivery, ConfirmRole.DROPOFF_SITE),
-                    HashTagGenerator.generate(),
                     delivery.getDeliveryNumber(),
                     delivery.getDeliveryDate(),
                     delivery.getToSite(),
@@ -119,12 +119,12 @@ class NotificationStateMachine {
       String messageToDriver =
           String.format(
               """
-      Delivery #%s confirmed for %s
-      Heading to: %s in %s
-      View the delivery and notify us
-      when you get started with this link:
-      %s
-      """,
+              Delivery #%s confirmed for %s
+              Heading to: %s in %s
+              View the delivery and notify us
+              when you get started with this link:
+              %s
+              """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
               delivery.getToSite(),
@@ -133,10 +133,10 @@ class NotificationStateMachine {
       String messageToOthers =
           String.format(
               """
-      Delivery #%s confirmed for %s
-      Heading to: %s in %s
-      %s
-      """,
+              Delivery #%s confirmed for %s
+              Heading to: %s in %s
+              %s
+              """,
               delivery.getDeliveryNumber(),
               delivery.getDeliveryDate(),
               delivery.getToSite(),
@@ -322,7 +322,7 @@ class NotificationStateMachine {
                             """
           Driver has arrived at the drop off site: %s
           Name: %s, license plate: %s
-          %s
+          #%s
           """,
                             delivery.getToSite(),
                             delivery.getDriverName(),

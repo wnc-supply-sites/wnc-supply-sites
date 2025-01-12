@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class NotificationStateMachineTest {
-  final String domain = "http://localhost:8080";
+  final String domain = "WNC-supply-sites.com";
   NotificationStateMachine notificationStateMachine =
       new NotificationStateMachine(
           new GoogleDistanceApi("") {
@@ -79,11 +79,33 @@ class NotificationStateMachineTest {
   /** When dispatcher confirms we send a confirmation request to driver & sites */
   @Test
   void confirm_dispatcherConfirm() {
-    var results = notificationStateMachine.requestConfirmations(withPendingConfirmations, domain);
+    var results =
+        notificationStateMachine.requestConfirmations(
+            withPendingConfirmations.toBuilder()
+                .deliveryNumber(23)
+                .publicKey("AAAA")
+                .deliveryDate("Dec 12")
+                .toSite("to site")
+                .toCity("to city")
+                .itemList(List.of("water", "soap"))
+                .build(),
+            domain);
 
     // confirmation request to driver & sites
     assertThat(results).hasSize(3);
     assertPhoneNumbers(results, driverNumber, pickupNumber, dropOffNumber);
+
+    assertThat(results.getFirst().getMessage())
+        .isEqualTo(
+            """
+          WNC-supply-sites.com delivery requested. Please confirm.
+          https://WNC-supply-sites.com/delivery/AAAA?code=BBBB
+
+          Delivery #23
+          Date: Dec 12
+          Heading to: to site, to city
+          Items (2): soap, water
+          """);
   }
 
   private static void assertPhoneNumbers(
