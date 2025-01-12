@@ -40,12 +40,17 @@ public class DeploymentAdvice {
 
   // @VisibleForTesting
   static String getShortNameForHost(Jdbi jdbi, String domain) {
+    try {
     return jdbi.withHandle(
         h ->
             h.createQuery("select short_name from deployment where lower(domain) = :domain")
                 .bind("domain", domain)
                 .mapTo(String.class)
                 .one());
+    } catch (Exception e) {
+      log.error("Error looking up short name for domain: {}", domain, e);
+      throw e;
+    }
   }
 
   @ModelAttribute(DEPLOYMENT_STATE_LIST)
