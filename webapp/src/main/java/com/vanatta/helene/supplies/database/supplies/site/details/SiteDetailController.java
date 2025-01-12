@@ -176,7 +176,9 @@ public class SiteDetailController {
     // site supplies
     List<SuppliesDao.SuppliesQueryResult> supplies =
         SuppliesDao.getSupplyResults(
-            jdbi, SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build());
+            jdbi,
+            SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build(),
+            List.of("NC"));
     List<InventoryItem> needs =
         supplies.stream()
             .filter(i -> i.getItem() != null)
@@ -236,7 +238,7 @@ public class SiteDetailController {
 
       // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
-          NeedsMatchingDao.executeByInternalId(jdbi, id);
+          NeedsMatchingDao.executeByInternalId(jdbi, id, List.of("NC"));
       siteDetails.put(TemplateParams.NEEDS_MATCHING.text, needsMatching);
       siteDetails.put(TemplateParams.NEEDS_MATCH_COUNT.text, needsMatching.size());
     }

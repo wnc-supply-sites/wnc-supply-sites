@@ -63,7 +63,8 @@ class BrowseRoutesControllerTest {
   void validatePageRenders() {
     var controller = new BrowseRoutesController(TestConfiguration.jdbiTest, "");
 
-    ModelAndView modelAndView = controller.browseRoutes(null, null, null, List.of(UserRole.DRIVER));
+    ModelAndView modelAndView =
+        controller.browseRoutes(null, null, null, List.of(UserRole.DRIVER), List.of("NC"));
 
     assertThat(modelAndView.getViewName()).isEqualTo("browse/routes");
 

@@ -12,22 +12,26 @@ public class FilterDataDao {
     return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
   }
 
-  public static List<String> getAllActiveSites(Jdbi jdbi, AuthenticatedMode authenticatedMode) {
+  public static List<String> getAllActiveSites(
+      Jdbi jdbi, AuthenticatedMode authenticatedMode, List<String> stateList) {
     String authenticatedFilter =
-        authenticatedMode == AuthenticatedMode.AUTHENTICATED
-            ? ""
-            : "and site.publicly_visible = true";
+        authenticatedMode == AuthenticatedMode.AUTHENTICATED ? "" : "and s.publicly_visible = true";
 
     String query =
         String.format(
             """
-        select site.name
-        from site
-        where site.active = true %s
-        order by lower(site.name)
+        select s.name
+        from site s
+        join county c on c.id = s.county_id
+        where s.active = true
+          %s
+          and c.state in (<stateList>)
+        order by lower(s.name)
         """,
             authenticatedFilter);
 
-    return jdbi.withHandle(handle -> handle.createQuery(query).mapTo(String.class).list());
+    return jdbi.withHandle(
+        handle ->
+            handle.createQuery(query).bindList("stateList", stateList).mapTo(String.class).list());
   }
 }

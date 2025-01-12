@@ -113,8 +113,10 @@ public class BrowseRoutesDao {
   }
 
   // TODO: improve testing
+  // TODO: test the cross states needs are not mixed (eg: needy site in CA is not pulled for needy
+  // site in NC, when state list is just NC)
   public static List<DeliveryOption> findDeliveryOptions(
-      Jdbi jdbi, Long siteWssId, String currentCounty) {
+      Jdbi jdbi, Long siteWssId, String currentCounty, List<String> stateList) {
     String county =
         (currentCounty != null && currentCounty.contains(","))
             ? currentCounty.split(",")[0].trim()
@@ -177,7 +179,9 @@ public class BrowseRoutesDao {
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
+            JOIN county c on c.id = s.county_id
             WHERE ist.name IN ('Urgently Needed', 'Needed')
+              and c.state in (<stateList>)
               and s.active = true
               and s.accepting_donations = true
         ),
@@ -186,9 +190,11 @@ public class BrowseRoutesDao {
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
+            JOIN county c on c.id = s.county_id
             JOIN site_type st on st.id = s.site_type_id
             WHERE
               s.active = true
+              and c.state in (<stateList>)
               and (ist.name = 'Oversupply' or (st.name = 'Supply Hub' and ist.name in ('Available', 'Oversupply')))
         )
         SELECT
@@ -242,7 +248,7 @@ public class BrowseRoutesDao {
     List<DeliveryOptionDbResult> dbResults =
         jdbi.withHandle(
             handle -> {
-              Query qb = handle.createQuery(query);
+              Query qb = handle.createQuery(query).bindList("stateList", stateList);
               bindings.accept(qb);
               return qb.mapToBean(DeliveryOptionDbResult.class).list();
             });
@@ -250,16 +256,19 @@ public class BrowseRoutesDao {
     return aggregate(dbResults);
   }
 
-  static List<BrowseRoutesController.Site> fetchSites(Jdbi jdbi) {
+  static List<BrowseRoutesController.Site> fetchSites(Jdbi jdbi, List<String> stateList) {
     return jdbi.withHandle(
         h ->
             h.createQuery(
                     """
-                          select wss_id, name siteName
-                          from site
-                          where active = true
-                          order by name;
+                          select s.wss_id, s.name siteName
+                          from site s
+                          join county c on c.id = s.county_id
+                          where s.active = true
+                            and c.state in (<stateList>)
+                          order by s.name;
                         """)
+                .bindList("stateList", stateList)
                 .mapToBean(BrowseRoutesController.Site.class)
                 .list());
   }

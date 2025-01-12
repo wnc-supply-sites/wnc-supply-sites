@@ -7,6 +7,7 @@ import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,7 @@ class BrowseRoutesDaoTest {
    */
   @Test
   void validateNeedsQuery() {
-    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null);
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null, List.of("NC"));
 
     Assertions.assertDoesNotThrow(
         () ->
@@ -81,7 +82,7 @@ class BrowseRoutesDaoTest {
   void fetchSites() {
     TestConfiguration.setupDatabase();
 
-    var results = BrowseRoutesDao.fetchSites(jdbiTest);
+    var results = BrowseRoutesDao.fetchSites(jdbiTest, List.of("NC"));
     assertThat(results).isNotEmpty();
     results.forEach(
         r -> {
@@ -92,21 +93,21 @@ class BrowseRoutesDaoTest {
 
   @Test
   void fetchDeliveryOptionsWithCounty() {
-    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Watauga,NC");
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Watauga,NC", List.of("NC"));
     assertThat(results).isNotEmpty();
     results.forEach(
         r ->
             assertThat(r.getToCounty().equals("Watauga") || r.getFromCounty().equals("Watauaga"))
                 .isTrue());
 
-    results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Polk,TN");
+    results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, "Polk,TN", List.of("NC", "TN"));
     assertThat(results).isEmpty();
   }
 
   /** Make sure that the item WSS-ID values are all set in return results of delivery options. */
   @Test
   void deliveryOptions_returnsItemWssIdsThatAreSet() {
-    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null);
+    var results = BrowseRoutesDao.findDeliveryOptions(jdbiTest, null, null, List.of("NC"));
     assertThat(results).isNotEmpty();
     results.forEach(r -> assertThat(r.getItemWssIds()).doesNotContain(0L));
   }

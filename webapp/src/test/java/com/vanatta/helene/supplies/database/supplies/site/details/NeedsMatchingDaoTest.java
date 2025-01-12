@@ -15,7 +15,8 @@ class NeedsMatchingDaoTest {
   @Test
   void needsQueryRuns() {
     var result =
-        NeedsMatchingDao.execute(TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID);
+        NeedsMatchingDao.execute(
+            TestConfiguration.jdbiTest, TestConfiguration.SITE1_AIRTABLE_ID, List.of("NC"));
 
     assertThat(result).isNotNull();
 

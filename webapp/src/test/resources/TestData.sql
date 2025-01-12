@@ -20,6 +20,7 @@ delete from county;
 
 insert into county(name, state) values('Ashe', 'NC');
 insert into county(name, state) values('Buncombe', 'NC');
+insert into county(name, state) values('Los Angeles', 'CA');
 
 insert into county(name, state) values('Watauga', 'NC');
 insert into county(name, state) values('Sevier', 'TN');
@@ -78,6 +79,11 @@ insert into site(name, address, city, county_id, accepting_donations, site_type_
 (select id from site_type where name = 'Distribution Center'), -20, -100, '123', '123'
 );
 
+-- siteCA, in CA
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number) values(
+  'siteCA', 'address2', 'city2', (select id from county where name = 'Los Angeles'), false,
+  (select id from site_type where name = 'Distribution Center'), -201, -100, '123', '123'
+);
 
 -- site3, in Buncombe county, not active
 insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(

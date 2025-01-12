@@ -39,23 +39,35 @@ class CountyDaoTest {
         CountyDao.fetchFullCountyListByState(TestConfiguration.jdbiTest, "NC").size();
     List<String> activeCounties =
         CountyDao.fetchActiveCountyList(
-            TestConfiguration.jdbiTest, AuthenticatedMode.NOT_AUTHENTICATED);
+            TestConfiguration.jdbiTest, AuthenticatedMode.NOT_AUTHENTICATED, List.of("NC"));
 
     assertThat(activeCounties.size()).isGreaterThan(0);
     assertThat(fullCountyCount).isGreaterThan(activeCounties.size());
 
     assertThat(activeCounties).contains("Watauga, NC");
-    assertThat(activeCounties).doesNotContain("dummy, NC");
+    assertThat(activeCounties).doesNotContain("dummy, NC", "siteCA");
   }
 
   @Test
   void fetchFullCountyListing() {
     Map<String, List<String>> fetchFullCountyListing =
-        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest);
+        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest, List.of("NC"));
     assertThat(fetchFullCountyListing.size()).isGreaterThan(0);
+    assertThat(fetchFullCountyListing.get("NC")).contains("Watauga");
 
+    fetchFullCountyListing =
+        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest, List.of("NC", "TN"));
+    assertThat(fetchFullCountyListing.get("NC")).contains("Watauga");
+    assertThat(fetchFullCountyListing.get("TN")).contains("Sevier");
+
+    fetchFullCountyListing =
+        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest, List.of("NC", "TN", "VA"));
     assertThat(fetchFullCountyListing.get("NC")).contains("Watauga");
     assertThat(fetchFullCountyListing.get("TN")).contains("Sevier");
     assertThat(fetchFullCountyListing.get("VA")).contains("Halifax");
+
+    fetchFullCountyListing =
+        CountyDao.fetchFullCountyListing(TestConfiguration.jdbiTest, List.of("CA"));
+    assertThat(fetchFullCountyListing.get("CA")).contains("Los Angeles");
   }
 }

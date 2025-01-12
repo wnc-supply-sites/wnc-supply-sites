@@ -29,7 +29,8 @@ public class SuppliesDao {
     LocalDate lastDeliveryDate;
   }
 
-  public static List<SuppliesQueryResult> getSupplyResults(Jdbi jdbi, SiteSupplyRequest request) {
+  public static List<SuppliesQueryResult> getSupplyResults(
+      Jdbi jdbi, SiteSupplyRequest request, List<String> stateList) {
     StringBuilder query =
         new StringBuilder(
             """
@@ -55,6 +56,7 @@ public class SuppliesDao {
       left join item_status ist on ist.id = si.item_status_id
       left join delivery d on d.to_site_id = s.id
       where s.active = true
+        and c.state in (<stateList>)
       """);
 
     if (!request.getSites().isEmpty()) {
@@ -160,7 +162,10 @@ public class SuppliesDao {
             queryBuilder.bindList("site_type", request.getSiteType());
           }
 
-          return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
+          return queryBuilder
+              .bindList("stateList", stateList)
+              .mapToBean(SuppliesQueryResult.class)
+              .list();
         });
   }
 }

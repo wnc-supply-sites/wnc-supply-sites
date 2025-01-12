@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.address;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
@@ -25,13 +26,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class SiteAddressController {
 
   private final Jdbi jdbi;
-
   public static final String MANAGE_ADDRESS_PATH = "/manage/address/address";
 
   /** Fetches data for the manage site page */
   @GetMapping(MANAGE_ADDRESS_PATH)
   ModelAndView showSiteContactPage(
-      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @RequestParam String siteId,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
     SiteDetailDao.SiteDetailData data =
         UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (data == null) {
@@ -46,7 +48,7 @@ public class SiteAddressController {
     pageParams.put(PageParam.WEBSITE.text, Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put(PageParam.FACEBOOK.text, Optional.ofNullable(data.getFacebook()).orElse(""));
 
-    Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
+    Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi, stateList);
     pageParams.put(PageParam.FULL_COUNTY_LIST.text, counties);
     pageParams.put(
         PageParam.STATE_LIST.text,

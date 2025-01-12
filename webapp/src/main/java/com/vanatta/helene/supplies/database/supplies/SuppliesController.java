@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.supplies;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.manage.inventory.ItemTagDao;
@@ -54,11 +55,6 @@ public class SuppliesController {
   private static final DateTimeFormatter dateTimeFormatter =
       DateTimeFormatter.ofPattern("yyyy-MMM-d");
 
-  @GetMapping(value = "/supplies/all-data-json")
-  public SiteSupplyResponse getSuppliesData() {
-    return getSuppliesData(SiteSupplyRequest.builder().build());
-  }
-
   /**
    * POST requests should be coming from supplies page JS requests for donation site data
    *
@@ -68,21 +64,25 @@ public class SuppliesController {
   @CrossOrigin
   @PostMapping(value = "/supplies/site-data")
   public SiteSupplyResponse getSuppliesData(
-      HttpServletRequest httpRequest, @RequestBody SiteSupplyRequest request) {
+      HttpServletRequest httpRequest,
+      @RequestBody SiteSupplyRequest request,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
     boolean authenticated = cookieAuthenticator.isAuthenticated(httpRequest);
-    return getSuppliesData(request, authenticated);
+    return getSuppliesData(request, authenticated, stateList);
   }
 
   // @VisibleForTesting
-  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request) {
-    return getSuppliesData(request, false);
+  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, List<String> stateList) {
+    return getSuppliesData(request, false, stateList);
   }
 
   // @VisibleForTesting
-  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, boolean isAuthenticated) {
+  SiteSupplyResponse getSuppliesData(
+      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList) {
     request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
 
-    List<SuppliesDao.SuppliesQueryResult> results = SuppliesDao.getSupplyResults(jdbi, request);
+    List<SuppliesDao.SuppliesQueryResult> results =
+        SuppliesDao.getSupplyResults(jdbi, request, stateList);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
 

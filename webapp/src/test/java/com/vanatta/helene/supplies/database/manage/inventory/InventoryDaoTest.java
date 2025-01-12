@@ -207,7 +207,9 @@ class InventoryDaoTest {
 
       var supplyResults =
           SuppliesDao.getSupplyResults(
-              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build());
+              jdbiTest,
+              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
+              List.of("NC"));
       confirmItemStatus(supplyResults, "gloves", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "water", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "batteries", ItemStatus.AVAILABLE);
@@ -243,7 +245,9 @@ class InventoryDaoTest {
       // we added no inventory to this new site. Even after marking an item as not needed
       // the site should still have no inventory.
       SuppliesDao.getSupplyResults(
-              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
+              jdbiTest,
+              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
+              List.of("NC"))
           .forEach(r -> assertThat(r.getItem()).isNull());
     }
 
@@ -259,7 +263,9 @@ class InventoryDaoTest {
       // we added no inventory to this new site. Even after marking an item as not needed
       // the site should still have no inventory.
       SuppliesDao.getSupplyResults(
-              jdbiTest, SiteSupplyRequest.builder().sites(List.of(newSiteName)).build())
+              jdbiTest,
+              SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
+              List.of("NC"))
           .forEach(r -> assertThat(r.getItemTags()).contains("toddler"));
     }
   }

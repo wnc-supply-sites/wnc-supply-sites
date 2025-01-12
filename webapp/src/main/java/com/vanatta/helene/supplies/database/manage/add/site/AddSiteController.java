@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage.add.site;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.CountyDao;
 import com.vanatta.helene.supplies.database.data.SiteType;
@@ -33,15 +34,18 @@ public class AddSiteController {
 
   /** Shows the form for adding a brand new site */
   @GetMapping("/manage/new-site/add-site")
-  ModelAndView showAddNewSiteForm() {
+  ModelAndView showAddNewSiteForm(
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
     Map<String, Object> model = new HashMap<>();
 
-    Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi);
+    Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi, stateList);
     model.put("fullCountyList", counties);
     model.put("stateList", SelectSiteController.createItemListing("NC", counties.keySet()));
+    String defaultState = counties.keySet().stream().sorted().toList().getFirst();
     model.put(
         "countyList",
-        SelectSiteController.createItemListing(counties.get("NC").getFirst(), counties.get("NC")));
+        SelectSiteController.createItemListing(
+            counties.get(defaultState).getFirst(), counties.get(defaultState)));
 
     List<SelectOption> maxSupplyDeliveryOptions =
         ManageSiteDao.getAllMaxSupplyOptions(jdbi).stream()

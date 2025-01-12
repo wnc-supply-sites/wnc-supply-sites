@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.browse.routes;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.auth.UserRole;
 import com.vanatta.helene.supplies.database.data.CountyDao;
@@ -66,7 +67,8 @@ public class BrowseRoutesController {
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) String siteWssId,
       @RequestParam(required = false) String county,
-      @ModelAttribute(LoggedInAdvice.USER_ROLES) List<UserRole> userRoles) {
+      @ModelAttribute(LoggedInAdvice.USER_ROLES) List<UserRole> userRoles,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
 
     if (page == null) {
       page = 1;
@@ -85,7 +87,8 @@ public class BrowseRoutesController {
 
     List<String> counties = new ArrayList<>();
     counties.add("");
-    counties.addAll(CountyDao.fetchActiveCountyList(jdbi, AuthenticatedMode.AUTHENTICATED));
+    counties.addAll(
+        CountyDao.fetchActiveCountyList(jdbi, AuthenticatedMode.AUTHENTICATED, stateList));
     templateParams.put(
         TemplateParams.countyList.name(),
         HtmlSelectOptionsUtil.createItemListingWithFuzzyStartsWith(county, counties));
@@ -95,7 +98,8 @@ public class BrowseRoutesController {
             : counties.stream().filter(c -> c.startsWith(county)).findAny().orElse(null);
 
     List<DeliveryOption> deliveryOptions =
-        BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssIdCleaned, currentCounty).stream()
+        BrowseRoutesDao.findDeliveryOptions(jdbi, siteWssIdCleaned, currentCounty, stateList)
+            .stream()
             .filter(RouteWeighting::filter)
             .sorted(Comparator.comparingDouble(DeliveryOption::sortScore))
             .toList();
@@ -130,7 +134,7 @@ public class BrowseRoutesController {
     sites.add(Site.BLANK);
 
     sites.addAll(
-        BrowseRoutesDao.fetchSites(jdbi).stream()
+        BrowseRoutesDao.fetchSites(jdbi, stateList).stream()
             .map(s -> s.getWssId() == siteWssIdCleaned ? s.toBuilder().selected(true).build() : s)
             .toList());
     templateParams.put(TemplateParams.siteList.name(), sites);

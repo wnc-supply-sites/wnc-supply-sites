@@ -136,7 +136,8 @@ public class NeedsMatchingDao {
     Double distanceMiles;
   }
 
-  public static List<NeedsMatchingResult> execute(Jdbi jdbi, long airtableId) {
+  public static List<NeedsMatchingResult> execute(
+      Jdbi jdbi, long airtableId, List<String> siteList) {
     String query = "select id from site where airtable_id = :airtableId";
     long dbId =
         jdbi.withHandle(
@@ -147,10 +148,11 @@ public class NeedsMatchingDao {
                         .mapTo(Long.class)
                         .findOne())
             .orElseThrow(() -> new IllegalArgumentException("Invalid ID: " + airtableId));
-    return executeByInternalId(jdbi, dbId);
+    return executeByInternalId(jdbi, dbId, siteList);
   }
 
-  public static List<NeedsMatchingResult> executeByInternalId(Jdbi jdbi, long siteId) {
+  public static List<NeedsMatchingResult> executeByInternalId(
+      Jdbi jdbi, long siteId, List<String> stateList) {
     String query =
         """
          WITH needy_items AS (
@@ -158,18 +160,22 @@ public class NeedsMatchingDao {
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
+            JOIN county c on c.id = s.county_id
             WHERE s.id = :siteId AND ist.name IN ('Urgently Needed', 'Needed')
               and s.active = true
               and s.accepting_donations = true
+              and c.state in (<stateList>)
         ),
         oversupply_sites AS (
             SELECT si.site_id, si.item_id
             FROM site_item si
             JOIN item_status ist ON si.item_status_id = ist.id
             JOIN site s on s.id = si.site_id
+            JOIN county c on c.id = s.county_id
             JOIN site_type st on st.id = s.site_type_id
             WHERE
               s.active = true
+              and c.state in (<stateList>)
               and (ist.name = 'Oversupply' or (st.name = 'Supply Hub' and ist.name in ('Available', 'Oversupply')))
         ), need_match AS (
             SELECT
@@ -219,6 +225,7 @@ public class NeedsMatchingDao {
                 handle
                     .createQuery(query)
                     .bind("siteId", siteId)
+                    .bindList("stateList", stateList)
                     .mapToBean(NeedsMatchingDbResult.class)
                     .list());
 

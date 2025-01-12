@@ -28,7 +28,8 @@ class SiteAddressControllerTest {
     // site1 should have every field populated.
     long siteId = TestConfiguration.getSiteId("site1");
     var response =
-        siteAddressController.showSiteContactPage(List.of(siteId), String.valueOf(siteId));
+        siteAddressController.showSiteContactPage(
+            List.of(siteId), String.valueOf(siteId), List.of("NC"));
     assertThat(response.getModelMap()).containsKey(param.text);
     assertThat(response.getModelMap().getAttribute(param.text)).isNotNull();
   }
@@ -43,7 +44,8 @@ class SiteAddressControllerTest {
         SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
 
     ModelAndView result =
-        siteAddressController.showSiteContactPage(List.of(siteId), String.valueOf(siteId));
+        siteAddressController.showSiteContactPage(
+            List.of(siteId), String.valueOf(siteId), List.of("NC"));
 
     List<HtmlSelectOptionsUtil.ItemListing> countyListResult =
         (List<HtmlSelectOptionsUtil.ItemListing>)
@@ -81,7 +83,8 @@ class SiteAddressControllerTest {
         SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
 
     ModelAndView result =
-        siteAddressController.showSiteContactPage(List.of(siteId), String.valueOf(siteId));
+        siteAddressController.showSiteContactPage(
+            List.of(siteId), String.valueOf(siteId), List.of("NC"));
 
     List<HtmlSelectOptionsUtil.ItemListing> stateListing =
         (List<HtmlSelectOptionsUtil.ItemListing>)
