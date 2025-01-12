@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.manage;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
 import java.util.Collection;
@@ -39,14 +40,17 @@ public class SelectSiteController {
 
   /** User will be shown a page to select the site they want to manage. */
   @GetMapping(PATH_SELECT_SITE)
-  ModelAndView showSelectSitePage(@ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites) {
-    return showSelectSitePage(jdbi, sites);
+  ModelAndView showSelectSitePage(
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> states) {
+    return showSelectSitePage(jdbi, sites, states);
   }
 
-  public static ModelAndView showSelectSitePage(Jdbi jdbi, List<Long> sites) {
+  public static ModelAndView showSelectSitePage(Jdbi jdbi, List<Long> sites, List<String> states) {
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("hasSites", sites.isEmpty() ? false : true);
-    pageParams.put("sites", sites.isEmpty() ? null : ManageSiteDao.fetchSiteList(jdbi, sites));
+    pageParams.put(
+        "sites", sites.isEmpty() ? null : ManageSiteDao.fetchSiteList(jdbi, sites, states));
     return new ModelAndView("manage/select-site", pageParams);
   }
 
@@ -59,11 +63,13 @@ public class SelectSiteController {
    */
   @GetMapping(PATH_SITE_SELECTED)
   ModelAndView showSiteSelectedPage(
-      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites, @RequestParam String siteId) {
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> sites,
+      @RequestParam String siteId,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> states) {
     SiteDetailDao.SiteDetailData siteData =
         UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
     if (siteData == null) {
-      return showSelectSitePage(jdbi, sites);
+      return showSelectSitePage(jdbi, sites, states);
     }
 
     Map<String, String> pageParams = new HashMap<>();

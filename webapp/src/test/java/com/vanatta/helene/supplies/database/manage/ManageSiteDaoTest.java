@@ -37,7 +37,8 @@ class ManageSiteDaoTest {
     var results =
         ManageSiteDao.fetchSiteList(
             TestConfiguration.jdbiTest,
-            List.of(TestConfiguration.getSiteId("site1"), TestConfiguration.getSiteId("site2")));
+            List.of(TestConfiguration.getSiteId("site1"), TestConfiguration.getSiteId("site2")),
+            List.of("NC"));
     assertThat(results).isNotEmpty();
 
     results.forEach(result -> assertThat(result.getId()).isNotEqualTo(0L));

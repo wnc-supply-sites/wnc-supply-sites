@@ -16,15 +16,20 @@ import org.jdbi.v3.core.Jdbi;
 @Slf4j
 public class ManageSiteDao {
 
-  static List<SiteSelection> fetchSiteList(Jdbi jdbi, List<Long> sites) {
+  static List<SiteSelection> fetchSiteList(Jdbi jdbi, List<Long> sites, List<String> states) {
     return jdbi.withHandle(
         handle ->
             handle
                 .createQuery(
                     """
-                   select id, name from site where id in (<sites>) order by lower(name)
+                   select s.id, s.name
+                   from site s
+                   join county c on c.id = s.county_id
+                   where s.id in (<sites>) and c.state in (<states>)
+                   order by lower(s.name)
                     """)
                 .bindList("sites", sites)
+                .bindList("states", states)
                 .mapToBean(SiteSelection.class)
                 .list());
   }
