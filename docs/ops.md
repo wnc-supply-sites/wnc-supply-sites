@@ -291,6 +291,21 @@ page would have crashed for the user.
 
 ----
 
+'duplicate key value violates unique constraint "item_name_unique"'
+
+This error happens when someone attempts to add a duplicate item. The website handles this
+situation, but there is no good way to suppress the log message that a duplicate item was
+attempted. Double check the the constraint name is 'item_name_unique', and then
+this error message can be ignored (the website handles it)
+
+> 2025-01-11T06:44:07.059133+00:00 localhost docker/webapp[345337]: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "item_name_unique"
+2025-01-11T06:44:07.059177+00:00 localhost docker/webapp[345337]:   Detail: Key (lower(name::text))=(work boots) already exists.
+2025-01-11T06:44:07.059214+00:00 localhost docker/webapp[345337]: #011at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2733)
+2025-01-11T06:44:07.059250+00:00 localhost docker/webapp[345337]: #011at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2420)
+2025-01-11T06:44:07.059286+00:00 localhost docker/webapp[345337]: #011at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:372)
+2025-01-11T06:44:07.059323+00:00 localhost docker/webapp[345337]: #011at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:517)
+
+----
 
 ## Debugging Login Issues
 
