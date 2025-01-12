@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.supplies.site.details;
 
+import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
@@ -86,17 +87,23 @@ public class SiteDetailController {
   @GetMapping(PATH_SITE_DETAIL)
   public ModelAndView siteDetail(
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> userSites,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList,
       @RequestParam(required = false) Long id,
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
     return siteDetail(
-        userSites, id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
+        userSites, stateList, id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
   }
 
   // @VisibleForTesting
   public ModelAndView siteDetail(
-      List<Long> userSites, Long id, Long airtableId, Long wssId, boolean isLoggedIn) {
+      List<Long> userSites,
+      List<String> stateList,
+      Long id,
+      Long airtableId,
+      Long wssId,
+      boolean isLoggedIn) {
     if (id == null && airtableId == null && wssId == null) {
       return new ModelAndView("redirect:" + SuppliesController.PATH_SUPPLY_SEARCH);
     }
@@ -182,7 +189,7 @@ public class SiteDetailController {
         SuppliesDao.getSupplyResults(
             jdbi,
             SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build(),
-            List.of("NC"));
+            stateList);
     List<InventoryItem> needs =
         supplies.stream()
             .filter(i -> i.getItem() != null)
@@ -251,7 +258,7 @@ public class SiteDetailController {
 
       // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
-          NeedsMatchingDao.executeByInternalId(jdbi, id, List.of("NC"));
+          NeedsMatchingDao.executeByInternalId(jdbi, id, stateList);
       siteDetails.put(TemplateParams.NEEDS_MATCHING.text, needsMatching);
       siteDetails.put(TemplateParams.NEEDS_MATCH_COUNT.text, needsMatching.size());
     }

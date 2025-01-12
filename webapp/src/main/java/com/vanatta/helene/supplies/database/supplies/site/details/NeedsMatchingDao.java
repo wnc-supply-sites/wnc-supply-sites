@@ -164,7 +164,7 @@ public class NeedsMatchingDao {
             WHERE s.id = :siteId AND ist.name IN ('Urgently Needed', 'Needed')
               and s.active = true
               and s.accepting_donations = true
-              and c.state in (<stateList>)
+              --and c.state in (<stateList>)
         ),
         oversupply_sites AS (
             SELECT si.site_id, si.item_id

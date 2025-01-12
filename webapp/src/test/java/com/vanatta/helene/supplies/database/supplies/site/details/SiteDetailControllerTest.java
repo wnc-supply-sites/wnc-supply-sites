@@ -23,7 +23,9 @@ class SiteDetailControllerTest {
   void renderSiteDetail() {
     long site1Id = TestConfiguration.getSiteId("site1");
 
-    var model = siteDetailController.siteDetail(List.of(site1Id), site1Id, null, null, true);
+    var model =
+        siteDetailController.siteDetail(
+            List.of(site1Id), List.of("NC", "TN"), site1Id, null, null, true);
 
     assertThat(model.getModelMap().keySet())
         .containsAll(
@@ -46,6 +48,6 @@ class SiteDetailControllerTest {
             .dispatcherCode("DZAA")
             .build());
 
-    siteDetailController.siteDetail(List.of(siteId), siteId, null, null, true);
+    siteDetailController.siteDetail(List.of(siteId), List.of("NC"), siteId, null, null, true);
   }
 }
