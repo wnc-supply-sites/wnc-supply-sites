@@ -166,38 +166,29 @@ class NotificationStateMachine {
               .message(
                   String.format(
                       """
-              Confirmation received, delivery #%s,
-              Driver: %s - %s
-              Pickup: %s - %s
-              DropOff: %s - %s
+              Confirmation received.
+              Delivery #%s (%s items)
+              %s: %s (Driver)
+              %s: %s (Pickup)
+              %s: %s (DropOff)
               """,
                       delivery.getDeliveryNumber(),
+                      delivery.getItemCount(),
+                      confirmationStatus(delivery, ConfirmRole.DRIVER),
                       delivery.getDriverName(),
-                      Optional.ofNullable(
-                              delivery
-                                  .getConfirmation(ConfirmRole.DRIVER)
-                                  .orElseThrow()
-                                  .getConfirmed())
-                          .map(Object::toString)
-                          .orElse(""),
+                      confirmationStatus(delivery, ConfirmRole.PICKUP_SITE),
                       delivery.getFromSite(),
-                      Optional.ofNullable(
-                              delivery
-                                  .getConfirmation(ConfirmRole.PICKUP_SITE)
-                                  .orElseThrow()
-                                  .getConfirmed())
-                          .map(Object::toString)
-                          .orElse(""),
-                      delivery.getToSite(),
-                      Optional.ofNullable(
-                              delivery
-                                  .getConfirmation(ConfirmRole.DROPOFF_SITE)
-                                  .orElseThrow()
-                                  .getConfirmed())
-                          .map(Object::toString)
-                          .orElse("")))
+                      confirmationStatus(delivery, ConfirmRole.DROPOFF_SITE),
+                      delivery.getToSite()))
               .build());
     }
+  }
+
+  private static String confirmationStatus(Delivery delivery, ConfirmRole confirmRole) {
+    return Optional.ofNullable(delivery.getConfirmation(confirmRole).orElseThrow().getConfirmed())
+        .filter(v -> v)
+        .map(v -> "CONFIRMED")
+        .orElse("PENDING");
   }
 
   List<SmsMessage> cancel(Delivery delivery, String domainName) {

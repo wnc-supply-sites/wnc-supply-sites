@@ -118,8 +118,44 @@ class NotificationStateMachineTest {
 
   @Test
   void confirm_singleConfirmation() {
-    var results = notificationStateMachine.confirm(withPendingConfirmations, domain);
+    var results =
+        notificationStateMachine.confirm(
+            withPendingConfirmations.toBuilder()
+                .deliveryNumber(212)
+                .driverName("The Driver")
+                .fromSite("zTest")
+                .toSite("zDrop")
+                .itemList(List.of("water", "brushes"))
+                .confirmations(
+                    List.of(
+                        DeliveryConfirmation.builder()
+                            .confirmed(true)
+                            .confirmRole(DeliveryConfirmation.ConfirmRole.DROPOFF_SITE.name())
+                            .code("XKCD")
+                            .build(),
+                        DeliveryConfirmation.builder()
+                            .confirmed(null)
+                            .confirmRole(DeliveryConfirmation.ConfirmRole.PICKUP_SITE.name())
+                            .code("XKCD")
+                            .build(),
+                        DeliveryConfirmation.builder()
+                            .confirmed(null)
+                            .confirmRole(DeliveryConfirmation.ConfirmRole.DRIVER.name())
+                            .code("XKCD")
+                            .build()))
+                .build(),
+            domain);
     assertPhoneNumbers(results, dispatcherNumber);
+
+    assertThat(results.getFirst().getMessage())
+        .isEqualTo(
+            """
+        Confirmation received.
+        Delivery #212 (2 items)
+        PENDING: The Driver (Driver)
+        PENDING: zTest (Pickup)
+        CONFIRMED: zDrop (DropOff)
+        """);
   }
 
   @Test
