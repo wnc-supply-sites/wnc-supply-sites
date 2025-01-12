@@ -29,7 +29,6 @@ insert into county(name, state) values('Placer', 'CA');
 insert into county(name, state) values('Plumas', 'CA');
 insert into county(name, state) values('Sacramento', 'CA');
 insert into county(name, state) values('San Benito', 'CA');
-insert into county(name, state) values('San Diego', 'CA');
 insert into county(name, state) values('San Francisco', 'CA');
 insert into county(name, state) values('San Joaquin', 'CA');
 insert into county(name, state) values('San Luis Obispo', 'CA');
