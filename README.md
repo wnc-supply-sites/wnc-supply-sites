@@ -35,6 +35,9 @@ See the [ops-docs](docs/ops.md)
 - Run `SuppliesDatabaseApplication.java`
   - in run configuration, set the environment variable: `WEBHOOK_SECRET=secret`
 
+To do full tests and formatting before commit & push:
+- `cd webapp; ./gradlew spotlessApply test`
+
 ### Quick Start - Frontend Dev
 - clone the code
 - open any of the .html file in a web browser
