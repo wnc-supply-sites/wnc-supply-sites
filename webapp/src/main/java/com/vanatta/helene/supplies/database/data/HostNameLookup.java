@@ -24,7 +24,8 @@ public class HostNameLookup {
     if (defaultDeploymentEnabled && defaultDeployment != null && !defaultDeployment.isEmpty()) {
       return defaultDeployment;
     } else {
-      return request.getHeader("host").toLowerCase();
+      String hostHeader = request.getHeader("host").toLowerCase();
+      return hostHeader.startsWith("www.") ? hostHeader.substring("www.".length()) : hostHeader;
     }
   }
 }
