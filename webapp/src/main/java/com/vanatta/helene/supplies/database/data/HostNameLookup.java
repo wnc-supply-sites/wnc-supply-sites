@@ -10,14 +10,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HostNameLookup {
+  private final boolean defaultDeploymentEnabled;
   private final String defaultDeployment;
 
-  public HostNameLookup(@Value("${dev.default.deployment}") String deployment) {
+  public HostNameLookup(
+      @Value("${dev.default.deployment.enabled") boolean defaultDeploymentEnabled,
+      @Value("${dev.default.deployment}") String deployment) {
+    this.defaultDeploymentEnabled = defaultDeploymentEnabled;
     this.defaultDeployment = deployment;
   }
 
   public String lookupHostName(HttpServletRequest request) {
-    if (defaultDeployment != null && !defaultDeployment.isEmpty()) {
+    if (defaultDeploymentEnabled && defaultDeployment != null && !defaultDeployment.isEmpty()) {
       return defaultDeployment;
     } else {
       return request.getHeader("host").toLowerCase();
