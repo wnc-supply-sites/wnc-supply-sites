@@ -61,8 +61,20 @@ public class NeedsMatchingController {
     log.info("{}, received data: {}", PATH_ADD_NEEDS, body);
     LinkedTreeMap json = new Gson().fromJson(body, LinkedTreeMap.class);
     long deliveryId = ((Double) json.get("deliveryId")).longValue();
-    long fromWssId = ((List<Double>) json.get("fromSiteWssId")).getFirst().longValue();
-    long toSiteWssId = ((List<Double>) json.get("toSiteWssId")).getFirst().longValue();
+
+    List<Double> fromSite = (List<Double>) json.get("fromSiteWssId");
+    List<Double> toSite = (List<Double>) json.get("toSiteWssId");
+
+    if (fromSite.isEmpty() || toSite.isEmpty()) {
+      log.warn(
+          "Add items requested, except the requested sites are not in WSS though. "
+              + "No results are being returned. Request: {}",
+          body);
+      return ResponseEntity.ok("No matches, sites are not in WSS");
+    }
+
+    long fromWssId = fromSite.getFirst().longValue();
+    long toSiteWssId = toSite.getFirst().longValue();
 
     List<String> neededItems = computeNeedsMatch(jdbi, fromWssId, toSiteWssId);
     log.info("Received needs computation request: {}, matched with needs: {}", body, neededItems);
