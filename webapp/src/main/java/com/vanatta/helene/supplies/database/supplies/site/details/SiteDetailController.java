@@ -7,6 +7,7 @@ import com.vanatta.helene.supplies.database.delivery.Delivery;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import com.vanatta.helene.supplies.database.manage.contact.SiteContactController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
+import com.vanatta.helene.supplies.database.manage.receiving.SiteReceivingController;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyRequest;
 import com.vanatta.helene.supplies.database.supplies.SuppliesController;
 import com.vanatta.helene.supplies.database.supplies.SuppliesDao;
@@ -45,6 +46,9 @@ public class SiteDetailController {
   @AllArgsConstructor
   enum TemplateParams {
     EDIT_CONTACT_LINK("editContactLink"),
+    EDIT_RECEIVING_LINK("editReceivingLink"),
+    RECEIVING_NOTES("receivingNotes"),
+    MAX_SUPPLY_LOAD("maxSupplyLoad"),
     EDIT_INVENTORY_LINK("editInventoryLink"),
     SITE_NAME("siteName"),
     WEBSITE("website"),
@@ -219,6 +223,15 @@ public class SiteDetailController {
       siteDetails.put(
           TemplateParams.ADDITIONAL_CONTACTS.text,
           SiteDetailDao.lookupAdditionalSiteContacts(jdbi, id));
+
+      siteDetails.put(
+          TemplateParams.EDIT_RECEIVING_LINK.text, SiteReceivingController.buildLink(id));
+      siteDetails.put(
+          TemplateParams.RECEIVING_NOTES.text,
+          siteDetailData.getReceivingNotes() == null || siteDetailData.getReceivingNotes().isBlank()
+              ? null
+              : siteDetailData.getReceivingNotes());
+      siteDetails.put(TemplateParams.MAX_SUPPLY_LOAD.text, siteDetailData.getMaxSupply());
 
       List<Delivery> allDeliveries = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
 

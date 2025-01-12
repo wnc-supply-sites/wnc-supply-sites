@@ -28,6 +28,10 @@ public class SiteReceivingController {
   private final Jdbi jdbi;
   private final SendSiteUpdate sendSiteUpdate;
 
+  public static String buildLink(Long id) {
+    return "/manage/receiving/receiving?siteId=" + id;
+  }
+
   /** Fetches data for the manage site page */
   @GetMapping("/manage/receiving/receiving")
   ModelAndView showSiteContactPage(

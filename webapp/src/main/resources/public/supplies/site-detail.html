@@ -90,8 +90,23 @@
         <h2>
             Receiving Instructions
             <span class="privately-visible">*</span>
-            {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
+            {{#showEditLinks}}<a class="edit-link" href="{{{editReceivingLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
+        <dl>
+            {{#receivingNotes}}
+            <dt>Receiving Notes</dt>
+            <dd class="detail-value">
+                <textarea rows="5" cols="20" readonly>{{.}}</textarea>
+            </dd>
+            {{/receivingNotes}}
+
+            <dt>Max Supply Load</dt>
+            <dd class="detail-value">
+                {{maxSupplyLoad}}
+            </dd>
+
+        </dl>
+
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
 
