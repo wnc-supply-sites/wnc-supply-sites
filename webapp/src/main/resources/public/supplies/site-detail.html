@@ -62,13 +62,16 @@
         </div>
 
         {{#loggedIn}}
+
         <h2>
             Contact
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
-        <div class="privately-visible">
-            * Indicates field is visible because you are logged in
+        <div class="content-container">
+            <div class="privately-visible">
+                * Indicates field is visible because you are logged in
+            </div>
         </div>
 
         <div class="mission-statement">
@@ -92,94 +95,101 @@
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editReceivingLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
-        <dl>
-            {{#receivingNotes}}
-            <dt>Receiving Notes</dt>
-            <dd class="detail-value">
-                <textarea rows="5" cols="20" readonly>{{.}}</textarea>
-            </dd>
-            {{/receivingNotes}}
+        <div class="content-container" >
+            <dl>
+                {{#receivingNotes}}
+                <dt>Receiving Notes: </dt>
+                <dd class="detail-value">
+                    <textarea rows="5" cols="20" readonly>{{.}}</textarea>
+                </dd>
+                {{/receivingNotes}}
 
-            <dt>Max Supply Load</dt>
-            <dd class="detail-value">
-                {{maxSupplyLoad}}
-            </dd>
+                <dt>Max Supply Load: </dt>
+                <dd class="detail-value">
+                    {{maxSupplyLoad}}
+                </dd>
 
-        </dl>
+            </dl>
+        </div>
 
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
 
-        <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>
-        {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}
-        {{#hasIncomingDeliveries}}
-        <div class="table-container">
-            <table class="delivery-table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Delivery Date</th>
-                        <th>From</th>
-                        <th>Status</th>
-                        <th>Item Count</th>
-                        <th>Items</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#incomingDeliveries}}
-                    <tr>
-                        <td><a href="{{detailLink}}">[Details]</a></td>
-                        <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                        <td>
-                            {{#fromSiteLink}}<a href="{{.}}">{{fromSite}}</a>{{/fromSiteLink}}
-                            {{^fromSiteLink}}{{#fromSite}}.{{/fromSite}}{{^fromSite}}-{{/fromSite}}{{/fromSiteLink}}
-                        </td>
-                        <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
-                        <td>{{itemCount}}</td>
-                        <td>{{itemListTruncated}}</td>
-                    </tr>
-                    {{/incomingDeliveries}}
-                </tbody>
-            </table>
-        </div>
-        {{/hasIncomingDeliveries}}
+        <div class="content-container">
+            <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>
 
-        <h3>
-            <span class="fa fa-truck outgoing-truck"></span> Outgoing Deliveries
-        </h3>
-        {{^hasOutgoingDeliveries}} None scheduled {{/hasOutgoingDeliveries}}
-        {{#hasOutgoingDeliveries}}
-
-        <div class="table-container">
-            <table class="delivery-table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Delivery Date</th>
-                        <th>To</th>
-                        <th>Status</th>
-                        <th>Item Count</th>
-                        <th>Items</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#outgoingDeliveries}}
-                    <tr>
-                        <td><a href="{{detailLink}}">[Details]</a></td>
-                        <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                        <td>
-                            {{#toSiteLink}}<a href="{{.}}">{{toSite}}</a>{{/toSiteLink}}
-                            {{^toSiteLink}}{{#toSite}}.{{/toSite}}{{^toSite}}-{{/toSite}}{{/toSiteLink}}
-                        </td>
-                        <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
-                        <td>{{itemCount}}</td>
-                        <td>{{itemListTruncated}}</td>
-                    </tr>
-                    {{/outgoingDeliveries}}
-                </tbody>
-            </table>
+            {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}
+            {{#hasIncomingDeliveries}}
+            <div class="table-container">
+                <table class="delivery-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Delivery Date</th>
+                            <th>From</th>
+                            <th>Status</th>
+                            <th>Item Count</th>
+                            <th>Items</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#incomingDeliveries}}
+                        <tr>
+                            <td><a href="{{detailLink}}">[Details]</a></td>
+                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
+                            <td>
+                                {{#fromSiteLink}}<a href="{{.}}">{{fromSite}}</a>{{/fromSiteLink}}
+                                {{^fromSiteLink}}{{#fromSite}}.{{/fromSite}}{{^fromSite}}-{{/fromSite}}{{/fromSiteLink}}
+                            </td>
+                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
+                            <td>{{itemCount}}</td>
+                            <td>{{itemListTruncated}}</td>
+                        </tr>
+                        {{/incomingDeliveries}}
+                    </tbody>
+                </table>
+            </div>
+            {{/hasIncomingDeliveries}}
         </div>
-        {{/hasOutgoingDeliveries}}
+
+        <div class="content-container">
+            <h3>
+                <span class="fa fa-truck outgoing-truck"></span> Outgoing Deliveries
+            </h3>
+            {{^hasOutgoingDeliveries}} None scheduled {{/hasOutgoingDeliveries}}
+            {{#hasOutgoingDeliveries}}
+
+            <div class="table-container">
+                <table class="delivery-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Delivery Date</th>
+                            <th>To</th>
+                            <th>Status</th>
+                            <th>Item Count</th>
+                            <th>Items</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#outgoingDeliveries}}
+                        <tr>
+                            <td><a href="{{detailLink}}">[Details]</a></td>
+                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
+                            <td>
+                                {{#toSiteLink}}<a href="{{.}}">{{toSite}}</a>{{/toSiteLink}}
+                                {{^toSiteLink}}{{#toSite}}.{{/toSite}}{{^toSite}}-{{/toSite}}{{/toSiteLink}}
+                            </td>
+                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
+                            <td>{{itemCount}}</td>
+                            <td>{{itemListTruncated}}</td>
+                        </tr>
+                        {{/outgoingDeliveries}}
+                    </tbody>
+                </table>
+            </div>
+            {{/hasOutgoingDeliveries}}
+        </div>
         {{/loggedIn}}
 
         <h2>
@@ -189,106 +199,110 @@
             <span class="privately-visible">*</span>
             {{/loggedIn}}
         </h2>
-        <div class="table-container">
-            <table class="inventory-table">
-                <tr>
-                    <th>{{#hasNeeds}}Needs List{{/hasNeeds}}</th>
-                    <th>{{#hasAvailable}}Available List{{/hasAvailable}}</th>
-                </tr>
-                <tr>
-                    <td class="inventory-column">
-                        <div class="horizontal">
-                            <ul>
-                            {{#needsList1}}
+        <div class="content-container">
+            <div class="table-container">
+                <table class="inventory-table">
+                    <tr>
+                        <th>{{#hasNeeds}}Needs List{{/hasNeeds}}</th>
+                        <th>{{#hasAvailable}}Available List{{/hasAvailable}}</th>
+                    </tr>
+                    <tr>
+                        <td class="inventory-column">
+                            <div class="horizontal">
+                                <ul>
+                                {{#needsList1}}
+                                    <li><div class="{{displayClass}}">{{name}}</div></li>
+                                {{/needsList1}}
+                                </ul>
+                                <ul>
+                                {{#needsList2}}
                                 <li><div class="{{displayClass}}">{{name}}</div></li>
-                            {{/needsList1}}
-                            </ul>
-                            <ul>
-                            {{#needsList2}}
-                            <li><div class="{{displayClass}}">{{name}}</div></li>
-                            {{/needsList2}}
-                            </ul>
-                        </div>
-                    </td>
+                                {{/needsList2}}
+                                </ul>
+                            </div>
+                        </td>
 
-                    <td class="inventory-column">
-                        <div class="horizontal">
-                            <ul>
-                                {{#availableList1}}
-                                <li><div class="{{displayClass}}">{{name}}</div></li>
-                                {{/availableList1}}
-                            </ul>
-                            <ul>
-                                {{#availableList2}}
-                                <li><div class="{{displayClass}}">{{name}}</div></li>
-                                {{/availableList2}}
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+                        <td class="inventory-column">
+                            <div class="horizontal">
+                                <ul>
+                                    {{#availableList1}}
+                                    <li><div class="{{displayClass}}">{{name}}</div></li>
+                                    {{/availableList1}}
+                                </ul>
+                                <ul>
+                                    {{#availableList2}}
+                                    <li><div class="{{displayClass}}">{{name}}</div></li>
+                                    {{/availableList2}}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         {{#loggedIn}}
         <a id="needs-matching"></a>
         <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
-        <p>The below sites have supplies that are needed and can be transported to the current site.</p>
-        <div class="table-container">
-            <table class="needs-matching">
-                <thead>
-                    <tr>
-                        <th>Site Name</th>
-                        <th>Distance</th>
-                        <th class="wider-column">Item</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#needsMatching}}
-                    <tr>
-                        <td class="padded align-top">
-                            <div class="vertical site-title">
-                                <div class="bold site-name">
-                                    <a href="{{{siteLink}}}">{{siteName}}</a>
+        <div class="content-container">
+            <p>The below sites have supplies that are needed and can be transported to the current site.</p>
+            <div class="table-container">
+                <table class="needs-matching">
+                    <thead>
+                        <tr>
+                            <th>Site Name</th>
+                            <th>Distance</th>
+                            <th class="wider-column">Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#needsMatching}}
+                        <tr>
+                            <td class="padded align-top">
+                                <div class="vertical site-title">
+                                    <div class="bold site-name">
+                                        <a href="{{{siteLink}}}">{{siteName}}</a>
+                                    </div>
+                                    <div>{{siteAddress}}</div>
+                                    <div class="city-name">{{city}}</div>
+                                    <div>{{county}} county, {{state}}</div>
+                                    <div class="map">
+                                        <iframe
+                                            width="300"
+                                            height="300"
+                                            class="gmap_iframe"
+                                            src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+                                        >
+                                        </iframe>
+                                    </div>
                                 </div>
-                                <div>{{siteAddress}}</div>
-                                <div class="city-name">{{city}}</div>
-                                <div>{{county}} county, {{state}}</div>
-                                <div class="map">
-                                    <iframe
-                                        width="300"
-                                        height="300"
-                                        class="gmap_iframe"
-                                        src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-                                    >
-                                    </iframe>
+                            </td>
+                            <td class="align-top">
+                                {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
+                                {{#driveTime}}{{.}}{{/driveTime}}
+                            </td>
+                            <td class="align-top">
+                                <div class="center bold">
+                                    {{itemCount}} items
                                 </div>
-                            </div>
-                        </td>
-                        <td class="align-top">
-                            {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
-                            {{#driveTime}}{{.}}{{/driveTime}}
-                        </td>
-                        <td class="align-top">
-                            <div class="center bold">
-                                {{itemCount}} items
-                            </div>
-                            <div class="horizontal">
-                                <ul>
-                                    {{#items1}}
-                                    <li class="{{urgencyCssClass}}">{{name}}</li>
-                                    {{/items1}}
-                                </ul>
-                                <ul>
-                                    {{#items2}}
-                                    <li class="{{urgencyCssClass}}">{{name}}</li>
-                                    {{/items2}}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    {{/needsMatching}}
-                </tbody>
-            </table>
+                                <div class="horizontal">
+                                    <ul>
+                                        {{#items1}}
+                                        <li class="{{urgencyCssClass}}">{{name}}</li>
+                                        {{/items1}}
+                                    </ul>
+                                    <ul>
+                                        {{#items2}}
+                                        <li class="{{urgencyCssClass}}">{{name}}</li>
+                                        {{/items2}}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/needsMatching}}
+                    </tbody>
+                </table>
+            </div>
         </div>
         {{/loggedIn}}
     </body>

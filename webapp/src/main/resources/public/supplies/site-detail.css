@@ -1,6 +1,9 @@
 html {
     /*padding: 15px;*/
 }
+h2 {
+    margin-left: 30px;
+}
 
 dl {
     display: grid;
@@ -117,4 +120,8 @@ table td {
 
 .align-top {
     align-content: baseline;
+}
+
+.content-container {
+    margin-left: 30px;
 }
