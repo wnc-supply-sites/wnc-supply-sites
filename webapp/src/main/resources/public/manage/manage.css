@@ -7,13 +7,17 @@ h2 {
     margin-bottom: 5px;
 }
 
+textarea {
+  max-width: 400px;
+}
+
 .data-entry-div {
     padding-left: 20px;
     width: 100%;
 }
 
 .data-entry-container {
-    width: 40%
+    width: 50%
 }
 
 .very-wide-button {
@@ -29,6 +33,11 @@ h2 {
     display: none;
 }
 
+.confirmation {
+  display: flex;
+  flex-direction: row;
+}
+
 .confirm-text {
     font-style: italic;
     font-size: 0.95em;
@@ -36,6 +45,11 @@ h2 {
 
 .shortTextField {
     width: 150px;
+}
+
+.data-field-inner {
+  display: flex;
+  flex-direction: row;
 }
 
 .data-field {
@@ -56,9 +70,16 @@ div.data-field label {
     background-color: lightcoral;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 675px) {
     .data-entry-container {
         width: 80%;
     }
-}
 
+    .data-field-inner {
+      flex-direction: column;
+    }
+  
+    .data-field-inner > :nth-child(2) {
+      margin-left: 20px;
+    }
+}
