@@ -171,6 +171,35 @@ table.results-table tbody tr:nth-child(even) {
     padding-bottom: 5px;
 }
 
+.tags-filter-container {
+    width: 20rem;
+    height: 20rem;
+    border: 2px solid red;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.item-tag {
+    font-size: smaller;
+    width: max-content;
+    height: max-content;
+    padding: .2rem;
+}
+
+.item-tag-inner {
+  padding: .25rem .5rem;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px gray;
+  border: 1px solid gray;
+}
+
+.tag-selected {
+  box-shadow: inset 2px 2px 5px gray;
+}
+
 @media only screen and (max-width: 600px) {
   .filters-container {
     flex-direction: column;

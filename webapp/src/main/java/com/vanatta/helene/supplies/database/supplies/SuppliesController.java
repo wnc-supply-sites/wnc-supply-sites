@@ -3,6 +3,7 @@ package com.vanatta.helene.supplies.database.supplies;
 import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.auth.CookieAuthenticator;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
+import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.manage.inventory.ItemTagDao;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteItem;
 import com.vanatta.helene.supplies.database.supplies.SiteSupplyResponse.SiteSupplyData;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +51,16 @@ public class SuppliesController {
     templateValues.put("availableChecked", mode.equalsIgnoreCase("donate") ? "" : "checked");
     templateValues.put(
         "tagList",
-        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> "\"" + tag + "\"").toList());
+        ItemTagDao.fetchAllDescriptionTags(jdbi).stream().map(tag -> new TagData(tag, "#7fffd4") ).toList());
     return new ModelAndView("supplies/supplies", templateValues);
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  static class TagData {
+    private String tagName;
+    private String tagColor;
   }
 
   private static final DateTimeFormatter dateTimeFormatter =
@@ -78,7 +89,8 @@ public class SuppliesController {
 
   // @VisibleForTesting
   SiteSupplyResponse getSuppliesData(
-      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList) {
+      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList
+  ) {
     request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
 
     List<SuppliesDao.SuppliesQueryResult> results =
@@ -134,6 +146,7 @@ public class SuppliesController {
               }
             }
           }
+
         });
     List<SiteSupplyData> resultData =
         aggregatedResults.values().stream() //

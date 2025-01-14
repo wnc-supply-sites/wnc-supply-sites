@@ -1,3 +1,4 @@
+// Filters
 function prePopulateCheckboxValuesIntoSession() {
   const fieldsets = document.querySelectorAll("fieldset");
   fieldsets.forEach((fieldset) => {
@@ -288,4 +289,18 @@ function formatAsList(items) {
       + "\n</ul>";
 }
 
+// Event Listeners
+function instantiateTagEventListeners(){
+    const tags = document.getElementsByClassName("item-tag-inner");
+    for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagColor = tag.getAttribute("data-tag-color");
+        tag.style.backgroundColo = tagColor;
+        tag.addEventListener("click", (e) => {
+              console.log(`Clicked tag: ${e.target.innerText}`)
+              tag.classList.toggle("tag-selected");
+              // Add filter to local storage
+            })
+    }
+}
 

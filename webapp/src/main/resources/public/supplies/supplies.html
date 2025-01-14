@@ -173,6 +173,11 @@
     </div>
 
   </div>
+  <div class="tags-filter-container">
+    {{#tagList}}
+      <div class="item-tag"> <button class="item-tag-inner" data-tag-color="{{tagColor}}"> {{tagName}} </button> </div>
+    {{/tagList}}
+  </div>
 </div>
 </div>
 <hr>
@@ -215,7 +220,6 @@
           throw new Error(`Server ${response.status} error: ${response.statusText}`);
         }
         return response.json()
-
       }
   )
   .then(filterData => {
@@ -232,9 +236,10 @@
         emptyOption +
         filterData.items.map(v =>
             `<option value="${v}">${v}</option>`).join("\n");
-
+    // Update tags container
     prePopulateCheckboxValuesIntoSession();
     addFiltersFromSession();
+    instantiateTagEventListeners();
     updateData();
   }).catch(error => {
     showSuppliesError(error);
