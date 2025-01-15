@@ -26,11 +26,8 @@
 
 <div class="data-entry-container">
   <div class="data-entry-div vertical">
-
     <div class="data-field vertical">
-
       <label for="Site Hours">Site Hours: </label>
-
       <textarea id="Site Hours" rows="5">{{hours}}</textarea>
       <div>
         <button onclick="showUpdateConfirmation({{siteId}}, 'Site Hours')" class="update-button">Update</button>
@@ -77,19 +74,19 @@
   
   <div class="data-entry-div vertical">
     <div class="data-field vertical">
-      <div>
-        <dl>
-          <dt class="bold">Receiving Notes/Instructions</dt>
-          <dd><textarea cols="20" rows="3" maxlength="1024" id="receiving notes">{{receivingNotes}}</textarea></dd>
-        </dl>
-      </div>
-  
+      <label for="receiving notes">Receiving Notes/Instructions:</label>
+      <textarea cols="20" rows="3" id="receiving notes">{{receivingNotes}}</textarea>
+
       <div class="horizontal">
         <button onclick="showUpdateConfirmation({{siteId}}, 'receiving notes')" class="update-button">Update
         </button>
-        <div class="green-check hidden" id="receiving notes-update-confirm-checkmark">&#10003;</div>
       </div>
-      <div id="receiving notes-update-confirm" class="confirm-text"></div>
+
+      <div class="confirmation">
+        <div class="green-check hidden" id="receiving notes-update-confirm-checkmark">&#10003;</div>
+        <div id="receiving notes-update-confirm" class="confirm-text"></div>
+      </div>
+
     </div>
   </div>
 </div>

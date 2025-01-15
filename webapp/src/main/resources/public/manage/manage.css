@@ -78,8 +78,4 @@ div.data-field label {
     .data-field-inner {
       flex-direction: column;
     }
-  
-    .data-field-inner > :nth-child(2) {
-      margin-left: 20px;
-    }
 }
