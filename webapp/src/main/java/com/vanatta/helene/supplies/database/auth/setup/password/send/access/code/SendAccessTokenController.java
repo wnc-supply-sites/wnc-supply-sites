@@ -86,9 +86,8 @@ public class SendAccessTokenController {
             .build());
 
     // Altered the hashtag in sms message based on domain name
-    String hashTag = "#wncStrong";
     String[] domainParts = domainName.split("-");
-    hashTag = "#"+domainParts[0]+"Strong";
+    String hashTag = "#"+domainParts[0]+"Strong";
 
     // send the passcode via SMS
     boolean success =
