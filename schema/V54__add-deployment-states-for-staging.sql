@@ -1,0 +1,1 @@
+INSERT INTO deployment_states (deployment_id, state) VALUES (3, 'CA')
