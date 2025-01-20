@@ -5,6 +5,7 @@ import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.export.update.SendInventoryUpdate;
 import com.vanatta.helene.supplies.database.export.update.SendNewItemUpdate;
 import com.vanatta.helene.supplies.database.manage.ManageSiteDao;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao.ItemTagData;
 import com.vanatta.helene.supplies.database.manage.SelectSiteController;
 import com.vanatta.helene.supplies.database.manage.UserSiteAuthorization;
 import com.vanatta.helene.supplies.database.supplies.site.details.SiteDetailDao;
@@ -112,7 +113,7 @@ public class InventoryController {
   @AllArgsConstructor
   static class ItemInventoryDisplay {
     String itemName;
-    List<String> tags;
+    List<ItemTagData> tags;
 
     /** Should either be blank or "checked" */
     @Builder.Default String itemChecked = "";

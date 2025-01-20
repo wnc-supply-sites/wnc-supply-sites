@@ -10,6 +10,7 @@
 </head>
 
 <body>
+  
 {{> header }}
 
 <button class="scroll-to-top-btn hidden">
@@ -68,14 +69,14 @@
           </td>
           <td onclick="checkAndToggleInventory(event,'{{siteId}}', '{{itemName}}')">
             <div>
-              <input type="hidden" class="item-tags" value="{{tags}}" />
+              <input type="hidden" class="item-tags" value="{{#tags}} {{tagName}}, {{/tags}}" />
               <div class="inventoryLabel {{itemLabelClass}} {{itemStatusDisabled}}"
                      id="{{itemName}}Label">
                 {{itemName}}
               </div>
               <div class="item-tags-container">
                 {{#tags}}
-                  <div class="item-tag"> <div class="item-tag-inner"> {{.}} </div> </div>
+                  <div class="item-tag"> <div class="item-tag-inner no-pointer" data-tag-color="{{tagColor}}"> {{tagName}} </div> </div>
                 {{/tags}}
               </div>
             </div>
