@@ -422,11 +422,8 @@ public class ManageSiteDao {
     String itemTags;
     boolean active;
 
-
     public List<ItemTagData> getTags() {
-
       if (itemTags == null) {return List.of();}
-      
       return Arrays.stream(itemTags.split(",")).map(tag -> new ItemTagData(tag, "#7fffd4")).toList();
     }
   }
