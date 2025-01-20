@@ -39,7 +39,7 @@
 
 <div class="content-container">
   <span class="filter-title"> Filter items by tag: </span>
-  <div id="item-tags-container">
+  <div id="tags-container">
     {{#tagList}}
     <div class="item-tag"> <button class="item-tag-inner" value="{{tagName}}" data-tag-color="{{tagColor}}">{{tagName}}</button> </div>
     {{/tagList}}
@@ -66,13 +66,18 @@
             <input type="checkbox" id="{{itemName}}Checkbox"
                    onclick="toggleInventory('{{siteId}}', '{{itemName}}')" {{itemChecked}}/>
           </td>
-          <td onclick="checkAndToggleInventory('{{siteId}}', '{{itemName}}')">
+          <td onclick="checkAndToggleInventory(event,'{{siteId}}', '{{itemName}}')">
             <div>
               <input type="hidden" class="item-tags" value="{{tags}}" />
-              <span class="inventoryLabel {{itemLabelClass}} {{itemStatusDisabled}}"
+              <div class="inventoryLabel {{itemLabelClass}} {{itemStatusDisabled}}"
                      id="{{itemName}}Label">
                 {{itemName}}
-              </span>
+              </div>
+              <div class="item-tags-container">
+                {{#tags}}
+                  <div class="item-tag"> <div class="item-tag-inner"> {{.}} </div> </div>
+                {{/tags}}
+              </div>
             </div>
             <div class="horizontal update-confirm-div" id="{{itemName}}UpdateConfirm">
               <span class="green-check" id="update-confirm">&#10003;</span>

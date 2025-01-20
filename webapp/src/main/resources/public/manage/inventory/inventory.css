@@ -137,7 +137,7 @@ table.inventoryTable td {
   margin-bottom: 1rem;
 }
 
-#item-tags-container {
+#tags-container {
   max-height: 200px; 
   border:1px solid gray; 
   display: flex;
@@ -146,6 +146,14 @@ table.inventoryTable td {
   overflow-y: auto;
   margin-top: .5rem;
   margin-bottom: 1rem;
+  padding: 10px 0px 10px 0px;
+}
+
+.item-tags-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 5px 0px  5px 0px ;
 }
 
 .item-tag {

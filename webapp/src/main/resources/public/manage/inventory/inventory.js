@@ -4,12 +4,17 @@
  * click the checkbox or label precisely.
  */
 
-async function checkAndToggleInventory(siteId, itemName) {
-  // first toggle the checkbox
+async function checkAndToggleInventory(event, siteId, itemName) {
+
+  // check that the event target was a tag
+  const eventTargetClassList = Array.from(event.target.classList);
+  if (eventTargetClassList.includes("item-tag-inner")) return;
+  
+  // toggle the checkbox
   const checkbox = document.getElementById(`${itemName}Checkbox`);
   checkbox.checked = !checkbox.checked;
 
-  // now handle the toggle inventory event as normal
+  // handle the toggle inventory event as normal
   await toggleInventory(siteId, itemName);
 }
 
@@ -449,16 +454,25 @@ function instantiateInputEventListener() {
 
 function instantiateTagsEventListener() {
   const tags = document.getElementsByClassName("item-tag-inner");
+  
+  // color the tag
   for (let i = 0; i < tags.length; i++) {
     const tag = tags[i];
     const tagColor = tag.getAttribute("data-tag-color");
-    tag.style.backgroundColor = tagColor; 
-
-    tag.addEventListener("click", (e) => {
-      tag.classList.toggle("tag-selected");
-      filterItems();
-    })
+    tag.style.backgroundColor = tagColor;
   }
+
+  // Add event listener
+  const tagsContainer = document.getElementById("tags-container");
+  tagsContainer.addEventListener("click", (e) => {
+    const classes = Array.from(e.target.classList);
+    
+    // check if the clicked item was a tag
+    if (!classes.includes("item-tag-inner")) return;
+
+    e.target.classList.toggle("tag-selected");
+    filterItems();
+  })
 }
 
 function filterItems() {
