@@ -422,9 +422,18 @@ public class ManageSiteDao {
     String itemTags;
     boolean active;
 
-    public List<String> getTags() {
-      return itemTags == null ? List.of() : Arrays.stream(itemTags.split(",")).sorted().toList();
+    public List<ItemTagData> getTags() {
+      if (itemTags == null) {return List.of();}
+      return Arrays.stream(itemTags.split(",")).map(tag -> new ItemTagData(tag, "#7fffd4")).toList();
     }
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ItemTagData  {
+    private String tagName;
+    private String tagColor;
   }
 
   /**

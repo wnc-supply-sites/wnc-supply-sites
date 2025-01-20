@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryDao;
+import com.vanatta.helene.supplies.database.manage.ManageSiteDao.ItemTagData;
 import com.vanatta.helene.supplies.database.manage.inventory.ItemTagDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class ItemCategoryWebhookTest {
 
     var gloves =
         results.stream().filter(i -> i.getItemName().equals("gloves")).findAny().orElseThrow();
-    assertThat(gloves.getTags()).contains("Work", "Construction");
+    assertThat(gloves.getTags()).extracting(ItemTagData::getTagName).contains("Work", "Construction");
   }
 
   /**
@@ -96,8 +97,8 @@ class ItemCategoryWebhookTest {
 
     var gloves =
         results.stream().filter(i -> i.getItemName().equals("gloves")).findAny().orElseThrow();
-    assertThat(gloves.getTags()).contains("New Tag", "Construction");
-    assertThat(gloves.getTags()).doesNotContain("Work");
+    assertThat(gloves.getTags()).extracting(ItemTagData::getTagName).contains("New Tag", "Construction");
+    assertThat(gloves.getTags()).extracting(ItemTagData::getTagName).doesNotContain("Work");
   }
 
   /**
