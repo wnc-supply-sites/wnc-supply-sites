@@ -30,11 +30,11 @@ jobs:
       - name: build docker container
         if: ${{ env.IS_MASTER_BUILD }}
         run: |
-          docker build schema/ --tag ghcr.io/danvanatta/wnc-supply-sites/flyway:latest
-          docker push ghcr.io/danvanatta/wnc-supply-sites/flyway:latest
+          docker build schema/ --tag ghcr.io/r4disasterdash/wnc-supply-sites/flyway:latest
+          docker push ghcr.io/r4disasterdash/wnc-supply-sites/flyway:latest
 
           cd webapp;
 
           ./gradlew clean bootJar
-          docker build . --tag ghcr.io/danvanatta/wnc-supply-sites/webapp:latest
-          docker push ghcr.io/danvanatta/wnc-supply-sites/webapp:latest
+          docker build . --tag ghcr.io/r4disasterdash/wnc-supply-sites/webapp:latest
+          docker push ghcr.io/r4disasterdash/wnc-supply-sites/webapp:latest
