@@ -10,7 +10,9 @@ jobs:
     env:
       IS_MASTER_BUILD: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    permission: write-all
+    permission:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 23
