@@ -1,0 +1,1 @@
+ALTER TABLE driver ADD COLUMN can_lift_50lbs boolean NOT NULL DEFAULT false;
