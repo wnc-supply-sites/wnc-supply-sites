@@ -41,6 +41,12 @@
       Which days or dates are you available? We will try to line up deliveries for you on these dates and days.
     </span>
 
+    <label for="can-lift" class="form-header">Can you lift 50lbs?</label>
+    <select id="can-lift" name="can-lift">
+      <option value="true" > Yes, I can </option>
+      <option value="false" {{^canLift50lbs}}selected{{/canLift50lbs}}> No, I cannot </option>
+    </select>
+
     <label for="comments" class="form-header">Comments:</label>
     <textarea rows="4" cols="10" id="comments" maxlength="1024">{{comments}}</textarea>
     <span class="smaller">

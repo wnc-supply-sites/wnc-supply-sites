@@ -20,6 +20,7 @@ function sendUpdate() {
   const availability = document.getElementById("availability");
   const comments = document.getElementById("comments");
   const errorDiv = document.getElementById("errorMessage");
+  const canLift50lbs = document.getElementById("can-lift").value;
   if(dataMissing) {
     errorDiv.innerHTML = "Missing data in required fields";
     document.getElementById("greenCheck").classList.add("hidden");
@@ -37,7 +38,8 @@ function sendUpdate() {
       location: location.value.trim(),
       licensePlates: licensePlates.value.trim(),
       availability: availability.value.trim(),
-      comments: comments.value.trim()
+      comments: comments.value.trim(),
+      canLift50lbs: canLift50lbs
     })
   })
   .then(
@@ -52,7 +54,6 @@ function sendUpdate() {
               },
               2500);
 
-          showPasswordUpdatedDiv();
         } else {
           const responseJson = await response.json();
           errorDiv.innerHTML = "Error: " + responseJson;

@@ -21,6 +21,7 @@ public class Driver {
   private String availability;
   private String comments;
   private String licensePlates;
+  private boolean can_lift_50lbs;
 
   public String getComments() {
     return TruncateString.truncate(comments, 1000);

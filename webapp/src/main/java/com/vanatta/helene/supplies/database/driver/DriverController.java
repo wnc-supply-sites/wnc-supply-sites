@@ -29,6 +29,7 @@ public class DriverController {
     availability,
     comments,
     active,
+    canLift50lbs,
     ;
   }
 
@@ -51,6 +52,8 @@ public class DriverController {
         PageParams.availability.name(), Optional.ofNullable(driver.getAvailability()).orElse(""));
     params.put(PageParams.comments.name(), Optional.ofNullable(driver.getComments()).orElse(""));
     params.put(PageParams.active.name(), driver.isActive());
+    params.put(PageParams.canLift50lbs.name(),driver.isCan_lift_50lbs());
+
     return new ModelAndView("driver/portal", params);
   }
 
@@ -70,6 +73,7 @@ public class DriverController {
             .licensePlates(update.get(PageParams.licensePlates.name()).trim())
             .availability(update.get(PageParams.availability.name()).trim())
             .comments(update.get(PageParams.comments.name()).trim())
+            .can_lift_50lbs(Boolean.parseBoolean(update.get(PageParams.canLift50lbs.name())))
             .build();
 
     DriverDao.upsert(jdbi, updatedDriverData);
