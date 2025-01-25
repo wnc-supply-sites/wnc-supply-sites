@@ -58,7 +58,7 @@ button {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items:center;
+    align-items: start;
 }
 
 .nav-button-container {
@@ -101,18 +101,6 @@ button {
     white-space: normal;
     will-change: box-shadow, transform;
     font-size: 18px;
-}
-
-
-@media only screen and (min-width: 600px) {
-
-  .nav-buttons-container {
-      align-items: start;
-  }
-
-  .nav-button-container {
-      margin-left: 50px;
-  }
 }
 
 .green-check {
@@ -163,6 +151,9 @@ button {
     border-radius: 20px;
     font-size: 1.1em;
     max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .red {
@@ -263,4 +254,37 @@ h1, h2, h3, h4 {
     margin-top: 3px;
     margin-bottom: 3px;
 }
+
+.margin-left-50 {
+    margin-left: 50px;
+}
+
+@media only screen and (max-width: 768px) {
+    .margin-left-50 {
+        margin-left: 0px;
+    }
+
+    .mobile-margin-left-10 {
+        margin-left: 10px;
+    }
+
+    .nav-buttons-container {
+        align-items: center;
+    }
+
+    .wide-button {
+        width: 300px;
+    }
+
+    .mission-statement {
+        margin: 10px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .wide-button {
+        width: 250px;
+    }
+}
+
 

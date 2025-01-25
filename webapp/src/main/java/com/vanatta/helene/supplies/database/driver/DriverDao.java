@@ -26,7 +26,8 @@ public class DriverDao {
                       license_plates,
                       availability,
                       comments,
-                      can_lift_50lbs
+                      can_lift_50lbs,
+                      pallet_capacity
                     from driver where regexp_replace(phone, '[^0-9]+', '', 'g') = :phone
                     """)
                 .bind("phone", PhoneNumberUtil.removeNonNumeric(phoneNumber))
@@ -42,7 +43,7 @@ public class DriverDao {
             insert into driver(
                   airtable_id, name, phone, location,
                   active, black_listed, license_plates,
-                  comments, availability, can_lift_50lbs)
+                  comments, availability, can_lift_50lbs, pallet_capacity)
             values(
                :airtableId,
                :name,
@@ -53,7 +54,8 @@ public class DriverDao {
                :licensePlates,
                :comments,
                :availability,
-               :can_lift_50lbs
+               :can_lift_50lbs,
+               :pallet_capacity
             ) on conflict(airtable_id) do update set
                name = :name,
                phone = :phone,
@@ -63,7 +65,8 @@ public class DriverDao {
                license_plates = :licensePlates,
                comments = :comments,
                availability = :availability,
-               can_lift_50lbs = :can_lift_50lbs
+               can_lift_50lbs = :can_lift_50lbs,
+               pallet_capacity = :pallet_capacity
             """)
                 .bind("airtableId", driver.getAirtableId())
                 .bind("name", driver.getFullName())
@@ -75,6 +78,7 @@ public class DriverDao {
                 .bind("comments", driver.getComments())
                 .bind("availability", driver.getAvailability())
                 .bind("can_lift_50lbs", driver.isCan_lift_50lbs())
+                .bind("pallet_capacity", driver.getPallet_capacity())
                 .execute());
   }
 

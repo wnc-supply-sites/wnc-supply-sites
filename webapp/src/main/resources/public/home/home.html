@@ -16,7 +16,7 @@
 
 <div class="nav-buttons-container">
 
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="/supplies/site-list">
       <button type="button" class="nav-button wide-button">
         Search Sites and Supplies
@@ -25,7 +25,7 @@
   </div>
 
   {{^isAuthenticated}}
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="login/login">
       <button type="button" class="nav-button wide-button">
         Login - Site Managers & Drivers
@@ -35,7 +35,7 @@
   {{/isAuthenticated}}
 
   {{#isDriver}}
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="driver/portal">
       <button type="button" class="nav-button wide-button">
         Driver Portal
@@ -45,7 +45,7 @@
   {{/isDriver}}
 
   {{#canManageSites}}
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="/manage/select-site">
       <button type="button" class="nav-button wide-button">Manager Portal</button>
     </a>
@@ -53,7 +53,7 @@
   {{/canManageSites}}
 
   {{#isAuthenticated}}
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="/browse/routes">
       <button type="button" class="nav-button wide-button">
         Browse Routes
@@ -61,14 +61,14 @@
     </a>
   </div>
 
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="/behind-the-scenes/">
       <button type="button" class="nav-button wide-button">How Supplies Move</button>
     </a>
   </div>
   {{/isAuthenticated}}
 
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="/about/">
       <button type="button" class="nav-button wide-button">
         About {{deploymentShortName}}-Supply-Sites.com
@@ -76,7 +76,7 @@
     </a>
   </div>
 
-  <div class="nav-button-container">
+  <div class="nav-button-container margin-left-50">
     <a href="{{contactUsLink}}">
       <button type="button" class="nav-button wide-button">Contact Us</button>
     </a>

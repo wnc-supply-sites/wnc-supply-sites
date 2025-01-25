@@ -30,6 +30,7 @@ public class DriverController {
     comments,
     active,
     canLift50lbs,
+    palletCapacity,
     ;
   }
 
@@ -44,6 +45,8 @@ public class DriverController {
       return new ModelAndView("redirect:/");
     }
 
+    System.out.println(driver);
+
     Map<String, Object> params = new HashMap<>();
     params.put(PageParams.location.name(), Optional.ofNullable(driver.getLocation()).orElse(""));
     params.put(
@@ -53,6 +56,7 @@ public class DriverController {
     params.put(PageParams.comments.name(), Optional.ofNullable(driver.getComments()).orElse(""));
     params.put(PageParams.active.name(), driver.isActive());
     params.put(PageParams.canLift50lbs.name(),driver.isCan_lift_50lbs());
+    params.put(PageParams.palletCapacity.name(), driver.getPallet_capacity());
 
     return new ModelAndView("driver/portal", params);
   }
@@ -74,6 +78,7 @@ public class DriverController {
             .availability(update.get(PageParams.availability.name()).trim())
             .comments(update.get(PageParams.comments.name()).trim())
             .can_lift_50lbs(Boolean.parseBoolean(update.get(PageParams.canLift50lbs.name())))
+            .pallet_capacity(Integer.parseInt(update.get(PageParams.palletCapacity.name().trim())))
             .build();
 
     DriverDao.upsert(jdbi, updatedDriverData);

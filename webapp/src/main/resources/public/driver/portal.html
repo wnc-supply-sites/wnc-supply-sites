@@ -20,7 +20,7 @@
 <div class="errorMessage inactive-message">Your driver status is currently set to INACTIVE.</div>
 {{/active}}
 
-<h3>Your Info</h3>
+<h2 class="mobile-margin-left-10">Your Info</h2>
 
 <div class="mission-statement vertical">
   <div class="vertical">
@@ -47,6 +47,16 @@
       <option value="false" {{^canLift50lbs}}selected{{/canLift50lbs}}> No, I cannot </option>
     </select>
 
+    <label for="pallet-capacity" class="form-header">How many pallets are you able to transport?</label>
+    <select id="pallet-capacity" name="pallet-capacity">
+      <option value="0" id="pallet-capacity-0"> 0 </option>
+      <option value="1" id="pallet-capacity-1"> 1 </option>
+      <option value="2" id="pallet-capacity-2"> 2 </option>
+      <option value="3" id="pallet-capacity-3"> 3 </option>
+      <option value="4" id="pallet-capacity-4"> 4 </option>
+      <option value="5" id="pallet-capacity-5"> 5+ </option>
+    </select>
+
     <label for="comments" class="form-header">Comments:</label>
     <textarea rows="4" cols="10" id="comments" maxlength="1024">{{comments}}</textarea>
     <span class="smaller">
@@ -62,7 +72,7 @@
   <div id="errorMessage" class="errorMessage"></div>
 </div>
 
-<h3>Information Policy</h3>
+<h2 class="mobile-margin-left-10">Information Policy</h2>
 
 <div class="mission-statement larger">
   <p>
@@ -73,7 +83,7 @@
   </p>
 </div>
 
-<h3>Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}</h3>
+<h2 class="mobile-margin-left-10">Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}</h2>
 <div class="mission-statement">
   <div class="nav-button-container">
     <a href="/driver/toggle-active">
@@ -92,6 +102,12 @@
   </span>
 </div>
 
+<script>
+  const palletsTransportableQuery = "pallet-capacity-{{palletCapacity}}"
+  const currentTransportableElement = document.getElementById(palletsTransportableQuery)
+  if (currentTransportableElement) {currentTransportableElement.setAttribute("selected", true)}
+
+</script>
 
 </body>
 </html>

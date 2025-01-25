@@ -21,6 +21,8 @@ function sendUpdate() {
   const comments = document.getElementById("comments");
   const errorDiv = document.getElementById("errorMessage");
   const canLift50lbs = document.getElementById("can-lift").value;
+  const palletCapacity = document.getElementById("pallet-capacity").value;
+
   if(dataMissing) {
     errorDiv.innerHTML = "Missing data in required fields";
     document.getElementById("greenCheck").classList.add("hidden");
@@ -39,7 +41,8 @@ function sendUpdate() {
       licensePlates: licensePlates.value.trim(),
       availability: availability.value.trim(),
       comments: comments.value.trim(),
-      canLift50lbs: canLift50lbs
+      canLift50lbs: canLift50lbs,
+      palletCapacity: palletCapacity,
     })
   })
   .then(
