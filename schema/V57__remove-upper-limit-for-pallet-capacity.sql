@@ -1,0 +1,1 @@
+ALTER TABLE driver DROP CONSTRAINT driver_pallet_capacity_check;
