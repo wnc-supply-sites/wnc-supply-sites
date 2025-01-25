@@ -45,8 +45,6 @@ public class DriverController {
       return new ModelAndView("redirect:/");
     }
 
-    System.out.println(driver);
-
     Map<String, Object> params = new HashMap<>();
     params.put(PageParams.location.name(), Optional.ofNullable(driver.getLocation()).orElse(""));
     params.put(
