@@ -65,7 +65,6 @@ public class DriverController {
   ResponseEntity<String> updateDriver(
       @ModelAttribute(LoggedInAdvice.USER_PHONE) String userPhone,
       @RequestBody Map<String, String> update) {
-    log.info("Driver updated data, params received: {}", update);
     var updatedDriverData =
         DriverDao.lookupByPhone(jdbi, userPhone)
             .orElseThrow(
