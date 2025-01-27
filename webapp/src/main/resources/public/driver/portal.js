@@ -1,4 +1,5 @@
 function sendUpdate() {
+
   let dataMissing = false;
 
   const location = document.getElementById("location");
