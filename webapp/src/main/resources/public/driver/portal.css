@@ -43,3 +43,14 @@ h3 {
     margin-top: 10px;
     justify-content: center;
 }
+
+.route-container {
+    border: 2px solid black;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+}
+
+.route-title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

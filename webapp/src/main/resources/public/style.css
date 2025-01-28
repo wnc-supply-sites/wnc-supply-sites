@@ -150,10 +150,20 @@ button {
     border: solid #111;
     border-radius: 20px;
     font-size: 1.1em;
-    max-width: 500px;
+    width: 500px;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.content-container {
+    background-color: #E0E0E0;
+    padding: 10px;
+    border: solid #111;
+    border-radius: 20px;
+    font-size: 1.1em;
+    width: 500px;
+    margin: 30px;
 }
 
 .red {
@@ -168,12 +178,34 @@ button {
     border: 1px solid red;
 }
 
+.txt-lg {
+    font-size: 2rem;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .bold {
   font-weight: 900;
 }
 
 .m-0 {
   margin: 0px;
+}
+
+.m-1 {
+  margin: 10px;
+}
+
+.p-1 {
+  padding: 10px;
+}
+
+.p-2 {
+  padding: 20px;
 }
 
 
@@ -183,6 +215,20 @@ button {
 
 .w-75 {
   width: 75%;
+}
+
+
+
+.h-10 {
+    max-height: 10rem;
+}
+
+.h-15 {
+    max-height: 15rem;
+}
+
+.scroll-y {
+    overflow-y: auto;
 }
 
 .items-center {
@@ -277,6 +323,10 @@ h1, h2, h3, h4 {
     }
 
     .mission-statement {
+        margin: 10px;
+    }
+
+    .content-container {
         margin: 10px;
     }
 }

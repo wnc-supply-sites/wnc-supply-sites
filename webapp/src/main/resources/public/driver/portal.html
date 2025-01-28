@@ -23,12 +23,23 @@
 
 <h2 class="mobile-margin-left-10"> Your Routes </h2>
 
-{{#driverDeliveries}}
-<div>
-  <p> From: <a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a>  - To: <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </p>
-  <div></div>
+<div  class="content-container h-15 scroll-y">
+  {{#driverDeliveries}}
+  <div class="vertical route-container m-1 p-1">
+    <div class="w-full bold text-lg">
+      <span class="route-title"><a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a> </span>  --> <span class="route-title"> <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </span>
+    </div>
+    <div class="vertical">
+      <div>
+        Date: {{deliveryDate}}
+      </div>
+      <div>
+        Status: <a href="{{detailLink}}"> {{deliveryStatus}} </a>
+      </div>
+    </div>
+  </div>
+  {{/driverDeliveries}}
 </div>
-{{/driverDeliveries}}
 
 <h2 class="mobile-margin-left-10">Your Info</h2>
 
