@@ -97,7 +97,7 @@ public class Delivery {
     this.fromSite = dbData.getFromSiteName();
     this.fromSiteLink =
         dbData.getFromSiteId() == null
-            ? null
+            ? ""
             : SiteDetailController.buildSiteLink(dbData.getFromSiteId());
     this.fromAddress = dbData.getFromAddress();
     this.fromCity = dbData.getFromCity();
@@ -108,7 +108,7 @@ public class Delivery {
     this.toSite = dbData.getToSiteName();
     this.toSiteLink =
         dbData.getToSiteId() == null
-            ? null
+            ? ""
             : SiteDetailController.buildSiteLink(dbData.getToSiteId());
     this.toAddress = dbData.getToAddress();
     this.toCity = dbData.getToCity();

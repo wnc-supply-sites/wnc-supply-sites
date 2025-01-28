@@ -35,6 +35,7 @@ public class DriverDao {
                 .findOne());
   }
 
+
   public static void upsert(Jdbi jdbi, Driver driver) {
     jdbi.withHandle(
         h ->

@@ -2,8 +2,12 @@ package com.vanatta.helene.supplies.database.driver;
 
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.vanatta.helene.supplies.database.delivery.Delivery;
+import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -31,6 +35,7 @@ public class DriverController {
     active,
     canLift50lbs,
     palletCapacity,
+    driverDeliveries,
     ;
   }
 
@@ -45,6 +50,9 @@ public class DriverController {
       return new ModelAndView("redirect:/");
     }
 
+    List<Delivery> deliveries = DeliveryDao.fetchDeliveriesByDriverPhoneNumber(jdbi, userPhone);
+    System.out.println(deliveries);
+
     Map<String, Object> params = new HashMap<>();
     params.put(PageParams.location.name(), Optional.ofNullable(driver.getLocation()).orElse(""));
     params.put(
@@ -55,6 +63,7 @@ public class DriverController {
     params.put(PageParams.active.name(), driver.isActive());
     params.put(PageParams.canLift50lbs.name(),driver.isCan_lift_50lbs());
     params.put(PageParams.palletCapacity.name(), driver.getPallet_capacity());
+    params.put(PageParams.driverDeliveries.name(), deliveries);
 
     return new ModelAndView("driver/portal", params);
   }

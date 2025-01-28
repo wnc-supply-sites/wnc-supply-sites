@@ -8,6 +8,7 @@
   {{> header-include }}
 </head>
 <body>
+
 {{> header }}
 <div class="page-sub-header horizontal">
   <div class="back-link">
@@ -19,6 +20,15 @@
 {{^active}}
 <div class="errorMessage inactive-message">Your driver status is currently set to INACTIVE.</div>
 {{/active}}
+
+<h2 class="mobile-margin-left-10"> Your Routes </h2>
+
+{{#driverDeliveries}}
+<div>
+  <p> From: <a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a>  - To: <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </p>
+  <div></div>
+</div>
+{{/driverDeliveries}}
 
 <h2 class="mobile-margin-left-10">Your Info</h2>
 

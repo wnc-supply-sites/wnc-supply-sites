@@ -260,6 +260,13 @@ public class DeliveryDao {
     return fetchDeliveries(jdbi, whereClause, siteId);
   }
 
+  public static List<Delivery> fetchDeliveriesByDriverPhoneNumber(Jdbi jdbi, String driverPhone) {
+    String whereClause = """
+              regexp_replace(d.driver_number, '[^0-9]+', '', 'g') = :id
+            """;
+    return fetchDeliveries(jdbi, whereClause, driverPhone);
+  }
+
   private static List<Delivery> fetchDeliveries(Jdbi jdbi, String whereClause, Object idValue) {
     String select =
         String.format(
