@@ -51,7 +51,6 @@ public class DriverController {
     }
 
     List<Delivery> deliveries = DeliveryDao.fetchDeliveriesByDriverPhoneNumber(jdbi, userPhone);
-    System.out.println(deliveries);
 
     Map<String, Object> params = new HashMap<>();
     params.put(PageParams.location.name(), Optional.ofNullable(driver.getLocation()).orElse(""));

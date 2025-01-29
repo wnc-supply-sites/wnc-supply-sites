@@ -21,29 +21,50 @@
 <div class="errorMessage inactive-message">Your driver status is currently set to INACTIVE.</div>
 {{/active}}
 
-<h2 class="mobile-margin-left-10"> Your Routes </h2>
-
-<div  class="content-container h-15 scroll-y">
-  {{#driverDeliveries}}
-  <div class="vertical route-container m-1 p-1">
-    <div class="w-full bold text-lg">
-      <span class="route-title"><a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a> </span>  --> <span class="route-title"> <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </span>
+<h2 class="margin-left-30 mobile-margin-left-10"> Your Routes </h2>
+<fieldset class="horizontal" id="routes-filter-container">
+    <legend> Filter your routes: </legend>
+    <div class="m-1">
+      <input onclick="filterDriverRoutes()" type="radio" id="volunteered" name="route-type" value="Driver Volunteered" checked>
+      <label for="volunteered">Volunteered</label><br>
     </div>
-    <div class="vertical">
+    <div class="m-1">
+      <input onclick="filterDriverRoutes()" type="radio" id="confirmed" name="route-type" value="Confirmed">
+      <label for="confirmed">Confirmed</label><br>
+    </div>
+    <div class="m-1">
+      <input onclick="filterDriverRoutes()" type="radio" id="pending" name="route-type" value="Creating Dispatch">
+      <label for="pending">Pending</label>
+    </div>
+    <div class="m-1">
+      <input onclick="filterDriverRoutes()" type="radio" id="completed" name="route-type" value="Delivery Completed">
+      <label for="completed">Completed</label>
+    </div>
+</fieldset>
+<div class="content-container margin-top-10 h-15 scroll-y">
+  {{#driverDeliveries}}
+  <div class="vertical route-container m-1 p-1" data-route-status="{{deliveryStatus}}">
+    <div class="w-full bold horizontal justify-between">
+      <span class="route-title"><a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a> </span>  <span>&rarr;</span> <span class="route-title text-align-start"> <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </span>
+    </div>
+    <div class="vertical flex-gap-3 margin-top-10">
       <div>
-        Date: {{deliveryDate}}
+        <span class="bold">Scheduled Date:</span> {{deliveryDate}}
       </div>
       <div>
-        Status: <a href="{{detailLink}}"> {{deliveryStatus}} </a>
+        <span class="bold">Status:</span> {{deliveryStatus}}
+      </div>
+      <div>
+         <a href="{{detailLink}}" class="no-text-deco w-full"><button class="w-full"> View Route details </button></a>
       </div>
     </div>
   </div>
   {{/driverDeliveries}}
 </div>
 
-<h2 class="mobile-margin-left-10">Your Info</h2>
+<h2 class="margin-left-30 mobile-margin-left-10">Your Info</h2>
 
-<div class="mission-statement vertical">
+<div class="mission-statement margin-top-10 vertical">
   <div class="vertical">
     <label for="location" class="form-header">City, State<span class="required">*</span>:</label>
     <input id="location" type="text" maxlength="128" value="{{location}}"></input>
@@ -93,9 +114,9 @@
   <div id="errorMessage" class="errorMessage"></div>
 </div>
 
-<h2 class="mobile-margin-left-10">Information Policy</h2>
+<h2 class="margin-left-30 mobile-margin-left-10">Information Policy</h2>
 
-<div class="mission-statement larger">
+<div class="mission-statement margin-top-10 larger">
   <p>
     Only supply sites and our dispatchers will have access to your information.
   </p>
@@ -104,8 +125,8 @@
   </p>
 </div>
 
-<h2 class="mobile-margin-left-10">Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}</h2>
-<div class="mission-statement">
+<h2 class="margin-left-30 mobile-margin-left-10">Go {{#active}}Inactive{{/active}}{{^active}}Active{{/active}}</h2>
+<div class="mission-statement margin-top-10">
   <div class="nav-button-container">
     <a href="/driver/toggle-active">
       <button type="button" class="nav-button wide-button danger-fields">
@@ -124,6 +145,7 @@
 </div>
 
 <script>
+  filterDriverRoutes();
   let currentTransportableElement = null;
   if (parseInt({{palletCapacity}}) >= 5) {
      currentTransportableElement = document.getElementById("pallet-capacity-5");

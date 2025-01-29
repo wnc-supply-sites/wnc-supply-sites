@@ -71,3 +71,18 @@ function sendUpdate() {
         document.getElementById("confirmation").innerHTML = "";
       });
 }
+
+function filterDriverRoutes() {
+    const routesFilterSelection = document.querySelector("input[name='route-type']:checked").value;
+    const routes = document.getElementsByClassName("route-container");
+
+    for (let i = 0; i < routes.length; i++) {
+        const route = routes[i]
+        const routeStatus = route.dataset.routeStatus;
+        if (routeStatus !== routesFilterSelection) {
+            route.classList.add("hidden")
+        } else {
+            route.classList.remove("hidden");
+        }
+    }
+}

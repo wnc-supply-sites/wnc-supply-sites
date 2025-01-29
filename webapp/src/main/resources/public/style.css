@@ -1,4 +1,8 @@
 /* Style sheet common to all pages. */
+*{
+  box-sizing: border-box;
+}
+
 html, table {
     background-color: #F5F5F5;
     color: #333;
@@ -9,6 +13,11 @@ button {
     border-radius: 7px;
     margin-left: 3px;
     margin-right: 3px;
+    cursor: pointer;
+}
+
+.no-text-deco {
+    text-decoration: none;
 }
 
 .vertical {
@@ -19,6 +28,28 @@ button {
 .horizontal {
     display: flex;
     flex-direction: row;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-gap-3 {
+    gap: 3px;
+}
+
+.justify-between{
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-around {
+    justify-content: space-around;
 }
 
 .header {
@@ -178,14 +209,16 @@ button {
     border: 1px solid red;
 }
 
-.txt-lg {
-    font-size: 2rem;
+.text-lg {
+    font-size: 1.5rem;
 }
 
-.flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.text-align-end {
+    text-align: end;
+}
+
+.text-align-start {
+    text-align: start;
 }
 
 .bold {
@@ -198,6 +231,10 @@ button {
 
 .m-1 {
   margin: 10px;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
 }
 
 .p-1 {
@@ -220,11 +257,15 @@ button {
 
 
 .h-10 {
-    max-height: 10rem;
+    height: 10rem;
 }
 
 .h-15 {
-    max-height: 15rem;
+    height: 15rem;
+}
+
+.h-20 {
+    height: 20rem;
 }
 
 .scroll-y {
@@ -305,6 +346,10 @@ h1, h2, h3, h4 {
     margin-left: 50px;
 }
 
+.margin-left-30 {
+    margin-left: 30px;
+}
+
 @media only screen and (max-width: 768px) {
     .margin-left-50 {
         margin-left: 0px;
@@ -324,11 +369,14 @@ h1, h2, h3, h4 {
 
     .mission-statement {
         margin: 10px;
+        width: 100%;
     }
 
     .content-container {
         margin: 10px;
+        width: 100%;
     }
+
 }
 
 @media only screen and (max-width: 480px) {
