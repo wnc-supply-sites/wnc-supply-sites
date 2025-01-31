@@ -86,3 +86,14 @@ function filterDriverRoutes() {
         }
     }
 }
+
+function instantiateTransportablePalletsValue(palletCapacity) {
+   let currentTransportableElement = null;
+     if (parseInt(palletCapacity) >= 5) {
+        currentTransportableElement = document.getElementById("pallet-capacity-5");
+     } else {
+        const palletsTransportableQuery = `pallet-capacity-${palletCapacity}`
+        currentTransportableElement = document.getElementById(palletsTransportableQuery)
+     }
+     if (currentTransportableElement) {currentTransportableElement.setAttribute("selected", true)}
+}
