@@ -102,6 +102,9 @@ public class SendAccessTokenController {
             """,
                 accessCode, hashTag, domainName));
 
+    log.info("Sending code to: {}, Access code: {}, Thank you! {} Use the passcode above to finish setting up your password with {}",
+            phoneNumber, accessCode, hashTag, domainName);
+
     if (success) {
       // return the CRF token
       SendAccessCodeResponse response = SendAccessCodeResponse.valid(csrf);
