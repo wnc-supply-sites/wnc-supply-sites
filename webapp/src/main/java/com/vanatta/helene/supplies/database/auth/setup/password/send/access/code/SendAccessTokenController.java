@@ -85,10 +85,6 @@ public class SendAccessTokenController {
             .accessCode(accessCode)
             .build());
 
-    // Altered the hashtag in sms message based on domain name
-    String[] domainParts = domainName.split("-");
-    String hashTag = "#"+domainParts[0]+"Strong";
-
     // send the passcode via SMS
     boolean success =
         smsSender.send(
@@ -96,14 +92,14 @@ public class SendAccessTokenController {
             String.format(
                 """
             Access code: %s
-            Thank you! %s
+            Thank you!
             Use the passcode above to finish setting up your
             password with %s
             """,
-                accessCode, hashTag, domainName));
+                accessCode, domainName));
 
-    log.info("Sending code to: {}, Access code: {}, Thank you! {} Use the passcode above to finish setting up your password with {}",
-            phoneNumber, accessCode, hashTag, domainName);
+    log.info("Sending code to: {}, Access code: {}, Thank you! Use the passcode above to finish setting up your password with {}",
+            phoneNumber, accessCode, domainName);
 
     if (success) {
       // return the CRF token
