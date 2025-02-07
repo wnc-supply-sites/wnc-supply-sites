@@ -90,11 +90,10 @@ public class SendAccessTokenController {
         smsSender.send(
             phoneNumber,
             String.format(
-                """
-            Access code: %s
-            Thank you!
-            Use the passcode above to finish setting up your
-            password with %s
+            """
+            WNC Supply:
+            Your one time access code is %s.
+            Enter this code to set up your password at %s.
             """,
                 accessCode, domainName));
 
