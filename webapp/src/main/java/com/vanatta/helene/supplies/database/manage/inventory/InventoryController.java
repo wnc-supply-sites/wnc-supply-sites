@@ -78,7 +78,6 @@ public class InventoryController {
     if (data == null) {
       return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
-
     Map<String, Object> pageParams = new HashMap<>();
     pageParams.put("siteName", data.getSiteName());
     pageParams.put("siteId", siteId);

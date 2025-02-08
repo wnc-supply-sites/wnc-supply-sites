@@ -53,6 +53,12 @@
     background-color: lightyellow;
 }
 
+.cancel-volunteer-button {
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #f9aeae;
+}
+
 .sticky-header {
     position: sticky;
     top: 0px;
@@ -74,6 +80,8 @@
 
 .item-column {
     align-content: flex-start;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .page-numbers-div {

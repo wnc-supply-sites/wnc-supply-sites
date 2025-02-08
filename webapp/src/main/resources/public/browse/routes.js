@@ -23,11 +23,19 @@ function clearFilters() {
 }
 
 function volunteerClicked() {
-  const volunterButtonRow = event.target.parentNode;
-  volunterButtonRow.style.display = "none";
+  const volunteerButtonRow = event.target.parentNode;
+  volunteerButtonRow.classList.add("hidden");
 
-  const confirmVolunteer = event.target.parentNode.parentNode.querySelector("div[class=confirm-volunteer]")
-  confirmVolunteer.style.display = "block";
+  const confirmVolunteer = event.target.parentNode.parentNode.querySelector(".confirm-volunteer")
+  confirmVolunteer.classList.remove("hidden");
+}
+
+function cancelVolunteerClicked() {
+    const volunteerButtonRow = event.target.parentNode.parentNode.parentNode.querySelector(".volunteer-button-row");
+    volunteerButtonRow.classList.remove("hidden");
+
+    const confirmVolunteer = event.target.parentNode.parentNode.parentNode.querySelector(".confirm-volunteer")
+    confirmVolunteer.classList.add("hidden");
 }
 
 function volunteerConfirmClicked(fromSiteWssId, toSiteWssId, itemList) {
