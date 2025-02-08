@@ -40,10 +40,20 @@
     flex-grow: 1;
 }
 
+.sites-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
 .site {
     align-content: baseline;
     text-align: center;
 }
+
+.site-title {
+    text-align: center
+}
+
 
 .volunteer-button {
     width: 150px;
@@ -185,5 +195,28 @@
 .needs-list {
     margin-top: 0px;
     margin-left: 4px;
-    padding: 0px;
+    padding-inline-start: 15px;
+}
+
+.route-items {
+    max-height: 10rem;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    .delivery-options {
+            width: 100%;
+    }
+
+    .sites-container {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: none;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+
+
 }
