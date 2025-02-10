@@ -3,6 +3,10 @@
   box-sizing: border-box;
 }
 
+body {
+    padding: .5rem;
+}
+
 html, table {
     background-color: #F5F5F5;
     color: #333;
@@ -33,6 +37,14 @@ button {
 .flex-center {
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.align-center {
     align-items: center;
 }
 

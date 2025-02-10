@@ -24,29 +24,34 @@
   </div>
 
 
-  <div id="filters" class="horizontal">
-    <span class="filters-title">Filters:</span>
+  <div id="filters" class="">
+    <div class="hidden">
+      <span class="filters-title">Filters:</span>
+    </div>
+    <fieldset class="route-filters">
+      <legend>Filter By: </legend>
+      <div>
+        <label for="site">Site: </label>
+        <select id="site" onchange="selectSiteFilter()">
+          {{#siteList}}
+          <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
+          {{/siteList}}
+        </select>
+      </div>
 
-    <div>
-      <label for="site">Site</label>
-      <select id="site" onchange="selectSiteFilter()">
-        {{#siteList}}
-        <option value="{{wssId}}" {{#selected}}selected{{/selected}}>{{siteName}}</option>
-        {{/siteList}}
-      </select>
-    </div>
-    <div>
-      <label for="county">County</label>
-      <select id="county" onchange="selectCountyFilter()">
-        {{#countyList}}
-        <option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-        {{/countyList}}
-      </select>
-    </div>
-    <div class="clear-button">
-      <button onclick="clearFilters()">Clear</button>
-    </div>
-    <div>
+      <div>
+        <label for="county">County: </label>
+        <select id="county" onchange="selectCountyFilter()">
+          {{#countyList}}
+          <option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+          {{/countyList}}
+        </select>
+      </div>
+      <div class="clear-button">
+        <button onclick="clearFilters()">Clear</button>
+      </div>
+    </fieldset>
+    <div class="routes-count">
       {{resultCount}} Results
     </div>
   </div>
@@ -62,7 +67,7 @@
 
 {{#deliveryOptions}}
 <div class="delivery-options">
-  <div class="vertical">
+  <div class="route-header vertical">
     <div class="large-section-header">
       <a class="clickable" onclick="selectSite({{fromSiteWssId}})">{{fromSiteName}}</a> &#8594;
       <a class="clickable" onclick="selectSite({{toSiteWssId}})">{{toSiteName}}</a>
@@ -75,13 +80,13 @@
   <!-- To and from maps Containers -->
   <div class="sites-container">
     <!--  FROM SITE   -->
-    <div class="site-container vertical flex-gap-3">
+    <div class="site-container align-center vertical flex-gap-3">
       <div class="site-title">
-        From <a class="clickable" onclick="selectCounty('{{fromCounty}}, {{fromState}}')">{{fromCounty}} County ({{fromState}})</a>
+        <span style="font-weight: bold">From:</span> <a class="clickable" onclick="selectCounty('{{fromCounty}}, {{fromState}}')">{{fromCounty}} County ({{fromState}})</a>
       </div>
       <div class="site">
         <iframe
-                width="250"
+                width="100%"
                 height="250"
                 style="border:0"
                 loading="lazy"
@@ -100,13 +105,13 @@
     </div>
 
     <!--  TO SITE  -->
-    <div class="site-container vertical flex-gap-3">
+    <div class="site-container align-center vertical flex-gap-3">
       <div class="site-title">
-        To <a class="clickable" onclick="selectCounty('{{toCounty}}, {{toState}}')">{{toCounty}} County ({{toState}})</a>
+        <span style="font-weight: bold">To:</span> <a class="clickable" onclick="selectCounty('{{toCounty}}, {{toState}}')">{{toCounty}} County ({{toState}})</a>
       </div>
       <div class="site">
         <iframe
-                width="250"
+                width="100%"
                 height="250"
                 style="border:0"
                 loading="lazy"
