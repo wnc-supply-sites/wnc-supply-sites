@@ -36,6 +36,7 @@ public class SiteAddressController {
       @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
     SiteDetailDao.SiteDetailData data =
         UserSiteAuthorization.isAuthorizedForSite(jdbi, sites, siteId).orElse(null);
+
     if (data == null) {
       return new ModelAndView("redirect:" + SelectSiteController.PATH_SELECT_SITE);
     }
@@ -47,6 +48,7 @@ public class SiteAddressController {
     pageParams.put(PageParam.CITY.text, Optional.ofNullable(data.getCity()).orElse(""));
     pageParams.put(PageParam.WEBSITE.text, Optional.ofNullable(data.getWebsite()).orElse(""));
     pageParams.put(PageParam.FACEBOOK.text, Optional.ofNullable(data.getFacebook()).orElse(""));
+    pageParams.put(PageParam.WEEKLY_SERVED.text, data.getWeeklyServed());
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi, stateList);
     pageParams.put(PageParam.FULL_COUNTY_LIST.text, counties);
@@ -71,6 +73,7 @@ public class SiteAddressController {
     FULL_COUNTY_LIST("fullCountyList"),
     STATE_LIST("stateList"),
     COUNTY_LIST("countyList"),
+    WEEKLY_SERVED("weeklyServed"),
     ;
     final String text;
   }
