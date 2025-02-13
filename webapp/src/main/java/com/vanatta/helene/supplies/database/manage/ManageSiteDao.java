@@ -5,6 +5,7 @@ import com.vanatta.helene.supplies.database.manage.SelectSiteController.SiteSele
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,6 +67,7 @@ public class ManageSiteDao {
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false, false),
     MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false, false),
     RECEIVING_NOTES("receiving_notes", "receiving notes", false, false),
+    WEEKLY_SERVED("weekly_served", "Weekly Served", false, false)
     ;
 
     private final String columnName;
@@ -224,19 +226,26 @@ public class ManageSiteDao {
             handle ->
                 handle.createQuery(oldValueQuery).bind("siteId", siteId).mapTo(String.class).one());
 
-    jdbi.withHandle(
-        handle ->
-            handle
-                .createUpdate(
-                    "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
-                .bind("newValue", newValue)
-                .bind("siteId", siteId)
-                .execute());
+    if (Objects.equals(column.getFrontEndName(), "Weekly Served")) {
+      jdbi.withHandle(
+              handle ->
+                      handle
+                        .createUpdate(
+                                "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
+                        .bind("newValue", Integer.parseInt(newValue))
+                        .bind("siteId", siteId)
+                        .execute());
+    } else {
+      jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(
+                      "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
+                  .bind("newValue", newValue)
+                  .bind("siteId", siteId)
+                  .execute());
+    }
     return oldValue;
-
-
-
-
   }
 
   private static void addToAuditTrail(

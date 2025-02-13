@@ -24,12 +24,12 @@ async function showUpdateConfirmation(siteId, field) {
     newValue = document.getElementById(field).value;
   }
 
-
-  if (newValue.trim() === "" &&
+   if (newValue.trim() === "" &&
       ((field === "Contact Number")
           || (field === "Site Name")
           || (field === "Street Address")
-          || (field === "City"))
+          || (field === "City")
+          || (field === "Weekly Served"))
   ) {
     document.getElementById(field).classList.add("missingData");
     document.getElementById(field + "-update-confirm").innerHTML =

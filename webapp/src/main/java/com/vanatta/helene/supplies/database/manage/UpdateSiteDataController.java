@@ -42,6 +42,7 @@ public class UpdateSiteDataController {
       log.warn("Invalid field requested for update: {}, params: {}", field, params);
       return ResponseEntity.badRequest().body("Invalid field: " + field);
     }
+
     ManageSiteDao.updateSiteField(jdbi, Long.parseLong(siteId), siteField, newValue);
     log.info("Site updated: {}", params);
     sendSiteUpdate.sendFullUpdate(Long.parseLong(siteId));
