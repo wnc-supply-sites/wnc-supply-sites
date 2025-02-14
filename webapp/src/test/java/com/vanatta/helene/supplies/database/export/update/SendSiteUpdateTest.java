@@ -71,6 +71,7 @@ class SendSiteUpdateTest {
     assertThat(siteDataResult.getHours()).isNotNull();
     assertThat(siteDataResult.getMaxSupplyTruckSize()).isNotNull();
     assertThat(siteDataResult.getInactiveReason()).isNotNull();
+    assertThat(siteDataResult.getWeeklyServed()).isNotNull();
   }
 
   @Builder

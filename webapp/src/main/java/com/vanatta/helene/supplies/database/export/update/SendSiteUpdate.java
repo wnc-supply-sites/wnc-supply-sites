@@ -16,7 +16,7 @@ import org.jdbi.v3.core.Jdbi;
 
 /**
  * Sends site updates "Make". For example, if a site updates its contact info, website, address. On
- * any such update, we send a full snapshot of the sites data.
+ * any such update, we send a full snapshot of the site's data.
  */
 @Slf4j
 @AllArgsConstructor
@@ -76,7 +76,8 @@ public class SendSiteUpdate {
               s.hours,
               s.additional_contacts,
               msl.name maxSupplyTruckSize,
-              s.inactive_reason
+              s.inactive_reason,
+              s.weekly_served
             from site s
             join county c on c.id = s.county_id
             join site_type st on st.id = s.site_type_id
@@ -126,6 +127,8 @@ public class SendSiteUpdate {
     String maxSupplyTruckSize;
 
     String inactiveReason;
+
+    Number weeklyServed;
   }
 
   /** JSON representation, to be sent externally. */
@@ -153,6 +156,7 @@ public class SendSiteUpdate {
 
     String maxSupplyTruckSize;
     String inactiveReason;
+    Number weeklyServed;
 
     SiteExportJson(SiteExportDataResult result) {
       this.wssId = result.wssId;
@@ -192,6 +196,7 @@ public class SendSiteUpdate {
 
       this.maxSupplyTruckSize = result.getMaxSupplyTruckSize();
       this.inactiveReason = result.getInactiveReason();
+      this.weeklyServed = result.getWeeklyServed();
     }
   }
 }
