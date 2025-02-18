@@ -25,6 +25,7 @@ public class DeploymentAdvice {
   public static final String DEPLOYMENT_DOMAIN_NAME = "domainName";
   public static final String DEPLOYMENT_SHORT_NAME = "deploymentShortName";
   public static final String DEPLOYMENT_STATE_LIST = "deploymentStateList";
+  public static final String DEPLOYMENT_ID = "deploymentId";
   private final Jdbi jdbi;
   private final HostNameLookup hostNameLookup;
 
@@ -60,6 +61,26 @@ public class DeploymentAdvice {
   @ModelAttribute(DEPLOYMENT_STATE_LIST)
   public List<String> stateList(HttpServletRequest request) {
     return fetchStateListForHost(jdbi, hostNameLookup.lookupHostName(request));
+  }
+
+  @ModelAttribute(DEPLOYMENT_ID)
+  public Number deploymentId(HttpServletRequest request) {
+    return fetchDeploymentId(jdbi, hostNameLookup.lookupHostName(request));
+  }
+
+
+  static Number fetchDeploymentId(Jdbi jdbi, String domain) {
+    return jdbi.withHandle(
+            h ->
+                    h.createQuery(
+                        """
+                              select id
+                              from deployment
+                              where domain = :domain
+                            """)
+                            .bind("domain", domain)
+                            .mapTo(Integer.class)
+                            .one());
   }
 
   static List<String> fetchStateListForHost(Jdbi jdbi, String domain) {
