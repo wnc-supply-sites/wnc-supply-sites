@@ -74,6 +74,7 @@ public class AddSiteController {
   @ResponseBody
   ResponseEntity<String> postNewSite(
       @ModelAttribute(LoggedInAdvice.USER_PHONE) String phone,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_ID) Number deploymentId,
       @RequestBody Map<String, String> params) {
     log.info("Received add new site data: {}", params);
     var addSiteData =
@@ -91,6 +92,7 @@ public class AddSiteController {
             .receivingNotes(params.get("receivingNotes"))
             .contactName(params.get("contactName"))
             .contactNumber(phone)
+            .deploymentId(deploymentId)
             .build();
     if (addSiteData.isMissingRequiredData()) {
       log.warn(

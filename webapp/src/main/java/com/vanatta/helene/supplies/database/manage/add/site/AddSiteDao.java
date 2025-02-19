@@ -36,7 +36,8 @@ public class AddSiteDao {
           contact_number,
           og_contact_number,
           max_supply_load_id,
-          receiving_notes
+          receiving_notes,
+          deployment_id
         ) values(
           :siteName,
           :address,
@@ -50,7 +51,8 @@ public class AddSiteDao {
           :contactNumber,
           :contactNumber,
           (select id from max_supply_load where name = :maxSupplyLoadName),
-          :receivingNotes
+          :receivingNotes,
+          :deploymentId
          )
         """;
 
@@ -74,6 +76,7 @@ public class AddSiteDao {
                       .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
                       .bind("maxSupplyLoadName", siteData.getMaxSupplyLoad())
                       .bind("receivingNotes", siteData.getReceivingNotes())
+                      .bind("deploymentId", siteData.getDeploymentId())
                       .executeAndReturnGeneratedKeys("id")
                       .mapTo(Long.class)
                       .one());
