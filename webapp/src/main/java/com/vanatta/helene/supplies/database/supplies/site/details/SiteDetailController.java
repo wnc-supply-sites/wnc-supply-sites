@@ -6,6 +6,7 @@ import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import com.vanatta.helene.supplies.database.data.ItemStatus;
 import com.vanatta.helene.supplies.database.delivery.Delivery;
 import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
+import com.vanatta.helene.supplies.database.delivery.DeliveryStatus;
 import com.vanatta.helene.supplies.database.manage.contact.SiteContactController;
 import com.vanatta.helene.supplies.database.manage.inventory.InventoryController;
 import com.vanatta.helene.supplies.database.manage.receiving.SiteReceivingController;
@@ -242,16 +243,22 @@ public class SiteDetailController {
 
       List<Delivery> allDeliveries = DeliveryDao.fetchDeliveriesBySiteId(jdbi, id);
 
+      // Should filter out any deliveries that are cancelled or deleted
       List<Delivery> incomingDeliveries =
           allDeliveries.stream()
               .filter(d -> siteDetailData.getSiteName().equals(d.getToSite()))
+              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
+              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
               .toList();
       siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.INCOMING_DELIVERIES.text, incomingDeliveries);
 
+      // Should filter out any deliveries that are cancelled or deleted
       List<Delivery> outgoingDeliveries =
           allDeliveries.stream()
               .filter(d -> siteDetailData.getSiteName().equals(d.getFromSite()))
+              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
+              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
