@@ -162,8 +162,13 @@ public class SuppliesDao {
             queryBuilder.bindList("site_type", request.getSiteType());
           }
 
+          if (!request.getStates().isEmpty()){
+            queryBuilder.bindList("stateList", request.getStates());
+          } else {
+            queryBuilder.bindList("stateList", stateList);
+          }
+
           return queryBuilder
-              .bindList("stateList", stateList)
               .mapToBean(SuppliesQueryResult.class)
               .list();
         });

@@ -47,6 +47,7 @@ public class FilterDataController {
         .sites(FilterDataDao.getAllActiveSites(jdbi, authenticatedMode, stateList))
         .counties(CountyDao.fetchActiveCountyList(jdbi, authenticatedMode, stateList))
         .items(FilterDataDao.getAllItems(jdbi))
+        .states(stateList)
         .build();
   }
 }

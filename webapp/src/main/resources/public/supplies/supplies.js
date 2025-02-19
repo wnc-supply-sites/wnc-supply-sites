@@ -1,3 +1,47 @@
+
+function getFilterItems() {
+    const url = "/supplies/filter-data";
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+            if (!response.ok) {
+              throw new Error(`Server ${response.status} error: ${response.statusText}`);
+            }
+            return response.json()
+          }
+      )
+      .then(filterData => {
+        const emptyOption = "<option value=''></option>\n";
+        document.getElementById('site-select').innerHTML =
+            emptyOption +
+            filterData.sites.map(v =>
+                `<option value="${v}">${v}</option>`).join("\n");
+        document.getElementById('county-select').innerHTML =
+            emptyOption +
+            filterData.counties.map(v =>
+                `<option value="${v}">${v}</option>`).join("\n");
+        document.getElementById('state-select').innerHTML =
+                    emptyOption +
+                    filterData.states.map(v =>
+                        `<option value="${v}">${v}</option>`).join("\n");
+        document.getElementById('item-select').innerHTML =
+            emptyOption +
+            filterData.items.map(v =>
+                `<option value="${v}">${v}</option>`).join("\n");
+
+        prePopulateCheckboxValuesIntoSession();
+        addFiltersFromSession();
+        updateData();
+      }).catch(error => {
+        showSuppliesError(error);
+      });
+}
+
 function prePopulateCheckboxValuesIntoSession() {
   const fieldsets = document.querySelectorAll("fieldset");
   fieldsets.forEach((fieldset) => {
@@ -15,7 +59,7 @@ function prePopulateCheckboxValuesIntoSession() {
 
 function addFiltersFromSession() {
   const filters = {
-    selections: ["site", "county", "item"],
+    selections: ["site", "county", "item", "state"],
     checkboxes: ["item-status", "site-status", "site-type"],
   }
 
@@ -83,7 +127,6 @@ function saveCheckboxToSession(fieldsetName, name, wasChecked) {
     }, []))
     sessionStorage.setItem(fieldsetName, newFieldsetValue);
   }
-
 }
 
 function getFieldsetValueFromSession(fieldsetName) {
@@ -159,9 +202,13 @@ async function updateData() {
   try {
     document.getElementById("error-div").innerHTML = "";
     startLoaderAnimation();
+
+    // Grab The Site Data
     const data = await fetchSupplyData();
+
     const supplyHubHtml = "<br><span class='supply-hub'>(Supply Warehouse)</span>";
     const notAcceptingDonationsHtml = "<br><span class='not-accepting-donations'>(Not Accepting Donations)</span>";
+
     // write data to the results table
     document.getElementById('results-table').querySelector("tbody").innerHTML =
         data.results.map(r => `
@@ -215,9 +262,14 @@ function stopLoaderAnimation() {
 
 async function fetchSupplyData() {
   const url = "/supplies/site-data";
+
+  // Drop-down filters values
   const sites = readSelections('site');
   const counties = readSelections('county');
   const items = readSelections('item');
+  const states = readSelections('state');
+
+  // Toggle filters values
   const itemStatus = [...document.getElementById('item-status').querySelectorAll("input:checked")].map(c => c.value);
   const siteType = [...document.getElementById('site-type').querySelectorAll("input:checked")].map(c => c.value);
   const acceptingDonations = document.getElementById('accepting-donations').checked;
@@ -233,6 +285,7 @@ async function fetchSupplyData() {
       sites: sites,
       items: items,
       counties: counties,
+      states: states,
       itemStatus: itemStatus,
       siteType: siteType,
       acceptingDonations: acceptingDonations,

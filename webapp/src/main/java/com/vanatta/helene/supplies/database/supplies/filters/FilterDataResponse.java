@@ -10,4 +10,5 @@ public class FilterDataResponse {
   List<String> sites;
   List<String> counties;
   List<String> items;
+  List<String> states;
 }

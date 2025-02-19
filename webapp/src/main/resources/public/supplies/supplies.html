@@ -33,6 +33,7 @@
       <col style="width:150px">
       <col style="width:125px">
       <col style="width:125px">
+      <col style="width:125px">
     </colgroup>
 
     <tbody>
@@ -45,6 +46,16 @@
           </select>
         </div>
       </td>
+
+      <!-- Filter: Select State DropDown -->
+      <td class="selection-td">
+        <div class="vertical">
+          <label for="state-select">State:</label>
+          <select id="state-select" onchange="handleSelection('state')">
+          </select>
+        </div>
+      </td>
+
       <!-- Filter: Select County DropDown -->
       <td class="selection-td">
         <div class="vertical">
@@ -63,32 +74,59 @@
         </div>
       </td>
     </tr>
+
     <tr>
+
+      <!-- Clear Site filters button -->
       <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="clearSelections('site')" class="toggle-all-button">Clear all</button>
         </div>
       </td>
+
+      <!-- Clear state filters button -->
+      <td class="selection-td">
+        <div class="vertical">
+          <button type="button" onclick="clearSelections('state')" class="toggle-all-button">Clear all</button>
+        </div>
+      </td>
+
+      <!-- Clear county filters buttons -->
       <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="clearSelections('county')" class="toggle-all-button">Clear all</button>
         </div>
       </td>
+
+      <!-- Clear item filters button -->
       <td class="selection-td">
         <div class="vertical">
           <button type="button" onclick="clearSelections('item')" class="toggle-all-button">Clear all</button>
         </div>
       </td>
     </tr>
+
     <tr>
+
+      <!-- Filter current selections: Select Site DropDown -->
       <td>
         <div id="site-selections" class="selection-list">
         </div>
       </td>
+
+      <!-- Filter current selections: Select state DropDown -->
+      <td>
+        <div id="state-selections" class="selection-list">
+        </div>
+      </td>
+
+      <!-- Filter current selections: Select county DropDown -->
       <td>
         <div id="county-selections" class="selection-list">
         </div>
       </td>
+
+      <!-- Filter current selections: Select item DropDown -->
       <td>
         <div id="item-selections" class="selection-list">
         </div>
@@ -200,45 +238,8 @@
 </table>
 </div>
 
-<!-- Script to populate filter controls (select site, inventory, etc..), executed after page is loaded -->
 <script>
-  const url = "/supplies/filter-data";
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => {
-        if (!response.ok) {
-          throw new Error(`Server ${response.status} error: ${response.statusText}`);
-        }
-        return response.json()
-
-      }
-  )
-  .then(filterData => {
-    const emptyOption = "<option value=''></option>\n";
-    document.getElementById('site-select').innerHTML =
-        emptyOption +
-        filterData.sites.map(v =>
-            `<option value="${v}">${v}</option>`).join("\n");
-    document.getElementById('county-select').innerHTML =
-        emptyOption +
-        filterData.counties.map(v =>
-            `<option value="${v}">${v}</option>`).join("\n");
-    document.getElementById('item-select').innerHTML =
-        emptyOption +
-        filterData.items.map(v =>
-            `<option value="${v}">${v}</option>`).join("\n");
-
-    prePopulateCheckboxValuesIntoSession();
-    addFiltersFromSession();
-    updateData();
-  }).catch(error => {
-    showSuppliesError(error);
-  });
+  getFilterItems();
 </script>
 </body>
 </html>

@@ -130,6 +130,7 @@ table.results-table tbody tr:nth-child(even) {
 .toggle-all-button {
     margin-top: 10px;
     height: 25px;
+    min-width: 125px;
 }
 
 #site-detail-instruction-text {
@@ -174,6 +175,8 @@ table.results-table tbody tr:nth-child(even) {
 @media only screen and (max-width: 600px) {
   .filters-container {
     flex-direction: column;
+    width: 100%;
+    overflow-x: auto;
   }
 
   .status-checkbox-container {
