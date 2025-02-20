@@ -131,12 +131,12 @@ public class MergeItemsController {
             handle ->
                 handle
                     .createUpdate(
-                        String.format(
                             """
                               insert into site_item_audit (item_id, site_id, old_value, new_value)
-                              values(:itemId, :siteId, 'item old name: %s', 'item merged into: %s')
-                          """,
-                            itemName, mergeIntoItemName))
+                              values(:itemId, :siteId, 'item old name: :itemName', 'item merged into: :mergeIntoItemName')
+                          """)
+                    .bind("itemName", itemName)
+                    .bind("mergeIntoItemName", mergeIntoItemName)
                     .bind("itemId", deleteItemId)
                     .bind("siteId", siteId)
                     .execute());

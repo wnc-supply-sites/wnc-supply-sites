@@ -98,6 +98,7 @@ function doMerge() {
         document.getElementById("itemTable")
         .querySelector("tbody tr input[type=radio]:checked")
             .value;
+
     const checkBoxItemIds =
         [...document.getElementById("itemTable")
         .querySelectorAll("tbody tr input[type=checkbox]:checked")]
