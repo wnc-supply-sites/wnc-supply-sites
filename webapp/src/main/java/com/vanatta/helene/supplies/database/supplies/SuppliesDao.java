@@ -8,12 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
-import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class SuppliesDao {
-
-  @Value("${deployment.is.staging}") Boolean isStaging;
 
   @NoArgsConstructor
   @Data
