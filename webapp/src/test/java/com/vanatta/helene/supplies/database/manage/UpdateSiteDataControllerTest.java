@@ -22,16 +22,22 @@ class UpdateSiteDataControllerTest {
   @ParameterizedTest
   @MethodSource
   void updateSiteDataThrowsNoErrors(ManageSiteDao.SiteField field) {
+
+    String newValue = switch (field) {
+      case MAX_SUPPLY_LOAD -> "Car";
+      case WEEKLY_SERVED -> "1000";
+      default -> field.getFrontEndName() + " " + UUID.randomUUID().toString().substring(0, 10);
+    };
+
     Map<String, String> params =
         Map.of(
             "siteId",
-            String.valueOf(TestConfiguration.getSiteId()), //
+            String.valueOf(TestConfiguration.getSiteId()),
             "field",
             field.getFrontEndName(),
             "newValue",
-            field == ManageSiteDao.SiteField.MAX_SUPPLY_LOAD
-                ? "Car"
-                : field.getFrontEndName() + " " + UUID.randomUUID().toString().substring(0, 10));
+            newValue
+            );
 
     var response = updateSiteDataController.updateSiteData(params);
     assertThat(response.getStatusCode().value()).isEqualTo(200);

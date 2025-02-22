@@ -49,7 +49,8 @@ insert into site(
   publicly_visible,
   distributing_supplies,
   max_supply_load_id,
-  inactive_reason)
+  inactive_reason,
+  deployment_id)
 values (
         'site1',
         'contact me',
@@ -69,26 +70,30 @@ values (
         true,
         true,
         (select id from max_supply_load where name = 'Car'),
-        'inactive reason text'
+        'inactive reason text',
+        1
        );
 
 
 -- site2, in Buncombe county, not accepting donations
-insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
 'site2', 'address2', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center'), -20, -100, '123', '123'
+(select id from site_type where name = 'Distribution Center'), -20, -100, '123', '123',
+1
 );
 
 -- siteCA, in CA
-insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, accepting_donations, site_type_id, wss_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
   'siteCA', 'address2', 'city2', (select id from county where name = 'Los Angeles'), false,
-  (select id from site_type where name = 'Distribution Center'), -201, -100, '123', '123'
+  (select id from site_type where name = 'Distribution Center'), -201, -100, '123', '123',
+  2
 );
 
 -- site3, in Buncombe county, not active
-insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, active, site_type_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
 'site3', 'address3', 'city2', (select id from county where name = 'Buncombe'), false,
-(select id from site_type where name = 'Distribution Center'), -100, '222', '222'
+(select id from site_type where name = 'Distribution Center'), -100, '222', '222',
+1
 );
 
 -- create a delivery from site2 to site3
@@ -116,9 +121,10 @@ values(
 
 
 -- site4, in Buncombe county, no items (but active), supply hub
-insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
    'site4', 'address3', 'city2', (select id from county where name = 'Buncombe'),
-   (select id from site_type where name = 'Supply Hub'), -100, '333', '333'
+   (select id from site_type where name = 'Supply Hub'), -100, '333', '333',
+   1
 );
 -- create a delivery from site3 to site4
 insert into delivery(
@@ -158,14 +164,16 @@ values(
 
 -- site5, (no items & not active), name, address & details may be modified by tests,
 -- data will not be stable.
-insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, site_type_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
    'site5', 'address5', 'city5', (select id from county where name = 'Buncombe'),
-   (select id from site_type where name = 'Distribution Center'), -100, 444, 444
+   (select id from site_type where name = 'Distribution Center'), -100, 444, 444,
+   1
 );
 
-insert into site(name, address, city, county_id, website, site_type_id, max_supply_load_id, contact_number, og_contact_number) values(
+insert into site(name, address, city, county_id, website, site_type_id, max_supply_load_id, contact_number, og_contact_number, deployment_id) values(
    'site6', 'address6', 'city6', (select id from county where name = 'Watauga'), 'site6website',
-   (select id from site_type where name = 'Distribution Center'), -100, 555, 555
+   (select id from site_type where name = 'Distribution Center'), -100, 555, 555,
+   1
 );
 
 

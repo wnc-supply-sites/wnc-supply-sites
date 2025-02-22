@@ -34,6 +34,7 @@ See the [ops-docs](docs/ops.md)
 - run: `./schema/run-flyway.sh`
 - Run `SuppliesDatabaseApplication.java`
   - in run configuration, set the environment variable: `WEBHOOK_SECRET=secret`
+  - in run configuration, set the environment variable: `DEFAULT_DEPLOYMENT_ENABLED=true`
 
 To do full tests and formatting before commit & push:
 - `cd webapp; ./gradlew spotlessApply test`

@@ -31,6 +31,7 @@ public class AddSiteDaoTest {
           .state("NC")
           .maxSupplyLoad("Car")
           .contactNumber("111")
+          .deploymentId(1)
           .build();
 
   private static final AddSiteData siteData2 =
@@ -43,6 +44,7 @@ public class AddSiteDaoTest {
           .state("NC")
           .maxSupplyLoad("Car")
           .contactNumber("000")
+          .deploymentId(1)
           .build();
 
   @Test
@@ -59,6 +61,7 @@ public class AddSiteDaoTest {
     assertThat(details.getAddress()).isEqualTo(siteData1.getStreetAddress());
     assertThat(details.getCity()).isEqualTo(siteData1.getCity());
     assertThat(details.getCounty()).isEqualTo(siteData1.getCounty());
+    assertThat(details.getDeploymentId()).isEqualTo(siteData1.getDeploymentId());
   }
 
   @Test

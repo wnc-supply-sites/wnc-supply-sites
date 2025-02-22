@@ -66,6 +66,7 @@ class DriverControllerTest {
     params.put(DriverController.PageParams.location.name(), "location demo");
     params.put(DriverController.PageParams.licensePlates.name(), "plates demo");
     params.put(DriverController.PageParams.availability.name(), "availability demo");
+    params.put(DriverController.PageParams.palletCapacity.name(), "1");
 
     var response = driverController.updateDriver("123-123-4444", params);
     assertThat(response.getStatusCode().value()).isEqualTo(200);
@@ -75,6 +76,7 @@ class DriverControllerTest {
     assertThat(dataResult.getLocation()).isEqualTo("location demo");
     assertThat(dataResult.getLicensePlates()).isEqualTo("plates demo");
     assertThat(dataResult.getAvailability()).isEqualTo("availability demo");
+    assertThat(dataResult.getPallet_capacity()).isEqualTo(1);
   }
 
   /**

@@ -77,6 +77,7 @@ public class TestConfiguration {
             .siteType(siteType)
             .maxSupplyLoad("Car")
             .contactNumber("000")
+            .deploymentId(1)
             .build());
     return name;
   }

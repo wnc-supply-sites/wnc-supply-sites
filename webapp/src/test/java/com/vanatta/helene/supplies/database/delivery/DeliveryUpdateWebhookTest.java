@@ -297,8 +297,8 @@ class DeliveryUpdateWebhookTest {
     assertThat(update.getDeliveryStatus()).isEqualTo("Delivery Completed");
     assertThat(update.getDeliveryDate()).isEqualTo("2024-12-13");
     assertThat(update.getDriverLicensePlate()).isNull();
-    assertThat(update.getToSiteLink()).isNull();
-    assertThat(update.getFromSiteLink()).isNull();
+    assertThat(update.getToSiteLink()).isEqualTo("");
+    assertThat(update.getFromSiteLink()).isEqualTo("");
 
     assertThat(update.getFromSite()).isEqualTo("Valley Hope Foundation");
     assertThat(update.getFromContactName()).isNull();
