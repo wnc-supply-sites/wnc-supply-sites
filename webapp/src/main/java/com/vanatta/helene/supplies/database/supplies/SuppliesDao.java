@@ -8,9 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class SuppliesDao {
+
+  @Value("${deployment.is.staging}") Boolean isStaging;
 
   @NoArgsConstructor
   @Data
@@ -31,6 +34,7 @@ public class SuppliesDao {
 
   public static List<SuppliesQueryResult> getSupplyResults(
       Jdbi jdbi, SiteSupplyRequest request, List<String> stateList, Number deploymentId) {
+
     StringBuilder query =
         new StringBuilder(
             """
@@ -56,7 +60,6 @@ public class SuppliesDao {
       left join item_status ist on ist.id = si.item_status_id
       left join delivery d on d.to_site_id = s.id
       where s.active = true
-        and s.deployment_id = :deploymentId
         and c.state in (<stateList>)
       """);
 
@@ -169,7 +172,7 @@ public class SuppliesDao {
             queryBuilder.bindList("stateList", stateList);
           }
 
-          queryBuilder.bind("deploymentId", deploymentId);
+          queryBuilder.bindList("deploymentIdList", List.of(deploymentId));
 
           return queryBuilder
               .mapToBean(SuppliesQueryResult.class)
