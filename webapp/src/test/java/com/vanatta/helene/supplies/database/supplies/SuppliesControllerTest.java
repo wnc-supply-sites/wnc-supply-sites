@@ -36,7 +36,7 @@ class SuppliesControllerTest {
   @Test
   void emptyRequestReturnsData() {
     var result =
-        suppliesController.getSuppliesData(SiteSupplyRequest.builder().build(), List.of("NC"));
+        suppliesController.getSuppliesData(SiteSupplyRequest.builder().build(), List.of("NC"),1);
 
     // All active sites should be returned
     assertThat(result.getResultCount()).isEqualTo(6);
@@ -52,7 +52,7 @@ class SuppliesControllerTest {
                 .itemStatus(ItemStatus.allItemStatus())
                 .sites(List.of("site5"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
 
     assertThat(result.getResultCount()).isEqualTo(1);
     assertThat(result.getResults().getFirst().getAvailableItems()).isEmpty();
@@ -63,14 +63,14 @@ class SuppliesControllerTest {
   void requestBySite() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().sites(List.of("site1")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().sites(List.of("site1")).build(), List.of("NC"), 1);
 
     assertThat(result.getResultCount()).isEqualTo(1);
     assertThat(result.getResults().getFirst().getSite()).isEqualTo("site1");
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().sites(List.of("site1", "site2")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().sites(List.of("site1", "site2")).build(), List.of("NC"), 1);
 
     assertThat(result.getResultCount()).isEqualTo(2);
   }
@@ -79,25 +79,25 @@ class SuppliesControllerTest {
   void requestByItem() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().items(List.of("water")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().items(List.of("water")).build(), List.of("NC"), 1);
 
     assertThat(result.getResultCount()).isEqualTo(2);
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().items(List.of("water", "new clothes")).build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(2);
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().items(List.of("random stuff")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().items(List.of("random stuff")).build(), List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(0);
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().items(List.of("random stuff", "new clothes")).build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(2);
   }
 
@@ -105,18 +105,18 @@ class SuppliesControllerTest {
   void requestByCounty() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Haywood, NC")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().counties(List.of("Haywood, NC")).build(), List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(0);
 
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Los Angeles, CA")).build(),
-            List.of("CA"));
+            List.of("CA"), 2);
     assertThat(result.getResultCount()).isEqualTo(1);
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Buncombe, NC")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().counties(List.of("Buncombe, NC")).build(), List.of("NC"),1);
     result
         .getResults()
         .forEach(
@@ -130,7 +130,7 @@ class SuppliesControllerTest {
 
     result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().counties(List.of("Watauga, NC")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().counties(List.of("Watauga, NC")).build(), List.of("NC"), 1);
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1");
@@ -147,7 +147,7 @@ class SuppliesControllerTest {
             SiteSupplyRequest.builder()
                 .counties(List.of("Ashe, NC", "Watauga, NC", "Buncombe, NC"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site1", "site2", "site4");
@@ -155,7 +155,7 @@ class SuppliesControllerTest {
     result =
         suppliesController.getSuppliesData(
             SiteSupplyRequest.builder().counties(List.of("Ashe, NC", "Buncombe, NC")).build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(
             result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite).toList())
         .contains("site2", "site4");
@@ -167,7 +167,7 @@ class SuppliesControllerTest {
       var result =
           suppliesController.getSuppliesData(
               SiteSupplyRequest.builder().itemStatus(List.of(status.getText())).build(),
-              List.of("NC"));
+              List.of("NC"), 1);
       result.getResults().stream()
           .map(SiteSupplyResponse.SiteSupplyData::getAvailableItems)
           .flatMap(List::stream)
@@ -187,7 +187,7 @@ class SuppliesControllerTest {
                 .itemStatus(
                     List.of(ItemStatus.OVERSUPPLY.getText(), ItemStatus.URGENTLY_NEEDED.getText()))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
 
     result.getResults().stream()
         .map(SiteSupplyResponse.SiteSupplyData::getNeededItems)
@@ -211,7 +211,7 @@ class SuppliesControllerTest {
                 .counties(List.of("Haywood, NC"))
                 .items(List.of("Random stuff"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(0);
 
     // there exists a site with 'Watauga' county, but no items
@@ -221,7 +221,7 @@ class SuppliesControllerTest {
                 .counties(List.of("Watauga, NC"))
                 .items(List.of("Random stuff"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(0);
 
     // there exists a site with the target county, but no item
@@ -232,7 +232,7 @@ class SuppliesControllerTest {
                 .counties(List.of("Watauga, NC"))
                 .items(List.of("Random stuff"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(0);
 
     // site name and county match
@@ -242,7 +242,7 @@ class SuppliesControllerTest {
                 .sites(List.of("site1"))
                 .counties(List.of("Watauga, NC"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(1);
 
     // both sites have water, but only one is in Watauga county
@@ -252,7 +252,7 @@ class SuppliesControllerTest {
                 .items(List.of("water"))
                 .counties(List.of("Watauga, NC"))
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(1);
   }
 
@@ -261,7 +261,7 @@ class SuppliesControllerTest {
   void multipleItemsAreAggregated() {
     var result =
         suppliesController.getSuppliesData(
-            SiteSupplyRequest.builder().sites(List.of("site1")).build(), List.of("NC"));
+            SiteSupplyRequest.builder().sites(List.of("site1")).build(), List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(1);
   }
 
@@ -278,7 +278,7 @@ class SuppliesControllerTest {
                 .acceptingDonations(true)
                 .notAcceptingDonations(false)
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     // must contain sites that are active & accepting donations
     // (we exclude site5 because its name can change
     assertThat(result.getResults().stream().map(SiteSupplyResponse.SiteSupplyData::getSite))
@@ -297,7 +297,7 @@ class SuppliesControllerTest {
                 .acceptingDonations(false)
                 .notAcceptingDonations(true)
                 .build(),
-            List.of("NC"));
+            List.of("NC"), 1);
     assertThat(result.getResultCount()).isEqualTo(1);
     assertThat(result.getResults().getFirst().isAcceptingDonations()).isFalse();
 
@@ -309,7 +309,7 @@ class SuppliesControllerTest {
                     .acceptingDonations(false)
                     .notAcceptingDonations(false)
                     .build(),
-                List.of("NC"))
+                List.of("NC"), 1)
             .getResultCount();
 
     // show all sites
@@ -320,7 +320,7 @@ class SuppliesControllerTest {
                     .acceptingDonations(true)
                     .notAcceptingDonations(true)
                     .build(),
-                List.of("NC"))
+                List.of("NC"), 1)
             .getResultCount();
 
     assertThat(resultCount).isEqualTo(allSiteResultCount);
@@ -334,7 +334,7 @@ class SuppliesControllerTest {
     void siteType(String siteType) {
       var result =
           suppliesController.getSuppliesData(
-              SiteSupplyRequest.builder().siteType(List.of(siteType)).build(), List.of("NC"));
+              SiteSupplyRequest.builder().siteType(List.of(siteType)).build(), List.of("NC"), 1);
 
       assertThat(result.getResultCount()).isGreaterThan(0);
       result.getResults().forEach(r -> assertThat(r.getSiteType()).isEqualTo(siteType));
@@ -345,10 +345,10 @@ class SuppliesControllerTest {
     void noSiteTypeOrAllSiteTypes() {
       var noSiteTypes =
           suppliesController.getSuppliesData(
-              SiteSupplyRequest.builder().siteType(List.of()).build(), List.of("NC"));
+              SiteSupplyRequest.builder().siteType(List.of()).build(), List.of("NC"), 1);
       var allSiteTypes =
           suppliesController.getSuppliesData(
-              SiteSupplyRequest.builder().siteType(SiteType.allSiteTypes()).build(), List.of("NC"));
+              SiteSupplyRequest.builder().siteType(SiteType.allSiteTypes()).build(), List.of("NC"), 1);
       assertThat(noSiteTypes.getResultCount()).isGreaterThan(0);
       assertThat(noSiteTypes.getResultCount()).isEqualTo(allSiteTypes.getResultCount());
     }
@@ -378,7 +378,7 @@ class SuppliesControllerTest {
 
   private List<String> doSearch(boolean authenticated) {
     return suppliesController
-        .getSuppliesData(SiteSupplyRequest.builder().build(), authenticated, List.of("NC"))
+        .getSuppliesData(SiteSupplyRequest.builder().build(), authenticated, List.of("NC"), 1)
         .getResults()
         .stream()
         .map(SiteSupplyResponse.SiteSupplyData::getSite)
@@ -400,7 +400,7 @@ class SuppliesControllerTest {
     var searchResults =
         suppliesController
             .getSuppliesData(
-                SiteSupplyRequest.builder().sites(List.of(siteName)).build(), false, List.of("NC"))
+                SiteSupplyRequest.builder().sites(List.of(siteName)).build(), false, List.of("NC"), 1)
             .getResults()
             .stream()
             .toList();
@@ -434,7 +434,7 @@ class SuppliesControllerTest {
     var searchResults =
         suppliesController
             .getSuppliesData(
-                SiteSupplyRequest.builder().sites(List.of(siteName)).build(), true, List.of("NC"))
+                SiteSupplyRequest.builder().sites(List.of(siteName)).build(), true, List.of("NC"), 1)
             .getResults()
             .stream()
             .toList();
@@ -454,7 +454,7 @@ class SuppliesControllerTest {
         suppliesController
             .getSuppliesData(
                 SiteSupplyRequest.builder().counties(List.of("Polk", "Watauga, NC")).build(),
-                List.of("NC"))
+                List.of("NC"), 1)
             .getResults()
             .stream()
             .toList();

@@ -66,23 +66,24 @@ public class SuppliesController {
   public SiteSupplyResponse getSuppliesData(
       HttpServletRequest httpRequest,
       @RequestBody SiteSupplyRequest request,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_ID) Number deploymentId) {
     boolean authenticated = cookieAuthenticator.isAuthenticated(httpRequest);
-    return getSuppliesData(request, authenticated, stateList);
+    return getSuppliesData(request, authenticated, stateList, deploymentId);
   }
 
   // @VisibleForTesting
-  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, List<String> stateList) {
-    return getSuppliesData(request, false, stateList);
+  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, List<String> stateList, Number deploymentId) {
+    return getSuppliesData(request, false, stateList, deploymentId);
   }
 
   // @VisibleForTesting
   SiteSupplyResponse getSuppliesData(
-      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList) {
+      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList, Number deploymentId) {
     request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
 
     List<SuppliesDao.SuppliesQueryResult> results =
-        SuppliesDao.getSupplyResults(jdbi, request, stateList);
+        SuppliesDao.getSupplyResults(jdbi, request, stateList, deploymentId);
 
     Map<Long, SiteSupplyData> aggregatedResults = new HashMap<>();
 
