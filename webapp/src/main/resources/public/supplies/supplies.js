@@ -111,6 +111,12 @@ function handleSelection(elementSelected) {
   updateData();
 }
 
+function handleSortSelection() {
+  // todo: save to session
+
+  updateData();
+}
+
 function saveCheckboxToSession(fieldsetName, name, wasChecked) {
   const fieldsetInSession = getFieldsetValueFromSession(fieldsetName);
 
@@ -204,7 +210,10 @@ async function updateData() {
     startLoaderAnimation();
 
     // Grab The Site Data
-    const data = await fetchSupplyData();
+    let data = await fetchSupplyData();
+
+    // Update the data based on Results filter data
+    data = sortDataResults(data);
 
     const supplyHubHtml = "<br><span class='supply-hub'>(Supply Warehouse)</span>";
     const notAcceptingDonationsHtml = "<br><span class='not-accepting-donations'>(Not Accepting Donations)</span>";
@@ -234,6 +243,8 @@ async function updateData() {
                   <td>${formatItems(r.availableItems)}</td>
               </tr>`)
         .join("\n");
+
+    // Redisplay results ct and results filter
     document.getElementById('result-count').innerHTML = `${data.resultCount} results`;
     stopLoaderAnimation();
   } catch (error) {
@@ -243,6 +254,34 @@ async function updateData() {
   }
 }
 
+function sortDataResults (data) {
+    const sortType = document.getElementById("sort-results").value;
+
+    switch(sortType) {
+        case "last-updated":
+            data.results.sort((siteA, siteB) => {
+                const siteADate = new Date(siteA.inventoryLastUpdated).getTime();
+                const siteBDate = new Date(siteB.inventoryLastUpdated).getTime();
+                return siteBDate - siteADate;
+            })
+            break;
+        case "last-updated-reverse":
+            data.results.sort((siteA, siteB) => {
+                const siteADate = new Date(siteA.inventoryLastUpdated).getTime();
+                const siteBDate = new Date(siteB.inventoryLastUpdated).getTime();
+                return siteADate - siteBDate;
+            })
+            break;
+        case "alphabetical":
+            data.results.sort((siteA, siteB) => {
+                return siteA.site.toLowerCase().localeCompare(siteB.site.toLowerCase())
+            })
+    }
+
+    console.log(data);
+    return data;
+}
+
 function showSuppliesError(error) {
   console.error(error, error.stack);
   document.getElementById("error-div").innerHTML =
@@ -250,9 +289,11 @@ function showSuppliesError(error) {
 }
 
 function startLoaderAnimation() {
+  // Clear out results count
   document.getElementById('result-count').innerHTML = "";
   document.getElementById('loader-div').style.animationPlayState = 'running';
   document.getElementById('loader-div').style.display = 'block';
+
 }
 
 function stopLoaderAnimation() {

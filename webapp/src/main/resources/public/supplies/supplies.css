@@ -172,6 +172,20 @@ table.results-table tbody tr:nth-child(even) {
     padding-bottom: 5px;
 }
 
+#result-count {
+    margin-left: 10px;
+}
+
+#sort-results-container {
+    margin-right: 10px;
+}
+
+#results-count-and-sort {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+
 @media only screen and (max-width: 600px) {
   .filters-container {
     flex-direction: column;
@@ -189,5 +203,14 @@ table.results-table tbody tr:nth-child(even) {
 
   table.results-table {
     width: max-content;
+  }
+
+  #results-count-and-sort {
+     flex-direction: column;
+     justify-content: start;
+  }
+
+  #sort-results-container {
+      margin-left: 10px;
   }
 }

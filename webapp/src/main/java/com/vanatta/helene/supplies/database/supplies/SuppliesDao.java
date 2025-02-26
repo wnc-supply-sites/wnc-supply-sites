@@ -169,6 +169,7 @@ public class SuppliesDao {
             queryBuilder.bindList("stateList", stateList);
           }
 
+          // todo: This needs to be hooked up
           queryBuilder.bindList("deploymentIdList", List.of(deploymentId));
 
           return queryBuilder
