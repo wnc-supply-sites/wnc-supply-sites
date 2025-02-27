@@ -65,6 +65,19 @@ function addFiltersFromSession() {
 
   addSelectionFiltersFromSession(filters.selections);
   addCheckboxFiltersFromSession(filters.checkboxes);
+  setSortByFromSession();
+}
+
+function setSortByFromSession() {
+
+  const sortByValueInSession = JSON.parse(sessionStorage.getItem("sort-by"));
+  const sortByOptions = document.getElementById("sort-results").children;
+
+  for (let i = 0; i < sortByOptions.length; i++) {
+    const sortByOption = sortByOptions[i];
+    if (sortByOption.value === sortByValueInSession) sortByOption.setAttribute("selected", "selected");
+  }
+
 }
 
 function addSelectionFiltersFromSession(selections){
@@ -113,7 +126,8 @@ function handleSelection(elementSelected) {
 
 function handleSortSelection() {
   // todo: save to session
-
+   const sortDataBy = document.getElementById("sort-results").value;
+   sessionStorage.setItem("sort-by", JSON.stringify(sortDataBy));
   updateData();
 }
 
@@ -277,8 +291,6 @@ function sortDataResults (data) {
                 return siteA.site.toLowerCase().localeCompare(siteB.site.toLowerCase())
             })
     }
-
-    console.log(data);
     return data;
 }
 
