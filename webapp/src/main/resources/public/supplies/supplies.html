@@ -2,6 +2,7 @@
 <head>
   <title>{{deploymentShortName}} Supply Sites - Supplies</title>
   <script type="text/javascript" src="supplies.js"></script>
+  <script type="text/javascript" src="../scrollToTop.js"></script>
   <link rel="stylesheet" href="supplies.css">
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../mobile.css"/>
@@ -12,6 +13,13 @@
 </head>
 <body>
 {{> header }}
+
+
+<button class="scroll-to-top-btn hidden">
+  &#8679;
+  Top
+</button>
+
 <div class="page-sub-header horizontal">
   <div class="back-link">
     <a href="/">[&larr; Go Back]</a>
@@ -249,6 +257,7 @@
 
 <script>
   getFilterItems();
+  instantiateScrollToTopEvenListener();
 </script>
 </body>
 </html>

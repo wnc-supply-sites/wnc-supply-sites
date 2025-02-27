@@ -9,25 +9,6 @@
   font-size: 0.95em;
 }
 
-.scroll-to-top-btn {
-  position: fixed;
-  bottom: 3rem;
-  right: 1rem;
-  background-color: white;
-  height: 3rem;
-  width: 3rem;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  font-size: 1rem;
-  cursor: pointer;
-  border: 2px solid black;
-  box-shadow: none;
-  opacity: 50%;
-}
-
 .opacity-full {
   opacity: 100%;
 }
