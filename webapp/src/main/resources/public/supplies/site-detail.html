@@ -23,22 +23,22 @@
         </div>
 
         <div class="mission-statement">
-            <dl>
+            <dl class="w-full overflow-auto">
                 {{#website}}
-                <dt>Website</dt>
+                <dt>Website: </dt>
                 <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
                 {{/website}} {{#facebook}}
-                <dt>Facebook</dt>
+                <dt>Facebook: </dt>
                 <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
                 {{/facebook}}
 
-                <dt>Address</dt>
+                <dt>Address: </dt>
                 <dd class="detail-value">
                     {{addressLine1}}<br />{{addressLine2}}
                 </dd>
 
                 {{#hours}}
-                <dt>Hours</dt>
+                <dt>Hours: </dt>
                 <dd class="detail-value">
                     <textarea rows="5" cols="20" readonly>{{.}}</textarea>
                 </dd>
@@ -68,15 +68,14 @@
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
-        <div class="content-container">
+        <div class="mission-statement">
             <div class="privately-visible">
                 * Indicates field is visible because you are logged in
             </div>
         </div>
 
         <div class="mission-statement">
-            <dl>
-
+            <dl class="w-full overflow-auto">
                 <dt>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}</dt>
                 <dd class="detail-value bold">
                     {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}}
@@ -95,8 +94,8 @@
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editReceivingLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
-        <div class="content-container" >
-            <dl>
+        <div class="mission-statement" >
+            <dl class="w-full overflow-auto">
                 {{#receivingNotes}}
                 <dt>Receiving Notes: </dt>
                 <dd class="detail-value">
@@ -115,7 +114,7 @@
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
 
-        <div class="content-container">
+        <div class="mission-statement">
             <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>
 
             {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}
@@ -152,7 +151,7 @@
             {{/hasIncomingDeliveries}}
         </div>
 
-        <div class="content-container">
+        <div class="mission-statement">
             <h3>
                 <span class="fa fa-truck outgoing-truck"></span> Outgoing Deliveries
             </h3>
@@ -199,7 +198,7 @@
             <span class="privately-visible">*</span>
             {{/loggedIn}}
         </h2>
-        <div class="content-container">
+        <div class="mission-statement">
             <div class="table-container">
                 <table class="inventory-table">
                     <tr>
@@ -244,7 +243,7 @@
         {{#loggedIn}}
         <a id="needs-matching"></a>
         <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
-        <div class="content-container">
+        <div class="mission-statement">
             <p>The below sites have supplies that are needed and can be transported to the current site.</p>
             <div class="table-container">
                 <table class="needs-matching">

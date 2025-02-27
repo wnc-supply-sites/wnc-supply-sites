@@ -311,6 +311,10 @@ button {
     overflow-y: auto;
 }
 
+.overflow-auto {
+    overflow: auto;
+}
+
 .items-center {
   justify-items: center;
   align-items: center;
@@ -408,7 +412,7 @@ h1, h2, h3, h4 {
 
     .mission-statement {
         margin: 10px;
-        width: 100%;
+        width: 80%;
     }
 
     .content-container {
@@ -421,6 +425,11 @@ h1, h2, h3, h4 {
 @media only screen and (max-width: 480px) {
     .wide-button {
         width: 250px;
+    }
+
+
+    .mission-statement {
+        width: 100%;
     }
 }
 
