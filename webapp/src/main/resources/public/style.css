@@ -189,6 +189,14 @@ button {
     font-weight: bold;
 }
 
+.font-large {
+    font-size: large;
+}
+
+.italic {
+    font-style: italic;
+}
+
 .errorMessage {
     color: #b60808;
     font-style: italic;

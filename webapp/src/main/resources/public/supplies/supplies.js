@@ -125,7 +125,6 @@ function handleSelection(elementSelected) {
 }
 
 function handleSortSelection() {
-  // todo: save to session
    const sortDataBy = document.getElementById("sort-results").value;
    sessionStorage.setItem("sort-by", JSON.stringify(sortDataBy));
   updateData();
@@ -394,4 +393,11 @@ function formatAsList(items) {
       + "\n</ul>";
 }
 
+function initializeModal() {
+    if (!sessionStorage.getItem("calledToAction")) {
+        const modal = document.getElementById("getInvolvedModal");
+        modal.showModal();
+        sessionStorage.setItem("calledToAction", "true");
+    }
+};
 
