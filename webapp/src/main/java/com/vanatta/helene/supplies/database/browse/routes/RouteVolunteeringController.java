@@ -46,6 +46,7 @@ public class RouteVolunteeringController {
       Jdbi jdbi, DeliveryVolunteerRequest volunteerRequest, String driverPhone) {
     return volunteerRequest.toBuilder()
         .driverAirtableId(DriverDao.lookupByPhone(jdbi, driverPhone).orElseThrow().getAirtableId())
+        .driverName(DriverDao.lookupByPhone(jdbi, driverPhone).orElseThrow().getFullName())
         .build();
   }
 
@@ -56,9 +57,12 @@ public class RouteVolunteeringController {
   public static class DeliveryVolunteerRequest {
     long fromSiteWssId;
     long toSiteWssId;
+    String fromSiteName;
+    String toSiteName;
     List<Long> itemList;
     String fromDate;
     String toDate;
     long driverAirtableId;
+    String driverName;
   }
 }

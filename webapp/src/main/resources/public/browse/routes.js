@@ -38,7 +38,7 @@ function cancelVolunteerClicked() {
     confirmVolunteer.classList.add("hidden");
 }
 
-function volunteerConfirmClicked(fromSiteWssId, toSiteWssId, itemList) {
+function volunteerConfirmClicked(fromSiteWssId, fromSiteName, toSiteWssId, toSiteName,itemList) {
   const confirmVolunteer = event.target.parentNode.parentNode;
 
   const confirmMessage = confirmVolunteer.parentNode.querySelector("div[class=volunteer-confirm-message]")
@@ -57,7 +57,9 @@ function volunteerConfirmClicked(fromSiteWssId, toSiteWssId, itemList) {
     },
     body: JSON.stringify({
       fromSiteWssId: fromSiteWssId,
+      fromSiteName: fromSiteName,
       toSiteWssId: toSiteWssId,
+      toSiteName: toSiteName,
       itemList: JSON.parse(itemList),
       fromDate: fromDate,
       toDate: toDate
