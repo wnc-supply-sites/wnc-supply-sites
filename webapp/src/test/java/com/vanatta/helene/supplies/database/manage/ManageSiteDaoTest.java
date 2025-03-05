@@ -135,6 +135,7 @@ class ManageSiteDaoTest {
   @Test
   void updatesReturnOldValue() {
     // setup: get a site, validate the old value is not what we will change it to.
+
     // remember the old value
     long siteId = Helper.getSiteId("site4");
     var dataLookup = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);

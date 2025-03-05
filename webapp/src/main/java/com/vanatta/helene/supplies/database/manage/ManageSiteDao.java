@@ -220,6 +220,7 @@ public class ManageSiteDao {
     String oldValueQuery =
         java.lang.String.format(
             "select s.%s from site s where s.id = :siteId", column.getColumnName());
+
     String oldValue =
         jdbi.withHandle(
             handle ->

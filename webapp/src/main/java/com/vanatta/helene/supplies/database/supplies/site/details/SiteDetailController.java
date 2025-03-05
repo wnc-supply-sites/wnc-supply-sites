@@ -268,9 +268,6 @@ public class SiteDetailController {
       siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.INCOMING_DELIVERIES.text, incomingDeliveries);
 
-
-      log.info("Incoming deleveries data: {}", incomingDeliveries);
-
       // Should filter out any deliveries that are cancelled or deleted
       List<Delivery> outgoingDeliveries =
           allDeliveries.stream()
@@ -286,8 +283,6 @@ public class SiteDetailController {
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
-
-      log.info("Outgoing deleveries data: {}", outgoingDeliveries);
 
       // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
