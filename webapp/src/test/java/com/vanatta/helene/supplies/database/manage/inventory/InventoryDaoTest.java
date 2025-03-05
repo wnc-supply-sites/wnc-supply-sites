@@ -209,7 +209,8 @@ class InventoryDaoTest {
           SuppliesDao.getSupplyResults(
               jdbiTest,
               SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
-              List.of("NC"), 1);
+              List.of("NC"),
+              1);
       confirmItemStatus(supplyResults, "gloves", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "water", ItemStatus.AVAILABLE);
       confirmItemStatus(supplyResults, "batteries", ItemStatus.AVAILABLE);
@@ -247,7 +248,8 @@ class InventoryDaoTest {
       SuppliesDao.getSupplyResults(
               jdbiTest,
               SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
-              List.of("NC"), 1)
+              List.of("NC"),
+              1)
           .forEach(r -> assertThat(r.getItem()).isNull());
     }
 
@@ -265,7 +267,8 @@ class InventoryDaoTest {
       SuppliesDao.getSupplyResults(
               jdbiTest,
               SiteSupplyRequest.builder().sites(List.of(newSiteName)).build(),
-              List.of("NC"), 1)
+              List.of("NC"),
+              1)
           .forEach(r -> assertThat(r.getItemTags()).contains("toddler"));
     }
   }

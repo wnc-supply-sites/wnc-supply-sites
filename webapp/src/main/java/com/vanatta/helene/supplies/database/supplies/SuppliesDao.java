@@ -163,7 +163,7 @@ public class SuppliesDao {
             queryBuilder.bindList("site_type", request.getSiteType());
           }
 
-          if (!request.getStates().isEmpty()){
+          if (!request.getStates().isEmpty()) {
             queryBuilder.bindList("stateList", request.getStates());
           } else {
             queryBuilder.bindList("stateList", stateList);
@@ -172,9 +172,7 @@ public class SuppliesDao {
           // todo: This needs to be hooked up
           queryBuilder.bindList("deploymentIdList", List.of(deploymentId));
 
-          return queryBuilder
-              .mapToBean(SuppliesQueryResult.class)
-              .list();
+          return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
         });
   }
 }

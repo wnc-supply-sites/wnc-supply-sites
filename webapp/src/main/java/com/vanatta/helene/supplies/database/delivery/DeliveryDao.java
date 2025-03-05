@@ -261,7 +261,8 @@ public class DeliveryDao {
   }
 
   public static List<Delivery> fetchDeliveriesByDriverPhoneNumber(Jdbi jdbi, String driverPhone) {
-    String whereClause = """
+    String whereClause =
+        """
               regexp_replace(d.driver_number, '[^0-9]+', '', 'g') = :id
             """;
     return fetchDeliveries(jdbi, whereClause, driverPhone);

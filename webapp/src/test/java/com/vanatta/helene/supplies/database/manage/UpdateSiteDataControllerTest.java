@@ -23,11 +23,12 @@ class UpdateSiteDataControllerTest {
   @MethodSource
   void updateSiteDataThrowsNoErrors(ManageSiteDao.SiteField field) {
 
-    String newValue = switch (field) {
-      case MAX_SUPPLY_LOAD -> "Car";
-      case WEEKLY_SERVED -> "1000";
-      default -> field.getFrontEndName() + " " + UUID.randomUUID().toString().substring(0, 10);
-    };
+    String newValue =
+        switch (field) {
+          case MAX_SUPPLY_LOAD -> "Car";
+          case WEEKLY_SERVED -> "1000";
+          default -> field.getFrontEndName() + " " + UUID.randomUUID().toString().substring(0, 10);
+        };
 
     Map<String, String> params =
         Map.of(
@@ -36,8 +37,7 @@ class UpdateSiteDataControllerTest {
             "field",
             field.getFrontEndName(),
             "newValue",
-            newValue
-            );
+            newValue);
 
     var response = updateSiteDataController.updateSiteData(params);
     assertThat(response.getStatusCode().value()).isEqualTo(200);

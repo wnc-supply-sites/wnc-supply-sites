@@ -90,7 +90,7 @@ public class SendAccessTokenController {
         smsSender.send(
             phoneNumber,
             String.format(
-            """
+                """
             WNC Supply:
             Your one time access code is %s.
             Enter this code to set up your password at %s.

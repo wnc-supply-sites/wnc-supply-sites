@@ -131,7 +131,7 @@ public class MergeItemsController {
             handle ->
                 handle
                     .createUpdate(
-                            """
+                        """
                               insert into site_item_audit (item_id, site_id, old_value, new_value)
                               values(:itemId, :siteId, 'item old name: :itemName', 'item merged into: :mergeIntoItemName')
                           """)

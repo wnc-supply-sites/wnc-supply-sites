@@ -73,13 +73,17 @@ public class SuppliesController {
   }
 
   // @VisibleForTesting
-  SiteSupplyResponse getSuppliesData(SiteSupplyRequest request, List<String> stateList, Number deploymentId) {
+  SiteSupplyResponse getSuppliesData(
+      SiteSupplyRequest request, List<String> stateList, Number deploymentId) {
     return getSuppliesData(request, false, stateList, deploymentId);
   }
 
   // @VisibleForTesting
   SiteSupplyResponse getSuppliesData(
-      SiteSupplyRequest request, boolean isAuthenticated, List<String> stateList, Number deploymentId) {
+      SiteSupplyRequest request,
+      boolean isAuthenticated,
+      List<String> stateList,
+      Number deploymentId) {
     request = request.toBuilder().isAuthenticatedUser(isAuthenticated).build();
 
     List<SuppliesDao.SuppliesQueryResult> results =

@@ -68,19 +68,18 @@ public class DeploymentAdvice {
     return fetchDeploymentId(jdbi, hostNameLookup.lookupHostName(request));
   }
 
-
   static Number fetchDeploymentId(Jdbi jdbi, String domain) {
     return jdbi.withHandle(
-            h ->
-                    h.createQuery(
-                        """
+        h ->
+            h.createQuery(
+                    """
                               select id
                               from deployment
                               where domain = :domain
                             """)
-                            .bind("domain", domain)
-                            .mapTo(Integer.class)
-                            .one());
+                .bind("domain", domain)
+                .mapTo(Integer.class)
+                .one());
   }
 
   static List<String> fetchStateListForHost(Jdbi jdbi, String domain) {

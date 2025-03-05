@@ -67,8 +67,7 @@ public class ManageSiteDao {
     ADDITIONAL_CONTACTS("additional_contacts", "Additional Contacts", false, false),
     MAX_SUPPLY_LOAD("max_supply_load", "max supply load", false, false),
     RECEIVING_NOTES("receiving_notes", "receiving notes", false, false),
-    WEEKLY_SERVED("weekly_served", "Weekly Served", false, false)
-    ;
+    WEEKLY_SERVED("weekly_served", "Weekly Served", false, false);
 
     private final String columnName;
     private final String frontEndName;
@@ -228,19 +227,23 @@ public class ManageSiteDao {
 
     if (Objects.equals(column.getFrontEndName(), "Weekly Served")) {
       jdbi.withHandle(
-              handle ->
-                      handle
-                        .createUpdate(
-                                "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
-                        .bind("newValue", Integer.parseInt(newValue))
-                        .bind("siteId", siteId)
-                        .execute());
+          handle ->
+              handle
+                  .createUpdate(
+                      "update site set "
+                          + column.getColumnName()
+                          + " = :newValue where id = :siteId")
+                  .bind("newValue", Integer.parseInt(newValue))
+                  .bind("siteId", siteId)
+                  .execute());
     } else {
       jdbi.withHandle(
           handle ->
               handle
                   .createUpdate(
-                      "update site set " + column.getColumnName() + " = :newValue where id = :siteId")
+                      "update site set "
+                          + column.getColumnName()
+                          + " = :newValue where id = :siteId")
                   .bind("newValue", newValue)
                   .bind("siteId", siteId)
                   .execute());
@@ -436,15 +439,19 @@ public class ManageSiteDao {
     boolean active;
 
     public List<ItemTagData> getTags() {
-      if (itemTags == null) {return List.of();}
-      return Arrays.stream(itemTags.split(",")).map(tag -> new ItemTagData(tag, "#7fffd4")).toList();
+      if (itemTags == null) {
+        return List.of();
+      }
+      return Arrays.stream(itemTags.split(","))
+          .map(tag -> new ItemTagData(tag, "#7fffd4"))
+          .toList();
     }
   }
 
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class ItemTagData  {
+  public static class ItemTagData {
     private String tagName;
     private String tagColor;
   }

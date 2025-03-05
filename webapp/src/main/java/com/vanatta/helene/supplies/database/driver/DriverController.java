@@ -1,13 +1,12 @@
 package com.vanatta.helene.supplies.database.driver;
 
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
+import com.vanatta.helene.supplies.database.delivery.Delivery;
+import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.vanatta.helene.supplies.database.delivery.Delivery;
-import com.vanatta.helene.supplies.database.delivery.DeliveryDao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
@@ -60,7 +59,7 @@ public class DriverController {
         PageParams.availability.name(), Optional.ofNullable(driver.getAvailability()).orElse(""));
     params.put(PageParams.comments.name(), Optional.ofNullable(driver.getComments()).orElse(""));
     params.put(PageParams.active.name(), driver.isActive());
-    params.put(PageParams.canLift50lbs.name(),driver.isCan_lift_50lbs());
+    params.put(PageParams.canLift50lbs.name(), driver.isCan_lift_50lbs());
     params.put(PageParams.palletCapacity.name(), driver.getPallet_capacity());
     params.put(PageParams.driverDeliveries.name(), deliveries);
 
