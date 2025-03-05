@@ -140,7 +140,7 @@
     <!-- Pickup Site -->
     <div class="vertical left-column page-subsection narrow-sub-section">
       <div class="large-section-header">Pick Up</div>
-      <div>{{#fromSiteLink}}<a href="{{.}}">{{fromSiteName}}</a>{{/fromSiteLink}}{{^fromSiteLink}}{{fromSiteName}}{{/fromSiteLink}}</div>
+      <div>{{#fromSiteLink}}<a href="{{.}}">{{#fromSiteName}} {{.}} {{/fromSiteName}}</a>{{/fromSiteLink}}{{^fromSiteLink}}{{#fromSiteName}} {{.}} {{/fromSiteName}}{{/fromSiteLink}}</div>
       <div>{{#fromAddress}}{{.}}{{/fromAddress}}</div>
       <div>{{#fromAddressLine2}}{{.}}{{/fromAddressLine2}}</div>
 
@@ -155,7 +155,7 @@
     <!-- DROP OFF -->
     <div class="vertical page-subsection narrow-sub-section right-column">
       <div class="large-section-header">Drop Off</div>
-      <div>{{#toSiteLink}}<a href="{{.}}">{{toSiteName}}</a>{{/toSiteLink}}{{^toSiteLink}}{{#toSiteName}}{{.}}{{/toSiteName}}{{/toSiteLink}}</div>
+      <div>{{#toSiteLink}}<a href="{{.}}"> {{#toSiteName}}{{.}}{{/toSiteName}}</a>{{/toSiteLink}}{{^toSiteLink}}{{#toSiteName}}{{.}}{{/toSiteName}}{{/toSiteLink}}</div>
       <div>{{#toAddress}}{{.}}{{/toAddress}}</div>
       <div>{{#toAddressLine2}}{{.}}{{/toAddressLine2}}</div>
 
