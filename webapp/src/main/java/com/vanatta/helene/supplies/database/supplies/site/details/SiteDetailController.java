@@ -95,7 +95,13 @@ public class SiteDetailController {
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
     return siteDetail(
-        userSites, stateList, deploymentId, id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
+        userSites,
+        stateList,
+        deploymentId,
+        id,
+        airtableId,
+        wssId,
+        cookieAuthenticator.isAuthenticated(request));
   }
 
   // @VisibleForTesting
@@ -192,7 +198,8 @@ public class SiteDetailController {
         SuppliesDao.getSupplyResults(
             jdbi,
             SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build(),
-            stateList, deploymentId);
+            stateList,
+            deploymentId);
     List<InventoryItem> needs =
         supplies.stream()
             .filter(i -> i.getItem() != null)
@@ -249,21 +256,38 @@ public class SiteDetailController {
       List<Delivery> incomingDeliveries =
           allDeliveries.stream()
               .filter(d -> siteDetailData.getSiteName().equals(d.getToSite()))
-              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
-              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
+              .filter(
+                  d ->
+                      !d.getDeliveryStatus()
+                          .equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
+              .filter(
+                  d ->
+                      !d.getDeliveryStatus()
+                          .equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
               .toList();
       siteDetails.put(TemplateParams.HAS_INCOMING_DELIVERIES.text, !incomingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.INCOMING_DELIVERIES.text, incomingDeliveries);
+
+
+      log.info("Incoming deleveries data: {}", incomingDeliveries);
 
       // Should filter out any deliveries that are cancelled or deleted
       List<Delivery> outgoingDeliveries =
           allDeliveries.stream()
               .filter(d -> siteDetailData.getSiteName().equals(d.getFromSite()))
-              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
-              .filter(d -> !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
+              .filter(
+                  d ->
+                      !d.getDeliveryStatus()
+                          .equals(DeliveryStatus.DELIVERY_CANCELLED.getAirtableName()))
+              .filter(
+                  d ->
+                      !d.getDeliveryStatus()
+                          .equals(DeliveryStatus.DELIVERY_COMPLETED.getAirtableName()))
               .toList();
       siteDetails.put(TemplateParams.HAS_OUTGOING_DELIVERIES.text, !outgoingDeliveries.isEmpty());
       siteDetails.put(TemplateParams.OUTGOING_DELIVERIES.text, outgoingDeliveries);
+
+      log.info("Outgoing deleveries data: {}", outgoingDeliveries);
 
       // site needs list
       List<NeedsMatchingDao.NeedsMatchingResult> needsMatching =
