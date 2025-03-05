@@ -112,83 +112,83 @@
         </div>
 
 
-        <h2>Deliveries<span class="privately-visible">*</span></h2>
+<!--        <h2>Deliveries<span class="privately-visible">*</span></h2>-->
 
-        <div class="mission-statement">
-            <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>
+<!--        <div class="mission-statement">-->
+<!--            <h3><span class="fa fa-truck"></span> Incoming Deliveries</h3>-->
 
-            {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}
-            {{#hasIncomingDeliveries}}
-            <div class="table-container">
-                <table class="delivery-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Delivery Date</th>
-                            <th>From</th>
-                            <th>Status</th>
-                            <th>Item Count</th>
-                            <th>Items</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#incomingDeliveries}}
-                        <tr>
-                            <td><a href="{{detailLink}}">[Details]</a></td>
-                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                            <td>
-                                {{#fromSiteLink}}<a href="{{.}}">{{fromSite}}</a>{{/fromSiteLink}}
-                                {{^fromSiteLink}}{{#fromSite}}.{{/fromSite}}{{^fromSite}}-{{/fromSite}}{{/fromSiteLink}}
-                            </td>
-                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
-                            <td>{{itemCount}}</td>
-                            <td>{{itemListTruncated}}</td>
-                        </tr>
-                        {{/incomingDeliveries}}
-                    </tbody>
-                </table>
-            </div>
-            {{/hasIncomingDeliveries}}
-        </div>
+<!--            {{^hasIncomingDeliveries}} None scheduled {{/hasIncomingDeliveries}}-->
+<!--            {{#hasIncomingDeliveries}}-->
+<!--            <div class="table-container">-->
+<!--                <table class="delivery-table">-->
+<!--                    <thead>-->
+<!--                        <tr>-->
+<!--                            <th></th>-->
+<!--                            <th>Delivery Date</th>-->
+<!--                            <th>From</th>-->
+<!--                            <th>Status</th>-->
+<!--                            <th>Item Count</th>-->
+<!--                            <th>Items</th>-->
+<!--                        </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                        {{#incomingDeliveries}}-->
+<!--                        <tr>-->
+<!--                            <td><a href="{{detailLink}}">[Details]</a></td>-->
+<!--                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>-->
+<!--                            <td>-->
+<!--                                {{#fromSiteLink}}<a href="{{.}}">{{fromSite}}</a>{{/fromSiteLink}}-->
+<!--                                {{^fromSiteLink}}{{#fromSite}}.{{/fromSite}}{{^fromSite}}-{{/fromSite}}{{/fromSiteLink}}-->
+<!--                            </td>-->
+<!--                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>-->
+<!--                            <td>{{itemCount}}</td>-->
+<!--                            <td>{{itemListTruncated}}</td>-->
+<!--                        </tr>-->
+<!--                        {{/incomingDeliveries}}-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--            {{/hasIncomingDeliveries}}-->
+<!--        </div>-->
 
-        <div class="mission-statement">
-            <h3>
-                <span class="fa fa-truck outgoing-truck"></span> Outgoing Deliveries
-            </h3>
-            {{^hasOutgoingDeliveries}} None scheduled {{/hasOutgoingDeliveries}}
-            {{#hasOutgoingDeliveries}}
+<!--        <div class="mission-statement">-->
+<!--            <h3>-->
+<!--                <span class="fa fa-truck outgoing-truck"></span> Outgoing Deliveries-->
+<!--            </h3>-->
+<!--            {{^hasOutgoingDeliveries}} None scheduled {{/hasOutgoingDeliveries}}-->
+<!--            {{#hasOutgoingDeliveries}}-->
 
-            <div class="table-container">
-                <table class="delivery-table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Delivery Date</th>
-                            <th>To</th>
-                            <th>Status</th>
-                            <th>Item Count</th>
-                            <th>Items</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#outgoingDeliveries}}
-                        <tr>
-                            <td><a href="{{detailLink}}">[Details]</a></td>
-                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>
-                            <td>
-                                {{#toSiteLink}}<a href="{{.}}">{{toSite}}</a>{{/toSiteLink}}
-                                {{^toSiteLink}}{{#toSite}}.{{/toSite}}{{^toSite}}-{{/toSite}}{{/toSiteLink}}
-                            </td>
-                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>
-                            <td>{{itemCount}}</td>
-                            <td>{{itemListTruncated}}</td>
-                        </tr>
-                        {{/outgoingDeliveries}}
-                    </tbody>
-                </table>
-            </div>
-            {{/hasOutgoingDeliveries}}
-        </div>
+<!--            <div class="table-container">-->
+<!--                <table class="delivery-table">-->
+<!--                    <thead>-->
+<!--                        <tr>-->
+<!--                            <th></th>-->
+<!--                            <th>Delivery Date</th>-->
+<!--                            <th>To</th>-->
+<!--                            <th>Status</th>-->
+<!--                            <th>Item Count</th>-->
+<!--                            <th>Items</th>-->
+<!--                        </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                        {{#outgoingDeliveries}}-->
+<!--                        <tr>-->
+<!--                            <td><a href="{{detailLink}}">[Details]</a></td>-->
+<!--                            <td>{{#deliveryDate}}{{.}}{{/deliveryDate}}</td>-->
+<!--                            <td>-->
+<!--                                {{#toSiteLink}}<a href="{{.}}">{{toSite}}</a>{{/toSiteLink}}-->
+<!--                                {{^toSiteLink}}{{#toSite}}.{{/toSite}}{{^toSite}}-{{/toSite}}{{/toSiteLink}}-->
+<!--                            </td>-->
+<!--                            <td>{{#deliveryStatus}}{{.}}{{/deliveryStatus}}</td>-->
+<!--                            <td>{{itemCount}}</td>-->
+<!--                            <td>{{itemListTruncated}}</td>-->
+<!--                        </tr>-->
+<!--                        {{/outgoingDeliveries}}-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--            {{/hasOutgoingDeliveries}}-->
+<!--        </div>-->
         {{/loggedIn}}
 
         <h2>
