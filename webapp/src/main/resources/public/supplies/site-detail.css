@@ -69,6 +69,8 @@ dd {
 .table-container {
     width: 100%;
     overflow-y: auto;
+    max-height: 80vh;
+    overflow-x: auto;
 }
 
 .inventory-table th,
@@ -135,6 +137,8 @@ table td {
     gap: 1rem;
     max-height: 85vh;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .matched-site {
@@ -168,7 +172,6 @@ table td {
 
 @media only screen and (max-width: 768px) {
     .mission-statement {
-        margin: 10px;
         width: 80%;
     }
 
