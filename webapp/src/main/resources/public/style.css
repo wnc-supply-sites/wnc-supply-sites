@@ -83,10 +83,6 @@ button {
     justify-content: space-between;
 }
 
-.justify-center {
-    justify-content: center;
-}
-
 .justify-around {
     justify-content: space-around;
 }
@@ -256,6 +252,14 @@ button {
     border: 1px solid red;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.text-md {
+    font-size: 1.25rem;
+}
+
 .text-lg {
     font-size: 1.5rem;
 }
@@ -278,6 +282,10 @@ button {
 
 .m-1 {
   margin: 10px;
+}
+
+.mt-5 {
+  margin-top: 5px;
 }
 
 .margin-top-10 {

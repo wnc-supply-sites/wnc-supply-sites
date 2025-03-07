@@ -243,65 +243,40 @@
         {{#loggedIn}}
         <a id="needs-matching"></a>
         <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
-        <div class="mission-statement">
-            <p>The below sites have supplies that are needed and can be transported to the current site.</p>
-            <div class="table-container">
-                <table class="needs-matching">
-                    <thead>
-                        <tr>
-                            <th>Site Name</th>
-                            <th>Distance</th>
-                            <th class="wider-column">Item</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#needsMatching}}
-                        <tr>
-                            <td class="padded align-top">
-                                <div class="vertical site-title">
-                                    <div class="bold site-name">
-                                        <a href="{{{siteLink}}}">{{siteName}}</a>
-                                    </div>
-                                    <div>{{siteAddress}}</div>
-                                    <div class="city-name">{{city}}</div>
-                                    <div>{{county}} county, {{state}}</div>
-                                    <div class="map">
-                                        <iframe
-                                            width="300"
-                                            height="300"
-                                            class="gmap_iframe"
-                                            src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
-                                        >
-                                        </iframe>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-top">
-                                {{#distanceMiles}}{{.}} miles{{/distanceMiles}}<br>
-                                {{#driveTime}}{{.}}{{/driveTime}}
-                            </td>
-                            <td class="align-top">
-                                <div class="center bold">
-                                    {{itemCount}} items
-                                </div>
-                                <div class="horizontal">
-                                    <ul>
-                                        {{#items1}}
-                                        <li class="{{urgencyCssClass}}">{{name}}</li>
-                                        {{/items1}}
-                                    </ul>
-                                    <ul>
-                                        {{#items2}}
-                                        <li class="{{urgencyCssClass}}">{{name}}</li>
-                                        {{/items2}}
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        {{/needsMatching}}
-                    </tbody>
-                </table>
+        <p style="margin-left: 30px">The below sites have supplies that are needed and can be transported to the current site.</p>
+
+        <div class="mission-statement" id="matched-sites">
+            {{#needsMatching}}
+            <div class="matched-site">
+                <div class="vertical flex-center flex-gap-3 text-center">
+                    <a href="{{siteLink}}"> <span class="text-md"> {{siteName}} </span> </a>
+                    <span> {{siteAddress}}, <span class="city-name">{{city}}</span> </span>
+                    <span> {{county}}, {{state}}  </span>
+                </div>
+
+                <div class="matched-site-info mt-3">
+                    <div class="matched-site-map">
+                        <span> Distance: {{#distanceMiles}} {{.}} Miles {{/distanceMiles}} ({{#driveTime}} {{.}} {{/driveTime}} ) </span>
+                        <iframe
+                            width="300"
+                            height="185"
+                            class="gmap_iframe"
+                            src="https://maps.google.com/maps?z=8&width=300&height=300&hl=en&q={{googleMapsAddress}}&ie=UTF8&iwloc=B&output=embed"
+                        >
+                        </iframe>
+                    </div>
+
+                    <div class="matched-site-items">
+                        <span>Items ({{itemCount}})</span>
+                        <ul class="items-list">
+                            {{#items}}
+                            <li class="{{urgencyCssClass}} mt-5">{{name}}</li>
+                            {{/items}}
+                        </ul>
+                    </div>
+                </div>
             </div>
+            {{/needsMatching}}
         </div>
         {{/loggedIn}}
     </body>

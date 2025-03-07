@@ -1,6 +1,11 @@
 html {
     /*padding: 15px;*/
 }
+
+.mission-statement {
+    width: 700px;
+}
+
 h2 {
     margin-left: 30px;
 }
@@ -124,4 +129,57 @@ table td {
 
 .content-container {
     margin-left: 30px;
+}
+
+#matched-sites {
+    gap: 1rem;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.matched-site {
+    background-color: #f5f5f5;
+    width: 100%;
+    border: solid #111;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.matched-site-info {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.matched-site-map {
+    flex: 2;
+}
+
+.matched-site-items {
+    flex: 1;
+}
+
+.items-list {
+    max-height: calc(300px - 1rem);
+    margin-top: 5px;
+    overflow: auto;
+    padding-inline-start: 30px;
+}
+
+@media only screen and (max-width: 768px) {
+    .mission-statement {
+        margin: 10px;
+        width: 80%;
+    }
+
+    .matched-site-info {
+        flex-direction: column;
+
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .mission-statement {
+        width: 100%;
+    }
 }
