@@ -198,45 +198,37 @@
             <span class="privately-visible">*</span>
             {{/loggedIn}}
         </h2>
-        <div class="mission-statement">
-            <div class="table-container">
-                <table class="inventory-table">
-                    <tr>
-                        <th>{{#hasNeeds}}Needs List{{/hasNeeds}}</th>
-                        <th>{{#hasAvailable}}Available List{{/hasAvailable}}</th>
-                    </tr>
-                    <tr>
-                        <td class="inventory-column">
-                            <div class="horizontal">
-                                <ul>
-                                {{#needsList1}}
-                                    <li><div class="{{displayClass}}">{{name}}</div></li>
-                                {{/needsList1}}
-                                </ul>
-                                <ul>
-                                {{#needsList2}}
-                                <li><div class="{{displayClass}}">{{name}}</div></li>
-                                {{/needsList2}}
-                                </ul>
-                            </div>
-                        </td>
-
-                        <td class="inventory-column">
-                            <div class="horizontal">
-                                <ul>
-                                    {{#availableList1}}
-                                    <li><div class="{{displayClass}}">{{name}}</div></li>
-                                    {{/availableList1}}
-                                </ul>
-                                <ul>
-                                    {{#availableList2}}
-                                    <li><div class="{{displayClass}}">{{name}}</div></li>
-                                    {{/availableList2}}
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+        <fieldset class="mission-statement" id="inventory-filter">
+            <legend> Filter Inventory: </legend>
+            <div class="m-1">
+                <input onclick="selectInventoryList('needs')" type="radio" id="needed" name="inventory-list" value="needs" checked>
+                <label for="needed">Needed Items</label><br>
+            </div>
+            <div class="m-1">
+                <input onclick="selectInventoryList('available')" type="radio" id="available" name="inventory-list" value="available">
+                <label for="available">Available Items</label><br>
+            </div>
+        </fieldset>
+        <div class="mission-statement" id="site-inventory">
+            <div class="site-items-container" id="site-items-needs">
+                <h3> Needed Items ({{needsItemsCt}}): </h3>
+                <ul>
+                    {{#needsList}}
+                    <li class="{{displayClass}}" data-value="{{name}}">
+                    {{name}}
+                    </li>
+                    {{/needsList}}
+                </ul>
+            </div>
+            <div class="site-items-container hidden" id="site-items-available">
+                <h3> Available Items ({{availableItemsCt}}): </h3>
+                <ul>
+                    {{#availableList}}
+                    <li class="{{displayClass}}" data-value="{{name}}">
+                        {{name}}
+                    </li>
+                    {{/availableList}}
+                </ul>
             </div>
         </div>
 
@@ -281,5 +273,10 @@
             </div>
         </div>
         {{/loggedIn}}
+
+    <script>
+        addHeaderToItemsList(document.getElementById('site-items-needs'));
+        addHeaderToItemsList(document.getElementById('site-items-available'));
+    </script>
     </body>
 </html>

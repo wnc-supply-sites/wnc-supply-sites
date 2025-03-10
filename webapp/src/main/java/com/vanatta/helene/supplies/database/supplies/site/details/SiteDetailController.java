@@ -17,6 +17,7 @@ import com.vanatta.helene.supplies.database.util.ListSplitter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +65,14 @@ public class SiteDetailController {
     ADDITIONAL_CONTACTS("additionalContacts"),
 
     HAS_NEEDS("hasNeeds"),
+    NEEDS_LIST("needsList"),
+    NEEDS_ITEMS_CT("needsItemsCt"),
     NEEDS_LIST1("needsList1"),
     NEEDS_LIST2("needsList2"),
 
     HAS_AVAILABLE("hasAvailable"),
+    AVAILABLE_ITEMS_CT("availableItemsCt"),
+    AVAILABLE_LIST("availableList"),
     AVAILABLE_LIST1("availableList1"),
     AVAILABLE_LIST2("availableList2"),
 
@@ -200,12 +205,18 @@ public class SiteDetailController {
             SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build(),
             stateList,
             deploymentId);
+
     List<InventoryItem> needs =
         supplies.stream()
             .filter(i -> i.getItem() != null)
             .filter(i -> ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
             .map(InventoryItem::new)
+            .sorted(Comparator.comparing(InventoryItem::getName))
             .toList();
+
+    siteDetails.put(TemplateParams.NEEDS_LIST.text, needs);
+    siteDetails.put(TemplateParams.NEEDS_ITEMS_CT.text, needs.size());
+
     List<List<InventoryItem>> needsSplit = ListSplitter.splitItemList(needs, 8);
     siteDetails.put(TemplateParams.NEEDS_LIST1.text, needsSplit.getFirst());
     siteDetails.put(
@@ -217,7 +228,12 @@ public class SiteDetailController {
             .filter(i -> i.getItem() != null)
             .filter(i -> !ItemStatus.fromTextValue(i.getItemStatus()).isNeeded())
             .map(InventoryItem::new)
+            .sorted(Comparator.comparing(InventoryItem::getName))
             .toList();
+
+    siteDetails.put(TemplateParams.AVAILABLE_LIST.text, available);
+    siteDetails.put(TemplateParams.AVAILABLE_ITEMS_CT.text, available.size());
+
     List<List<InventoryItem>> availableSplit = ListSplitter.splitItemList(available, 8);
     siteDetails.put(TemplateParams.AVAILABLE_LIST1.text, availableSplit.getFirst());
     siteDetails.put(
