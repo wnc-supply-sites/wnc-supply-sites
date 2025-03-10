@@ -45,7 +45,7 @@
   {{#driverDeliveries}}
   <div class="vertical route-container m-1 p-1" data-route-status="{{deliveryStatus}}">
     <div class="w-full bold horizontal justify-between">
-      <span class="route-title"><a href="{{fromSiteLink}}">{{fromSite}}, {{fromState}} </a> </span>  <span>&rarr;</span> <span class="route-title text-align-start"> <a href="{{toSiteLink}}">{{toSite}}, {{toState}}</a> </span>
+      <span class="route-title"><a href="{{#fromSiteLink}}{{.}}{{/fromSiteLink}}">{{#fromSite}} {{.}} {{/fromSite}}, {{#fromState}} {{.}} {{/fromState}}</a> </span>  <span>&rarr;</span> <span class="route-title text-align-start"> <a href="{{#toSiteLink}}{{.}}{{/toSiteLink}}">{{#toSite}} {{.}} {{/toSite}}, {{#toState}} {{.}} {{/toState}}</a> </span>
     </div>
     <div class="vertical flex-gap-3 margin-top-10">
       <div>
@@ -57,10 +57,12 @@
         {{/deliveryDate}}
       </div>
       <div>
-        <span class="bold">Status:</span> {{deliveryStatus}}
+        <span class="bold">Status:</span> {{#deliveryStatus}}{{.}}{{/deliveryStatus}}
       </div>
       <div>
-         <a href="{{detailLink}}" class="no-text-deco w-full"><button class="w-full"> View Route details </button></a>
+        {{#detailLink}}
+          <a href="{{.}}" class="no-text-deco w-full"><button class="w-full"> View Route details </button></a>
+        {{/detailLink}}
       </div>
     </div>
   </div>
