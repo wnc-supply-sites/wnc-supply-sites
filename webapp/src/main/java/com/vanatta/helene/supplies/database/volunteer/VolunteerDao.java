@@ -2,7 +2,7 @@ package com.vanatta.helene.supplies.database.volunteer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import java.util.List;
 public class VolunteerDao {
 
 
-  static List<Site> fetchSites(Jdbi jdbi, List<String>states) {
+  static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String>states) {
     return jdbi.withHandle(
         handle ->
             handle
                 .createQuery(
             """
-                select s.id, s.name, c.name as countyName, c.state
+                select s.id, s.name, c.name as county, c.state
                 from site s
                 join county c on c.id = s.county_id
                 where
@@ -28,8 +28,10 @@ public class VolunteerDao {
                 order by lower(s.name)
                 """)
                 .bindList("states", states)
-                .mapToBean(Site.class)
+                .mapToBean(SiteSelect.class)
                 .list());
   }
+
+
 
 }
