@@ -1,8 +1,10 @@
-package com.vanatta.helene.supplies.database.volunteer.delivery;
+package com.vanatta.helene.supplies.database.volunteer;
 
 import com.vanatta.helene.supplies.database.DeploymentAdvice;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +28,25 @@ public class VolunteerController {
     return deliveryForm(jdbi, states);
   }
 
-  public static ModelAndView deliveryForm(Jdbi jdbi, List<String> states) {
-    Map<String, Object> pageParams = new HashMap<>();
-    pageParams.put("state", states);
-    return new ModelAndView("volunteer/delivery/deliveryForm", pageParams);
+  @Builder
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class Site {
+    Long id;
+    String name;
+    String countyName;
+    String state;
   }
 
+  public static ModelAndView deliveryForm(Jdbi jdbi, List<String> states) {
+    Map<String, Object> pageParams = new HashMap<>();
 
+    List<Site> sites = VolunteerDao.fetchSites(jdbi, states);
 
+    pageParams.put("sites", sites);
 
+    return new ModelAndView("volunteer/delivery-form", pageParams);
+  }
 
 }

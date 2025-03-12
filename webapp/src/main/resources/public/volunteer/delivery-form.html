@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="delivery-form.css">
+  <title>Document</title>
+  {{> header-include }}
+</head>
+<body>
+  {{> header }}
+  <div class="page-sub-header horizontal">
+    <div class="back-link">
+      <a href="/">[&larr; Go Back]</a>
+    </div>
+    <span class="page-title-sub-header">Search</span>
+  </div>
+
+  <main>
+    <form>
+      <h1> Volunteer Form: Delivery </h1>
+
+      <section>
+        <h2> Site </h2>
+        <div class="vertical">
+          <label for="site-select"> Select your site: </label>
+          <select name="site" id="site-select">
+            {{#sites}}
+              <option value="{{id}}"> {{name}}, {{countyName}}, {{State}} </option>
+            {{/sites}}
+          </select>
+          <span> Site Address: 123 Main street </span>
+        </div>
+      </section>
+
+      <section>
+        <h2> Contact Info </h2>
+        <div class="horizontal">
+          <label for="name-input"> Name: </label>
+          <input type="text" id="name-input"/>
+        </div>
+
+        <div class="horizontal">
+          <label for="contact-input"> Phone Number: </label>
+          <input type="text" id="contact-input" />
+        </div>
+      </section>
+
+      <section>
+        <h2> Items </h2>
+        <div style="display: flex; flex-direction: row; gap: 1rem">
+          <div style="height: 10rem; border: 2px solid red">
+            Container for Needed Items
+          </div>
+          <div style="height: 10rem; border: 2px solid red">
+            Container for selected items
+          </div>
+        </div>
+      </section>
+
+      <section style="display: flex; flex-direction: row-reverse">
+        <button type="submit"> Submit </button>
+      </section>
+    </form>
+
+    <div class="instructions">
+
+    </div>
+  </main>
+
+
+</body>
+</html>
