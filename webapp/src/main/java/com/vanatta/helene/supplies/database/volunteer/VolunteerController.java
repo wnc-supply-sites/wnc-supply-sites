@@ -70,7 +70,6 @@ public class VolunteerController {
     List<SiteSelect> sites = VolunteerDao.fetchSiteSelect(jdbi, states);
 
     pageParams.put("sites", sites);
-    System.out.println(sites);
     return new ModelAndView("volunteer/delivery-form", pageParams);
   }
 
