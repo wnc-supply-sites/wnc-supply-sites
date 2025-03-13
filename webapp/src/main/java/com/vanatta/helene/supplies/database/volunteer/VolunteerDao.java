@@ -38,7 +38,7 @@ public class VolunteerDao {
   static Site fetchSiteItems(Jdbi jdbi, Long siteId) {
     return  jdbi.withHandle(handle -> {
           Site site = handle.createQuery("""
-                select s.id, s.name, c.name as county, c.state
+                select s.id, s.name, s.address ,c.name as county, c.state
                 from site s
                 join county c on c.id = s.county_id
                 where
