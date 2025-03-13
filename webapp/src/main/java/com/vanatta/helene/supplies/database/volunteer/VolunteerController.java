@@ -48,6 +48,7 @@ public class VolunteerController {
   @AllArgsConstructor
   @NoArgsConstructor
   public static class Site {
+    Long id;
     String name;
     String address;
     String county;
@@ -74,13 +75,10 @@ public class VolunteerController {
   }
 
   /** Return json payload of site info */
-
   @GetMapping("/volunteer/site-items")
   ResponseEntity<?> getSiteItems(@RequestParam String siteId) {
-    log.info("Get site info request received: {}", siteId);
-    return ResponseEntity.ok().body("received");
+    Site site = VolunteerDao.fetchSiteItems(jdbi, Long.parseLong(siteId));
+    return ResponseEntity.ok(Map.of("site", site));
   }
-
-
 
 }
