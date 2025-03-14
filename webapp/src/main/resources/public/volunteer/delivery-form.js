@@ -13,10 +13,23 @@ function updateNeededItemsList (items) {
         child.remove();
     }
     for(const item of items) {
-        let listItem = document.createElement("li");
-        listItem.textContent = item.name;
-        listItem.value = item.name;
-        neededItemsList.appendChild(listItem);
+        let itemContainer = document.createElement("div");
+
+        let listItem = document.createElement("input");
+        listItem.type = "checkbox"
+        listItem.name = "neededItem"
+        listItem.value = item.id;
+        listItem.id = item.id;
+
+        let itemLabel = document.createElement("label");
+        itemLabel.for = item.id;
+        itemLabel.textContent = item.name;
+
+
+
+        itemContainer.appendChild(listItem);
+        itemContainer.appendChild(itemLabel);
+        neededItemsList.appendChild(itemContainer);
     }
 }
 
