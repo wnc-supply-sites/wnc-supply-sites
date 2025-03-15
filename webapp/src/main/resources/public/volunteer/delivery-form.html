@@ -25,7 +25,7 @@
         <h2> Site </h2>
         <div class="vertical">
           <label for="site-select"> Select your site: </label>
-          <select name="site" id="site-select">
+          <select name="site" id="site-select" required>
             {{#sites}}
               <option value="{{id}}"> {{name}}, {{countyName}}, {{State}} </option>
             {{/sites}}
@@ -38,12 +38,12 @@
         <h2> Contact Info </h2>
         <div class="horizontal">
           <label for="name-input"> Name: </label>
-          <input type="text" id="name-input" name="volunteer-name"/>
+          <input type="text" id="name-input" name="volunteer-name" required/>
         </div>
 
         <div class="horizontal">
           <label for="contact-input"> Phone Number: </label>
-          <input type="text" id="contact-input" name="volunteer-contact"/>
+          <input type="text" id="contact-input" name="volunteer-contact" required/>
         </div>
       </section>
 

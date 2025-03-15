@@ -27,6 +27,14 @@ public class VolunteerDao {
                 s.publicly_visible
                 and
                 s.active
+                and exists (
+                  select 1
+                  from site_item si
+                  join item_status ist on si.item_status_id = ist.id
+                  Where 
+                  si.site_id = s.id 
+                  and 
+                  ist.is_need = true)
                 order by lower(s.name)
                 """)
                 .bindList("states", states)
