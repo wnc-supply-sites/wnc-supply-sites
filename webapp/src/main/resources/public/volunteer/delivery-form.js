@@ -55,6 +55,7 @@ function addSelectedItem(name, id) {
     selectedItem.id = `selected-${id}`;
     selectedItem.dataset.itemName = name;
 
+    // Build the remove button and item name
     const removeSelectionButton = document.createElement("button");
     removeSelectionButton.type = "button";
     removeSelectionButton.dataset.itemId = id;
@@ -84,6 +85,7 @@ function addSelectedItem(name, id) {
 }
 
 function handleItemSelect(element) {
+    // If item was checked add selected item, if it was unchecked remove
     if (element.checked) {
         addSelectedItem(element.dataset.name, element.value);
     } else {
@@ -101,6 +103,27 @@ function clearSelectedItems() {
     while (selectedItems.firstChild) selectedItems.removeChild(selectedItems.firstChild)
 }
 
+/** Form Submission */
+function handleFormSubmission(event) {
+    event.preventDefault();
+    console.log(event);
+    const formData = new FormData(event.target);
+
+    const dataObject = {};
+
+    for (const [key, value] of formData.entries()) {
+        if (dataObject[key]) {
+            dataObject[key] = [].concat(dataObject[key], value);
+        } else {
+            dataObject[key] = value;
+        }
+    }
+
+
+    console.log(dataObject);
+}
+
+
 /** API requests */
 async function fetchSiteData (siteId) {
     const response = await fetch(`/volunteer/site-items?siteId=${siteId}`);
@@ -110,15 +133,23 @@ async function fetchSiteData (siteId) {
 
 /** On Load */
 function instantiateEventListeners() {
+
+    // Updates site data when site is selected
     const siteSelect = document.getElementById("site-select");
     siteSelect.addEventListener("change", (e) => {
         updateSelectedSiteData(e.target.value)
     });
 
+    // Updates the selected item list when a needed item is selected
     const neededItemsList = document.getElementById("needed-items");
     neededItemsList.addEventListener("change", (e) => {
         handleItemSelect(e.target);
     });
+
+
+    // Handle form submission
+    const form = document.getElementById("volunteer-delivery-form");
+    form.addEventListener("submit", handleFormSubmission)
 }
 
 window.addEventListener("load", () => {
