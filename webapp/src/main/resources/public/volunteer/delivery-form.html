@@ -24,25 +24,25 @@
 
       <section>
         <h2> Site </h2>
-        <div class="vertical">
+        <div class="form-input">
           <label for="site-select"> Select your site: </label>
           <select name="site" id="site-select" required>
             {{#sites}}
               <option value="{{id}}"> {{name}} </option>
             {{/sites}}
           </select>
-          <span id="selected-site-address"> Site Address: 123 Main street </span>
         </div>
+        <span id="selected-site-address"> Site Address: 123 Main street </span>
       </section>
 
       <section>
         <h2> Contact Info </h2>
-        <div class="horizontal">
+        <div class="form-input">
           <label for="name-input"> Name: </label>
           <input type="text" id="name-input" name="volunteer-name" required/>
         </div>
 
-        <div class="horizontal">
+        <div class="form-input">
           <label for="contact-input"> Phone Number: </label>
           <input type="text" id="contact-input" name="volunteer-contact" required/>
         </div>
@@ -50,7 +50,7 @@
 
       <section>
         <h2> Items </h2>
-        <div style="display: flex; flex-direction: row; gap: 1rem">
+        <div class="items">
           <div class="items-container">
             <h4> Needed Items </h4>
             <div id="needed-items">
