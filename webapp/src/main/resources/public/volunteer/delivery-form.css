@@ -5,10 +5,15 @@ main {
     flex-direction: row;
 }
 
-main form {
+h2 {
+    margin-left: 0px;
+    margin-bottom: 0px;
+}
+
+#volunteer-delivery-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     flex: 2;
 }
 
@@ -65,6 +70,55 @@ main form {
     height: 100%;
 }
 
-h2 {
-    margin-left: 0px;
+.items {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.form-input {
+    display: flex;
+    flex-direction: column;
+    margin-top: .5rem;
+    gap: .5rem;
+}
+
+@media only screen and (max-width: 768px) {
+    .instructions-wrapper {
+        display: none;
+    }
+
+    .items-container {
+        height: 10rem;
+    }
+
+    .items-container {
+        flex: none;
+        padding: .5rem;
+    }
+
+    #needed-items {
+        padding: .5rem;
+    }
+
+    #selected-items {
+        padding: .5rem;
+    }
+
+    #volunteer-delivery-form {
+        flex: 1;
+        width: 100%;
+    }
+
+    .form-input {
+        gap: .25rem;
+    }
+
+    .items {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+
 }

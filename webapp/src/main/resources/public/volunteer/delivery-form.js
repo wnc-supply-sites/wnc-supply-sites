@@ -5,9 +5,12 @@
 *    - Update Items list
 *    - Remove selected items from selected items list
 */
-function updateSiteAddress (address, county, state) {
-    const siteAddress = document.getElementById("selected-site-address");
-    siteAddress.textContent = `Site Address: ${address}, ${county}, ${state}`;
+
+async function updateSelectedSiteData (siteId) {
+    const siteData = await fetchSiteData(siteId);
+    updateSiteAddress(siteData.site.address, siteData.site.county, siteData.site.state);
+    updateNeededItemsList(siteData.site.items);
+    clearSelectedItems();
 }
 
 function updateNeededItemsList (items) {
@@ -36,12 +39,11 @@ function updateNeededItemsList (items) {
     }
 }
 
-async function updateSelectedSiteData (siteId) {
-    const siteData = await fetchSiteData(siteId);
-    updateSiteAddress(siteData.site.address, siteData.site.county, siteData.site.state);
-    updateNeededItemsList(siteData.site.items);
-    clearSelectedItems();
+function updateSiteAddress (address, county, state) {
+    const siteAddress = document.getElementById("selected-site-address");
+    siteAddress.textContent = `Site Address: ${address}, ${county}, ${state}`;
 }
+
 
 function addSelectedItem(name, id) {
     const itemsContainer = document.getElementById("selected-items");
@@ -118,7 +120,6 @@ function handleFormSubmission(event) {
             dataObject[key] = value;
         }
     }
-
 
     console.log(dataObject);
 }
