@@ -5,10 +5,7 @@
         <link rel="stylesheet" href="../style.css" />
         <link rel="stylesheet" href="site-detail.css" />
         <link rel="stylesheet" href="../mobile.css" />
-        <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
-        />
+        <script src="https://kit.fontawesome.com/e1873995ee.js" crossorigin="anonymous"></script>
         {{> header-include }}
     </head>
 
@@ -22,30 +19,28 @@
             <span class="page-title-sub-header">{{siteName}}</span>
         </div>
 
+
         <div class="mission-statement">
-            <dl class="w-full overflow-auto">
+            <h1 id="site-name"> {{siteName}} </h1>
+            <div class="socials-container">
                 {{#website}}
-                <dt>Website: </dt>
-                <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
-                {{/website}} {{#facebook}}
-                <dt>Facebook: </dt>
-                <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
+                    <a href="{{href}}"><i class="fa-solid fa-globe"></i> Website</a>
+                {{/website}}
+
+                {{#facebook}}
+                    <a href="{{href}}"><i class="fa-brands fa-facebook"></i> Facebook </a>
                 {{/facebook}}
 
-                <dt>Address: </dt>
-                <dd class="detail-value">
-                    {{addressLine1}}<br />{{addressLine2}}
-                </dd>
+            </div>
+        </div>
 
-                {{#hours}}
-                <dt>Hours: </dt>
-                <dd class="detail-value">
-                    <textarea rows="5" cols="20" readonly>{{.}}</textarea>
-                </dd>
-                {{/hours}}
-            </dl>
-
-            <hr />
+        <div class="mission-statement">
+            <div id="site-address">
+                <span class="detail-value">
+                    <i class="fa-solid fa-location-dot" style="color: #63E6BE;"></i>
+                    {{addressLine1}}, {{addressLine2}}
+                </span>
+            </div>
             <div class="mapouter">
                 <div class="gmap_canvas">
                     <iframe
@@ -58,6 +53,12 @@
                     >
                     </iframe>
                 </div>
+            </div>
+            <div style="display: flex; flex-direction: column; width: 100%; justify-content: left">
+                {{#hours}}
+                <label for="site-hours">Hours: </label>
+                <textarea rows="5" cols="20" id="site-hours" readonly>{{.}}</textarea>
+                {{/hours}}
             </div>
         </div>
 
@@ -234,8 +235,10 @@
 
         {{#loggedIn}}
         <a id="needs-matching"></a>
+
         <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
-        <p style="margin-left: 30px; margin-top: 0px; margin-bottom: 0px">The below sites have supplies that are needed and can be transported to the current site.</p>
+        <p class="header-subtext">The below sites have supplies that are needed and can be transported to the current site.</p>
+
 
         <div class="mission-statement">
             <div id="matched-sites">
