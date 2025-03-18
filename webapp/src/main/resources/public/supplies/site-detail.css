@@ -248,7 +248,15 @@ table td {
     display: flex;
     flex-direction: column;
     width: 100%;
-    justify-content: left
+    justify-content: left;
+    overflow-y: auto;
+}
+
+.contact {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    margin-top: 1rem;
 }
 
 @media only screen and (max-width: 768px) {
@@ -282,8 +290,6 @@ table td {
     #site-address {
         font-size: larger
     }
-
-
 }
 
 @media only screen and (max-width: 480px) {
@@ -298,4 +304,6 @@ table td {
     #site-address {
         font-size: large
     }
+
+
 }

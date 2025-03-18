@@ -64,29 +64,30 @@
 
         {{#loggedIn}}
         <div>
-            <div class="privately-visible header-subtext">
-                * Indicates field is visible because you are logged in
-            </div>
             <h2>
                 Contacts
                 <span class="privately-visible">*</span>
                 {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
             </h2>
+            <div class="privately-visible header-subtext">
+                * Indicates field is visible because you are logged in
+            </div>
         </div>
 
+
         <div class="mission-statement">
-            <dl class="w-full overflow-auto">
-                <dt><i class="fa-solid fa-phone" style="margin-right: .5rem"></i>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}:</dt>
-                <dd class="detail-value bold">
-                    {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}}
-                </dd>
+            <div class="site-detail">
+                <div class="contact">
+                    <div><i class="fa-solid fa-phone" style="margin-right: .5rem"></i> {{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}: </div>
+                    <div class="detail-value bold"> {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}} </div>
+                </div>
                 {{#additionalContacts}}
-                <dt><i class="fa-solid fa-phone" style="margin-right: .5rem"></i>{{#name}}{{.}}{{/name}}:</dt>
-                <dd class="detail-value bold">
-                    {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}}
-                </dd>
+                <div class="contact">
+                    <div><i class="fa-solid fa-phone" style="margin-right: .5rem"></i> {{#name}} {{.}} {{/name}}: </div>
+                    <div class="detail-value bold"> {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}} </div>
+                </div>
                 {{/additionalContacts}}
-            </dl>
+            </div>
         </div>
 
         <h2>
@@ -96,17 +97,16 @@
         </h2>
 
         <div class="mission-statement">
-            {{#receivingNotes}}
             <div class="site-detail">
+                <span> Max Supply Load: <span class="detail-value"> {{maxSupplyLoad}} </span></span>
+            </div>
+            {{#receivingNotes}}
+            <div class="site-detail" style="margin-top: 1rem;">
                 <label for="receiving-notes" class="hidden">Receiving Notes: </label>
                 <textarea rows="5" cols="20" id="receiving-notes" readonly>{{.}}</textarea>
             </div>
             {{/receivingNotes}}
-            <div class="site-detail" style="margin-top: 1rem;">
-                <span> Max Supply Load: <span class="detail-value"> {{maxSupplyLoad}} </span></span>
-            </div>
         </div>
-
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
 
