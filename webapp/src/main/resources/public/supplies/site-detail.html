@@ -54,35 +54,34 @@
                     </iframe>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: column; width: 100%; justify-content: left">
+            <div class="site-detail">
                 {{#hours}}
-                <label for="site-hours">Hours: </label>
+                <label for="site-hours" class="hidden">Hours: </label>
                 <textarea rows="5" cols="20" id="site-hours" readonly>{{.}}</textarea>
                 {{/hours}}
             </div>
         </div>
 
         {{#loggedIn}}
-
-        <h2>
-            Contact
-            <span class="privately-visible">*</span>
-            {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
-        </h2>
-        <div class="mission-statement">
-            <div class="privately-visible">
+        <div>
+            <div class="privately-visible header-subtext">
                 * Indicates field is visible because you are logged in
             </div>
+            <h2>
+                Contacts
+                <span class="privately-visible">*</span>
+                {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
+            </h2>
         </div>
 
         <div class="mission-statement">
             <dl class="w-full overflow-auto">
-                <dt>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}</dt>
+                <dt><i class="fa-solid fa-phone" style="margin-right: .5rem"></i>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}:</dt>
                 <dd class="detail-value bold">
                     {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}}
                 </dd>
                 {{#additionalContacts}}
-                <dt>{{#name}}{{.}}{{/name}}</dt>
+                <dt><i class="fa-solid fa-phone" style="margin-right: .5rem"></i>{{#name}}{{.}}{{/name}}:</dt>
                 <dd class="detail-value bold">
                     {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}}
                 </dd>
@@ -95,21 +94,17 @@
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editReceivingLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
-        <div class="mission-statement" >
-            <dl class="w-full overflow-auto">
-                {{#receivingNotes}}
-                <dt>Receiving Notes: </dt>
-                <dd class="detail-value">
-                    <textarea rows="5" cols="20" readonly>{{.}}</textarea>
-                </dd>
-                {{/receivingNotes}}
 
-                <dt>Max Supply Load: </dt>
-                <dd class="detail-value">
-                    {{maxSupplyLoad}}
-                </dd>
-
-            </dl>
+        <div class="mission-statement">
+            {{#receivingNotes}}
+            <div class="site-detail">
+                <label for="receiving-notes" class="hidden">Receiving Notes: </label>
+                <textarea rows="5" cols="20" id="receiving-notes" readonly>{{.}}</textarea>
+            </div>
+            {{/receivingNotes}}
+            <div class="site-detail" style="margin-top: 1rem;">
+                <span> Max Supply Load: <span class="detail-value"> {{maxSupplyLoad}} </span></span>
+            </div>
         </div>
 
 

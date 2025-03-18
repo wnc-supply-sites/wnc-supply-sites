@@ -4,6 +4,7 @@ html {
 
 .mission-statement {
     width: 700px;
+    padding: 20px;
 }
 
 h2 {
@@ -241,6 +242,13 @@ table td {
     margin-left: 30px;
     margin-top: 0px;
     margin-bottom: 0px
+}
+
+.site-detail {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: left
 }
 
 @media only screen and (max-width: 768px) {
