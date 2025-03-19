@@ -4,10 +4,12 @@ html {
 
 .mission-statement {
     width: 700px;
+    padding: 20px;
 }
 
 h2 {
     margin-left: 30px;
+    margin-top: 2rem;
 }
 
 dl {
@@ -98,9 +100,20 @@ table td {
     transform: scaleX(-1);
 }
 
-.site-name {
+#site-name {
     margin-bottom: 3px;
-    font-size: 1.05em;
+    font-size: xx-large;
+}
+
+#site-hours {
+    width: 100%;
+}
+
+#site-address {
+    text-align: start;
+    width: 100%;
+    margin: 1rem .5rem 1rem .5rem;
+    font-size: x-large
 }
 
 .city-name {
@@ -215,8 +228,35 @@ table td {
     width: 90%;
 }
 
+.socials-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: .5rem;
+}
+
 .hidden {
     display: none;
+}
+
+.header-subtext {
+    margin-left: 30px;
+    margin-top: 0px;
+    margin-bottom: 0px
+}
+
+.site-detail {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: left;
+    overflow-y: auto;
+}
+
+.contact {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    margin-top: 1rem;
 }
 
 @media only screen and (max-width: 768px) {
@@ -233,10 +273,37 @@ table td {
         flex-direction: column;
         align-items: start;
     }
+
+    h2 {
+        margin-left: 20px;
+    }
+
+    .header-subtext {
+        margin-left: 20px;
+    }
+
+
+    #site-name {
+        font-size: x-large;
+    }
+
+    #site-address {
+        font-size: larger
+    }
 }
 
 @media only screen and (max-width: 480px) {
     .mission-statement {
         width: 100%;
     }
+
+    #site-name {
+        font-size: larger;
+    }
+
+    #site-address {
+        font-size: large
+    }
+
+
 }
