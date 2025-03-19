@@ -2,7 +2,11 @@
 main {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    justify-content: center;
+}
+
+input, select {
+    height: 2rem;
 }
 
 h2 {
@@ -10,11 +14,16 @@ h2 {
     margin-bottom: 0px;
 }
 
+section h2 {
+    margin-bottom: .5rem;
+}
+
 #volunteer-delivery-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    flex: 2;
+    width: 75%;
+    padding: 2rem;
 }
 
 .instructions {
@@ -23,7 +32,7 @@ h2 {
 
 .items-container {
     background-color: #e3e3e3;
-    border-radius: 20px;
+    border-radius: 10px;
     height: 20rem;
     border: 2px solid black;
     padding: 1rem 1rem 1rem 1rem;
@@ -36,6 +45,12 @@ h2 {
     margin-top : 0px;
     margin-bottom: .5rem;
 }
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+}
+
 
 #needed-items {
     flex: 1;
@@ -76,11 +91,15 @@ h2 {
     gap: 1rem;
 }
 
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
 .form-input {
     display: flex;
     flex-direction: column;
-    margin-top: .5rem;
-    gap: .5rem;
 }
 
 @media only screen and (max-width: 768px) {
