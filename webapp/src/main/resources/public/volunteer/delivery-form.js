@@ -21,6 +21,7 @@ function updateNeededItemsList (items) {
 
     for(const item of items) {
         let itemContainer = document.createElement("div");
+        itemContainer.classList.add("checkbox-container");
 
         let listItem = document.createElement("input");
         listItem.type = "checkbox"

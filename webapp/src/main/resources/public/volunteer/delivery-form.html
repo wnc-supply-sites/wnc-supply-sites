@@ -15,7 +15,7 @@
     <div class="back-link">
       <a href="/">[&larr; Go Back]</a>
     </div>
-    <span class="page-title-sub-header">Search</span>
+    <span class="page-title-sub-header">Form</span>
   </div>
 
   <main>
@@ -24,27 +24,32 @@
 
       <section>
         <h2> Site </h2>
-        <div class="form-input">
-          <label for="site-select"> Select your site: </label>
-          <select name="site" id="site-select" required>
-            {{#sites}}
-              <option value="{{id}}"> {{name}} </option>
-            {{/sites}}
-          </select>
+        <div class="inputs">
+          <div class="form-input">
+            <label for="site-select"> Select your site: </label>
+            <select name="site" id="site-select" required>
+              {{#sites}}
+                <option value="{{id}}"> {{name}} </option>
+              {{/sites}}
+            </select>
+          </div>
         </div>
         <span id="selected-site-address"> Site Address: 123 Main street </span>
       </section>
 
       <section>
         <h2> Contact Info </h2>
-        <div class="form-input">
-          <label for="name-input"> Name: </label>
-          <input type="text" id="name-input" name="volunteer-name" required/>
-        </div>
 
-        <div class="form-input">
-          <label for="contact-input"> Phone Number: </label>
-          <input type="text" id="contact-input" name="volunteer-contact" required/>
+        <div class="inputs">
+          <div class="form-input">
+            <label for="name-input"> Name: </label>
+            <input type="text" id="name-input" name="volunteer-name" required/>
+          </div>
+
+          <div class="form-input">
+            <label for="contact-input"> Phone Number: </label>
+            <input type="text" id="contact-input" name="volunteer-contact" required/>
+          </div>
         </div>
       </section>
 
@@ -68,12 +73,6 @@
         <button type="submit"> Submit </button>
       </section>
     </form>
-
-    <div class="instructions-wrapper">
-      <div class="instructions">
-        Instructions
-      </div>
-    </div>
   </main>
   <script>
 
