@@ -5,14 +5,17 @@ import org.jdbi.v3.core.Jdbi;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Item;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.DeliveryForm;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 
 import java.util.List;
 
 @Slf4j
 public class VolunteerDao {
 
-
   static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String>states) {
+    // todo: Write test
+
     return jdbi.withHandle(
         handle ->
             handle
@@ -44,6 +47,8 @@ public class VolunteerDao {
 
 
   static Site fetchSiteItems(Jdbi jdbi, Long siteId) {
+    // todo: Write test
+
     return  jdbi.withHandle(handle -> {
           Site site = handle.createQuery("""
                 select s.id, s.name, s.address ,c.name as county, c.state
@@ -80,6 +85,68 @@ public class VolunteerDao {
           site.setItems(items);
           return site;
     });
+  }
+
+  static Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm form) {
+    // todo: Write test
+
+    // Create Delivery
+    String insertDelivery = """
+          INSERT INTO volunteer_delivery (
+            volunteer_name,
+            volunteer_phone,
+            site_id,
+            url_key
+          ) values (
+            :volunteerName,
+            :volunteerPhone,
+            :siteId,
+            :URLKey
+          )
+        """;
+
+    try {
+      long deliveryId = jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(insertDelivery)
+                  .bind("volunteerName", form.getVolunteerName())
+                  .bind("volunteerPhone", form.getVolunteerContact())
+                  .bind("siteId", Integer.parseInt(form.getSite()))
+                  .bind("URLKey", form.getUrlKey())
+                  .executeAndReturnGeneratedKeys("id")
+                  .mapTo(Long.class)
+                  .one()
+      );
+      log.info("Creating Volunteer Delivery in DB: {}", deliveryId);
+
+      // Create Delivery Item
+      String insertItem = """
+                        INSERT INTO volunteer_delivery_item (
+                          site_item_id,
+                          volunteer_delivery_id
+                        ) VALUES (
+                          :site_item_id,
+                          :volunteerDeliveryId
+                        )
+                        """;
+
+      for (Long itemId : form.getNeededItems()) {
+        jdbi.withHandle(
+            handle ->
+                handle
+                    .createUpdate(insertItem)
+                    .bind("site_item_id", itemId)
+                    .bind("volunteerDeliveryId", deliveryId)
+                    .execute()
+        );
+      }
+
+      return deliveryId;
+    } catch (UnableToExecuteStatementException e) {
+      log.error(e.getMessage());
+      throw e;
+    }
   }
 
 }

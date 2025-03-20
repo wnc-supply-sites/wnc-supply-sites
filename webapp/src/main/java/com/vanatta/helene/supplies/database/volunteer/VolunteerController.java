@@ -1,6 +1,7 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
 import com.vanatta.helene.supplies.database.DeploymentAdvice;
+import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -64,6 +65,7 @@ public class VolunteerController {
     String site;
     String volunteerContact;
     String volunteerName;
+    String urlKey;
   }
 
   /** Users will be shown a form to request to make a delivery */
@@ -92,11 +94,21 @@ public class VolunteerController {
 
   /** Adds volunteer request to DB */
   @PostMapping("/volunteer/delivery")
-  ResponseEntity<String> submitDeliveryForm(@RequestBody DeliveryForm request) {
+  ResponseEntity<String> submitDeliveryRequest(@RequestBody DeliveryForm request) {
     // todo: Add logging for when adding delivery
     log.info("Received delivery request for site: {}", request.site);
-    String url_key = generateUrlKey();
-    log.info("Generated URL KEY for volunteer delivery: {}", url_key);
+
+    // Make sure the phone number is properly formatted
+    request.volunteerContact = String.join("", request.volunteerContact.split("-"));
+
+    // Add urlKey
+    request.urlKey = generateUrlKey();
+
+
+    Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(jdbi, request);
+
+    log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
+
     return ResponseEntity.ok("Volunteer request added successfully!");
   }
 
