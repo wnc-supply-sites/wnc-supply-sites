@@ -16,16 +16,17 @@ async function updateSelectedSiteData (siteId) {
 function updateNeededItemsList (items) {
     const neededItemsList = document.getElementById("needed-items");
 
+    // Remove current needs
     while (neededItemsList.firstChild) neededItemsList.removeChild(neededItemsList.firstChild);
 
-
+    // Add new needs
     for(const item of items) {
         let itemContainer = document.createElement("div");
         itemContainer.classList.add("checkbox-container");
 
         let listItem = document.createElement("input");
         listItem.type = "checkbox"
-        listItem.name = "neededItem"
+        listItem.name = "neededItems"
         listItem.value = item.id;
         listItem.id = item.id;
         listItem.dataset.name = item.name;
@@ -90,6 +91,7 @@ function addSelectedItem(name, id) {
 function handleItemSelect(element) {
     // If item was checked add selected item, if it was unchecked remove
     if (element.checked) {
+        hideNeededItemsErrorMsg();
         addSelectedItem(element.dataset.name, element.value);
     } else {
         removeSelectedItem(element.value);
@@ -107,22 +109,55 @@ function clearSelectedItems() {
 }
 
 /** Form Submission */
-function handleFormSubmission(event) {
+async function handleFormSubmission(event) {
     event.preventDefault();
     console.log(event);
     const formData = new FormData(event.target);
 
-    const dataObject = {};
+    const dataObject = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
 
     for (const [key, value] of formData.entries()) {
-        if (dataObject[key]) {
-            dataObject[key] = [].concat(dataObject[key], value);
+        if (key === "neededItems") {
+            dataObject["neededItems"] = [].concat(dataObject[key], parseInt(value));
         } else {
             dataObject[key] = value;
         }
     }
 
-    console.log(dataObject);
+    const isValid = validateData(dataObject);
+
+    if (isValid) {
+        console.log("Posting form")
+        const response = await fetch("/volunteer/delivery", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+              },
+            body: JSON.stringify(dataObject)
+        });
+
+        console.log(response);
+    }
+}
+
+function validateData(data) {
+    if (data["neededItems"].length <= 0) {
+        alert("Whoops, please make sure you select some items to bring!");
+        showNeededItemsErrorMsg();
+        return false;
+    };
+
+    return true;
+}
+
+function showNeededItemsErrorMsg() {
+    const errorMessage = document.getElementById("items-error-msg");
+    errorMessage.classList.remove("hidden");
+}
+
+function hideNeededItemsErrorMsg() {
+    const errorMessage = document.getElementById("items-error-msg");
+    errorMessage.classList.add("hidden");
 }
 
 
