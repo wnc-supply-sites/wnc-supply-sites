@@ -43,12 +43,13 @@
         <div class="inputs">
           <div class="form-input">
             <label for="name-input"> Name: </label>
-            <input type="text" id="name-input" name="volunteer-name" required/>
+            <input type="text" id="name-input" name="volunteerName" required/>
           </div>
 
           <div class="form-input">
             <label for="contact-input"> Phone Number: </label>
-            <input type="text" id="contact-input" name="volunteer-contact" required/>
+            <label for="contact-input"> **Format 123-456-7891 </label>
+            <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" id="contact-input" name="volunteerContact" required/>
           </div>
         </div>
       </section>
@@ -58,6 +59,7 @@
         <div class="items">
           <div class="items-container">
             <h4> Needed Items </h4>
+            <span class="errorMessage hidden" id="items-error-msg"> * Please make sure to select items to send </span>
             <div id="needed-items">
             </div>
           </div>
