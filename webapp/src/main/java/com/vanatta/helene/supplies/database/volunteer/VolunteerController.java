@@ -104,7 +104,6 @@ public class VolunteerController {
     // Add urlKey
     request.urlKey = generateUrlKey();
 
-
     Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(jdbi, request);
 
     log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);

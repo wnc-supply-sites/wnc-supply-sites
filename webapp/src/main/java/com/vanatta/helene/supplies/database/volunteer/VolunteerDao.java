@@ -118,7 +118,6 @@ public class VolunteerDao {
                   .mapTo(Long.class)
                   .one()
       );
-      log.info("Creating Volunteer Delivery in DB: {}", deliveryId);
 
       // Create Delivery Item
       String insertItem = """
