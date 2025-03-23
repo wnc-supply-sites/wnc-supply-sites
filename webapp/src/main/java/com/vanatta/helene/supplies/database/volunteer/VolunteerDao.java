@@ -1,5 +1,9 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
@@ -10,8 +14,24 @@ import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 
 import java.util.List;
 
+
+
+
+
 @Slf4j
 public class VolunteerDao {
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Builder
+  public static class VolunteerDelivery {
+    Long id;
+    String volunteerName;
+    String volunteerPhone;
+    Long siteId;
+    String urlKey;
+  }
 
   static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String>states) {
     // todo: Write test
@@ -27,9 +47,11 @@ public class VolunteerDao {
                 where
                 c.state in (<states>)
                 and
-                s.publicly_visible
+                s.publicly_visible = true
                 and
-                s.active
+                s.active = true 
+                and
+                s.accepting_donations = true
                 and exists (
                   select 1
                   from site_item si
@@ -57,9 +79,9 @@ public class VolunteerDao {
                 where
                 s.id = :siteId
                 and 
-                s.active
+                s.active = true
                 and 
-                s.publicly_visible
+                s.publicly_visible = true
               """)
               .bind("siteId", siteId)
               .mapToBean(Site.class)
@@ -144,8 +166,23 @@ public class VolunteerDao {
       return deliveryId;
     } catch (UnableToExecuteStatementException e) {
       log.error(e.getMessage());
+
+      // Check if error message indicates a unique constraint violation
+      if (e.getMessage().contains("duplicate key value")) {
+        throw new UnableToExecuteStatementException("Error: Duplicate URL key");
+      }
+
       throw e;
     }
   }
+
+//  static VolunteerDelivery getVolunteerDelivery(Jdbi jdbi, Long deliveryId) {
+//    try {
+//      return jdbi
+//    } catch (UnableToExecuteStatementException e){
+//      log.error(e.getMessage());
+//      throw e;
+//    }
+//  }
 
 }
