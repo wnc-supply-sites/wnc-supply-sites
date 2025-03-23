@@ -60,6 +60,7 @@ public class VolunteerController {
 
   @Data
   @AllArgsConstructor
+  @Builder
   public static class DeliveryForm {
     List<Long> neededItems;
     String site;
