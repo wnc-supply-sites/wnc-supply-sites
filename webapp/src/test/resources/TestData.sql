@@ -5,6 +5,9 @@ delete from wss_user_roles;
 delete from wss_user;
 delete from driver;
 
+delete from volunteer_delivery_item;
+delete from volunteer_delivery;
+
 delete from site_distance_matrix;
 delete from delivery_item;
 delete from delivery_confirmation;

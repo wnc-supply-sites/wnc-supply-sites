@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="delivery-form.css">
+  <script src="delivery-form.js"></script>
+  <title>Document</title>
+  {{> header-include }}
+</head>
+<body>
+  {{> header }}
+  <div class="page-sub-header horizontal">
+    <div class="back-link">
+      <a href="/">[&larr; Go Back]</a>
+    </div>
+    <span class="page-title-sub-header">Form</span>
+  </div>
+
+  <dialog id="success-modal">
+    <div class="vertical flex-gap-10">
+      <div>
+        <h1> Success! </h1>
+        <p class="italic font-large"> Thank you for volunteering! </p>
+        <p> Your delivery request has been sent! You'll be contacted shortly if the request has been accepted. </p>
+      </div>
+
+      <form method="dialog" style="display: flex; flex-direction: row-reverse; margin: 5px">
+        <a class="redirect-button" type="button" href="/">Go back home</a>
+      </form>
+    </div>
+  </dialog>
+
+  <main>
+    <form id="volunteer-delivery-form">
+      <div>
+        <h1> Volunteer Form: Delivery </h1>
+        <span id="submission-error-text" class="hidden errorMessage"> Error: Something happened when submitting form. Please try again.  </span>
+      </div>
+      <section>
+        <h2> Site </h2>
+        <div class="inputs">
+          <div class="form-input">
+            <label for="site-select"> Select your site: </label>
+            <select name="site" id="site-select" required>
+              {{#sites}}
+                <option value="{{id}}"> {{name}} </option>
+              {{/sites}}
+            </select>
+          </div>
+        </div>
+        <span id="selected-site-address"> Site Address: 123 Main street </span>
+      </section>
+
+      <section>
+        <h2> Contact Info </h2>
+
+        <div class="inputs">
+          <div class="form-input">
+            <label for="name-input"> Name: </label>
+            <input type="text" id="name-input" name="volunteerName" required/>
+          </div>
+
+          <div class="form-input">
+            <label for="contact-input"> Phone Number: </label>
+            <label for="contact-input"> **Format 123-456-7891 </label>
+            <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" id="contact-input" name="volunteerContact" required/>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2> Items </h2>
+        <div class="items">
+          <div class="items-container">
+            <h4> Needed Items </h4>
+            <span class="errorMessage hidden" id="items-error-msg"> * Please make sure to select items to send </span>
+            <div id="needed-items">
+            </div>
+          </div>
+          <div class="items-container" >
+            <h4> Donating Items </h4>
+            <div id="selected-items">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="display: flex; flex-direction: row-reverse">
+        <button type="submit"> Submit </button>
+      </section>
+    </form>
+  </main>
+
+</body>
+</html>
