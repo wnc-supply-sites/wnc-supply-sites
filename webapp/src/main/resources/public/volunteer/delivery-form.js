@@ -127,17 +127,37 @@ async function handleFormSubmission(event) {
     const isValid = validateData(dataObject);
 
     if (isValid) {
-        console.log("Posting form")
-        const response = await fetch("/volunteer/delivery", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-              },
-            body: JSON.stringify(dataObject)
-        });
+        try {
+            const response = await fetch("/volunteer/delivery", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                  },
+                body: JSON.stringify(dataObject)
+            });
 
-        console.log(response);
+            if (response.ok) {
+                const data = await response.text();
+                console.log(data);
+                showSuccessModal();
+            } else {
+                handleSubmissionError();
+            }
+        } catch (e) {
+            handleSubmissionError()
+        }
     }
+}
+
+function showSuccessModal() {
+    const modal = document.getElementById("success-modal");
+    modal.showModal();
+}
+
+function handleSubmissionError() {
+    const errorText = document.getElementById("submission-error-text");
+    errorText.classList.remove("hidden");
+    document.documentElement.scrollTop = 0;
 }
 
 function validateData(data) {

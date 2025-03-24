@@ -5,6 +5,8 @@ import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Item;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +37,7 @@ public class VolunteerDao {
     Long site_item_id;
     Long volunteer_delivery_id;
   }
+
 
   static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String> states) {
     // todo: Write test
@@ -155,14 +158,14 @@ public class VolunteerDao {
 
     String insertItem =
         """
-                          INSERT INTO volunteer_delivery_item (
-                            site_item_id,
-                            volunteer_delivery_id
-                          ) VALUES (
-                            :site_item_id,
-                            :volunteerDeliveryId
-                          )
-                          """;
+          INSERT INTO volunteer_delivery_item (
+            site_item_id,
+            volunteer_delivery_id
+          ) VALUES (
+            :site_item_id,
+            :volunteerDeliveryId
+          )
+          """;
 
     for (Long itemId : itemIds) {
       jdbi.withHandle(
@@ -172,7 +175,21 @@ public class VolunteerDao {
                   .bind("site_item_id", itemId)
                   .bind("volunteerDeliveryId", deliveryId)
                   .execute());
-    }
-    ;
+    };
+  }
+
+  static VolunteerDelivery getVolunteerDeliveryById(Jdbi jdbi, Long deliveryId) {
+    String query = """
+        SELECT id, volunteer_phone, volunteer_name, site_id, url_key
+        FROM volunteer_delivery
+        WHERE volunteer_delivery.id = :id
+        """;
+
+    return jdbi.withHandle(handle ->
+        handle
+            .createQuery(query)
+            .bind("id", deliveryId)
+            .mapToBean(VolunteerDelivery.class)
+            .one());
   }
 }

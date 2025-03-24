@@ -18,10 +18,26 @@
     <span class="page-title-sub-header">Form</span>
   </div>
 
+  <dialog id="success-modal">
+    <div class="vertical flex-gap-10">
+      <div>
+        <h1> Success! </h1>
+        <p class="italic font-large"> Thank you for volunteering! </p>
+        <p> Your delivery request has been sent! You'll be contacted shortly if the request has been accepted. </p>
+      </div>
+
+      <form method="dialog" style="display: flex; flex-direction: row-reverse; margin: 5px">
+        <a class="redirect-button" type="button" href="/">Go back home</a>
+      </form>
+    </div>
+  </dialog>
+
   <main>
     <form id="volunteer-delivery-form">
-      <h1> Volunteer Form: Delivery </h1>
-
+      <div>
+        <h1> Volunteer Form: Delivery </h1>
+        <span id="submission-error-text" class="hidden errorMessage"> Error: Something happened when submitting form. Please try again.  </span>
+      </div>
       <section>
         <h2> Site </h2>
         <div class="inputs">
@@ -76,9 +92,6 @@
       </section>
     </form>
   </main>
-  <script>
-
-  </script>
 
 </body>
 </html>

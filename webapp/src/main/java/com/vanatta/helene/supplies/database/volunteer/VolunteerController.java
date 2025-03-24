@@ -104,13 +104,14 @@ public class VolunteerController {
       request.urlKey = generateUrlKey();
 
       Long deliveryId = volunteerService.createVolunteerDelivery(jdbi, request);
+      VolunteerDao.VolunteerDelivery createdDelivery = volunteerService.getDeliveryById(jdbi, deliveryId);
+
+      return ResponseEntity.ok(createdDelivery.urlKey);
+
     } catch (Exception e) {
       log.error(e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Failed to create delivery: " + e.getMessage());
     }
-
-    // todo: Should return the URLKey
-    return ResponseEntity.ok("Volunteer request added successfully!");
   }
 }
