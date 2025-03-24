@@ -5,11 +5,14 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Service;
 
-import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.createVolunteerDeliveryItems;
+import java.util.Optional;
+
+import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
 
 @Service
 @Slf4j
 public class VolunteerService {
+
   public Long createVolunteerDelivery(Jdbi jdbi, VolunteerController.DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
@@ -30,6 +33,15 @@ public class VolunteerService {
       throw new RuntimeException("Error while creating volunteer delivery. Rolling back.", e);
     } finally {
       handle.close(); // Ensure the handle is closed
+    }
+  }
+
+  public VolunteerDao.VolunteerDelivery getDeliveryById(Jdbi jdbi, Long id) {
+    try {
+      return VolunteerDao.getVolunteerDeliveryById(jdbi, id);
+    } catch (Exception e) {
+      log.error("Error while looking up delivery by id: ", e);
+      throw new RuntimeException("Error while looking up delivery by id: ", e);
     }
   }
 }

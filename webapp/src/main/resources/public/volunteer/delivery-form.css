@@ -102,6 +102,15 @@ section h2 {
     flex-direction: column;
 }
 
+.redirect-button {
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+    padding: .5rem;
+    border-radius: 7px;
+    margin-left: 3px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 768px) {
     .instructions-wrapper {
         display: none;
