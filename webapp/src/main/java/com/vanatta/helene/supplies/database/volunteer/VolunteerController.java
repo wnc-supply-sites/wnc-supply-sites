@@ -1,23 +1,20 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
 import com.vanatta.helene.supplies.database.DeploymentAdvice;
-import com.vanatta.helene.supplies.database.manage.add.site.AddSiteDao;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generateUrlKey;
 
@@ -26,6 +23,8 @@ import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generate
 @Slf4j
 public class VolunteerController {
   private final Jdbi jdbi;
+
+  private VolunteerService volunteerService;
 
   @Data
   @AllArgsConstructor
@@ -72,8 +71,7 @@ public class VolunteerController {
   /** Users will be shown a form to request to make a delivery */
   @GetMapping("/volunteer/delivery")
   ModelAndView deliveryForm(
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> states
-  ) {
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> states) {
     return deliveryForm(jdbi, states);
   }
 
@@ -96,21 +94,23 @@ public class VolunteerController {
   /** Adds volunteer request to DB */
   @PostMapping("/volunteer/delivery")
   ResponseEntity<String> submitDeliveryRequest(@RequestBody DeliveryForm request) {
-    // todo: Add logging for when adding delivery
     log.info("Received delivery request for site: {}", request.site);
 
-    // Make sure the phone number is properly formatted
-    request.volunteerContact = String.join("", request.volunteerContact.split("-"));
+    try {
+      // Remove '-' from phone number
+      request.volunteerContact = String.join("", request.volunteerContact.split("-"));
 
-    // Add urlKey
-    request.urlKey = generateUrlKey();
+      // Add urlKey
+      request.urlKey = generateUrlKey();
 
-    Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(jdbi, request);
+      Long deliveryId = volunteerService.createVolunteerDelivery(jdbi, request);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Failed to create delivery: " + e.getMessage());
+    }
 
-    log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
-
+    // todo: Should return the URLKey
     return ResponseEntity.ok("Volunteer request added successfully!");
   }
-
-
 }

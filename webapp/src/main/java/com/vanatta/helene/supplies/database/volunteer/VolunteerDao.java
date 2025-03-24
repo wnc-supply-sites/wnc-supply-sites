@@ -1,22 +1,16 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.DeliveryForm;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Item;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Item;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.DeliveryForm;
-import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
-
-import java.util.List;
-
-
-
-
 
 @Slf4j
 public class VolunteerDao {
@@ -33,14 +27,23 @@ public class VolunteerDao {
     String urlKey;
   }
 
-  static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String>states) {
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class VolunteerDeliveryItem {
+    Long id;
+    Long site_item_id;
+    Long volunteer_delivery_id;
+  }
+
+  static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String> states) {
     // todo: Write test
 
     return jdbi.withHandle(
         handle ->
             handle
                 .createQuery(
-            """
+                    """
                 select s.id, s.name, c.name as county, c.state
                 from site s
                 join county c on c.id = s.county_id
@@ -49,16 +52,16 @@ public class VolunteerDao {
                 and
                 s.publicly_visible = true
                 and
-                s.active = true 
+                s.active = true
                 and
                 s.accepting_donations = true
                 and exists (
                   select 1
                   from site_item si
                   join item_status ist on si.item_status_id = ist.id
-                  Where 
-                  si.site_id = s.id 
-                  and 
+                  Where
+                  si.site_id = s.id
+                  and
                   ist.is_need = true)
                 order by lower(s.name)
                 """)
@@ -67,32 +70,39 @@ public class VolunteerDao {
                 .list());
   }
 
-
   static Site fetchSiteItems(Jdbi jdbi, Long siteId) {
     // todo: Write test
 
-    return  jdbi.withHandle(handle -> {
-          Site site = handle.createQuery("""
+    return jdbi.withHandle(
+        handle -> {
+          Site site =
+              handle
+                  .createQuery(
+                      """
                 select s.id, s.name, s.address ,c.name as county, c.state
                 from site s
                 join county c on c.id = s.county_id
                 where
                 s.id = :siteId
-                and 
+                and
                 s.active = true
-                and 
+                and
                 s.publicly_visible = true
               """)
-              .bind("siteId", siteId)
-              .mapToBean(Site.class)
-              .findOne()
-              .orElse(null);
+                  .bind("siteId", siteId)
+                  .mapToBean(Site.class)
+                  .findOne()
+                  .orElse(null);
 
           if (site == null) {
             return null;
-          };
+          }
+          ;
 
-          List<Item> items = handle.createQuery("""
+          List<Item> items =
+              handle
+                  .createQuery(
+                      """
               select si.id as id, i.name as name, ist.name as status
               from site_item si
               join item i on si.item_id = i.id
@@ -101,19 +111,20 @@ public class VolunteerDao {
               and ist.is_need
               order by ist.sort_order, i.name
               """)
-              .bind("siteId", siteId)
-              .mapToBean(VolunteerController.Item.class)
-              .list();
+                  .bind("siteId", siteId)
+                  .mapToBean(VolunteerController.Item.class)
+                  .list();
           site.setItems(items);
           return site;
-    });
+        });
   }
 
   static Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm form) {
     // todo: Write test
 
     // Create Delivery
-    String insertDelivery = """
+    String insertDelivery =
+        """
           INSERT INTO volunteer_delivery (
             volunteer_name,
             volunteer_phone,
@@ -127,62 +138,41 @@ public class VolunteerDao {
           )
         """;
 
-    try {
-      long deliveryId = jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(insertDelivery)
-                  .bind("volunteerName", form.getVolunteerName())
-                  .bind("volunteerPhone", form.getVolunteerContact())
-                  .bind("siteId", Integer.parseInt(form.getSite()))
-                  .bind("URLKey", form.getUrlKey())
-                  .executeAndReturnGeneratedKeys("id")
-                  .mapTo(Long.class)
-                  .one()
-      );
-
-      // Create Delivery Item
-      String insertItem = """
-                        INSERT INTO volunteer_delivery_item (
-                          site_item_id,
-                          volunteer_delivery_id
-                        ) VALUES (
-                          :site_item_id,
-                          :volunteerDeliveryId
-                        )
-                        """;
-
-      for (Long itemId : form.getNeededItems()) {
-        jdbi.withHandle(
-            handle ->
-                handle
-                    .createUpdate(insertItem)
-                    .bind("site_item_id", itemId)
-                    .bind("volunteerDeliveryId", deliveryId)
-                    .execute()
-        );
-      }
-
-      return deliveryId;
-    } catch (UnableToExecuteStatementException e) {
-      log.error(e.getMessage());
-
-      // Check if error message indicates a unique constraint violation
-      if (e.getMessage().contains("duplicate key value")) {
-        throw new UnableToExecuteStatementException("Error: Duplicate URL key");
-      }
-
-      throw e;
-    }
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createUpdate(insertDelivery)
+                .bind("volunteerName", form.getVolunteerName())
+                .bind("volunteerPhone", form.getVolunteerContact())
+                .bind("siteId", Integer.parseInt(form.getSite()))
+                .bind("URLKey", form.getUrlKey())
+                .executeAndReturnGeneratedKeys("id")
+                .mapTo(Long.class)
+                .one());
   }
 
-//  static VolunteerDelivery getVolunteerDelivery(Jdbi jdbi, Long deliveryId) {
-//    try {
-//      return jdbi
-//    } catch (UnableToExecuteStatementException e){
-//      log.error(e.getMessage());
-//      throw e;
-//    }
-//  }
+  static void createVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId, List<Long> itemIds) {
 
+    String insertItem =
+        """
+                          INSERT INTO volunteer_delivery_item (
+                            site_item_id,
+                            volunteer_delivery_id
+                          ) VALUES (
+                            :site_item_id,
+                            :volunteerDeliveryId
+                          )
+                          """;
+
+    for (Long itemId : itemIds) {
+      jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(insertItem)
+                  .bind("site_item_id", itemId)
+                  .bind("volunteerDeliveryId", deliveryId)
+                  .execute());
+    }
+    ;
+  }
 }
