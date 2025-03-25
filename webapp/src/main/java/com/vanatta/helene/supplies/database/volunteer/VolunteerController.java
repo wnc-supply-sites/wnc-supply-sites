@@ -41,7 +41,6 @@ public class VolunteerController {
     return new ModelAndView("volunteer/delivery-form", pageParams);
   }
 
-
   /** Adds volunteer request to DB */
   @PostMapping("/volunteer/delivery")
   ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
@@ -72,7 +71,6 @@ public class VolunteerController {
     VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbi, Long.parseLong(siteId));
     return ResponseEntity.ok(Map.of("site", site));
   }
-
 
   @GetMapping("/volunteer/delivery/request")
   ModelAndView volunteerDeliveryStatus(
@@ -108,7 +106,7 @@ public class VolunteerController {
         Objects.equals(deliveryRequest.volunteerPhone, userPhone)
     );
 
-    // Check if user Is Primary or Secondary User
+    // Check if user Is Primary or Secondary Site Manager
     pageParams.put(
         "userIsManager",
         userSites.contains(deliveryRequest.siteId)
