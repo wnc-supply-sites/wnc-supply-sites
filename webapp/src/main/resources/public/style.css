@@ -28,6 +28,10 @@ html, table {
     color: #333;
 }
 
+.page-title {
+    font-size: 1.8em;
+}
+
 .scroll-to-top-btn {
   position: fixed;
   bottom: 3rem;
@@ -459,6 +463,10 @@ h1, h2, h3, h4 {
 
     #header-title {
         font-size: medium
+    }
+
+    .page-title {
+        font-size: 1.5em;
     }
 
 }

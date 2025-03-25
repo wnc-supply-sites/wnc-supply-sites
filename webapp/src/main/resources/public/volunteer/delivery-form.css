@@ -23,7 +23,7 @@ section h2 {
     flex-direction: column;
     gap: 1.5rem;
     width: 75%;
-    padding: 2rem;
+    padding: 0px 2rem 2rem 2rem;
 }
 
 .instructions {
@@ -136,6 +136,7 @@ section h2 {
     #volunteer-delivery-form {
         flex: 1;
         width: 100%;
+        padding: 0px;
     }
 
     .form-input {
