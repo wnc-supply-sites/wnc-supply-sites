@@ -23,7 +23,7 @@ public class VolunteerDaoTest {
   /** fetchSiteSelect */
   @Test
   void retrievesSiteSelect() {
-    List<VolunteerController.SiteSelect> results =
+    List<VolunteerService.SiteSelect> results =
         VolunteerDao.fetchSiteSelect(jdbiTest, List.of("NC", "KY", "VA", "TN"));
 
     // Retrieves sites that are active and accepting donations
@@ -33,7 +33,7 @@ public class VolunteerDaoTest {
     String inactiveSiteName = addSite("inactiveSite");
     Long inactiveSiteId = TestConfiguration.getSiteId(inactiveSiteName);
 
-    List<VolunteerController.SiteSelect> updatedResults =
+    List<VolunteerService.SiteSelect> updatedResults =
         VolunteerDao.fetchSiteSelect(jdbiTest, List.of("NC", "KY", "VA", "TN"));
 
     // Validate that updated result and results are the same size
@@ -45,7 +45,7 @@ public class VolunteerDaoTest {
   void correctlyRetrievesNeededItems() {
     long siteId = TestConfiguration.getSiteId("site1");
 
-    VolunteerController.Site result = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
+    VolunteerService.Site result = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
     // Retrieved site name is correct
     assertThat(result.getName()).isEqualTo("site1");
@@ -56,7 +56,7 @@ public class VolunteerDaoTest {
     addItemToSite(siteId, ItemStatus.NEEDED, "heater", -80);
 
     // Update site item
-    VolunteerController.Site resultAfterUpdate = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
+    VolunteerService.Site resultAfterUpdate = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
     // Check site item count was increased
     assertThat(resultAfterUpdate.getItems().size() == 2).isTrue();
@@ -65,7 +65,7 @@ public class VolunteerDaoTest {
   @Test
   void neededItemsRequestReturnsNull() {
     // Returns null if that item id does not exist
-    VolunteerController.Site result = VolunteerDao.fetchSiteItems(jdbiTest, 567L);
+    VolunteerService.Site result = VolunteerDao.fetchSiteItems(jdbiTest, 567L);
     assertThat(result).isNull();
   }
 
@@ -77,16 +77,16 @@ public class VolunteerDaoTest {
     addItemToSite(siteId, ItemStatus.NEEDED, "batteries", -66);
     addItemToSite(siteId, ItemStatus.URGENTLY_NEEDED, "soap", -65);
 
-    VolunteerController.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
+    VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
 
     List<Long> itemIds =
-        site.getItems().stream().map(VolunteerController.Item::getId).toList().subList(0, 1);
+        site.getItems().stream().map(VolunteerService.Item::getId).toList().subList(0, 1);
 
     String urlKey = URLKeyGenerator.generateUrlKey();
 
-    VolunteerController.DeliveryForm form =
-        VolunteerController.DeliveryForm.builder()
+    VolunteerService.DeliveryForm form =
+        VolunteerService.DeliveryForm.builder()
             .site(String.valueOf(siteId))
             .neededItems(itemIds)
             .volunteerContact("1231231234")
@@ -102,7 +102,7 @@ public class VolunteerDaoTest {
     VolunteerDao.createVolunteerDeliveryItems(jdbiTest, volunteerDeliveryId, itemIds);
 
     // Check that the created volunteer delivery row has the correct information
-    VolunteerDao.VolunteerDelivery volunteerDelivery =
+    VolunteerService.VolunteerDelivery volunteerDelivery =
         jdbiTest.withHandle(
             handle ->
                 handle
@@ -114,13 +114,13 @@ public class VolunteerDaoTest {
         LIMIT 1
         """)
                     .bind("id", volunteerDeliveryId)
-                    .mapToBean(VolunteerDao.VolunteerDelivery.class)
+                    .mapToBean(VolunteerService.VolunteerDelivery.class)
                     .one());
 
     assertThat(
             Objects.equals(
                 volunteerDelivery,
-                VolunteerDao.VolunteerDelivery.builder()
+                VolunteerService.VolunteerDelivery.builder()
                     .id(volunteerDeliveryId)
                     .volunteerPhone("1231231234")
                     .volunteerName("John Test")
@@ -130,7 +130,7 @@ public class VolunteerDaoTest {
         .isTrue();
 
     // Check that the correct amount of volunteer_delivery_id was created
-    List<VolunteerDao.VolunteerDeliveryItem> deliveryItems =
+    List<VolunteerService.VolunteerDeliveryItem> deliveryItems =
         jdbiTest.withHandle(
             handle ->
                 handle
@@ -141,7 +141,7 @@ public class VolunteerDaoTest {
             WHERE volunteer_delivery_item.volunteer_delivery_id = :deliveryId
             """)
                     .bind("deliveryId", volunteerDeliveryId)
-                    .mapToBean(VolunteerDao.VolunteerDeliveryItem.class)
+                    .mapToBean(VolunteerService.VolunteerDeliveryItem.class)
                     .list());
 
     assertThat(deliveryItems.size() == itemIds.size()).isTrue();
@@ -151,14 +151,14 @@ public class VolunteerDaoTest {
   void errorIfURLKeyIsNotUnique() {
     long siteId = TestConfiguration.getSiteId("site1");
 
-    VolunteerController.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
+    VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
-    List<Long> itemIds = site.getItems().stream().map(VolunteerController.Item::getId).toList();
+    List<Long> itemIds = site.getItems().stream().map(VolunteerService.Item::getId).toList();
 
     String urlKey = URLKeyGenerator.generateUrlKey();
 
-    VolunteerController.DeliveryForm form1 =
-        VolunteerController.DeliveryForm.builder()
+    VolunteerService.DeliveryForm form1 =
+        VolunteerService.DeliveryForm.builder()
             .site(String.valueOf(siteId))
             .neededItems(itemIds)
             .volunteerContact("1231231234")
@@ -166,8 +166,8 @@ public class VolunteerDaoTest {
             .urlKey(urlKey)
             .build();
 
-    VolunteerController.DeliveryForm form2 =
-        VolunteerController.DeliveryForm.builder()
+    VolunteerService.DeliveryForm form2 =
+        VolunteerService.DeliveryForm.builder()
             .site(String.valueOf(siteId))
             .neededItems(itemIds)
             .volunteerContact("2223334444")
