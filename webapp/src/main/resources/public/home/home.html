@@ -1,8 +1,8 @@
 <html xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
   <title>{{deploymentShortName}} Supply Sites - Home</title>
-  <link rel="stylesheet" href="home/home.css"/>
   <link rel="stylesheet" href="../style.css"/>
+  <link rel="stylesheet" href="home/home.css"/>
   <link rel="stylesheet" href="../mobile.css"/>
   <link
       rel="stylesheet"
@@ -12,13 +12,10 @@
 </head>
 <body>
 {{> header }}
-<h2>{{siteDescription}}</h2>
-
-<div class="nav-buttons-container">
-
+<main class="nav-buttons-container">
   <div class="nav-button-container margin-left-50">
     <a href="/supplies/site-list">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button wide-button button-30">
         Search Sites and Supplies
       </button>
     </a>
@@ -27,7 +24,7 @@
   {{^isAuthenticated}}
   <div class="nav-button-container margin-left-50">
     <a href="login/login">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button wide-button button-30">
         Login - Site Managers & Drivers
       </button>
     </a>
@@ -37,7 +34,7 @@
   {{#isDriver}}
   <div class="nav-button-container margin-left-50">
     <a href="driver/portal">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button wide-button button-30">
         Driver Portal
       </button>
     </a>
@@ -47,7 +44,7 @@
   {{#canManageSites}}
   <div class="nav-button-container margin-left-50">
     <a href="/manage/select-site">
-      <button type="button" class="nav-button wide-button">Manager Portal</button>
+      <button type="button" class="nav-button wide-button button-30">Manager Portal</button>
     </a>
   </div>
   {{/canManageSites}}
@@ -55,7 +52,7 @@
   {{#isAuthenticated}}
   <div class="nav-button-container margin-left-50">
     <a href="/browse/routes">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button wide-button button-30">
         Browse Routes
       </button>
     </a>
@@ -63,14 +60,14 @@
 
   <div class="nav-button-container margin-left-50">
     <a href="/behind-the-scenes/">
-      <button type="button" class="nav-button wide-button">How Supplies Move</button>
+      <button type="button" class="nav-button wide-button button-30">How Supplies Move</button>
     </a>
   </div>
   {{/isAuthenticated}}
 
   <div class="nav-button-container margin-left-50">
     <a href="/about/">
-      <button type="button" class="nav-button wide-button">
+      <button type="button" class="nav-button wide-button button-30">
         About {{deploymentShortName}}-Supply-Sites.com
       </button>
     </a>
@@ -78,11 +75,11 @@
 
   <div class="nav-button-container margin-left-50">
     <a href="{{contactUsLink}}">
-      <button type="button" class="nav-button wide-button">Contact Us</button>
+      <button type="button" class="nav-button wide-button button-30">Contact Us</button>
     </a>
   </div>
 
-</div>
+</main>
 
 </body>
 </html>
