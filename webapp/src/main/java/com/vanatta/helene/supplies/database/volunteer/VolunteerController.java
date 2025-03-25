@@ -1,13 +1,12 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
 import com.vanatta.helene.supplies.database.DeploymentAdvice;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
+import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.HttpStatus;
@@ -26,48 +25,6 @@ public class VolunteerController {
 
   private VolunteerService volunteerService;
 
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class SiteSelect {
-    Long id;
-    String name;
-    String county;
-    String state;
-  }
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class Item {
-    Long id;
-    String name;
-    String status;
-  }
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class Site {
-    Long id;
-    String name;
-    String address;
-    String county;
-    String state;
-    List<Item> items;
-  }
-
-  @Data
-  @AllArgsConstructor
-  @Builder
-  public static class DeliveryForm {
-    List<Long> neededItems;
-    String site;
-    String volunteerContact;
-    String volunteerName;
-    String urlKey;
-  }
-
   /** Users will be shown a form to request to make a delivery */
   @GetMapping("/volunteer/delivery")
   ModelAndView deliveryForm(
@@ -78,22 +35,16 @@ public class VolunteerController {
   public static ModelAndView deliveryForm(Jdbi jdbi, List<String> states) {
     Map<String, Object> pageParams = new HashMap<>();
 
-    List<SiteSelect> sites = VolunteerDao.fetchSiteSelect(jdbi, states);
+    List<VolunteerService.SiteSelect> sites = VolunteerDao.fetchSiteSelect(jdbi, states);
 
     pageParams.put("sites", sites);
     return new ModelAndView("volunteer/delivery-form", pageParams);
   }
 
-  /** Return json payload of site info */
-  @GetMapping("/volunteer/site-items")
-  ResponseEntity<?> getSiteItems(@RequestParam String siteId) {
-    Site site = VolunteerDao.fetchSiteItems(jdbi, Long.parseLong(siteId));
-    return ResponseEntity.ok(Map.of("site", site));
-  }
 
   /** Adds volunteer request to DB */
   @PostMapping("/volunteer/delivery")
-  ResponseEntity<String> submitDeliveryRequest(@RequestBody DeliveryForm request) {
+  ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
 
     try {
@@ -104,7 +55,7 @@ public class VolunteerController {
       request.urlKey = generateUrlKey();
 
       Long deliveryId = volunteerService.createVolunteerDelivery(jdbi, request);
-      VolunteerDao.VolunteerDelivery createdDelivery = volunteerService.getDeliveryById(jdbi, deliveryId);
+      VolunteerService.VolunteerDelivery createdDelivery = VolunteerService.getDeliveryById(jdbi, deliveryId);
 
       return ResponseEntity.ok(createdDelivery.urlKey);
 
@@ -113,5 +64,62 @@ public class VolunteerController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Failed to create delivery: " + e.getMessage());
     }
+  }
+
+  /** Return json payload of site info */
+  @GetMapping("/volunteer/site-items")
+  ResponseEntity<?> getSiteItems(@RequestParam String siteId) {
+    VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbi, Long.parseLong(siteId));
+    return ResponseEntity.ok(Map.of("site", site));
+  }
+
+
+  @GetMapping("/volunteer/delivery/request")
+  ModelAndView volunteerDeliveryStatus(
+      @ModelAttribute(LoggedInAdvice.USER_PHONE) String userPhone,
+      @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> userSites,
+      @RequestParam String urlKey) {
+    return volunteerDeliveryStatus(jdbi, userPhone, userSites, urlKey);
+  }
+
+  public static ModelAndView volunteerDeliveryStatus(Jdbi jdbi, String userPhone, List<Long> userSites, String urlKey) {
+    // Get Volunteer Delivery
+    log.info("Received request for Volunteer Delivery {}", urlKey.toUpperCase());
+    Optional<VolunteerService.VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerService.getVolunteerDeliveryRequest(jdbi, urlKey.toUpperCase());
+
+    Map<String, Object> pageParams = new HashMap<>();
+
+    // If volunteer Delivery is not available reroute them to home
+    // todo: create a 404 not found page to redirect to
+    if (deliveryRequestOpt.isEmpty()) return new ModelAndView("redirect:/");
+
+    VolunteerService.VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
+    log.info("Received delivery request: {}", deliveryRequest);
+
+    // Add retrieved Delivery data
+    pageParams.put(
+        "deliveryRequest",
+        deliveryRequest
+    );
+
+    // Check if userPhone matches deliveryRequestPhone
+    pageParams.put(
+        "userIsVolunteer",
+        Objects.equals(deliveryRequest.volunteerPhone, userPhone)
+    );
+
+    // Check if user Is Primary or Secondary User
+    pageParams.put(
+        "userIsManager",
+        userSites.contains(deliveryRequest.siteId)
+    );
+
+    // Check if user requires phone verification
+    pageParams.put(
+        "userRequiresPhoneAuth",
+        !userSites.contains(deliveryRequest.siteId) && !Objects.equals(deliveryRequest.volunteerPhone, userPhone)
+    );
+
+    return new ModelAndView("volunteer/delivery/request", pageParams);
   }
 }

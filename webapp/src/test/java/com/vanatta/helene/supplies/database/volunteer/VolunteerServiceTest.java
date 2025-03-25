@@ -25,16 +25,16 @@ public class VolunteerServiceTest {
   void errorIfItemIdDoesNotExist() {
     long siteId = TestConfiguration.getSiteId("site1");
 
-    VolunteerController.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
+    VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
-    List<Long> itemIds = new java.util.ArrayList<>(site.getItems().stream().map(VolunteerController.Item::getId).toList());
+    List<Long> itemIds = new java.util.ArrayList<>(site.getItems().stream().map(VolunteerService.Item::getId).toList());
 
     // Adding fake item id to itemIds
     itemIds.add(-66L);
 
     String urlKey = URLKeyGenerator.generateUrlKey();
 
-    VolunteerController.DeliveryForm form = VolunteerController.DeliveryForm.builder()
+    VolunteerService.DeliveryForm form = VolunteerService.DeliveryForm.builder()
         .site(String.valueOf(siteId))
         .neededItems(itemIds)
         .volunteerContact("1231231234")
@@ -49,14 +49,14 @@ public class VolunteerServiceTest {
     );
 
     // Check that the created delivery was removed after error
-    List<VolunteerDao.VolunteerDeliveryItem> deliveryItems = jdbiTest.withHandle(handle ->
+    List<VolunteerService.VolunteerDeliveryItem> deliveryItems = jdbiTest.withHandle(handle ->
         handle.createQuery("""
             SELECT *
             FROM volunteer_delivery
             WHERE volunteer_delivery.site_id = :siteId
             """)
             .bind("siteId", siteId)
-            .mapToBean(VolunteerDao.VolunteerDeliveryItem.class)
+            .mapToBean(VolunteerService.VolunteerDeliveryItem.class)
             .list());
     assertThat(deliveryItems.isEmpty()).isTrue();
 
