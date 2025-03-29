@@ -10,7 +10,7 @@ async function submitVerification (phoneNumber, urlKey) {
     const response = await fetch("/volunteer/verify-delivery", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "phoneNumber": phoneNumber, "urlKey": urlKey, "section": "delivery" })
+            body: JSON.stringify({ "phoneNumber": phoneNumber, "urlKey": urlKey.toUpperCase(), "section": "delivery" })
         });
 
     if (response.ok) {
@@ -45,10 +45,9 @@ function removeVerificationError() {
     errorMsgElement.classList.add("hidden");
 }
 
-
-
 window.addEventListener("load", () => {
     const verificationForm = document.getElementById("verificationForm");
+
     // Event Listener for Phone number verification
     verificationForm.addEventListener("submit", (e) => {
         e.preventDefault();
