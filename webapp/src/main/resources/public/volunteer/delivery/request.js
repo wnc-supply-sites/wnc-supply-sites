@@ -3,11 +3,15 @@ async function handleVerificationSubmission(e) {
     const phoneNumber = document.getElementById("phone-verification").value.replaceAll("-", "");
     const urlKey = document.getElementById("content").dataset.urlkey;
 
+    submitVerification(phoneNumber, urlKey);
+};
+
+async function submitVerification (phoneNumber, urlKey) {
     const response = await fetch("/volunteer/verify-delivery", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "phoneNumber": phoneNumber, "urlKey": urlKey, "section": "delivery" })
-    });
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "phoneNumber": phoneNumber, "urlKey": urlKey, "section": "delivery" })
+        });
 
     if (response.ok) {
         const data = await response.json();
@@ -15,7 +19,7 @@ async function handleVerificationSubmission(e) {
     } else {
         return displayVerificationError();
     }
-};
+}
 
 
 function handleLoadDeliveryData(data) {
@@ -45,7 +49,6 @@ function removeVerificationError() {
 
 window.addEventListener("load", () => {
     const verificationForm = document.getElementById("verificationForm");
-
     // Event Listener for Phone number verification
     verificationForm.addEventListener("submit", (e) => {
         e.preventDefault();

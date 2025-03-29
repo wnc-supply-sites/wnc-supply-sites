@@ -14,7 +14,7 @@
 
   <main style="display: flex; flex-direction: column; align-items: center">
 
-    {{#userRequiresPhoneAuth}}
+
       <div style="
                   padding: 1rem 1.5rem 1rem 1.5rem;
                   border: solid black;
@@ -36,15 +36,15 @@
               <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" id="phone-verification" name="userPhone" required/>
             </div>
             <label for="phone-verification" class="italic" style="font-size:small">Format: 111-222-3333 </label>
-          </div>
-          <div style="display: flex;  flex-direction: row-reverse">
-            <button>
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    {{/userRequiresPhoneAuth}}
+        </div>
+        <div style="display: flex;  flex-direction: row-reverse">
+          <button>
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+
 
     <div class="hidden" id="content" data-urlkey="{{urlKey}}">
       <h1> Verified! </h1>
@@ -56,6 +56,9 @@
 <script>
   {{^userRequiresPhoneAuth}}
     console.log("Running script because the user does not require auth")
+    window.addEventListener("load", () => {
+      submitVerification({{userPhone}}, {{urlKey}});
+    });
   {{/userRequiresPhoneAuth}}
 </script>
 </html>

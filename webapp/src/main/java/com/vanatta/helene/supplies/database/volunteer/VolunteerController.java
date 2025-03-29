@@ -106,6 +106,8 @@ public class VolunteerController {
         !userSites.contains(deliveryRequest.siteId) && !Objects.equals(deliveryRequest.volunteerPhone, userPhone)
     );
 
+    pageParams.put("userPhone",  userPhone == null ? "" : userPhone);
+
     return new ModelAndView("volunteer/delivery/request", pageParams);
   }
 
