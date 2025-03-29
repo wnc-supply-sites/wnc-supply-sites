@@ -64,7 +64,7 @@ public class VolunteerDaoTest {
 
   @Test
   void neededItemsRequestReturnsNull() {
-    // Returns null if that item id does not exist
+    // Returns null if item id does not exist
     VolunteerService.Site result = VolunteerDao.fetchSiteItems(jdbiTest, 567L);
     assertThat(result).isNull();
   }
@@ -183,4 +183,6 @@ public class VolunteerDaoTest {
             () -> VolunteerDao.createVolunteerDelivery(jdbiTest, form2),
             "Expected an exception due to duplicate URL Key.");
   }
+
+
 }

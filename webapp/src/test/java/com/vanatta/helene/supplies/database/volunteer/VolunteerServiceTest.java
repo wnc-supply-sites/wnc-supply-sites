@@ -59,6 +59,23 @@ public class VolunteerServiceTest {
             .mapToBean(VolunteerService.VolunteerDeliveryItem.class)
             .list());
     assertThat(deliveryItems.isEmpty()).isTrue();
-
   }
+
+  // todo: getVolunteerDeliveryRequest -> returns correct delivery request
+
+  // todo: getVolunteerDeliveryRequest -> returns empty optional if urlKey does not exist
+
+  // todo: verifyVolunteerPortalAccess -> returns correct access
+
+  // todo: verifyVolunteerPortalAccess -> Returns an empty hashmap if no access
+
+  // todo: VolunteerService.VolunteerDeliveryRequest.scrubDataBasedOnStatus -> returns correct information based on each status
+
+
+
+
+
+
+
+
 }

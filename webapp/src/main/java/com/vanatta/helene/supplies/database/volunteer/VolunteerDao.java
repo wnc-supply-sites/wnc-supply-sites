@@ -4,6 +4,8 @@ import com.vanatta.helene.supplies.database.volunteer.VolunteerService.DeliveryF
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Item;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Site;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.SiteSelect;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,8 +54,6 @@ public class VolunteerDao {
   }
 
   static Site fetchSiteItems(Jdbi jdbi, Long siteId) {
-    // todo: Write test
-
     return jdbi.withHandle(
         handle -> {
           Site site =
@@ -78,7 +78,6 @@ public class VolunteerDao {
           if (site == null) {
             return null;
           }
-          ;
 
           List<Item> items =
               handle
@@ -101,8 +100,6 @@ public class VolunteerDao {
   }
 
   static Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm form) {
-    // todo: Write test
-
     // Create Delivery
     String insertDelivery =
         """
@@ -171,6 +168,7 @@ public class VolunteerDao {
   }
 
   static Optional<VolunteerService.VolunteerDeliveryRequest> getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
+
     String query = """
         SELECT
           vd.id,
@@ -197,7 +195,6 @@ public class VolunteerDao {
             .findOne());
   }
 
-
   static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId) {
     String query = """
         SELECT
@@ -218,4 +215,6 @@ public class VolunteerDao {
             .mapToBean(VolunteerService.VolunteerDeliveryRequestItem.class)
             .list());
   }
+
+
 }
