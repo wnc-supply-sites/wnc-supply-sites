@@ -55,9 +55,8 @@
 
 <script>
   {{^userRequiresPhoneAuth}}
-    console.log("Running script because the user does not require auth")
     window.addEventListener("load", () => {
-      submitVerification({{userPhone}}, {{urlKey}});
+      submitVerification({{userPhone}}, "{{urlKey}}");
     });
   {{/userRequiresPhoneAuth}}
 </script>
