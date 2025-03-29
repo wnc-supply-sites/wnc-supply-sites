@@ -9,8 +9,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
 
@@ -95,13 +94,13 @@ public class VolunteerService {
   @NoArgsConstructor
   public static class VolunteerDeliveryRequest {
     Long id;
-    String volunteerName;
-    String volunteerPhone;
     String status;
     Long siteId;
     String urlKey;
     String address;
     String city;
+    String volunteerName;
+    String volunteerPhone;
     String siteContactNumber;
     String siteContactName;
     List<VolunteerDeliveryRequestItem> items;
@@ -109,32 +108,66 @@ public class VolunteerService {
     public void insertItems(List<VolunteerDeliveryRequestItem> deliveryItems) {
       this.items = deliveryItems;
     }
+
+    public HashMap<String, Object> scrubDataBasedOnStatus(){
+      HashMap<String, Object> scrubbedData = new HashMap<>();
+      scrubbedData.put("id", this.id);
+      scrubbedData.put("volunteerName", this.volunteerName);
+      scrubbedData.put("status", this.status);
+      scrubbedData.put("siteId", this.siteId);
+      scrubbedData.put("urlKey", this.urlKey);
+      scrubbedData.put("address", this.address);
+      scrubbedData.put("city", this.city);
+
+      if (Objects.equals(this.status, "ACCEPTED")) {
+        scrubbedData.put("volunteerName", this.volunteerName);
+        scrubbedData.put("volunteerPhone", this.volunteerPhone);
+        scrubbedData.put("siteContactNumber", this.siteContactNumber);
+        scrubbedData.put("siteContactName", this.siteContactName);
+      };
+      return scrubbedData;
+    }
+
+    public String getCleanedSitePhoneNumber() {
+      return this.siteContactNumber.replaceAll("[^0-9]", "");
+    }
+
+    public String getCleanedVolunteerPhoneNumber() {
+      return this.volunteerPhone.replaceAll("[^0-9]", "");
+    }
+  }
+
+  // Consider making section an enum
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class VerificationRequest {
+    String phoneNumber;
+    String urlKey;
+    String section;
   }
 
 
   public Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
-      handle.begin(); // Start the transaction
-
-      // Create the volunteer delivery
+      handle.begin();
       Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(handle.getJdbi(), request);
-
-      // Create the volunteer delivery items
       createVolunteerDeliveryItems(handle.getJdbi(), volunteerDeliveryId, request.getNeededItems());
-
-      handle.commit(); // Commit the transaction
+      handle.commit();
       log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
+
       return volunteerDeliveryId;
     } catch (Exception e) {
-      handle.rollback(); // Rollback the transaction if an error occurs
+      handle.rollback();
       log.error("Error while creating volunteer delivery. Transaction rolled back.", e);
       throw new RuntimeException("Error while creating volunteer delivery. Rolling back.", e);
     } finally {
-      handle.close(); // Ensure the handle is closed
+      handle.close();
     }
   }
 
+  /** Grabs a volunteer delivery request via ID */
   public static VolunteerDelivery getDeliveryById(Jdbi jdbi, Long id) {
     try {
       return VolunteerDao.getVolunteerDeliveryById(jdbi, id);
@@ -144,6 +177,7 @@ public class VolunteerService {
     }
   }
 
+  /** Grabs a volunteer delivery request via urlKey and returns an optional. */
   public static Optional<VolunteerDeliveryRequest> getVolunteerDeliveryRequest(Jdbi jdbi, String urlKey) {
     try {
       Optional<VolunteerDeliveryRequest> volunteerDeliveryRequestOpt =  getVolunteerDeliveryByUrlKey(jdbi, urlKey);
@@ -161,9 +195,41 @@ public class VolunteerService {
       log.error("Error while looking up delivery by urlKey: ", e);
       throw new RuntimeException("Error while looking up delivery by urlKey: ", e);
     }
-
   }
 
+  /** Determines which delivery type this verify request is for and calls the correct verifyer function */
+  public static HashMap<String, Boolean> verifyVolunteerPortalAccess(Jdbi jdbi, String urlKey, String phoneNumber, String section){
+    switch (section) {
+      // Grab delivery request, cleans numbers, and calls correct verifyer function
+      case "delivery":
+        Optional<VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerDao.getVolunteerDeliveryByUrlKey(jdbi, urlKey);
+        if (deliveryRequestOpt.isEmpty()) return new HashMap<>();
+        VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
+
+        return verifyDeliveryPortalAccess(phoneNumber, deliveryRequest);
+      default:
+        return new HashMap<>();
+    }
+  }
+
+  /** Gets called by verifyVolunteerPortalAccess. Determines if a user is a volunteer or manager or both. If not verified */
+  private static HashMap<String, Boolean> verifyDeliveryPortalAccess(String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
+    String cleanedUserPhoneNumber = userPhoneNumber.replaceAll("[^0-9]", "");
+
+    Boolean hasVolunteerAccess = Objects.equals(deliveryRequest.getCleanedVolunteerPhoneNumber(), cleanedUserPhoneNumber);
+    Boolean hasSiteManagerAccess = Objects.equals(deliveryRequest.getCleanedSitePhoneNumber(), cleanedUserPhoneNumber);
+
+    HashMap<String, Boolean> access = new HashMap<>();
+
+    // Returns an empty hashmap if not verified
+    if (!hasVolunteerAccess & !hasSiteManagerAccess) {
+      return access;
+    }
+
+    access.put("hasManagerAccess", hasSiteManagerAccess);
+    access.put("hasVolunteerAccess", hasVolunteerAccess);
+    return access;
+  }
 }
 
 

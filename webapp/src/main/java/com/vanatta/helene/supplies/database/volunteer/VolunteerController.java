@@ -7,6 +7,7 @@ import java.util.*;
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.HttpStatus;
@@ -73,14 +74,18 @@ public class VolunteerController {
   }
 
   @GetMapping("/volunteer/delivery/request")
-  ModelAndView volunteerDeliveryStatus(
+  ModelAndView deliveryPortal(
       @ModelAttribute(LoggedInAdvice.USER_PHONE) String userPhone,
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> userSites,
       @RequestParam String urlKey) {
-    return volunteerDeliveryStatus(jdbi, userPhone, userSites, urlKey);
+    return deliveryPortal(jdbi, userPhone, userSites, urlKey);
   }
 
-  public static ModelAndView volunteerDeliveryStatus(Jdbi jdbi, String userPhone, List<Long> userSites, String urlKey) {
+  /**
+   * Checks if delivery exists and if the user is already logged in and is a site manager or the volunteer
+   * Returns the urlKey and a boolean representing if the user required verification or not
+   * */
+  public static ModelAndView deliveryPortal(Jdbi jdbi, String userPhone, List<Long> userSites, String urlKey) {
     // Get Volunteer Delivery
     log.info("Received request for Volunteer Delivery {}", urlKey.toUpperCase());
     Optional<VolunteerService.VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerService.getVolunteerDeliveryRequest(jdbi, urlKey.toUpperCase());
@@ -92,25 +97,8 @@ public class VolunteerController {
     if (deliveryRequestOpt.isEmpty()) return new ModelAndView("redirect:/");
 
     VolunteerService.VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
-    log.info("Received delivery request: {}", deliveryRequest);
 
-    // Add retrieved Delivery data
-    pageParams.put(
-        "deliveryRequest",
-        deliveryRequest
-    );
-
-    // Check if userPhone matches deliveryRequestPhone
-    pageParams.put(
-        "userIsVolunteer",
-        Objects.equals(deliveryRequest.volunteerPhone, userPhone)
-    );
-
-    // Check if user Is Primary or Secondary Site Manager
-    pageParams.put(
-        "userIsManager",
-        userSites.contains(deliveryRequest.siteId)
-    );
+    pageParams.put("urlKey", urlKey);
 
     // Check if user requires phone verification
     pageParams.put(
@@ -120,4 +108,42 @@ public class VolunteerController {
 
     return new ModelAndView("volunteer/delivery/request", pageParams);
   }
+
+  /**
+   * A site sends urlKey, phoneNumber, and volunteerSection
+   * Verify that the phone number is associated with the delivery and returns access level and delivery data
+   * If not then an 401 error is returned
+   * */
+  @PostMapping("/volunteer/verify-delivery")
+  ResponseEntity<?> verifyAndRetrieveDelivery(@RequestBody VolunteerService.VerificationRequest body) {
+
+    // Check access
+    HashMap<String, Boolean> access = VolunteerService.verifyVolunteerPortalAccess(jdbi, body.urlKey, body.phoneNumber, "delivery");
+
+    // If user does not hav access return 403 forbidden response
+    if (access.isEmpty())  {
+      log.info("Verification failed for volunteer volunteer delivery: {}", body.urlKey);
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied: User is not verified");
+    };
+
+    Optional<VolunteerService.VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerService.getVolunteerDeliveryRequest(jdbi, body.getUrlKey());
+
+    // Filter delivery request based on access
+    if (deliveryRequestOpt.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body("Volunteer delivery request not found for the provided URL key.");
+    }
+
+    VolunteerService.VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
+
+    // Only shows volunteer and manager phone numbers if the request status is accepted
+    HashMap<String, Object> requestInfo = deliveryRequest.scrubDataBasedOnStatus();
+
+    HashMap<String, Object> response = new HashMap<>();
+    response.put("access", access);
+    response.put("request", requestInfo);
+
+    return ResponseEntity.ok(response);
+  }
+
 }
