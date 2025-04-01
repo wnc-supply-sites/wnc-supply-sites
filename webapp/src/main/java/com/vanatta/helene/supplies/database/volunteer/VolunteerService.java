@@ -84,9 +84,8 @@ public class VolunteerService {
   @AllArgsConstructor
   @NoArgsConstructor
   public static class VolunteerDeliveryRequestItem {
-    Long id;
-    String item_name;
-    String item_status;
+    String name;
+    String status;
   }
 
   @Data
@@ -95,6 +94,7 @@ public class VolunteerService {
   public static class VolunteerDeliveryRequest {
     Long id;
     String status;
+    String siteName;
     Long siteId;
     String urlKey;
     String address;
@@ -111,20 +111,29 @@ public class VolunteerService {
 
     public HashMap<String, Object> scrubDataBasedOnStatus(){
       HashMap<String, Object> scrubbedData = new HashMap<>();
-      scrubbedData.put("id", this.id);
+      scrubbedData.put("siteName", this.siteName);
       scrubbedData.put("volunteerName", this.volunteerName);
       scrubbedData.put("status", this.status);
       scrubbedData.put("siteId", this.siteId);
       scrubbedData.put("urlKey", this.urlKey);
+      scrubbedData.put("items", this.items);
+
+      // todo: remove when finished testing
       scrubbedData.put("address", this.address);
       scrubbedData.put("city", this.city);
+      scrubbedData.put("volunteerPhone", this.volunteerPhone);
+      scrubbedData.put("siteContactNumber", this.siteContactNumber);
+      scrubbedData.put("siteContactName", this.siteContactName);
 
-      if (Objects.equals(this.status, "ACCEPTED")) {
-        scrubbedData.put("volunteerName", this.volunteerName);
-        scrubbedData.put("volunteerPhone", this.volunteerPhone);
-        scrubbedData.put("siteContactNumber", this.siteContactNumber);
-        scrubbedData.put("siteContactName", this.siteContactName);
-      };
+
+
+//      if (Objects.equals(this.status, "ACCEPTED")) {
+//        scrubbedData.put("address", this.address);
+//        scrubbedData.put("city", this.city);
+//        scrubbedData.put("volunteerPhone", this.volunteerPhone);
+//        scrubbedData.put("siteContactNumber", this.siteContactNumber);
+//        scrubbedData.put("siteContactName", this.siteContactName);
+//      };
       return scrubbedData;
     }
 

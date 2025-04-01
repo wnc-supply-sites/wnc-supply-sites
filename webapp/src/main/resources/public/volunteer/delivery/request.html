@@ -35,7 +35,7 @@
     </div>
 
 
-    <div class="" id="requestData" data-urlkey="{{urlKey}}">
+    <div class="hidden" id="delivery-details" data-urlkey="{{urlKey}}">
       <div id="request-status-wrapper">
         <h1> Request Status: </h1>
         <div id="request-status">
@@ -72,37 +72,43 @@
         <div id="site-info">
           <div class="site-detail-container">
             <div class="detail-label"> Site Name: </div>
-            <div class="site-detail"> Great Smokey Mt. Relief Site </div>
+            <div class="site-detail" id="site-name"> Great Smokey Mt. Relief Site </div>
           </div>
 
-          <div class="site-detail-container">
+          <div class="site-detail-container hidden">
             <div class="detail-label"> Address: </div>
-            <div class="site-detail"> 123 great Smokey Mt.  </div>
+            <div class="site-detail" id="site-address"> 123 great Smokey Mt.  </div>
           </div>
 
-          <div class="site-detail-container">
+          <div class="site-detail-container hidden">
             <div class="detail-label"> Main Contact: </div>
-            <div class="site-detail"> Harry Potter </div>
+            <div class="site-detail" id="site-contact-name"> Harry Potter </div>
+          </div>
+
+          <div class="site-detail-container hidden">
+            <div class="detail-label"> Contact Number: </div>
+            <div class="site-detail" id="site-contact-number"> 123-345-789 </div>
+          </div>
+
+          <div class="site-detail-container hidden">
+            <div class="detail-label"> Volunteer Name: </div>
+            <div class="site-detail" id="volunteer-name"> Thanh Nguyen </div>
+          </div>
+
+          <div class="site-detail-container hidden">
+            <div class="detail-label"> Volunteer Contact Number: </div>
+            <div class="site-detail" id="volunteer-contact"> 123-456-7890 </div>
           </div>
 
           <div class="site-detail-container">
-            <div class="detail-label"> Contact Number: </div>
-            <div class="site-detail"> 123-345-789 </div>
+            <div id="map"></div>
           </div>
 
         </div>
 
         <div id="items">
           <span class="detail-label"> Items: </span>
-          <ul id="delivery-items">
-            <li> Water </li>
-            <li> Super Extra Long ginormous large bouncy house for a birthday party </li>
-            <li> Water </li>
-            <li> Water </li>
-            <li> Diaper </li>
-            <li> Really Really Long chainsaw </li>
-            <li> Water </li>
-          </ul>
+          <ul id="delivery-items"></ul>
         </div>
 
         <div >

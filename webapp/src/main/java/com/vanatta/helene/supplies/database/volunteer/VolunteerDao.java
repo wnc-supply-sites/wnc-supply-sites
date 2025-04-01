@@ -177,6 +177,7 @@ public class VolunteerDao {
           vd.url_key,
           vd.status,
           site.id as site_id,
+          site.name as site_name,
           site.address,
           site.city,
           site.contact_number as site_contact_number,
@@ -198,9 +199,8 @@ public class VolunteerDao {
   static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId) {
     String query = """
         SELECT
-            vdi.id,
-            i.name AS item_name,
-            ist.name AS item_status
+            i.name AS name,
+            ist.name AS status
         FROM volunteer_delivery_item vdi
         JOIN site_item si ON vdi.site_item_id = si.id
         JOIN item i ON si.item_id = i.id

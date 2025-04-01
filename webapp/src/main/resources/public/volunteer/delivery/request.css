@@ -54,6 +54,19 @@ main {
     font-size: x-small;
 }
 
+#map {
+    width: 100%;
+}
+
+#map iframe {
+    width: 100%;
+}
+
+#delivery-details {
+    width: 100%;
+}
+
+
 #delivery {
     background-color: #dddddd;
     display: flex;
