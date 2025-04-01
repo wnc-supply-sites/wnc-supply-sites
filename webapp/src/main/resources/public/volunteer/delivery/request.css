@@ -25,11 +25,61 @@ main {
     display: flex;
     flex-direction: row;
     border: solid black;
-    border-radius: 20px;
+    border-radius: 5px;
     background-color: #dddddd;
+    height: 2.5rem;
 }
 
 .status {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.status-divider {
+    border-left: solid black;
+    height: 75%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.status-text {
+    font-weight: bold;
+    font-size: x-small;
+}
+
+@media only screen and (min-width: 640px) {
+    .status-text {
+        font-size: 1.25rem;
+    }
+
+    .request-status-icon {
+        font-size: x-large;
+    }
+
+    #request-status {
+        border-radius: 10px;
+        height: 4rem;
+    }
+
+    #request-status-wrapper {
+        width: 75%;
+        margin-right: auto;
+        margin-left: auto;
+    }
 
 }
+
+
+@media only screen and (min-width: 1024px) {
+
+    #request-status-wrapper {
+        width: 50%;
+    }
+
+
+}
+
 

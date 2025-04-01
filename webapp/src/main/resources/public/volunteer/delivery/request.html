@@ -36,24 +36,36 @@
 
 
     <div class="" id="requestData" data-urlkey="{{urlKey}}">
-      <div>
-        <h1> Request Status </h1>
+      <div id="request-status-wrapper">
+        <h1> Request Status: </h1>
         <div id="request-status">
-          <div class="status">
-            Pending
+          <div class="status" id="status-pending">
+            <span class="status-text">Pending</span>
+            <i class="fa-solid fa-check request-status-icon" style="color: #63E6BE;"></i>
           </div>
-          <div class="status">
-            Accepted
+
+          <div class="status-divider"></div>
+
+          <div class="status" id="status-accepted">
+            <span class="status-text">Accepted</span>
+            <i class="fa-solid fa-check request-status-icon" style="color: #63E6BE;"></i>
           </div>
-          <div class="status">
-            Declined
+
+          <div class="status-divider"></div>
+
+          <div class="status" id="status-declined">
+            <span class="status-text">Declined</span>
+            <i class="fa-solid fa-check request-status-icon" style="color: #63E6BE;"></i>
           </div>
-          <div class="status">
-            Cancelled
+
+          <div class="status-divider"></div>
+
+          <div class="status" id="status-cancelled">
+            <span class="status-text">Cancelled</span>
+            <i class="fa-solid fa-check request-status-icon" style="color: #63E6BE;"></i>
           </div>
         </div>
       </div>
-
 
     </div>
   </main>
