@@ -1,8 +1,7 @@
 
 async function handleVerificationSubmission(e) {
     const phoneNumber = document.getElementById("phone-verification").value.replaceAll("-", "");
-    const urlKey = document.getElementById("content").dataset.urlkey;
-
+    const urlKey = document.getElementById("requestData").dataset.urlkey;
     submitVerification(phoneNumber, urlKey);
 };
 
@@ -10,8 +9,12 @@ async function submitVerification (phoneNumber, urlKey) {
     const response = await fetch("/volunteer/verify-delivery", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "phoneNumber": phoneNumber, "urlKey": urlKey.toUpperCase(), "section": "delivery" })
-        });
+            body: JSON.stringify({
+                "phoneNumber": phoneNumber,
+                "urlKey": urlKey.toUpperCase(),
+                "section": "delivery"
+                })
+    });
 
     if (response.ok) {
         const data = await response.json();
@@ -22,12 +25,11 @@ async function submitVerification (phoneNumber, urlKey) {
 }
 
 
+// fills and displays delivery data
 function handleLoadDeliveryData(data) {
-    console.log("loading delivery data");
     removeVerificationError();
-    console.log(data);
 
-    const volunteerContent = document.getElementById("content");
+    const volunteerContent = document.getElementById("requestData");
 
     const verificationContainer = document.getElementById("verification-container");
     verificationContainer.classList.add("hidden");
@@ -46,7 +48,7 @@ function removeVerificationError() {
 }
 
 window.addEventListener("load", () => {
-    const verificationForm = document.getElementById("verificationForm");
+    const verificationForm = document.getElementById("verification-form");
 
     // Event Listener for Phone number verification
     verificationForm.addEventListener("submit", (e) => {

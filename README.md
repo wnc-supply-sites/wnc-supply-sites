@@ -104,7 +104,6 @@ psql
 sudo -u postgres psql
 \c wnc_helene
 ```
-
 - The databases will have empty data. Example data can be found in `src/test/resources/TestData.sql`
 
 - Finally, the app can be launched via Intellj IDE, main class is `SuppliesDatabaseApplication.java`
