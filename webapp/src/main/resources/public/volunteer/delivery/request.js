@@ -30,8 +30,8 @@ async function submitVerification (phoneNumber, urlKey) {
 function handleLoadDeliveryData(data) {
     removeVerificationError();
 
-
     // Load request status
+    if(data.request.status) loadStatus(data.request.status);
 
     // Load site Name
     if (data.request.siteName) loadSiteDetail("site-name", data.request.siteName);
@@ -74,6 +74,8 @@ function createDeliveryItemElement(itemName) {
     return deliveryItem;
 }
 
+// Creates a new iframe element using
+// google maps as the source and the site address as query
 function loadMap(address) {
     const mapElement = document.createElement("div");
     mapElement.innerHTML = `
@@ -93,6 +95,23 @@ function loadMap(address) {
     mapContainer.appendChild(mapElement.firstChild);
 }
 
+// unselect all statuses except for the current status
+function loadStatus(status){
+
+    const statusElements = document.getElementsByClassName("status");
+    const statusText = `status-${status.toLowerCase()}`;
+
+    for (const element of statusElements) {
+        const statusIcon = element.querySelector(".request-status-icon");
+        if (element.id === statusText) {
+            statusIcon.classList.add("status-selected");
+            statusIcon.classList.remove("status-unselected");
+        } else {
+            statusIcon.classList.remove("status-selected");
+            statusIcon.classList.add("status-unselected");
+        }
+    }
+}
 
 // Finds the element by the provided elementId.
 // Changes the textContent and then removes hidden element
@@ -103,7 +122,6 @@ function loadSiteDetail(elementId, value) {
 }
 
 function displayVerificationError() {
-    console.log("displaying verification error");
     const errorMsgElement = document.getElementById("verification-error-msg");
     errorMsgElement.classList.remove("hidden");
 }

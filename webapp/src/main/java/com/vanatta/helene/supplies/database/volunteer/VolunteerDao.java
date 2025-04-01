@@ -168,7 +168,6 @@ public class VolunteerDao {
   }
 
   static Optional<VolunteerService.VolunteerDeliveryRequest> getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
-
     String query = """
         SELECT
           vd.id,

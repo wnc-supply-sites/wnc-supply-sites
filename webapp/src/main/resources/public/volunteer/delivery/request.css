@@ -66,6 +66,13 @@ main {
     width: 100%;
 }
 
+.status-selected {
+    color: #63E6BE;
+}
+
+.status-unselected {
+    color: #dddddd;
+}
 
 #delivery {
     background-color: #dddddd;
