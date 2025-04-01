@@ -1,0 +1,1 @@
+UPDATE deployment SET short_name = 'WNC & Appalachian' WHERE domain = 'wnc-supply-sites.com';
