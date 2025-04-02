@@ -116,17 +116,17 @@ public class VolunteerService {
       scrubbedData.put("urlKey", this.urlKey);
 
       // Provide site name, volunteerName, site address, siteId, and items is request is still active (pending/accepted);
-      if (!Objects.equals(this.status, "DECLINED") || !Objects.equals(this.status, "CANCELLED")) {
+      if (!Objects.equals(this.status, "DECLINED") && !Objects.equals(this.status, "CANCELLED")) {
         scrubbedData.put("siteName", this.siteName);
         scrubbedData.put("volunteerName", this.volunteerName);
         scrubbedData.put("address", this.address);
+        scrubbedData.put("city", this.city);
         scrubbedData.put("siteId", this.siteId);
         scrubbedData.put("items", this.items);
       }
 
       // Provided user info and site contact if accepted
       if (Objects.equals(this.status, "ACCEPTED")) {
-        scrubbedData.put("city", this.city);
         scrubbedData.put("volunteerPhone", this.volunteerPhone);
         scrubbedData.put("siteContactNumber", this.siteContactNumber);
         scrubbedData.put("siteContactName", this.siteContactName);
