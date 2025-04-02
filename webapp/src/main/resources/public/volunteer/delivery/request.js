@@ -60,7 +60,9 @@ function handleLoadDeliveryData(data) {
     if (data.request.siteContactName) loadSiteDetail("site-contact-name", data.request.siteContactName);
     if (data.request.siteContactNumber) loadSiteDetail("site-contact-number", data.request.siteContactNumber);
 
-    // Load buttons
+    // Load status change buttons
+    loadStatusChangeButtons(data.request.status, data.usePhoneNumber, data.access);
+
     const deliveryDetails = document.getElementById("delivery-details");
     deliveryDetails.classList.remove("hidden");
 
@@ -68,7 +70,7 @@ function handleLoadDeliveryData(data) {
     verificationContainer.classList.add("hidden");
 };
 
-// Creates a new li element with text content of itemNAme
+// Creates a new <li> element with item name as it's textContent
 function createDeliveryItemElement(itemName) {
     const deliveryItem = document.createElement("li");
     deliveryItem.textContent = itemName;
@@ -112,6 +114,60 @@ function loadStatus(status){
             statusIcon.classList.add("status-unselected");
         }
     }
+}
+
+// Reads the status and displays the appropriate buttons
+function loadStatusChangeButtons(status, userPhoneNumber, access) {
+    debugger;
+
+    switch(status){
+        case "PENDING":
+            loadPendingStatusButtons(access, userPhoneNumber);
+        case "ACCEPTED":
+            // display cancel buttons
+        case "DECLINED":
+            // display declined message
+        case "CANCELLED":
+            // display cancelled message
+    }
+}
+
+// Displays corresponding buttons based on user access
+// Also set up the event listeners for the appropriate
+function loadPendingStatusButtons(access, userPhoneNumber) {
+    if (access.hasManagerAccess) {
+        const acceptDeclineButtonGroup = document.getElementById("acceptDeclineButtonGroup")
+        initializeButtonGroupEventListener(acceptDeclineButtonGroup, userPhoneNumber);
+        acceptDeclineButtonGroup.classList.remove("hidden");
+    }
+
+    if (access.hasVolunteerAccess) {
+        const cancelButtonGroup = document.getElementById("cancelButtonGroup");
+        initializeButtonGroupEventListener(cancelButtonGroup, userPhoneNumber);
+        cancelButtonGroup.classList.remove("hidden");
+    }
+}
+
+// Initialize event listener for provided status change button group
+function initializeButtonGroupEventListener(buttonGroup ,userPhoneNumber) {
+    // todo: check if buttonGroup is an element
+    buttonGroup.addEventListener("click", (event) => {
+        const isButton = event.target.nodeName === 'BUTTON';
+        if(isButton){
+           console.log("Changing status");
+           return console.dir(event.target.id)
+        }
+    });
+};
+
+// Loads the cancel delivery button
+function loadCancelButton(){
+
+}
+
+// displays the declined or cancelled message
+function loadDeclinedOrCancelledMessage() {
+
 }
 
 // Finds the element by the provided elementId.

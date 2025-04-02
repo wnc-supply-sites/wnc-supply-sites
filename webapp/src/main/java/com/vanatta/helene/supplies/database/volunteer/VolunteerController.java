@@ -102,7 +102,8 @@ public class VolunteerController {
 
   /**
    * A site sends urlKey, phoneNumber, and volunteerSection
-   * Verify that the phone number is associated with the delivery and returns access level and delivery data
+   * Verify that the phone number is associated with the delivery and
+   * returns access level, delivery data, and provided phone number (used for auth later)
    * If not then an 401 error is returned
    * */
   @PostMapping("/volunteer/verify-delivery")
@@ -133,6 +134,9 @@ public class VolunteerController {
     HashMap<String, Object> response = new HashMap<>();
     response.put("access", access);
     response.put("request", requestInfo);
+
+    // Returning the phone number to use as verification when updating status
+    response.put("userPhoneNumber", body.phoneNumber);
 
     return ResponseEntity.ok(response);
   }

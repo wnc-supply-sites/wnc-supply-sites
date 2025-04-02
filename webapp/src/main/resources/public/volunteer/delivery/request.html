@@ -111,14 +111,14 @@
           <ul id="delivery-items"></ul>
         </div>
 
-        <div id="update-status">
-          <div class="button-group">
-            <button> Decline </button>
-            <button> Accept </button>
+        <div id="update-status" data-userPhone="">
+          <div class="button-group hidden" id="acceptDeclineButtonGroup">
+            <button id="declineRequest" data-request="DECLINE"> Decline </button>
+            <button id="acceptRequest" data-request="ACCEPT"> Accept </button>
           </div>
 
-          <div class="button-group">
-            <button> Cancel Request </button>
+          <div class="button-group hidden" id="cancelButtonGroup">
+            <button id="cancelRequest" data-request="CANCEL"> Cancel Request </button>
           </div>
 
         </div>
