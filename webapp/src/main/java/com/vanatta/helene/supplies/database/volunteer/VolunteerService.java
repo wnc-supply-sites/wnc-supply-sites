@@ -112,29 +112,25 @@ public class VolunteerService {
 
     public HashMap<String, Object> scrubDataBasedOnStatus(){
       HashMap<String, Object> scrubbedData = new HashMap<>();
-      scrubbedData.put("siteName", this.siteName);
-      scrubbedData.put("volunteerName", this.volunteerName);
       scrubbedData.put("status", this.status);
-      scrubbedData.put("siteId", this.siteId);
       scrubbedData.put("urlKey", this.urlKey);
-      scrubbedData.put("items", this.items);
 
-      // todo: remove when finished testing
-      scrubbedData.put("address", this.address);
-      scrubbedData.put("city", this.city);
-      scrubbedData.put("volunteerPhone", this.volunteerPhone);
-      scrubbedData.put("siteContactNumber", this.siteContactNumber);
-      scrubbedData.put("siteContactName", this.siteContactName);
+      // Provide site name, volunteerName, site address, siteId, and items is request is still active (pending/accepted);
+      if (!Objects.equals(this.status, "DECLINED") || !Objects.equals(this.status, "CANCELLED")) {
+        scrubbedData.put("siteName", this.siteName);
+        scrubbedData.put("volunteerName", this.volunteerName);
+        scrubbedData.put("address", this.address);
+        scrubbedData.put("siteId", this.siteId);
+        scrubbedData.put("items", this.items);
+      }
 
-
-
-//      if (Objects.equals(this.status, "ACCEPTED")) {
-//        scrubbedData.put("address", this.address);
-//        scrubbedData.put("city", this.city);
-//        scrubbedData.put("volunteerPhone", this.volunteerPhone);
-//        scrubbedData.put("siteContactNumber", this.siteContactNumber);
-//        scrubbedData.put("siteContactName", this.siteContactName);
-//      };
+      // Provided user info and site contact if accepted
+      if (Objects.equals(this.status, "ACCEPTED")) {
+        scrubbedData.put("city", this.city);
+        scrubbedData.put("volunteerPhone", this.volunteerPhone);
+        scrubbedData.put("siteContactNumber", this.siteContactNumber);
+        scrubbedData.put("siteContactName", this.siteContactName);
+      };
       return scrubbedData;
     }
 
@@ -147,7 +143,6 @@ public class VolunteerService {
     }
   }
 
-  // Consider making section an enum
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -156,7 +151,6 @@ public class VolunteerService {
     String urlKey;
     String section;
   }
-
 
   public VolunteerService.VolunteerDelivery createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();

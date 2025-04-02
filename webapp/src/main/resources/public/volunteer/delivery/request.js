@@ -6,7 +6,6 @@ async function handleVerificationSubmission(e) {
 };
 
 async function submitVerification (phoneNumber, urlKey) {
-
     const response = await fetch("/volunteer/verify-delivery", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -16,10 +15,9 @@ async function submitVerification (phoneNumber, urlKey) {
                 "section": "delivery"
                 })
     });
-
     if (response.ok) {
         const data = await response.json();
-        return handleLoadDeliveryData(data);
+        return loadDeliveryData(data);
     } else {
         return displayVerificationError();
     }
@@ -27,7 +25,7 @@ async function submitVerification (phoneNumber, urlKey) {
 
 
 // fills and displays delivery data
-function handleLoadDeliveryData(data) {
+function loadDeliveryData(data) {
     removeVerificationError();
 
     // Load request status
@@ -38,7 +36,7 @@ function handleLoadDeliveryData(data) {
 
     // Load site Address and map
     if (data.request.address) {
-        const siteAddress = `${data.request.address}, ${data.request.city}`
+        const siteAddress = `${data.request.address}, ${data.request.city}`;
         loadSiteDetail("site-address", siteAddress);
         loadMap(siteAddress);
     };
@@ -93,7 +91,6 @@ function loadMap(address) {
         >
         </iframe>
     </div>`.trim();
-
     const mapContainer = document.getElementById("map");
     mapContainer.appendChild(mapElement.firstChild);
 }
@@ -116,19 +113,17 @@ function loadStatus(status){
     }
 }
 
-// Reads the status and displays the appropriate buttons
+// Reads the status and displays the appropriate buttons or an inactive message
 function loadStatusChangeButtons(status, userPhoneNumber, access) {
-    debugger;
-
     switch(status){
         case "PENDING":
             loadPendingStatusButtons(access, userPhoneNumber);
+            break;
         case "ACCEPTED":
-            // display cancel buttons
-        case "DECLINED":
-            // display declined message
-        case "CANCELLED":
-            // display cancelled message
+             loadAcceptedStatusButtons(userPhoneNumber);
+             break;
+        default:
+            loadDeclinedOrCancelledMessage();
     }
 }
 
@@ -148,6 +143,18 @@ function loadPendingStatusButtons(access, userPhoneNumber) {
     }
 }
 
+function loadAcceptedStatusButtons(userPhoneNumber) {
+    const cancelButtonGroup = document.getElementById("cancelButtonGroup");
+    initializeButtonGroupEventListener(cancelButtonGroup, userPhoneNumber);
+    cancelButtonGroup.classList.remove("hidden");
+};
+
+// displays the declined or cancelled message
+function loadDeclinedOrCancelledMessage() {
+    const message = document.getElementById("requestInactiveMessage");
+    message.classList.remove("hidden");
+};
+
 // Initialize event listener for provided status change button group
 function initializeButtonGroupEventListener(buttonGroup ,userPhoneNumber) {
     // todo: check if buttonGroup is an element
@@ -160,15 +167,6 @@ function initializeButtonGroupEventListener(buttonGroup ,userPhoneNumber) {
     });
 };
 
-// Loads the cancel delivery button
-function loadCancelButton(){
-
-}
-
-// displays the declined or cancelled message
-function loadDeclinedOrCancelledMessage() {
-
-}
 
 // Finds the element by the provided elementId.
 // Changes the textContent and then removes hidden element
