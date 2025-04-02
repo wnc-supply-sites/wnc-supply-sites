@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generateUrlKey;
 import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
 
 @Service
@@ -157,16 +158,23 @@ public class VolunteerService {
   }
 
 
-  public Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
+  public VolunteerService.VolunteerDelivery createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
       handle.begin();
+
+      // Remove '-' from phone number
+      request.volunteerContact = String.join("", request.volunteerContact.split("-"));
+
+      // Add urlKey
+      request.urlKey = generateUrlKey();
+
       Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(handle.getJdbi(), request);
       createVolunteerDeliveryItems(handle.getJdbi(), volunteerDeliveryId, request.getNeededItems());
       handle.commit();
       log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
 
-      return volunteerDeliveryId;
+      return VolunteerService.getDeliveryById(jdbi, volunteerDeliveryId);
     } catch (Exception e) {
       handle.rollback();
       log.error("Error while creating volunteer delivery. Transaction rolled back.", e);

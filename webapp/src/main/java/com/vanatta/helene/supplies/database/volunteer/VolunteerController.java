@@ -23,8 +23,7 @@ import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generate
 @Slf4j
 public class VolunteerController {
   private final Jdbi jdbi;
-
-  private VolunteerService volunteerService;
+  private final VolunteerService volunteerService;
 
   /** Users will be shown a form to request to make a delivery */
   @GetMapping("/volunteer/delivery")
@@ -46,19 +45,9 @@ public class VolunteerController {
   @PostMapping("/volunteer/delivery")
   ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
-
     try {
-      // Remove '-' from phone number
-      request.volunteerContact = String.join("", request.volunteerContact.split("-"));
-
-      // Add urlKey
-      request.urlKey = generateUrlKey();
-
-      Long deliveryId = volunteerService.createVolunteerDelivery(jdbi, request);
-      VolunteerService.VolunteerDelivery createdDelivery = VolunteerService.getDeliveryById(jdbi, deliveryId);
-
+      VolunteerService.VolunteerDelivery createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);
       return ResponseEntity.ok(createdDelivery.urlKey);
-
     } catch (Exception e) {
       log.error(e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
