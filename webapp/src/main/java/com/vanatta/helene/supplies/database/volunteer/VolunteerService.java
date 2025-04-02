@@ -229,7 +229,7 @@ public class VolunteerService {
     }
   }
 
-  /** Gets called by verifyVolunteerPortalAccess. Determines if a user is a volunteer or manager or both. If not verified */
+  /** Gets called by verifyVolunteerPortalAccess. Determines if a user is a volunteer or manager or both. If not verified return an empty HashMap */
   private static HashMap<String, Boolean> verifyDeliveryPortalAccess(String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
     String cleanedUserPhoneNumber = userPhoneNumber.replaceAll("[^0-9]", "");
 

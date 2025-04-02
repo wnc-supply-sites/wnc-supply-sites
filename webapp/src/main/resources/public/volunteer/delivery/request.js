@@ -55,11 +55,12 @@ function handleLoadDeliveryData(data) {
         };
     };
 
-    // check status and load contacts
-
+    // Load contacts
+    if (data.request.volunteerPhone) loadSiteDetail("volunteer-contact", data.request.volunteerPhone)
+    if (data.request.siteContactName) loadSiteDetail("site-contact-name", data.request.siteContactName);
+    if (data.request.siteContactNumber) loadSiteDetail("site-contact-number", data.request.siteContactNumber);
 
     // Load buttons
-
     const deliveryDetails = document.getElementById("delivery-details");
     deliveryDetails.classList.remove("hidden");
 

@@ -110,9 +110,21 @@ main {
 
 
 #delivery-items {
-    height: 10rem;
+    max-height: 10rem;
     overflow-y: auto;
     margin-top: 10px;
+}
+
+#update-status {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 @media only screen and (min-width: 640px) {
