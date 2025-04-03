@@ -152,6 +152,27 @@ public class VolunteerService {
     String section;
   }
 
+  @Data
+  @Builder(toBuilder = true)
+  public static class Access {
+    Boolean hasManagerAccess;
+    Boolean hasVolunteerAccess;
+
+    public Boolean isAuthorized() {
+      return this.hasManagerAccess || this.hasVolunteerAccess;
+    }
+  }
+
+  @Data
+  public static class UpdateRequest {
+    String phoneNumber;
+    String urlKey;
+    String status;
+  }
+
+  /**
+   * Creates a new volunteer delivery
+   */
   public VolunteerService.VolunteerDelivery createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
@@ -164,7 +185,9 @@ public class VolunteerService {
       request.urlKey = generateUrlKey();
 
       Long volunteerDeliveryId = VolunteerDao.createVolunteerDelivery(handle.getJdbi(), request);
+
       createVolunteerDeliveryItems(handle.getJdbi(), volunteerDeliveryId, request.getNeededItems());
+
       handle.commit();
       log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
 
@@ -178,7 +201,9 @@ public class VolunteerService {
     }
   }
 
-  /** Grabs a volunteer delivery request via ID */
+  /**
+   * Grabs a volunteer delivery request via ID
+   */
   public static VolunteerDelivery getDeliveryById(Jdbi jdbi, Long id) {
     try {
       return VolunteerDao.getVolunteerDeliveryById(jdbi, id);
@@ -188,58 +213,105 @@ public class VolunteerService {
     }
   }
 
-  /** Grabs a volunteer delivery request via urlKey and returns an optional. */
-  public static Optional<VolunteerDeliveryRequest> getVolunteerDeliveryRequest(Jdbi jdbi, String urlKey) {
+  /**
+   * Grabs a volunteer delivery request via urlKey
+   */
+  public static VolunteerDeliveryRequest getVolunteerDeliveryRequest(Jdbi jdbi, String urlKey) {
     try {
-      Optional<VolunteerDeliveryRequest> volunteerDeliveryRequestOpt =  getVolunteerDeliveryByUrlKey(jdbi, urlKey);
-
-      if (volunteerDeliveryRequestOpt.isEmpty()) return volunteerDeliveryRequestOpt;
-
-      VolunteerDeliveryRequest volunteerDeliveryRequest = volunteerDeliveryRequestOpt.get();
+      VolunteerDeliveryRequest volunteerDeliveryRequest =  getVolunteerDeliveryByUrlKey(jdbi, urlKey);
 
       List<VolunteerDeliveryRequestItem> deliveryItems = VolunteerDao.getVolunteerDeliveryItems(jdbi, volunteerDeliveryRequest.getId());
 
       volunteerDeliveryRequest.insertItems(deliveryItems);
 
-      return Optional.of(volunteerDeliveryRequest);
+      return volunteerDeliveryRequest;
     } catch (Exception e) {
       log.error("Error while looking up delivery by urlKey: ", e);
       throw new RuntimeException("Error while looking up delivery by urlKey: ", e);
     }
   }
 
-  /** Determines which delivery type this verify request is for and calls the correct verifyer function */
-  public static HashMap<String, Boolean> verifyVolunteerPortalAccess(Jdbi jdbi, String urlKey, String phoneNumber, String section){
+  /**
+   * Determines which delivery type this verify request is for
+   * and calls the correct verify-er function
+   */
+  public static Access verifyVolunteerPortalAccess(Jdbi jdbi, String urlKey, String phoneNumber, String section){
     switch (section) {
-      // Grab delivery request, cleans numbers, and calls correct verifyer function
       case "delivery":
-        Optional<VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerDao.getVolunteerDeliveryByUrlKey(jdbi, urlKey);
-        if (deliveryRequestOpt.isEmpty()) return new HashMap<>();
-        VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
-
+        // Grab delivery request and calls correct verify-er function
+        VolunteerDeliveryRequest deliveryRequest = VolunteerDao.getVolunteerDeliveryByUrlKey(jdbi, urlKey);
         return verifyDeliveryPortalAccess(phoneNumber, deliveryRequest);
       default:
-        return new HashMap<>();
+        return Access.builder()
+            .hasManagerAccess(false)
+            .hasVolunteerAccess(false)
+            .build();
     }
   }
 
-  /** Gets called by verifyVolunteerPortalAccess. Determines if a user is a volunteer or manager or both. If not verified return an empty HashMap */
-  private static HashMap<String, Boolean> verifyDeliveryPortalAccess(String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
+  /**
+   * Determines if a user is a volunteer, manager , both or neither.
+   * returns the result
+   */
+  private static Access verifyDeliveryPortalAccess(String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
     String cleanedUserPhoneNumber = userPhoneNumber.replaceAll("[^0-9]", "");
 
     Boolean hasVolunteerAccess = Objects.equals(deliveryRequest.getCleanedVolunteerPhoneNumber(), cleanedUserPhoneNumber);
     Boolean hasSiteManagerAccess = Objects.equals(deliveryRequest.getCleanedSitePhoneNumber(), cleanedUserPhoneNumber);
 
-    HashMap<String, Boolean> access = new HashMap<>();
+    return Access.builder()
+        .hasManagerAccess(hasSiteManagerAccess)
+        .hasVolunteerAccess(hasVolunteerAccess)
+        .build();
+  }
 
-    // Returns an empty hashmap if not verified
-    if (!hasVolunteerAccess & !hasSiteManagerAccess) {
-      return access;
+  /**
+   * Updates the delivery status and returns the updates delivery
+   */
+  public static VolunteerDeliveryRequest updateDeliveryStatus(Jdbi jdbi, Access access, String newStatus, VolunteerDeliveryRequest delivery) {
+    String urlKey = delivery.getUrlKey();
+    Boolean requestIsValid = validateDeliveryUpdate(access, delivery, newStatus);
+    if (requestIsValid) {
+      VolunteerDao.updateDeliveryStatus(jdbi, urlKey, newStatus);
+    }
+    return getVolunteerDeliveryRequest(jdbi, urlKey);
+  }
+
+  /**
+   * Checks if the requested new status is a valid request
+   */
+  private static Boolean validateDeliveryUpdate(Access access, VolunteerDeliveryRequest delivery, String newStatus) {
+    String currentStatus = delivery.getStatus();
+
+    if (Objects.equals(newStatus, "ACCEPTED") || Objects.equals(newStatus, "DECLINED")) {
+      // If new status is ACCEPTED or DECLINED
+      // The current status must be PENDING
+      // And the user must have manager access
+      if (!access.getHasManagerAccess()) {
+        log.error("Site update failed: user not authorized");
+        return false;
+      }
+      if (!Objects.equals(currentStatus, "PENDING")) {
+        log.error("Site update failed: Invalid current state");
+        return false;
+      }
+    } else if (Objects.equals(newStatus, "CANCELLED")) {
+      // If new status is CANCELLED
+      // User has to be authorized (manager or volunteer)
+      if (!access.isAuthorized()) {
+        log.error("Site update failed: user not authorized");
+        return false;
+      }
+    } else if (
+        !Objects.equals(newStatus, "ACCEPTED") &&
+        !Objects.equals(newStatus, "DECLINED") &&
+        !Objects.equals(newStatus, "CANCELLED")
+    ) {
+      log.error("Site update failed: Invalid new status");
+      return false;
     }
 
-    access.put("hasManagerAccess", hasSiteManagerAccess);
-    access.put("hasVolunteerAccess", hasVolunteerAccess);
-    return access;
+    return true;
   }
 }
 

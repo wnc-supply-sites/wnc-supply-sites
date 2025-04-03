@@ -41,7 +41,9 @@ public class VolunteerController {
     return new ModelAndView("volunteer/delivery-form", pageParams);
   }
 
-  /** Adds volunteer request to DB */
+  /**
+   * Adds volunteer request to DB
+   */
   @PostMapping("/volunteer/delivery")
   ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
@@ -77,15 +79,12 @@ public class VolunteerController {
   public static ModelAndView deliveryPortal(Jdbi jdbi, String userPhone, List<Long> userSites, String urlKey) {
     // Get Volunteer Delivery
     log.info("Received request for Volunteer Delivery {}", urlKey.toUpperCase());
-    Optional<VolunteerService.VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerService.getVolunteerDeliveryRequest(jdbi, urlKey.toUpperCase());
+    VolunteerService.VolunteerDeliveryRequest deliveryRequest = VolunteerService.getVolunteerDeliveryRequest(jdbi, urlKey.toUpperCase());
 
     Map<String, Object> pageParams = new HashMap<>();
 
     // If volunteer Delivery is not available reroute them to home
     // todo: create a 404 not found page to redirect to
-    if (deliveryRequestOpt.isEmpty()) return new ModelAndView("redirect:/");
-
-    VolunteerService.VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
 
     pageParams.put("urlKey", urlKey);
 
@@ -101,7 +100,7 @@ public class VolunteerController {
   }
 
   /**
-   * A site sends urlKey, phoneNumber, and volunteerSection
+   * Webapp sends urlKey, phoneNumber, and volunteerSection
    * Verify that the phone number is associated with the delivery and
    * returns access level, delivery data, and provided phone number (used for auth later)
    * If not then an 401 error is returned
@@ -110,23 +109,15 @@ public class VolunteerController {
   ResponseEntity<?> verifyAndRetrieveDelivery(@RequestBody VolunteerService.VerificationRequest body) {
 
     // Check access
-    HashMap<String, Boolean> access = VolunteerService.verifyVolunteerPortalAccess(jdbi, body.urlKey, body.phoneNumber, "delivery");
+    VolunteerService.Access access = VolunteerService.verifyVolunteerPortalAccess(jdbi, body.urlKey, body.phoneNumber, "delivery");
 
     // If user does not hav access return 403 forbidden response
-    if (access.isEmpty())  {
+    if (!(access.isAuthorized()))  {
       log.info("Verification failed for volunteer volunteer delivery: {}", body.urlKey);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied: User is not verified");
     };
 
-    Optional<VolunteerService.VolunteerDeliveryRequest> deliveryRequestOpt = VolunteerService.getVolunteerDeliveryRequest(jdbi, body.getUrlKey());
-
-    // Filter delivery request based on access
-    if (deliveryRequestOpt.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body("Volunteer delivery request not found for the provided URL key.");
-    }
-
-    VolunteerService.VolunteerDeliveryRequest deliveryRequest = deliveryRequestOpt.get();
+    VolunteerService.VolunteerDeliveryRequest deliveryRequest = VolunteerService.getVolunteerDeliveryRequest(jdbi, body.getUrlKey());
 
     // Only shows volunteer and manager phone numbers if the request status is accepted
     HashMap<String, Object> requestInfo = deliveryRequest.scrubDataBasedOnStatus();
@@ -140,5 +131,37 @@ public class VolunteerController {
 
     return ResponseEntity.ok(response);
   }
+
+  /**
+   * Webapp sends urlKey, new status , and phone number
+   * Verify the user again
+   * Send the updated request data
+   * Returns and error if not authorized to make the change
+   */
+  @PostMapping("/volunteer/delivery/update")
+  ResponseEntity<?> updateDeliveryStatus(@RequestBody VolunteerService.UpdateRequest reqBody) {
+    log.info("Recieved delivery update: {}", reqBody);
+
+    // Check access
+    VolunteerService.Access access = VolunteerService.verifyVolunteerPortalAccess(jdbi, reqBody.urlKey, reqBody.phoneNumber, "delivery");
+    if (!access.isAuthorized()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("User does not have authorization to update delivery");
+    }
+
+
+    // Check delivery exists
+    VolunteerService.VolunteerDeliveryRequest deliveryRequest = VolunteerService.getVolunteerDeliveryRequest(jdbi, reqBody.getUrlKey());
+
+    // todo: Send Text Notification
+
+    // update status
+    VolunteerService.VolunteerDeliveryRequest updatedRequest = VolunteerService.updateDeliveryStatus(jdbi, access, reqBody.status ,deliveryRequest);
+
+    HashMap <String, Object> response = new HashMap<>();
+    response.put("data", updatedRequest.scrubDataBasedOnStatus());
+    return ResponseEntity.ok(response);
+  }
+
 
 }

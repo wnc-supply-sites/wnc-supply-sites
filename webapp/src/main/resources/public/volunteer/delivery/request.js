@@ -59,7 +59,7 @@ function loadDeliveryData(data) {
     if (data.request.siteContactNumber) loadSiteDetail("site-contact-number", data.request.siteContactNumber);
 
     // Load status change buttons
-    loadStatusChangeButtons(data.request.status, data.usePhoneNumber, data.access);
+    loadStatusChangeButtons(data.request.status, data.userPhoneNumber, data.access);
 
     const deliveryDetails = document.getElementById("delivery-details");
     deliveryDetails.classList.remove("hidden");
@@ -120,7 +120,7 @@ function loadStatusChangeButtons(status, userPhoneNumber, access) {
             loadPendingStatusButtons(access, userPhoneNumber);
             break;
         case "ACCEPTED":
-             loadAcceptedStatusButtons(userPhoneNumber);
+             loadCancelButton(userPhoneNumber);
              break;
         default:
             loadDeclinedOrCancelledMessage();
@@ -143,7 +143,8 @@ function loadPendingStatusButtons(access, userPhoneNumber) {
     }
 }
 
-function loadAcceptedStatusButtons(userPhoneNumber) {
+// Loads the cancel button
+function loadCancelButton(userPhoneNumber) {
     const cancelButtonGroup = document.getElementById("cancelButtonGroup");
     initializeButtonGroupEventListener(cancelButtonGroup, userPhoneNumber);
     cancelButtonGroup.classList.remove("hidden");
@@ -156,16 +157,39 @@ function loadDeclinedOrCancelledMessage() {
 };
 
 // Initialize event listener for provided status change button group
-function initializeButtonGroupEventListener(buttonGroup ,userPhoneNumber) {
-    // todo: check if buttonGroup is an element
+function initializeButtonGroupEventListener(buttonGroup , userPhoneNumber) {
     buttonGroup.addEventListener("click", (event) => {
         const isButton = event.target.nodeName === 'BUTTON';
         if(isButton){
-           console.log("Changing status");
-           return console.dir(event.target.id)
+           const urlKey = document.getElementById("delivery-details").dataset.urlkey;
+           const newStatus = event.target.dataset.request;
+           return updateStatus(urlKey, userPhoneNumber, newStatus);
         }
     });
 };
+
+async function updateStatus(urlKey, phoneNumber, status) {
+    // send a request to the backend to update the status
+
+    // send the urlKey ,update text and the user phone number as the request body
+    const response = await fetch("/volunteer/delivery/update", {
+        method: "POST",
+        headers: {'Content-Type': "application/json"},
+        body: JSON.stringify({
+            "phoneNumber": phoneNumber,
+            "urlKey": urlKey.toUpperCase(),
+            "status": status.toUpperCase()
+        })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+    } else {
+        // todo: Handle Error
+        console.log("An error occurred!");
+    }
+}
 
 
 // Finds the element by the provided elementId.

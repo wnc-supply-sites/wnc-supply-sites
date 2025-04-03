@@ -167,7 +167,7 @@ public class VolunteerDao {
             .one());
   }
 
-  static Optional<VolunteerService.VolunteerDeliveryRequest> getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
+  static VolunteerService.VolunteerDeliveryRequest getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
     String query = """
         SELECT
           vd.id,
@@ -192,7 +192,7 @@ public class VolunteerDao {
             .createQuery(query)
             .bind("urlKey", urlKey)
             .mapToBean(VolunteerService.VolunteerDeliveryRequest.class)
-            .findOne());
+            .one());
   }
 
   static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId) {
@@ -213,6 +213,26 @@ public class VolunteerDao {
             .bind("volunteerDeliveryId", deliveryId)
             .mapToBean(VolunteerService.VolunteerDeliveryRequestItem.class)
             .list());
+  }
+
+
+  static String updateDeliveryStatus(Jdbi jdbi,String urlKey, String status) {
+    String updateStatus = """
+          UPDATE volunteer_delivery
+          SET status = CAST(:status AS volunteer_delivery_status_enum)
+          WHERE url_key = :urlKey
+          RETURNING url_key
+        """;
+    return jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(updateStatus)
+                  .bind("status", status)
+                  .bind("urlKey", urlKey)
+                  .executeAndReturnGeneratedKeys("url_key")
+                  .mapTo(String.class)
+                  .one()
+      );
   }
 
 
