@@ -170,6 +170,7 @@ public class VolunteerController {
 
     HashMap <String, Object> response = new HashMap<>();
     response.put("request", updatedRequest.scrubDataBasedOnStatus());
+    response.put("userPhoneNumber", reqBody.phoneNumber);
     return ResponseEntity.ok(response);
   }
 

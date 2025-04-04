@@ -16,6 +16,7 @@ async function submitVerification (phoneNumber, urlKey) {
                 })
     });
     if (response.ok) {
+        hideVerificationForm();
         const data = await response.json();
         return loadDeliveryData(data);
     } else {
@@ -26,38 +27,35 @@ async function submitVerification (phoneNumber, urlKey) {
 
 // fills and displays delivery data
 function loadDeliveryData(data) {
-    debugger
-    removeVerificationError();
-
     // Load request status
     if(data.request.status) loadStatus(data.request.status);
 
-    // Load site Name
-    if (data.request.siteName) loadSiteDetail("site-name", data.request.siteName);
 
-    // Load site Address and map
-    if (data.request.address) {
-        const siteAddress = `${data.request.address}, ${data.request.city}`;
-        loadSiteDetail("site-address", siteAddress);
-        loadMap(siteAddress);
-    };
+    // If request is cancelled or declined hide data
+    if (data.request.status == "CANCELLED" || data.request.status == "DECLINED") {
+        hideDeliveryData();
+    } else {
+        // Load site Name
+        if (data.request.siteName) loadSiteDetail("site-name", data.request.siteName);
 
-    // Load Volunteer Name
-    if (data.request.volunteerName) loadSiteDetail("volunteer-name", data.request.volunteerName);
-
-    // Load items
-    if (data.request.items) {
-        const itemsList = document.getElementById("delivery-items");
-        for (let item of data.request.items) {
-            const deliveryItem = createDeliveryItemElement(item.name);
-            itemsList.appendChild(deliveryItem);
+        // Load site Address and map
+        if (data.request.address) {
+            const siteAddress = `${data.request.address}, ${data.request.city}`;
+            loadSiteDetail("site-address", siteAddress);
+            loadMap(siteAddress);
         };
-    };
 
-    // Load contacts
-    if (data.request.volunteerPhone) loadSiteDetail("volunteer-contact", data.request.volunteerPhone)
-    if (data.request.siteContactName) loadSiteDetail("site-contact-name", data.request.siteContactName);
-    if (data.request.siteContactNumber) loadSiteDetail("site-contact-number", data.request.siteContactNumber);
+        // Load Volunteer Name
+        if (data.request.volunteerName) loadSiteDetail("volunteer-name", data.request.volunteerName);
+
+        // Load items
+        if (data.request.items) loadDeliveryItems(data.request.items);
+
+        // Load contacts
+        if (data.request.volunteerPhone) loadSiteDetail("volunteer-contact", data.request.volunteerPhone)
+        if (data.request.siteContactName) loadSiteDetail("site-contact-name", data.request.siteContactName);
+        if (data.request.siteContactNumber) loadSiteDetail("site-contact-number", data.request.siteContactNumber);
+    }
 
     // Load status change buttons
     loadStatusChangeButtons(data.request.status, data.userPhoneNumber, data.access);
@@ -65,9 +63,22 @@ function loadDeliveryData(data) {
     const deliveryDetails = document.getElementById("delivery-details");
     deliveryDetails.classList.remove("hidden");
 
-    const verificationContainer = document.getElementById("verification-container");
-    verificationContainer.classList.add("hidden");
 };
+
+
+function hideDeliveryData() {
+    // Hide site info
+    const siteDetailContainers = document.getElementsByClassName("site-detail-container");
+    for (let container of siteDetailContainers) {
+        container.classList.add("hidden");
+    };
+
+    // Hide site map
+    document.getElementById("map").classList.add("hidden");
+
+    // Hide site items
+    document.getElementById("items").classList.add("hidden");
+}
 
 // Creates a new <li> element with item name as it's textContent
 function createDeliveryItemElement(itemName) {
@@ -76,9 +87,37 @@ function createDeliveryItemElement(itemName) {
     return deliveryItem;
 }
 
+// loadsDeliveryItem
+function loadDeliveryItems(items) {
+    // Clear all items
+    const itemsList = document.getElementById("delivery-items");
+
+    // Remove all items
+    while (itemsList.firstChild) {
+        itemsList.removeChild(itemsList.lastChild);
+    };
+
+    // Load new items
+    for (let item of items) {
+        const deliveryItem = createDeliveryItemElement(item.name);
+        itemsList.appendChild(deliveryItem);
+    };
+};
+
+function hideVerificationForm(){
+    removeVerificationError();
+    const verificationContainer = document.getElementById("verification-container");
+    verificationContainer.classList.add("hidden");
+}
+
 // Creates a new iframe element using
 // google maps as the source and the site address as query
 function loadMap(address) {
+    const mapContainer = document.getElementById("map");
+
+    // Empty current map
+    while (mapContainer.firstChild) mapContainer.removeChild(mapContainer.lastChild);
+
     const mapElement = document.createElement("div");
     mapElement.innerHTML = `
     <div class="gmap_canvas">
@@ -92,7 +131,6 @@ function loadMap(address) {
         >
         </iframe>
     </div>`.trim();
-    const mapContainer = document.getElementById("map");
     mapContainer.appendChild(mapElement.firstChild);
 }
 
@@ -116,6 +154,14 @@ function loadStatus(status){
 
 // Reads the status and displays the appropriate buttons or an inactive message
 function loadStatusChangeButtons(status, userPhoneNumber, access) {
+
+    // Hide All buttons
+    const buttonGroups = document.getElementsByClassName("button-group");
+    for (let buttonGroup of buttonGroups) {
+        buttonGroup.classList.add("hidden")
+    }
+
+
     switch(status){
         case "PENDING":
             loadPendingStatusButtons(access, userPhoneNumber);
@@ -175,11 +221,10 @@ async function handleStatusUpdate(urlKey, phoneNumber, status) {
     try {
         updatedDeliveryData = await updateStatus(urlKey, phoneNumber, status);
 
-        // Load update success message
+        // todo: Load update success message
 
         // Load the updated data
-        debugger;
-//        loadDeliveryData(updatedDeliveryData);
+        loadDeliveryData(updatedDeliveryData);
     } catch (e) {
         console.log(e)
         // Display error message
