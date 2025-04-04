@@ -215,6 +215,7 @@ public class VolunteerService {
 
   /**
    * Grabs a volunteer delivery request via urlKey
+   * This method returns Delivery and Delivery Items
    */
   public static VolunteerDeliveryRequest getVolunteerDeliveryRequest(Jdbi jdbi, String urlKey) {
     try {
@@ -250,6 +251,7 @@ public class VolunteerService {
   }
 
   /**
+   * Verify-er function.
    * Determines if a user is a volunteer, manager , both or neither.
    * returns the result
    */
@@ -266,7 +268,8 @@ public class VolunteerService {
   }
 
   /**
-   * Updates the delivery status and returns the updates delivery
+   * Updates the delivery status and returns the updated delivery
+   * If not valid, return the old delivery
    */
   public static VolunteerDeliveryRequest updateDeliveryStatus(Jdbi jdbi, Access access, String newStatus, VolunteerDeliveryRequest delivery) {
     String urlKey = delivery.getUrlKey();
@@ -303,6 +306,7 @@ public class VolunteerService {
         return false;
       }
     } else if (
+        // If the new status to update to is not one of the accepted values
         !Objects.equals(newStatus, "ACCEPTED") &&
         !Objects.equals(newStatus, "DECLINED") &&
         !Objects.equals(newStatus, "CANCELLED")

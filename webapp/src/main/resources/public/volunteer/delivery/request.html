@@ -138,7 +138,7 @@
 <script>
   {{^userRequiresPhoneAuth}}
     window.addEventListener("load", () => {
-      submitVerification({{userPhone}}, "{{urlKey}}");
+      submitVerification("{{userPhone}}", "{{urlKey}}");
     });
   {{/userRequiresPhoneAuth}}
 </script>

@@ -26,6 +26,7 @@ async function submitVerification (phoneNumber, urlKey) {
 
 // fills and displays delivery data
 function loadDeliveryData(data) {
+    debugger
     removeVerificationError();
 
     // Load request status
@@ -163,14 +164,31 @@ function initializeButtonGroupEventListener(buttonGroup , userPhoneNumber) {
         if(isButton){
            const urlKey = document.getElementById("delivery-details").dataset.urlkey;
            const newStatus = event.target.dataset.request;
-           return updateStatus(urlKey, userPhoneNumber, newStatus);
+           return handleStatusUpdate(urlKey, userPhoneNumber, newStatus);
         }
     });
 };
 
-async function updateStatus(urlKey, phoneNumber, status) {
-    // send a request to the backend to update the status
+// Send update request and fills the data
+// If error display error message
+async function handleStatusUpdate(urlKey, phoneNumber, status) {
+    try {
+        updatedDeliveryData = await updateStatus(urlKey, phoneNumber, status);
 
+        // Load update success message
+
+        // Load the updated data
+        debugger;
+//        loadDeliveryData(updatedDeliveryData);
+    } catch (e) {
+        console.log(e)
+        // Display error message
+    }
+
+}
+
+// Sends update request and returns updated data
+async function updateStatus(urlKey, phoneNumber, status) {
     // send the urlKey ,update text and the user phone number as the request body
     const response = await fetch("/volunteer/delivery/update", {
         method: "POST",
@@ -183,11 +201,11 @@ async function updateStatus(urlKey, phoneNumber, status) {
     });
 
     if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+        return await response.json();
     } else {
         // todo: Handle Error
         console.log("An error occurred!");
+        throw Error(e);
     }
 }
 

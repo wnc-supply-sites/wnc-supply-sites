@@ -49,6 +49,9 @@ public class VolunteerController {
     log.info("Received delivery request for site: {}", request.site);
     try {
       VolunteerService.VolunteerDelivery createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);
+
+      // todo: Send text message
+
       return ResponseEntity.ok(createdDelivery.urlKey);
     } catch (Exception e) {
       log.error(e.getMessage());
@@ -57,7 +60,9 @@ public class VolunteerController {
     }
   }
 
-  /** Return json payload of site info */
+  /**
+   * Return Site items and information
+   * */
   @GetMapping("/volunteer/site-items")
   ResponseEntity<?> getSiteItems(@RequestParam String siteId) {
     VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbi, Long.parseLong(siteId));
@@ -73,8 +78,12 @@ public class VolunteerController {
   }
 
   /**
-   * Checks if delivery exists and if the user is already logged in and is a site manager or the volunteer
-   * Returns the urlKey and a boolean representing if the user required verification or not
+   * Checks if
+   * - delivery exists and
+   * - if the user is already logged in check if user is a site manager or the volunteer
+   * Returns
+   * - the urlKey and
+   * - a boolean representing if the user requires verification or not
    * */
   public static ModelAndView deliveryPortal(Jdbi jdbi, String userPhone, List<Long> userSites, String urlKey) {
     // Get Volunteer Delivery
@@ -89,6 +98,7 @@ public class VolunteerController {
     pageParams.put("urlKey", urlKey);
 
     // Check if user requires phone verification
+    // true if user sites does not include siteId and user's phone number is not the volunteer's number
     pageParams.put(
         "userRequiresPhoneAuth",
         !userSites.contains(deliveryRequest.siteId) && !Objects.equals(deliveryRequest.volunteerPhone, userPhone)
@@ -100,8 +110,8 @@ public class VolunteerController {
   }
 
   /**
-   * Webapp sends urlKey, phoneNumber, and volunteerSection
-   * Verify that the phone number is associated with the delivery and
+   * Params: urlKey, phoneNumber, and volunteerSection
+   * Verify that the provided phone number is associated with the delivery and
    * returns access level, delivery data, and provided phone number (used for auth later)
    * If not then an 401 error is returned
    * */
@@ -133,14 +143,15 @@ public class VolunteerController {
   }
 
   /**
-   * Webapp sends urlKey, new status , and phone number
-   * Verify the user again
-   * Send the updated request data
-   * Returns and error if not authorized to make the change
+   * Params: urlKey, new status, and phone number
+   * Verify the user
+   * Update the delivery
+   * Returns the updated delivery
+   * an error if not authorized to make the change
    */
   @PostMapping("/volunteer/delivery/update")
   ResponseEntity<?> updateDeliveryStatus(@RequestBody VolunteerService.UpdateRequest reqBody) {
-    log.info("Recieved delivery update: {}", reqBody);
+    log.info("Received delivery update: {}", reqBody);
 
     // Check access
     VolunteerService.Access access = VolunteerService.verifyVolunteerPortalAccess(jdbi, reqBody.urlKey, reqBody.phoneNumber, "delivery");
@@ -148,7 +159,6 @@ public class VolunteerController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body("User does not have authorization to update delivery");
     }
-
 
     // Check delivery exists
     VolunteerService.VolunteerDeliveryRequest deliveryRequest = VolunteerService.getVolunteerDeliveryRequest(jdbi, reqBody.getUrlKey());
@@ -159,7 +169,7 @@ public class VolunteerController {
     VolunteerService.VolunteerDeliveryRequest updatedRequest = VolunteerService.updateDeliveryStatus(jdbi, access, reqBody.status ,deliveryRequest);
 
     HashMap <String, Object> response = new HashMap<>();
-    response.put("data", updatedRequest.scrubDataBasedOnStatus());
+    response.put("request", updatedRequest.scrubDataBasedOnStatus());
     return ResponseEntity.ok(response);
   }
 
