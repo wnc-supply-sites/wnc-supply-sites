@@ -5,13 +5,11 @@
         <link rel="stylesheet" href="../style.css" />
         <link rel="stylesheet" href="site-detail.css" />
         <link rel="stylesheet" href="../mobile.css" />
-        <script src="https://kit.fontawesome.com/e1873995ee.js" crossorigin="anonymous"></script>
         {{> header-include }}
     </head>
 
     <body>
         {{> header }}
-
         <div class="page-sub-header horizontal">
             <div class="back-link">
                 <a href="/supplies/site-list">[&larr; Go Back]</a>
@@ -19,28 +17,31 @@
             <span class="page-title-sub-header">{{siteName}}</span>
         </div>
 
-
         <div class="mission-statement">
-            <h1 id="site-name"> {{siteName}} </h1>
-            <div class="socials-container">
-                {{#website}}
-                    <a href="{{href}}"><i class="fa-solid fa-globe"></i> Website</a>
-                {{/website}}
 
-                {{#facebook}}
-                    <a href="{{href}}"><i class="fa-brands fa-facebook"></i> Facebook </a>
+            <dl class="w-full overflow-auto">
+                {{#website}}
+                <dt>Website: </dt>
+                <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
+                {{/website}} {{#facebook}}
+                <dt>Facebook: </dt>
+                <dd class="detail-value"><a href="{{href}}">{{title}}</a></dd>
                 {{/facebook}}
 
-            </div>
-        </div>
+                <dt>Address: </dt>
+                <dd class="detail-value">
+                    {{addressLine1}}<br />{{addressLine2}}
+                </dd>
 
-        <div class="mission-statement">
-            <div id="site-address">
-                <span class="detail-value">
-                    <i class="fa-solid fa-location-dot" style="color: #63E6BE;"></i>
-                    {{addressLine1}}, {{addressLine2}}
-                </span>
-            </div>
+                {{#hours}}
+                <dt>Hours: </dt>
+                <dd class="detail-value">
+                    <textarea rows="5" cols="20" readonly>{{.}}</textarea>
+                </dd>
+                {{/hours}}
+            </dl>
+
+            <hr />
             <div class="mapouter">
                 <div class="gmap_canvas">
                     <iframe
@@ -54,40 +55,34 @@
                     </iframe>
                 </div>
             </div>
-            <div class="site-detail">
-                {{#hours}}
-                <label for="site-hours" class="hidden">Hours: </label>
-                <textarea rows="5" cols="20" id="site-hours" readonly>{{.}}</textarea>
-                {{/hours}}
-            </div>
         </div>
 
         {{#loggedIn}}
-        <div>
-            <h2>
-                Contacts
-                <span class="privately-visible">*</span>
-                {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
-            </h2>
-            <div class="privately-visible header-subtext">
+
+        <h2>
+            Contact
+            <span class="privately-visible">*</span>
+            {{#showEditLinks}}<a class="edit-link" href="{{{editContactLink}}}">[edit]</a>{{/showEditLinks}}
+        </h2>
+        <div class="mission-statement">
+            <div class="privately-visible">
                 * Indicates field is visible because you are logged in
             </div>
         </div>
 
-
         <div class="mission-statement">
-            <div class="site-detail">
-                <div class="contact">
-                    <div><i class="fa-solid fa-phone" style="margin-right: .5rem"></i> {{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}: </div>
-                    <div class="detail-value bold"> {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}} </div>
-                </div>
+            <dl class="w-full overflow-auto">
+                <dt>{{#contactName}}{{.}}{{/contactName}}{{^contactName}}Primary{{/contactName}}</dt>
+                <dd class="detail-value bold">
+                    {{#contactNumber}}<a href="tel:{{.}}">{{.}}</a>{{/contactNumber}}
+                </dd>
                 {{#additionalContacts}}
-                <div class="contact">
-                    <div><i class="fa-solid fa-phone" style="margin-right: .5rem"></i> {{#name}} {{.}} {{/name}}: </div>
-                    <div class="detail-value bold"> {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}} </div>
-                </div>
+                <dt>{{#name}}{{.}}{{/name}}</dt>
+                <dd class="detail-value bold">
+                    {{#phone}}<a href="tel:{{.}}">{{.}}</a>{{/phone}}
+                </dd>
                 {{/additionalContacts}}
-            </div>
+            </dl>
         </div>
 
         <h2>
@@ -95,18 +90,23 @@
             <span class="privately-visible">*</span>
             {{#showEditLinks}}<a class="edit-link" href="{{{editReceivingLink}}}">[edit]</a>{{/showEditLinks}}
         </h2>
+        <div class="mission-statement" >
+            <dl class="w-full overflow-auto">
+                {{#receivingNotes}}
+                <dt>Receiving Notes: </dt>
+                <dd class="detail-value">
+                    <textarea rows="5" cols="20" readonly>{{.}}</textarea>
+                </dd>
+                {{/receivingNotes}}
 
-        <div class="mission-statement">
-            <div class="site-detail">
-                <span> Max Supply Load: <span class="detail-value"> {{maxSupplyLoad}} </span></span>
-            </div>
-            {{#receivingNotes}}
-            <div class="site-detail" style="margin-top: 1rem;">
-                <label for="receiving-notes" class="hidden">Receiving Notes: </label>
-                <textarea rows="5" cols="20" id="receiving-notes" readonly>{{.}}</textarea>
-            </div>
-            {{/receivingNotes}}
+                <dt>Max Supply Load: </dt>
+                <dd class="detail-value">
+                    {{maxSupplyLoad}}
+                </dd>
+
+            </dl>
         </div>
+
 
         <h2>Deliveries<span class="privately-visible">*</span></h2>
 
@@ -230,10 +230,8 @@
 
         {{#loggedIn}}
         <a id="needs-matching"></a>
-
         <h2>Needs Matching<span class="privately-visible">*</span> ({{#matchCount}}{{.}}{{/matchCount}} sites)</h2>
-        <p class="header-subtext">The below sites have supplies that are needed and can be transported to the current site.</p>
-
+        <p style="margin-left: 30px; margin-top: 0px; margin-bottom: 0px">The below sites have supplies that are needed and can be transported to the current site.</p>
 
         <div class="mission-statement">
             <div id="matched-sites">

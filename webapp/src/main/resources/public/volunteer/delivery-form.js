@@ -111,20 +111,25 @@ function clearSelectedItems() {
 /** Form Submission */
 async function handleFormSubmission(event) {
     event.preventDefault();
-    console.log(event);
     const formData = new FormData(event.target);
 
     const dataObject = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
 
     for (const [key, value] of formData.entries()) {
         if (key === "neededItems") {
-            dataObject["neededItems"] = [].concat(dataObject[key], parseInt(value));
+            // Adds the current needed item into the existing needed items array in dataObject
+            dataObject["neededItems"] = dataObject[key].concat(parseInt(value));
         } else {
             dataObject[key] = value;
         }
     }
 
     const isValid = validateData(dataObject);
+
+    if (!isValid) {
+        alert("Whoops, please make sure you select some items to bring!");
+        showNeededItemsErrorMsg();
+    }
 
     if (isValid) {
         try {
@@ -160,21 +165,18 @@ function handleSubmissionError() {
     document.documentElement.scrollTop = 0;
 }
 
+// Checks if data has needed items selected
 function validateData(data) {
-    if (data["neededItems"].length <= 0) {
-        alert("Whoops, please make sure you select some items to bring!");
-        showNeededItemsErrorMsg();
-        return false;
-    };
-
-    return true;
+  return (data["neededItems"].length > 0);
 }
 
+// Removes hidden tag to error message div
 function showNeededItemsErrorMsg() {
     const errorMessage = document.getElementById("items-error-msg");
     errorMessage.classList.remove("hidden");
 }
 
+// Add hidden tag to error message div
 function hideNeededItemsErrorMsg() {
     const errorMessage = document.getElementById("items-error-msg");
     errorMessage.classList.add("hidden");
@@ -204,7 +206,7 @@ function instantiateEventListeners() {
     });
 
 
-    // Handle form submission
+    // Handle form submission event listener
     const form = document.getElementById("volunteer-delivery-form");
     form.addEventListener("submit", handleFormSubmission)
 }

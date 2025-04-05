@@ -1,9 +1,11 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.DeliveryForm;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Item;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.Site;
-import com.vanatta.helene.supplies.database.volunteer.VolunteerController.SiteSelect;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerService.DeliveryForm;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Item;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Site;
+import com.vanatta.helene.supplies.database.volunteer.VolunteerService.SiteSelect;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,28 +18,6 @@ import org.jdbi.v3.core.Jdbi;
 
 @Slf4j
 public class VolunteerDao {
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Builder
-  public static class VolunteerDelivery {
-    Long id;
-    String volunteerName;
-    String volunteerPhone;
-    Long siteId;
-    String urlKey;
-  }
-
-  @Data
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class VolunteerDeliveryItem {
-    Long id;
-    Long site_item_id;
-    Long volunteer_delivery_id;
-  }
-
 
   static List<SiteSelect> fetchSiteSelect(Jdbi jdbi, List<String> states) {
     // todo: Write test
@@ -74,8 +54,6 @@ public class VolunteerDao {
   }
 
   static Site fetchSiteItems(Jdbi jdbi, Long siteId) {
-    // todo: Write test
-
     return jdbi.withHandle(
         handle -> {
           Site site =
@@ -100,7 +78,6 @@ public class VolunteerDao {
           if (site == null) {
             return null;
           }
-          ;
 
           List<Item> items =
               handle
@@ -115,7 +92,7 @@ public class VolunteerDao {
               order by ist.sort_order, i.name
               """)
                   .bind("siteId", siteId)
-                  .mapToBean(VolunteerController.Item.class)
+                  .mapToBean(VolunteerService.Item.class)
                   .list();
           site.setItems(items);
           return site;
@@ -123,8 +100,6 @@ public class VolunteerDao {
   }
 
   static Long createVolunteerDelivery(Jdbi jdbi, DeliveryForm form) {
-    // todo: Write test
-
     // Create Delivery
     String insertDelivery =
         """
@@ -178,18 +153,87 @@ public class VolunteerDao {
     };
   }
 
-  static VolunteerDelivery getVolunteerDeliveryById(Jdbi jdbi, Long deliveryId) {
+  static VolunteerService.VolunteerDelivery getVolunteerDeliveryById(Jdbi jdbi, Long deliveryId) {
     String query = """
         SELECT id, volunteer_phone, volunteer_name, site_id, url_key
         FROM volunteer_delivery
         WHERE volunteer_delivery.id = :id
         """;
-
     return jdbi.withHandle(handle ->
         handle
             .createQuery(query)
             .bind("id", deliveryId)
-            .mapToBean(VolunteerDelivery.class)
+            .mapToBean(VolunteerService.VolunteerDelivery.class)
             .one());
   }
+
+  static VolunteerService.VolunteerDeliveryRequest getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
+    String query = """
+        SELECT
+          vd.id,
+          vd.volunteer_phone,
+          vd.volunteer_name,
+          vd.url_key,
+          vd.status,
+          site.id as site_id,
+          site.name as site_name,
+          site.address,
+          site.city,
+          site.contact_number as site_contact_number,
+          site.contact_name as site_contact_name
+        FROM volunteer_delivery vd
+        LEFT JOIN site
+        ON vd.site_id = site.id
+        WHERE vd.url_key = :urlKey
+        """;
+
+    return jdbi.withHandle(handle ->
+        handle
+            .createQuery(query)
+            .bind("urlKey", urlKey)
+            .mapToBean(VolunteerService.VolunteerDeliveryRequest.class)
+            .one());
+  }
+
+  static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId) {
+    String query = """
+        SELECT
+            i.name AS name,
+            ist.name AS status
+        FROM volunteer_delivery_item vdi
+        JOIN site_item si ON vdi.site_item_id = si.id
+        JOIN item i ON si.item_id = i.id
+        JOIN item_status ist ON si.item_status_id = ist.id
+        WHERE vdi.volunteer_delivery_id = :volunteerDeliveryId
+        """;
+
+    return jdbi.withHandle(handle ->
+        handle
+            .createQuery(query)
+            .bind("volunteerDeliveryId", deliveryId)
+            .mapToBean(VolunteerService.VolunteerDeliveryRequestItem.class)
+            .list());
+  }
+
+
+  static String updateDeliveryStatus(Jdbi jdbi,String urlKey, String status) {
+    String updateStatus = """
+          UPDATE volunteer_delivery
+          SET status = CAST(:status AS volunteer_delivery_status_enum)
+          WHERE url_key = :urlKey
+          RETURNING url_key
+        """;
+    return jdbi.withHandle(
+          handle ->
+              handle
+                  .createUpdate(updateStatus)
+                  .bind("status", status)
+                  .bind("urlKey", urlKey)
+                  .executeAndReturnGeneratedKeys("url_key")
+                  .mapTo(String.class)
+                  .one()
+      );
+  }
+
+
 }

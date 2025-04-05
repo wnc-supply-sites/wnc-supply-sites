@@ -1,0 +1,1 @@
+ALTER TYPE volunteer_delivery_status_enum ADD VALUE 'DECLINED';

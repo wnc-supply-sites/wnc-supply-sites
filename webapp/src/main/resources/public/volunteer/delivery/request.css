@@ -1,0 +1,178 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.h-10 {
+    height: 10rem;
+}
+
+#verification-container {
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    border: solid black;
+    border-radius: 20px;
+    background-color: #dddddd;
+}
+
+#verification-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#requestData {
+    width: 100%;
+}
+
+#request-status {
+    display: flex;
+    flex-direction: row;
+    border: solid black;
+    border-radius: 5px;
+    background-color: #dddddd;
+    height: 2.5rem;
+}
+
+.status {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.status-divider {
+    border-left: solid black;
+    height: 75%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.status-text {
+    font-weight: bold;
+    font-size: x-small;
+}
+
+#map {
+    width: 100%;
+}
+
+#map iframe {
+    width: 100%;
+}
+
+#delivery-details {
+    width: 100%;
+}
+
+.status-selected {
+    color: #63E6BE;
+}
+
+.status-unselected {
+    color: #dddddd;
+}
+
+#delivery {
+    background-color: #dddddd;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: solid black;
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#site-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.site-detail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+}
+
+.site-detail-container .site-detail {
+    margin-left: 1rem;
+}
+
+.detail-label {
+    font-weight: bold;
+}
+
+
+#delivery-items {
+    max-height: 10rem;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+#update-status {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+@media only screen and (min-width: 640px) {
+    .status-text {
+        font-size: 1.25rem;
+    }
+
+    .request-status-icon {
+        font-size: x-large;
+    }
+
+    #request-status {
+        border-radius: 10px;
+        height: 4rem;
+    }
+
+    #request-status-wrapper {
+        width: 75%;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    #delivery {
+        width: 75%
+    }
+
+    .site-detail-container {
+        flex-direction: row;
+    }
+
+    .site-detail-container .site-detail {
+        margin-left: 0px;
+    }
+
+}
+
+
+@media only screen and (min-width: 1024px) {
+
+    #request-status-wrapper {
+        width: 30%;
+    }
+
+    #delivery {
+        width: 30%
+    }
+
+
+}
+
+
