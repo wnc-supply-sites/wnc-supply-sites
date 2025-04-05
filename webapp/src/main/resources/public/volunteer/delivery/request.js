@@ -24,12 +24,10 @@ async function submitVerification (phoneNumber, urlKey) {
     }
 }
 
-
 // fills and displays delivery data
 function loadDeliveryData(data) {
     // Load request status
     if(data.request.status) loadStatus(data.request.status);
-
 
     // If request is cancelled or declined hide data
     if (data.request.status == "CANCELLED" || data.request.status == "DECLINED") {
@@ -108,7 +106,7 @@ function hideVerificationForm(){
     removeVerificationError();
     const verificationContainer = document.getElementById("verification-container");
     verificationContainer.classList.add("hidden");
-}
+};
 
 // Creates a new iframe element using
 // google maps as the source and the site address as query
@@ -161,7 +159,6 @@ function loadStatusChangeButtons(status, userPhoneNumber, access) {
         buttonGroup.classList.add("hidden")
     }
 
-
     switch(status){
         case "PENDING":
             loadPendingStatusButtons(access, userPhoneNumber);
@@ -174,8 +171,8 @@ function loadStatusChangeButtons(status, userPhoneNumber, access) {
     }
 }
 
-// Displays corresponding buttons based on user access
-// Also set up the event listeners for the appropriate
+// Displays corresponding delivery update buttons based on user access
+// Also set up the event listeners for the appropriate button group
 function loadPendingStatusButtons(access, userPhoneNumber) {
     if (access.hasManagerAccess) {
         const acceptDeclineButtonGroup = document.getElementById("acceptDeclineButtonGroup")
@@ -203,6 +200,7 @@ function loadDeclinedOrCancelledMessage() {
     message.classList.remove("hidden");
 };
 
+
 // Initialize event listener for provided status change button group
 function initializeButtonGroupEventListener(buttonGroup , userPhoneNumber) {
     buttonGroup.addEventListener("click", (event) => {
@@ -210,26 +208,76 @@ function initializeButtonGroupEventListener(buttonGroup , userPhoneNumber) {
         if(isButton){
            const urlKey = document.getElementById("delivery-details").dataset.urlkey;
            const newStatus = event.target.dataset.request;
-           return handleStatusUpdate(urlKey, userPhoneNumber, newStatus);
+
+           const modalMessage = buildConfirmationMessage(newStatus);
+
+           // Open confirmation modal with appropriate data and callback;
+           displayConfirmationModal(modalMessage, () => {
+                handleStatusUpdate(urlKey, userPhoneNumber, newStatus);
+           });
         }
     });
 };
+
+
+function buildConfirmationMessage(newStatus) {
+    switch (newStatus) {
+        case "ACCEPTED":
+            return "You are about to ACCEPT the delivery request. This action cannot be undone. We will share you phone number and send a text message notification upon confirmation.";
+        case "DECLINED":
+            return "You are about to DECLINE the delivery request. This action cannot be undone. We will hide delivery information and send a text message upon confirmation.";
+        case "CANCELLED":
+            return "You are about to CANCEL the delivery request. This action cannot be undone. We will hide delivery information and send a text message upon confirmation.";
+        default:
+            return "";
+    }
+}
+
+// Displays update status modal
+function displayConfirmationModal(message, sendUpdate) {
+    // Get modal
+    const confirmationModal = document.getElementById("update-confirmation");
+    const confirmationMessage = document.getElementById("confirmation-message");
+    const confirmationButton = document.getElementById("confirm-update");
+
+    // Updates the message
+    confirmationMessage.textContent = message;
+
+    // Remove previous onClick
+    const newButton = confirmationButton.cloneNode(true);
+    confirmationButton.parentNode.replaceChild(newButton, confirmationButton);
+
+    // Add event listener for onClick. Runs the update sendUpdate and then closes the modal
+    newButton.addEventListener("click", () => {
+        sendUpdate();
+        closeConfirmationModal();
+    });
+
+    confirmationModal.showModal();
+}
+
+function closeConfirmationModal() {
+    // Remove any previous callbacks
+    const confirmationButton = document.getElementById("confirm-update");
+    const newButton = confirmationButton.cloneNode(true);
+    confirmationButton.parentNode.replaceChild(newButton, confirmationButton);
+    // Close modal
+    const confirmationModal = document.getElementById("update-confirmation").close();
+}
 
 // Send update request and fills the data
 // If error display error message
 async function handleStatusUpdate(urlKey, phoneNumber, status) {
     try {
         updatedDeliveryData = await updateStatus(urlKey, phoneNumber, status);
-
         // todo: Load update success message
 
         // Load the updated data
         loadDeliveryData(updatedDeliveryData);
     } catch (e) {
         console.log(e)
-        // Display error message
+        // todo: Display error message
     }
-
 }
 
 // Sends update request and returns updated data

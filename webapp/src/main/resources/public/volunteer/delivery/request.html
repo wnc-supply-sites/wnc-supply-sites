@@ -10,8 +10,17 @@
 </head>
 <body>
   {{> header }}
-  <h1> Request Page </h1>
 
+  <dialog id="update-confirmation">
+    <h3>Please Confirm you action</h3>
+    <p id="confirmation-message"></p>
+    <div>
+      <button onclick="closeConfirmationModal()">Cancel</button>
+      <button id="confirm-update">OK</button>
+    </div>
+  </dialog>
+
+  <h1> Request Page </h1>
   <main>
       <div id="verification-container">
         <form id="verification-form">
