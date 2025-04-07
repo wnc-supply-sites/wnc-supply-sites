@@ -111,14 +111,14 @@ function clearSelectedItems() {
 /** Form Submission */
 async function handleFormSubmission(event) {
     event.preventDefault();
-
+  
     // Creating form data
     const formData = new FormData(event.target);
     const requestBody = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
     for (const [key, value] of formData.entries()) {
         if (key === "neededItems") {
-            // Adds the current needed item into the existing needed items array in requestBody
-            requestBody["neededItems"] = requestBody[key].concat(parseInt(value));
+          // Adds the current needed item into the existing needed items array in requestBody
+          requestBody["neededItems"] = requestBody[key].concat(parseInt(value));
         } else {
             requestBody[key] = value;
         }
@@ -131,6 +131,11 @@ async function handleFormSubmission(event) {
         alert("Whoops, please make sure you select some items to bring!");
         showNeededItemsErrorMsg();
     };
+
+    if (!isValid) {
+        alert("Whoops, please make sure you select some items to bring!");
+        showNeededItemsErrorMsg();
+    }
 
     if (isValid) {
         try {
