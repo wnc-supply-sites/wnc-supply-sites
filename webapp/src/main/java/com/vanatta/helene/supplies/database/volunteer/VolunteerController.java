@@ -43,18 +43,17 @@ public class VolunteerController {
    * Create Volunteer Delivery and adds it to the DB
    */
   @PostMapping("/volunteer/delivery")
-  ResponseEntity<String> submitDeliveryRequest(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName, @RequestBody VolunteerService.DeliveryForm request) {
+  ResponseEntity<String> submitDeliveryRequest(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName, @ModelAttribute(DeploymentAdvice.DEPLOYMENT_SHORT_NAME) String deploymentShortName, @RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
     try {
       VolunteerService.VolunteerDeliveryRequest createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);
 
-      // todo: Send text message
       // Build and send sms
       String updateMessage = String.format(
-          "%s: " +
+          "%s Supply Sites: " +
               "\n A delivery request to %s has been created. " +
               "\n Visit: %s%s to view delivery portal.",
-          domainName,
+          deploymentShortName,
           createdDelivery.getSiteName(),
           domainName, createdDelivery.getPortalURL());
 
@@ -160,7 +159,7 @@ public class VolunteerController {
    * an error if not authorized to make the change
    */
   @PostMapping("/volunteer/delivery/update")
-  ResponseEntity<?> updateDeliveryStatus(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName , @RequestBody VolunteerService.UpdateRequest reqBody) {
+  ResponseEntity<?> updateDeliveryStatus(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName, @ModelAttribute(DeploymentAdvice.DEPLOYMENT_SHORT_NAME) String deploymentShortName, @RequestBody VolunteerService.UpdateRequest reqBody) {
     log.info("Received delivery update: {}", reqBody);
 
     // Check access
@@ -178,10 +177,10 @@ public class VolunteerController {
 
     // Build and send sms
     String updateMessage = String.format(
-        "%s: " +
+        "%s Supply Sites: " +
         "\n Delivery %s has been updated to %s. " +
         "\n Visit: %s%s to view delivery portal.",
-        domainName,
+        deploymentShortName,
         updatedRequest.getUrlKey(), updatedRequest.getStatus(),
         domainName, updatedRequest.getPortalURL());
 
