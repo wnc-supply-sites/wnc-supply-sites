@@ -15,6 +15,7 @@ import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generate
 import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class VolunteerService {
 
@@ -141,6 +142,10 @@ public class VolunteerService {
     public String getCleanedVolunteerPhoneNumber() {
       return this.volunteerPhone.replaceAll("[^0-9]", "");
     }
+
+    public String getPortalURL() {
+      return String.format("/volunteer/delivery/request?urlKey=%s", this.getUrlKey());
+    }
   }
 
   @Data
@@ -170,10 +175,11 @@ public class VolunteerService {
     String status;
   }
 
+
   /**
    * Creates a new volunteer delivery
    */
-  public VolunteerService.VolunteerDelivery createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
+  public VolunteerService.VolunteerDeliveryRequest createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
       handle.begin();
@@ -191,7 +197,7 @@ public class VolunteerService {
       handle.commit();
       log.info("Created volunteer delivery in DB of ID: {}", volunteerDeliveryId);
 
-      return VolunteerService.getDeliveryById(jdbi, volunteerDeliveryId);
+      return VolunteerService.getVolunteerDeliveryRequest(jdbi, request.urlKey);
     } catch (Exception e) {
       handle.rollback();
       log.error("Error while creating volunteer delivery. Transaction rolled back.", e);

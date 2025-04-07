@@ -5,9 +5,8 @@ import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import java.util.*;
 
 import com.vanatta.helene.supplies.database.auth.LoggedInAdvice;
-import jakarta.servlet.http.HttpServletResponse;
+import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.http.HttpStatus;
@@ -16,14 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generateUrlKey;
-
 @Controller
 @AllArgsConstructor
 @Slf4j
 public class VolunteerController {
   private final Jdbi jdbi;
   private final VolunteerService volunteerService;
+  private final SmsSender smsSender;
 
   /** Users will be shown a form to request to make a delivery */
   @GetMapping("/volunteer/delivery")
@@ -48,9 +46,21 @@ public class VolunteerController {
   ResponseEntity<String> submitDeliveryRequest(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName, @RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
     try {
-      VolunteerService.VolunteerDelivery createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);
+      VolunteerService.VolunteerDeliveryRequest createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);
 
       // todo: Send text message
+      // Build and send sms
+      String updateMessage = String.format(
+          "%s: " +
+              "\n A delivery request to %s has been created. " +
+              "\n Visit: %s%s to view delivery portal.",
+          domainName,
+          createdDelivery.getSiteName(),
+          domainName, createdDelivery.getPortalURL());
+
+      // todo: Send Text Notification to volunteer and site manager
+      smsSender.send(createdDelivery.getCleanedSitePhoneNumber(),  updateMessage);
+      smsSender.send(createdDelivery.getCleanedVolunteerPhoneNumber(),  updateMessage);
 
       return ResponseEntity.ok(createdDelivery.urlKey);
     } catch (Exception e) {
@@ -150,7 +160,7 @@ public class VolunteerController {
    * an error if not authorized to make the change
    */
   @PostMapping("/volunteer/delivery/update")
-  ResponseEntity<?> updateDeliveryStatus(@RequestBody VolunteerService.UpdateRequest reqBody) {
+  ResponseEntity<?> updateDeliveryStatus(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName , @RequestBody VolunteerService.UpdateRequest reqBody) {
     log.info("Received delivery update: {}", reqBody);
 
     // Check access
@@ -163,10 +173,21 @@ public class VolunteerController {
     // Check delivery exists
     VolunteerService.VolunteerDeliveryRequest deliveryRequest = VolunteerService.getVolunteerDeliveryRequest(jdbi, reqBody.getUrlKey());
 
-    // todo: Send Text Notification
-
     // update status
     VolunteerService.VolunteerDeliveryRequest updatedRequest = VolunteerService.updateDeliveryStatus(jdbi, access, reqBody.status ,deliveryRequest);
+
+    // Build and send sms
+    String updateMessage = String.format(
+        "%s: " +
+        "\n Delivery %s has been updated to %s. " +
+        "\n Visit: %s%s to view delivery portal.",
+        domainName,
+        updatedRequest.getUrlKey(), updatedRequest.getStatus(),
+        domainName, updatedRequest.getPortalURL());
+
+    // todo: Send Text Notification to volunteer and site manager
+    smsSender.send(updatedRequest.getCleanedSitePhoneNumber(),  updateMessage);
+    smsSender.send(updatedRequest.getCleanedVolunteerPhoneNumber(),  updateMessage);
 
     HashMap <String, Object> response = new HashMap<>();
     response.put("request", updatedRequest.scrubDataBasedOnStatus());
