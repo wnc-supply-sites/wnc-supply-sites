@@ -147,7 +147,6 @@ async function handleFormSubmission(event) {
 }
 
 async function sendForm(requestBody) {
-    debugger;
     const response = await fetch("/volunteer/delivery", {
         method: "POST",
         headers: {
@@ -157,7 +156,6 @@ async function sendForm(requestBody) {
     });
 
     if (response.ok) {
-        debugger;
         const urlKey = await response.text();
         updateRedirectButton(urlKey);
         showSuccessModal();
