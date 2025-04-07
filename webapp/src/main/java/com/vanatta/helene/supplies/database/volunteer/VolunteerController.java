@@ -42,10 +42,10 @@ public class VolunteerController {
   }
 
   /**
-   * Adds volunteer request to DB
+   * Create Volunteer Delivery and adds it to the DB
    */
   @PostMapping("/volunteer/delivery")
-  ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
+  ResponseEntity<String> submitDeliveryRequest(@ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName, @RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
     try {
       VolunteerService.VolunteerDelivery createdDelivery = volunteerService.createVolunteerDelivery(jdbi, request);

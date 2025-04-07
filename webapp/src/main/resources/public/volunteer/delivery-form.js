@@ -111,20 +111,26 @@ function clearSelectedItems() {
 /** Form Submission */
 async function handleFormSubmission(event) {
     event.preventDefault();
+  
+    // Creating form data
     const formData = new FormData(event.target);
-
-    const dataObject = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
-
+    const requestBody = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
     for (const [key, value] of formData.entries()) {
         if (key === "neededItems") {
-            // Adds the current needed item into the existing needed items array in dataObject
-            dataObject["neededItems"] = dataObject[key].concat(parseInt(value));
+          // Adds the current needed item into the existing needed items array in requestBody
+          requestBody["neededItems"] = requestBody[key].concat(parseInt(value));
         } else {
-            dataObject[key] = value;
+            requestBody[key] = value;
         }
     }
 
-    const isValid = validateData(dataObject);
+    // Validates formData
+    const isValid = validateData(requestBody);
+
+    if (!isValid) {
+        alert("Whoops, please make sure you select some items to bring!");
+        showNeededItemsErrorMsg();
+    };
 
     if (!isValid) {
         alert("Whoops, please make sure you select some items to bring!");
@@ -133,30 +139,44 @@ async function handleFormSubmission(event) {
 
     if (isValid) {
         try {
-            const response = await fetch("/volunteer/delivery", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                  },
-                body: JSON.stringify(dataObject)
-            });
-
-            if (response.ok) {
-                const data = await response.text();
-                console.log(data);
-                showSuccessModal();
-            } else {
-                handleSubmissionError();
-            }
+            sendForm(requestBody)
         } catch (e) {
             handleSubmissionError()
         }
     }
 }
 
+async function sendForm(requestBody) {
+    debugger;
+    const response = await fetch("/volunteer/delivery", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+          },
+        body: JSON.stringify(requestBody)
+    });
+
+    if (response.ok) {
+        debugger;
+        const urlKey = await response.text();
+        updateRedirectButton(urlKey);
+        showSuccessModal();
+        showSuccessModal(urlKey);
+    } else {
+        handleSubmissionError();
+    }
+}
+
+// Displays a modal that contains the redirect url to the volunteer page
 function showSuccessModal() {
     const modal = document.getElementById("success-modal");
     modal.showModal();
+}
+
+function updateRedirectButton(urlKey) {
+    // Change the href of the redirect button to point to the volunteer delivery portal
+    const redirectButton = document.getElementById("request-redirect");
+    redirectButton.href = `/volunteer/delivery/request?urlKey=${urlKey}`;
 }
 
 function handleSubmissionError() {

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Slf4j
 @AllArgsConstructor
 public class DeploymentAdvice {
-
   public static final String DEPLOYMENT_DOMAIN_NAME = "domainName";
   public static final String DEPLOYMENT_SHORT_NAME = "deploymentShortName";
   public static final String DEPLOYMENT_STATE_LIST = "deploymentStateList";

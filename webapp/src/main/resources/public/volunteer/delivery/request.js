@@ -87,6 +87,8 @@ function createDeliveryItemElement(itemName) {
 
 // loadsDeliveryItem
 function loadDeliveryItems(items) {
+    const itemsContainer = document.getElementById("items");
+    itemsContainer.classList.remove("hidden");
     // Clear all items
     const itemsList = document.getElementById("delivery-items");
 
