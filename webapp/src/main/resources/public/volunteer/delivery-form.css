@@ -111,6 +111,36 @@ section h2 {
     cursor: pointer;
 }
 
+
+/*
+   Shows a loading indicator that is placed on top of the 'update' button.
+   Shown after 'update' button is clicked. The loading indicator is a 'div'
+   with background image, we place it on top of the 'update' button exactly
+   to make it look like we changed the background of the update button.
+*/
+#loader-div {
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+    background-image: url(loading-spinner.png);
+    position: relative;
+    z-index: 10;
+    background-repeat: no-repeat;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    display: none;
+    animation-play-state: paused;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 @media only screen and (max-width: 768px) {
     .instructions-wrapper {
         display: none;

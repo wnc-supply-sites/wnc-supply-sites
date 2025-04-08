@@ -304,7 +304,6 @@ function startLoaderAnimation() {
   document.getElementById('result-count').innerHTML = "";
   document.getElementById('loader-div').style.animationPlayState = 'running';
   document.getElementById('loader-div').style.display = 'block';
-
 }
 
 function stopLoaderAnimation() {

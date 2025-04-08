@@ -111,7 +111,7 @@ function clearSelectedItems() {
 /** Form Submission */
 async function handleFormSubmission(event) {
     event.preventDefault();
-  
+
     // Creating form data
     const formData = new FormData(event.target);
     const requestBody = {"neededItems": [], "site": "", "volunteerContacts":"", "volunteerName": ""};
@@ -132,11 +132,6 @@ async function handleFormSubmission(event) {
         showNeededItemsErrorMsg();
     };
 
-    if (!isValid) {
-        alert("Whoops, please make sure you select some items to bring!");
-        showNeededItemsErrorMsg();
-    }
-
     if (isValid) {
         try {
             sendForm(requestBody)
@@ -147,6 +142,8 @@ async function handleFormSubmission(event) {
 }
 
 async function sendForm(requestBody) {
+    startLoaderAnimation();
+
     const response = await fetch("/volunteer/delivery", {
         method: "POST",
         headers: {
@@ -155,6 +152,7 @@ async function sendForm(requestBody) {
         body: JSON.stringify(requestBody)
     });
 
+    stopLoaderAnimation();
     if (response.ok) {
         const urlKey = await response.text();
         updateRedirectButton(urlKey);
@@ -198,6 +196,18 @@ function showNeededItemsErrorMsg() {
 function hideNeededItemsErrorMsg() {
     const errorMessage = document.getElementById("items-error-msg");
     errorMessage.classList.add("hidden");
+}
+
+// Loader animation
+function startLoaderAnimation() {
+  // Clear out results count
+  document.getElementById('loader-div').style.animationPlayState = 'running';
+  document.getElementById('loader-div').style.display = 'block';
+}
+
+function stopLoaderAnimation() {
+  document.getElementById('loader-div').style.animationPlayState = 'paused';
+  document.getElementById('loader-div').style.display = 'none';
 }
 
 
