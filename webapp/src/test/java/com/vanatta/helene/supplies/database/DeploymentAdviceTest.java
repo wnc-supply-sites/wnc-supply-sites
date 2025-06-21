@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class DeploymentAdviceTest {
 
   @ParameterizedTest
-  @CsvSource({"wnc-supply-sites.com,WNC & Appalacian", "socal-supply-sites.com,SoCal"})
+  @CsvSource({"wnc-supply-sites.com,WNC & Appalachian", "socal-supply-sites.com,SoCal"})
   void getShortNameForHost(String input, String output) {
     assertThat(DeploymentAdvice.getShortNameForHost(jdbiTest, input)).isEqualTo(output);
   }
