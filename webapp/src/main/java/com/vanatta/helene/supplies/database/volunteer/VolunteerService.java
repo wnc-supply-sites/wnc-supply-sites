@@ -1,5 +1,9 @@
 package com.vanatta.helene.supplies.database.volunteer;
 
+import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generateUrlKey;
+import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
+
+import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,11 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-
-import static com.vanatta.helene.supplies.database.util.URLKeyGenerator.generateUrlKey;
-import static com.vanatta.helene.supplies.database.volunteer.VolunteerDao.*;
 
 @Service
 @AllArgsConstructor
@@ -111,12 +110,13 @@ public class VolunteerService {
       this.items = deliveryItems;
     }
 
-    public HashMap<String, Object> scrubDataBasedOnStatus(){
+    public HashMap<String, Object> scrubDataBasedOnStatus() {
       HashMap<String, Object> scrubbedData = new HashMap<>();
       scrubbedData.put("status", this.status);
       scrubbedData.put("urlKey", this.urlKey);
 
-      // Provide site name, volunteerName, site address, siteId, and items is request is still active (pending/accepted);
+      // Provide site name, volunteerName, site address, siteId, and items is request is still
+      // active (pending/accepted);
       if (!Objects.equals(this.status, "DECLINED") && !Objects.equals(this.status, "CANCELLED")) {
         scrubbedData.put("siteName", this.siteName);
         scrubbedData.put("volunteerName", this.volunteerName);
@@ -131,7 +131,8 @@ public class VolunteerService {
         scrubbedData.put("volunteerPhone", this.volunteerPhone);
         scrubbedData.put("siteContactNumber", this.siteContactNumber);
         scrubbedData.put("siteContactName", this.siteContactName);
-      };
+      }
+      ;
       return scrubbedData;
     }
 
@@ -175,11 +176,9 @@ public class VolunteerService {
     String status;
   }
 
-
-  /**
-   * Creates a new volunteer delivery
-   */
-  public VolunteerService.VolunteerDeliveryRequest createVolunteerDelivery(Jdbi jdbi, DeliveryForm request) {
+  /** Creates a new volunteer delivery */
+  public VolunteerService.VolunteerDeliveryRequest createVolunteerDelivery(
+      Jdbi jdbi, DeliveryForm request) {
     Handle handle = jdbi.open();
     try {
       handle.begin();
@@ -207,9 +206,7 @@ public class VolunteerService {
     }
   }
 
-  /**
-   * Grabs a volunteer delivery request via ID
-   */
+  /** Grabs a volunteer delivery request via ID */
   public static VolunteerDelivery getDeliveryById(Jdbi jdbi, Long id) {
     try {
       return VolunteerDao.getVolunteerDeliveryById(jdbi, id);
@@ -220,14 +217,15 @@ public class VolunteerService {
   }
 
   /**
-   * Grabs a volunteer delivery request via urlKey
-   * This method returns Delivery and Delivery Items
+   * Grabs a volunteer delivery request via urlKey This method returns Delivery and Delivery Items
    */
   public static VolunteerDeliveryRequest getVolunteerDeliveryRequest(Jdbi jdbi, String urlKey) {
     try {
-      VolunteerDeliveryRequest volunteerDeliveryRequest =  getVolunteerDeliveryByUrlKey(jdbi, urlKey);
+      VolunteerDeliveryRequest volunteerDeliveryRequest =
+          getVolunteerDeliveryByUrlKey(jdbi, urlKey);
 
-      List<VolunteerDeliveryRequestItem> deliveryItems = VolunteerDao.getVolunteerDeliveryItems(jdbi, volunteerDeliveryRequest.getId());
+      List<VolunteerDeliveryRequestItem> deliveryItems =
+          VolunteerDao.getVolunteerDeliveryItems(jdbi, volunteerDeliveryRequest.getId());
 
       volunteerDeliveryRequest.insertItems(deliveryItems);
 
@@ -239,33 +237,34 @@ public class VolunteerService {
   }
 
   /**
-   * Determines which delivery type this verify request is for
-   * and calls the correct verify-er function
+   * Determines which delivery type this verify request is for and calls the correct verify-er
+   * function
    */
-  public static Access verifyVolunteerPortalAccess(Jdbi jdbi, String urlKey, String phoneNumber, String section){
+  public static Access verifyVolunteerPortalAccess(
+      Jdbi jdbi, String urlKey, String phoneNumber, String section) {
     switch (section) {
       case "delivery":
         // Grab delivery request and calls correct verify-er function
-        VolunteerDeliveryRequest deliveryRequest = VolunteerDao.getVolunteerDeliveryByUrlKey(jdbi, urlKey);
+        VolunteerDeliveryRequest deliveryRequest =
+            VolunteerDao.getVolunteerDeliveryByUrlKey(jdbi, urlKey);
         return verifyDeliveryPortalAccess(phoneNumber, deliveryRequest);
       default:
-        return Access.builder()
-            .hasManagerAccess(false)
-            .hasVolunteerAccess(false)
-            .build();
+        return Access.builder().hasManagerAccess(false).hasVolunteerAccess(false).build();
     }
   }
 
   /**
-   * Verify-er function.
-   * Determines if a user is a volunteer, manager , both or neither.
-   * returns the result
+   * Verify-er function. Determines if a user is a volunteer, manager , both or neither. returns the
+   * result
    */
-  private static Access verifyDeliveryPortalAccess(String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
+  private static Access verifyDeliveryPortalAccess(
+      String userPhoneNumber, VolunteerDeliveryRequest deliveryRequest) {
     String cleanedUserPhoneNumber = userPhoneNumber.replaceAll("[^0-9]", "");
 
-    Boolean hasVolunteerAccess = Objects.equals(deliveryRequest.getCleanedVolunteerPhoneNumber(), cleanedUserPhoneNumber);
-    Boolean hasSiteManagerAccess = Objects.equals(deliveryRequest.getCleanedSitePhoneNumber(), cleanedUserPhoneNumber);
+    Boolean hasVolunteerAccess =
+        Objects.equals(deliveryRequest.getCleanedVolunteerPhoneNumber(), cleanedUserPhoneNumber);
+    Boolean hasSiteManagerAccess =
+        Objects.equals(deliveryRequest.getCleanedSitePhoneNumber(), cleanedUserPhoneNumber);
 
     return Access.builder()
         .hasManagerAccess(hasSiteManagerAccess)
@@ -274,10 +273,11 @@ public class VolunteerService {
   }
 
   /**
-   * Updates the delivery status and returns the updated delivery
-   * If not valid, return the old delivery
+   * Updates the delivery status and returns the updated delivery If not valid, return the old
+   * delivery
    */
-  public static VolunteerDeliveryRequest updateDeliveryStatus(Jdbi jdbi, Access access, String newStatus, VolunteerDeliveryRequest delivery) {
+  public static VolunteerDeliveryRequest updateDeliveryStatus(
+      Jdbi jdbi, Access access, String newStatus, VolunteerDeliveryRequest delivery) {
     String urlKey = delivery.getUrlKey();
     Boolean requestIsValid = validateDeliveryUpdate(access, delivery, newStatus);
     if (requestIsValid) {
@@ -286,10 +286,9 @@ public class VolunteerService {
     return getVolunteerDeliveryRequest(jdbi, urlKey);
   }
 
-  /**
-   * Checks if the requested new status is a valid request
-   */
-  private static Boolean validateDeliveryUpdate(Access access, VolunteerDeliveryRequest delivery, String newStatus) {
+  /** Checks if the requested new status is a valid request */
+  private static Boolean validateDeliveryUpdate(
+      Access access, VolunteerDeliveryRequest delivery, String newStatus) {
     String currentStatus = delivery.getStatus();
 
     if (Objects.equals(newStatus, "ACCEPTED") || Objects.equals(newStatus, "DECLINED")) {
@@ -312,11 +311,10 @@ public class VolunteerService {
         return false;
       }
     } else if (
-        // If the new status to update to is not one of the accepted values
-        !Objects.equals(newStatus, "ACCEPTED") &&
-        !Objects.equals(newStatus, "DECLINED") &&
-        !Objects.equals(newStatus, "CANCELLED")
-    ) {
+    // If the new status to update to is not one of the accepted values
+    !Objects.equals(newStatus, "ACCEPTED")
+        && !Objects.equals(newStatus, "DECLINED")
+        && !Objects.equals(newStatus, "CANCELLED")) {
       log.error("Site update failed: Invalid new status");
       return false;
     }
@@ -324,37 +322,3 @@ public class VolunteerService {
     return true;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

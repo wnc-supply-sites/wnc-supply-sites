@@ -79,7 +79,6 @@ public class VolunteerDaoTest {
 
     VolunteerService.Site site = VolunteerDao.fetchSiteItems(jdbiTest, siteId);
 
-
     List<Long> itemIds =
         site.getItems().stream().map(VolunteerService.Item::getId).toList().subList(0, 1);
 
@@ -183,6 +182,4 @@ public class VolunteerDaoTest {
             () -> VolunteerDao.createVolunteerDelivery(jdbiTest, form2),
             "Expected an exception due to duplicate URL Key.");
   }
-
-
 }
