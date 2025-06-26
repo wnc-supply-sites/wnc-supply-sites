@@ -4,15 +4,7 @@ import com.vanatta.helene.supplies.database.volunteer.VolunteerService.DeliveryF
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Item;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.Site;
 import com.vanatta.helene.supplies.database.volunteer.VolunteerService.SiteSelect;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 
@@ -150,25 +142,30 @@ public class VolunteerDao {
                   .bind("site_item_id", itemId)
                   .bind("volunteerDeliveryId", deliveryId)
                   .execute());
-    };
+    }
+    ;
   }
 
   static VolunteerService.VolunteerDelivery getVolunteerDeliveryById(Jdbi jdbi, Long deliveryId) {
-    String query = """
+    String query =
+        """
         SELECT id, volunteer_phone, volunteer_name, site_id, url_key
         FROM volunteer_delivery
         WHERE volunteer_delivery.id = :id
         """;
-    return jdbi.withHandle(handle ->
-        handle
-            .createQuery(query)
-            .bind("id", deliveryId)
-            .mapToBean(VolunteerService.VolunteerDelivery.class)
-            .one());
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(query)
+                .bind("id", deliveryId)
+                .mapToBean(VolunteerService.VolunteerDelivery.class)
+                .one());
   }
 
-  static VolunteerService.VolunteerDeliveryRequest getVolunteerDeliveryByUrlKey(Jdbi jdbi, String urlKey){
-    String query = """
+  static VolunteerService.VolunteerDeliveryRequest getVolunteerDeliveryByUrlKey(
+      Jdbi jdbi, String urlKey) {
+    String query =
+        """
         SELECT
           vd.id,
           vd.volunteer_phone,
@@ -187,16 +184,19 @@ public class VolunteerDao {
         WHERE vd.url_key = :urlKey
         """;
 
-    return jdbi.withHandle(handle ->
-        handle
-            .createQuery(query)
-            .bind("urlKey", urlKey)
-            .mapToBean(VolunteerService.VolunteerDeliveryRequest.class)
-            .one());
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(query)
+                .bind("urlKey", urlKey)
+                .mapToBean(VolunteerService.VolunteerDeliveryRequest.class)
+                .one());
   }
 
-  static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(Jdbi jdbi, Long deliveryId) {
-    String query = """
+  static List<VolunteerService.VolunteerDeliveryRequestItem> getVolunteerDeliveryItems(
+      Jdbi jdbi, Long deliveryId) {
+    String query =
+        """
         SELECT
             i.name AS name,
             ist.name AS status
@@ -207,33 +207,31 @@ public class VolunteerDao {
         WHERE vdi.volunteer_delivery_id = :volunteerDeliveryId
         """;
 
-    return jdbi.withHandle(handle ->
-        handle
-            .createQuery(query)
-            .bind("volunteerDeliveryId", deliveryId)
-            .mapToBean(VolunteerService.VolunteerDeliveryRequestItem.class)
-            .list());
+    return jdbi.withHandle(
+        handle ->
+            handle
+                .createQuery(query)
+                .bind("volunteerDeliveryId", deliveryId)
+                .mapToBean(VolunteerService.VolunteerDeliveryRequestItem.class)
+                .list());
   }
 
-
-  static String updateDeliveryStatus(Jdbi jdbi,String urlKey, String status) {
-    String updateStatus = """
+  static String updateDeliveryStatus(Jdbi jdbi, String urlKey, String status) {
+    String updateStatus =
+        """
           UPDATE volunteer_delivery
           SET status = CAST(:status AS volunteer_delivery_status_enum)
           WHERE url_key = :urlKey
           RETURNING url_key
         """;
     return jdbi.withHandle(
-          handle ->
-              handle
-                  .createUpdate(updateStatus)
-                  .bind("status", status)
-                  .bind("urlKey", urlKey)
-                  .executeAndReturnGeneratedKeys("url_key")
-                  .mapTo(String.class)
-                  .one()
-      );
+        handle ->
+            handle
+                .createUpdate(updateStatus)
+                .bind("status", status)
+                .bind("urlKey", urlKey)
+                .executeAndReturnGeneratedKeys("url_key")
+                .mapTo(String.class)
+                .one());
   }
-
-
 }
