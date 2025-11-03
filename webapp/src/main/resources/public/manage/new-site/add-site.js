@@ -16,8 +16,13 @@ async function saveNewSite() {
 
   const website = document.getElementById("Website");
   const facebook = document.getElementById("Facebook");
-  const siteType = document.getElementById("distributionCenterRadio")
-      .checked ? "Distribution Center" : "Supply Hub";
+  if(document.getElementById("distributionCenterRadio").checked) {
+      siteType = "Distribution Center";
+  } else if(document.getElementById("supplyHubRadio").checked) {
+      siteType = "Supply Hub";
+  } else {
+      siteType = "Food Pantry";
+  }
   const siteHours = document.getElementById("Site Hours");
 
   const maxSupplyLoad = document.getElementById('maxSupplyLoad');

@@ -64,6 +64,9 @@ public class SiteStatusController {
         siteStatus.getSiteTypeEnum() == SiteType.DISTRIBUTION_CENTER ? "checked" : "");
     pageParams.put(
         "supplyHubChecked", siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
+    pageParams.put(
+        "foodPantryChecked",
+        siteStatus.getSiteTypeEnum() == SiteType.FOOD_PANTRY ? "checked" : "");
 
     return new ModelAndView("manage/status/status", pageParams);
   }
@@ -118,8 +121,7 @@ public class SiteStatusController {
             jdbi, Long.parseLong(siteId), Boolean.parseBoolean(newValue));
         break;
       case SITE_TYPE:
-        var siteType =
-            Boolean.parseBoolean(newValue) ? SiteType.DISTRIBUTION_CENTER : SiteType.SUPPLY_HUB;
+        var siteType = SiteType.parseSiteType(newValue);
         ManageSiteDao.updateSiteType(jdbi, Long.parseLong(siteId), siteType);
         break;
       case PUBLICLY_VISIBLE:
