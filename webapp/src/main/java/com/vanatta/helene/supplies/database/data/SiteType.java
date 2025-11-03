@@ -10,6 +10,7 @@ import lombok.Getter;
 public enum SiteType {
   DISTRIBUTION_CENTER("Distribution Center"),
   SUPPLY_HUB("Supply Hub"),
+  FOOD_PANTRY("Food Pantry"),
   ;
   private final String text;
 

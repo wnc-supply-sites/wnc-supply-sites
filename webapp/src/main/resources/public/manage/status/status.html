@@ -85,6 +85,12 @@
                 <input type="radio" id="supplyHub" name="siteType" {{supplyHubChecked}}/>
                 <label for="supplyHub">Supply Warehouse</label>
               </div>
+
+              <div class="horizontal radioButtonControl">
+                <input type="radio" id="foodPantry" name="siteType" {{foodPantryChecked}}/>
+                <label for="foodPantry">Food Pantry</label>
+              </div>
+
             </div>
             <div>
               <button class="siteStatusUpdateButton" onclick="updateSiteSiteType({{siteId}})">Update</button>

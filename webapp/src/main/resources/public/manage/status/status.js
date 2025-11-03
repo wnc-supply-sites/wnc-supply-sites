@@ -61,11 +61,15 @@ async function updateSiteDistributingDonations(siteId) {
 
 async function updateSiteSiteType(siteId) {
   const isDistSite = document.getElementById("distributionCenter").checked;
+  const isSupplySite = document.getElementById("supplyHub").checked;
+  const isFoodPantry = document.getElementById("foodPantry").checked;
+  siteTypeText = isDistSite ? "Distribution Center" : isSupplySite ? "Supply Hub" : "Food Pantry";
+
   const confirmationDiv = event.target.parentNode.parentNode.querySelector("div[class=confirm-message]")
   const errorDiv = event.target.parentNode.parentNode.querySelector("div[class=errorMessage]")
   try {
-    await sendStatusUpdate(siteId, "distSite", isDistSite);
-    showConfirmation(confirmationDiv, errorDiv, "Site type set to " + (isDistSite ? "distribution site" : "supply warehouse"));
+    await sendStatusUpdate(siteId, "distSite", siteTypeText);
+    showConfirmation(confirmationDiv, errorDiv, "Site type set to " + siteTypeText)
   } catch (error) {
     showStatusError(confirmationDiv, errorDiv, error, "site type was not updated");
   }
