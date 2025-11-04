@@ -17,9 +17,6 @@ class DeploymentAdviceTest {
 
   @Test
   void fetchStateListForHost() {
-    assertThat(DeploymentAdvice.fetchStateListForHost(jdbiTest, "wnc-supply-sites.com"))
-        .contains("NC", "TN");
-    assertThat(DeploymentAdvice.fetchStateListForHost(jdbiTest, "socal-supply-sites.com"))
-        .contains("CA");
+    assertThat(DeploymentAdvice.fetchStateListForHost(jdbiTest)).contains("NC", "TN");
   }
 }

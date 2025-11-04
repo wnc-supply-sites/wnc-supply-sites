@@ -58,8 +58,8 @@ public class DeploymentAdvice {
   }
 
   @ModelAttribute(DEPLOYMENT_STATE_LIST)
-  public List<String> stateList(HttpServletRequest request) {
-    return fetchStateListForHost(jdbi, hostNameLookup.lookupHostName(request));
+  public List<String> stateList() {
+    return fetchStateListForHost(jdbi);
   }
 
   @ModelAttribute(DEPLOYMENT_ID)
@@ -81,16 +81,19 @@ public class DeploymentAdvice {
                 .one());
   }
 
-  static List<String> fetchStateListForHost(Jdbi jdbi, String domain) {
+  /**
+   * @deprecated Avoid using this method. This method is a relic from when we had multiple
+   *     "deployments"
+   */
+  static List<String> fetchStateListForHost(Jdbi jdbi) {
     return jdbi.withHandle(
         h ->
             h.createQuery(
                     """
               select state
               from deployment_states
-              where deployment_id = (select id from deployment where lower(domain) = :domain)
+              order by state
             """)
-                .bind("domain", domain)
                 .mapTo(String.class)
                 .list());
   }

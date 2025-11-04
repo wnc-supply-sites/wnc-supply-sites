@@ -65,8 +65,7 @@ public class SiteStatusController {
     pageParams.put(
         "supplyHubChecked", siteStatus.getSiteTypeEnum() == SiteType.SUPPLY_HUB ? "checked" : "");
     pageParams.put(
-        "foodPantryChecked",
-        siteStatus.getSiteTypeEnum() == SiteType.FOOD_PANTRY ? "checked" : "");
+        "foodPantryChecked", siteStatus.getSiteTypeEnum() == SiteType.FOOD_PANTRY ? "checked" : "");
 
     return new ModelAndView("manage/status/status", pageParams);
   }
