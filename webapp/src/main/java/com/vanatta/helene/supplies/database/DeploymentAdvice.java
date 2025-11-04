@@ -90,8 +90,10 @@ public class DeploymentAdvice {
         h ->
             h.createQuery(
                     """
-              select state
-              from deployment_states
+              select distinct state
+              from county c
+              join site s on s.county_id = c.id
+              where s.active is true
               order by state
             """)
                 .mapTo(String.class)
