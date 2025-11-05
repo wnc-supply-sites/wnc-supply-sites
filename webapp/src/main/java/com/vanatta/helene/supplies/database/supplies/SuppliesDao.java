@@ -30,7 +30,7 @@ public class SuppliesDao {
   }
 
   public static List<SuppliesQueryResult> getSupplyResults(
-      Jdbi jdbi, SiteSupplyRequest request, List<String> stateList, Number deploymentId) {
+      Jdbi jdbi, SiteSupplyRequest request, List<String> stateList) {
 
     StringBuilder query =
         new StringBuilder(
@@ -143,7 +143,7 @@ public class SuppliesDao {
               } else {
                 log.warn(
                     "Supply search, county filter, received unexpected county "
-                        + "result that was not in this format 'county,sate': {}",
+                        + "result that was not in this format 'county,state': {}",
                     c);
                 queryBuilder.bind("county" + i, "");
                 queryBuilder.bind("state" + i, "");
@@ -168,9 +168,6 @@ public class SuppliesDao {
           } else {
             queryBuilder.bindList("stateList", stateList);
           }
-
-          // todo: This needs to be hooked up
-          queryBuilder.bindList("deploymentIdList", List.of(deploymentId));
 
           return queryBuilder.mapToBean(SuppliesQueryResult.class).list();
         });

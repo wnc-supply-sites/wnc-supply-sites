@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class NotificationStateMachineTest {
-  final String domain = "WNC-supply-sites.com";
   NotificationStateMachine notificationStateMachine =
       new NotificationStateMachine(
           new GoogleDistanceApi("") {
@@ -88,8 +87,7 @@ class NotificationStateMachineTest {
                 .toSite("to site")
                 .toCity("to city")
                 .itemList(List.of("water", "soap"))
-                .build(),
-            domain);
+                .build());
 
     // confirmation request to driver & sites
     assertThat(results).hasSize(3);
@@ -98,8 +96,8 @@ class NotificationStateMachineTest {
     assertThat(results.getFirst().getMessage())
         .isEqualTo(
             """
-          WNC-supply-sites.com delivery requested. Please confirm.
-          https://WNC-supply-sites.com/delivery/AAAA?code=BBBB
+          wnc-supply-sites.com delivery requested. Please confirm.
+          https://wnc-supply-sites.com/delivery/AAAA?code=BBBB
 
           Delivery #23
           Date: Dec 12
@@ -143,8 +141,7 @@ class NotificationStateMachineTest {
                             .confirmRole(DeliveryConfirmation.ConfirmRole.DRIVER.name())
                             .code("XKCD")
                             .build()))
-                .build(),
-            domain);
+                .build());
     assertPhoneNumbers(results, dispatcherNumber);
 
     assertThat(results.getFirst().getMessage())
@@ -160,33 +157,33 @@ class NotificationStateMachineTest {
 
   @Test
   void confirm_fullyConfirmed() {
-    var results = notificationStateMachine.confirm(withFullyConfirmed, domain);
+    var results = notificationStateMachine.confirm(withFullyConfirmed);
     assertPhoneNumbers(results, dispatcherNumber, driverNumber, pickupNumber, dropOffNumber);
   }
 
   /** If we never started the confirmation process, then a cancel does not need to notify anyone */
   @Test
   void cancel_dispatcherNeverConfirmed() {
-    var results = notificationStateMachine.cancel(sample, domain);
+    var results = notificationStateMachine.cancel(sample);
     assertThat(results).isEmpty();
   }
 
   /** Once confirmations start, a cancel should notify everyone */
   @Test
   void cancel_confirmationsStarted() {
-    var results = notificationStateMachine.cancel(withPendingConfirmations, domain);
+    var results = notificationStateMachine.cancel(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, driverNumber, pickupNumber, dropOffNumber);
   }
 
   @Test
   void driverEnRoute() {
-    var results = notificationStateMachine.driverEnRoute(withPendingConfirmations, domain);
+    var results = notificationStateMachine.driverEnRoute(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, pickupNumber);
   }
 
   @Test
   void driverArrivedToPickup() {
-    var results = notificationStateMachine.driverArrivedToPickup(withPendingConfirmations, domain);
+    var results = notificationStateMachine.driverArrivedToPickup(withPendingConfirmations);
     assertPhoneNumbers(results, dispatcherNumber, pickupNumber);
   }
 
@@ -201,8 +198,7 @@ class NotificationStateMachineTest {
                 .toState("NC")
                 .toCity("Elk Park")
                 .toAddress("Main St.")
-                .build(),
-            domain);
+                .build());
     assertPhoneNumbers(results, dispatcherNumber, dropOffNumber);
   }
 

@@ -16,6 +16,7 @@ public class FilterDataDao {
       Jdbi jdbi, AuthenticatedMode authenticatedMode, List<String> stateList) {
     String authenticatedFilter =
         authenticatedMode == AuthenticatedMode.AUTHENTICATED ? "" : "and s.publicly_visible = true";
+    String stateFilter = stateList.isEmpty() ? "" : "and c.state in (<stateList>)";
 
     String query =
         String.format(
@@ -25,13 +26,18 @@ public class FilterDataDao {
         join county c on c.id = s.county_id
         where s.active = true
           %s
-          and c.state in (<stateList>)
+          %s
         order by lower(s.name)
         """,
-            authenticatedFilter);
+            authenticatedFilter, stateFilter);
 
     return jdbi.withHandle(
-        handle ->
-            handle.createQuery(query).bindList("stateList", stateList).mapTo(String.class).list());
+        handle -> {
+          var jdbiQuery = handle.createQuery(query);
+          if (!stateList.isEmpty()) {
+            jdbiQuery = jdbiQuery.bindList("stateList", stateList);
+          }
+          return jdbiQuery.mapTo(String.class).list();
+        });
   }
 }

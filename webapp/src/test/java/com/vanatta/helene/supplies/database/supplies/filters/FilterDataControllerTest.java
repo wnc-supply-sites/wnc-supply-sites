@@ -24,12 +24,14 @@ class FilterDataControllerTest {
 
   @Test
   void counties() {
-    var response = filterDataController.getFilterData(List.of("NC"));
+    var response =
+        filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, List.of("NC"));
 
     // spot check we return a few expected values, counties of sites that are known to be active
     assertThat(response.getCounties()).contains("Buncombe, NC", "Watauga, NC");
 
-    response = filterDataController.getFilterData(List.of("CA"));
+    response =
+        filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, List.of("CA"));
 
     // spot check we return a few expected values, counties of sites that are known to be active
     assertThat(response.getCounties()).contains("Los Angeles, CA");
@@ -37,7 +39,8 @@ class FilterDataControllerTest {
 
   @Test
   void items() {
-    var response = filterDataController.getFilterData(List.of("NC"));
+    var response =
+        filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, List.of("NC"));
 
     // spot check we return a few expected values
     assertThat(response.getItems()).contains("water", "new clothes", "gloves");
@@ -45,13 +48,15 @@ class FilterDataControllerTest {
 
   @Test
   void sites() {
-    var response = filterDataController.getFilterData(List.of("NC"));
+    var response =
+        filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, List.of("NC"));
     // site3 is not active
     assertThat(response.getSites()).doesNotContain("site3");
     // all active sites should be returned
     assertThat(response.getSites()).contains("site1", "site4", "site5", "site6");
 
-    response = filterDataController.getFilterData(List.of("CA"));
+    response =
+        filterDataController.getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, List.of("CA"));
     assertThat(response.getSites()).doesNotContain("site1", "site2", "site3");
     assertThat(response.getSites()).contains("siteCA");
   }

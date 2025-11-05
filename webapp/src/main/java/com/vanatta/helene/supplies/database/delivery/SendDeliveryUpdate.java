@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import com.vanatta.helene.supplies.database.DomainName;
 import com.vanatta.helene.supplies.database.util.HttpPostSender;
 import jakarta.annotation.Nonnull;
 import lombok.Builder;
@@ -40,16 +41,15 @@ public class SendDeliveryUpdate {
     this.airtableWebhookUrl = airtableWebhookUrl;
   }
 
-  void send(String publicKey, DeliveryStatus newStatus, String domainName) {
+  void send(String publicKey, DeliveryStatus newStatus) {
     if (!enabled) {
       return;
     }
-    UpdateDeliveryJson updateDeliveryJson = createPayload(jdbi, publicKey, newStatus, domainName);
+    UpdateDeliveryJson updateDeliveryJson = createPayload(jdbi, publicKey, newStatus);
     HttpPostSender.sendAsJson(airtableWebhookUrl, updateDeliveryJson);
   }
 
-  UpdateDeliveryJson createPayload(
-      Jdbi jdbi, String publicKey, DeliveryStatus newStatus, String domainName) {
+  UpdateDeliveryJson createPayload(Jdbi jdbi, String publicKey, DeliveryStatus newStatus) {
     Delivery delivery =
         DeliveryDao.fetchDeliveryByPublicKey(jdbi, publicKey)
             .orElseThrow(
@@ -60,7 +60,8 @@ public class SendDeliveryUpdate {
         .deliveryStatus(newStatus.getAirtableName())
         .driverStatus(delivery.getDriverStatus())
         .driverConfirmLink(
-            domainName
+            "https://"
+                + DomainName.DOMAIN_NAME
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery
@@ -68,7 +69,8 @@ public class SendDeliveryUpdate {
                         .orElseThrow()
                         .getCode()))
         .pickupConfirmLink(
-            domainName
+            "https://"
+                + DomainName.DOMAIN_NAME
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery
@@ -76,7 +78,8 @@ public class SendDeliveryUpdate {
                         .orElseThrow()
                         .getCode()))
         .dropOffConfirmLink(
-            domainName
+            "https://"
+                + DomainName.DOMAIN_NAME
                 + DeliveryController.buildDeliveryPageLinkWithCode(
                     publicKey,
                     delivery

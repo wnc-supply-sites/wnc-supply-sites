@@ -1,0 +1,8 @@
+package com.vanatta.helene.supplies.database;
+
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class DomainName {
+  public static final String DOMAIN_NAME = "wnc-supply-sites.com";
+}

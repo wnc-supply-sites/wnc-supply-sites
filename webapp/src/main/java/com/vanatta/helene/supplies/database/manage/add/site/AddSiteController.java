@@ -35,7 +35,7 @@ public class AddSiteController {
   /** Shows the form for adding a brand new site */
   @GetMapping("/manage/new-site/add-site")
   ModelAndView showAddNewSiteForm(
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_FULL_STATE_LIST) List<String> stateList) {
     Map<String, Object> model = new HashMap<>();
 
     Map<String, List<String>> counties = CountyDao.fetchFullCountyListing(jdbi, stateList);
@@ -74,7 +74,6 @@ public class AddSiteController {
   @ResponseBody
   ResponseEntity<String> postNewSite(
       @ModelAttribute(LoggedInAdvice.USER_PHONE) String phone,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_ID) Number deploymentId,
       @RequestBody Map<String, String> params) {
     log.info("Received add new site data: {}", params);
     var addSiteData =
@@ -92,7 +91,6 @@ public class AddSiteController {
             .receivingNotes(params.get("receivingNotes"))
             .contactName(params.get("contactName"))
             .contactNumber(phone)
-            .deploymentId(deploymentId)
             .build();
     if (addSiteData.isMissingRequiredData()) {
       log.warn(

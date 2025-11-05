@@ -94,26 +94,18 @@ public class SiteDetailController {
   public ModelAndView siteDetail(
       @ModelAttribute(LoggedInAdvice.USER_SITES) List<Long> userSites,
       @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_ID) Number deploymentId,
       @RequestParam(required = false) Long id,
       @RequestParam(required = false) Long airtableId,
       @RequestParam(required = false) Long wssId,
       HttpServletRequest request) {
     return siteDetail(
-        userSites,
-        stateList,
-        deploymentId,
-        id,
-        airtableId,
-        wssId,
-        cookieAuthenticator.isAuthenticated(request));
+        userSites, stateList, id, airtableId, wssId, cookieAuthenticator.isAuthenticated(request));
   }
 
   // @VisibleForTesting
   public ModelAndView siteDetail(
       List<Long> userSites,
       List<String> stateList,
-      Number deploymentId,
       Long id,
       Long airtableId,
       Long wssId,
@@ -203,8 +195,7 @@ public class SiteDetailController {
         SuppliesDao.getSupplyResults(
             jdbi,
             SiteSupplyRequest.builder().sites(List.of(siteDetailData.siteName)).build(),
-            stateList,
-            deploymentId);
+            stateList);
 
     List<InventoryItem> needs =
         supplies.stream()

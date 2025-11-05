@@ -49,7 +49,6 @@ public class SiteDetailDao {
     String maxSupply;
     String receivingNotes;
     Number weeklyServed;
-    Number deploymentId;
   }
 
   @Nullable
@@ -80,8 +79,7 @@ public class SiteDetailDao {
                               s.inactive_reason,
                               msl.name maxSupply,
                               s.receiving_notes,
-                              s.weekly_served,
-                              s.deployment_id
+                              s.weekly_served
                             from site s
                             join county c on c.id = s.county_id
                             join site_type st on st.id = s.site_type_id

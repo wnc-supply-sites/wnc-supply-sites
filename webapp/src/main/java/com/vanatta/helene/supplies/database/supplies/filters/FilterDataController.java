@@ -28,17 +28,15 @@ public class FilterDataController {
   @GetMapping(value = "/supplies/filter-data")
   public FilterDataResponse getFilterData(
       HttpServletRequest request,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList) {
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_STATE_LIST) List<String> stateList,
+      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_FULL_STATE_LIST) List<String> fullstateList) {
+
     AuthenticatedMode authenticatedMode =
         cookieAuthenticator.isAuthenticated(request)
             ? AuthenticatedMode.AUTHENTICATED
             : AuthenticatedMode.NOT_AUTHENTICATED;
-    return getFilterData(authenticatedMode, stateList);
-  }
 
-  // @VisibleForTesting
-  FilterDataResponse getFilterData(List<String> stateList) {
-    return getFilterData(AuthenticatedMode.NOT_AUTHENTICATED, stateList);
+    return getFilterData(authenticatedMode, stateList.isEmpty() ? fullstateList : stateList);
   }
 
   // @VisibleForTesting

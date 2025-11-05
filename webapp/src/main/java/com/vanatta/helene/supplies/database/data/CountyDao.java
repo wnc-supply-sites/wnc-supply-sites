@@ -17,6 +17,9 @@ public class CountyDao {
 
   public static List<String> fetchActiveCountyList(
       Jdbi jdbi, AuthenticatedMode authenticatedMode, List<String> stateList) {
+    if (stateList.isEmpty()) {
+      return List.of();
+    }
     String authenticatedFilter =
         authenticatedMode == AuthenticatedMode.AUTHENTICATED ? "" : " and publicly_visible = true";
     String query =
