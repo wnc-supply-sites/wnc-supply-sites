@@ -45,7 +45,7 @@ services:
 #      flyway:
 #        condition: service_completed_successfully
   app:
-    image: openjdk:23-jdk
+    image: azul/zulu-openjdk:25-latest
     volumes:
       - ./webapp/build/libs/:/build/
     command: >
