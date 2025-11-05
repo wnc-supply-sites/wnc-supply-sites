@@ -45,7 +45,7 @@ services:
 #      flyway:
 #        condition: service_completed_successfully
   app:
-    image: openjdk:23-jdk-slim
+    image: openjdk:23-jdk
     volumes:
       - ./webapp/build/libs/:/build/
     command: >
