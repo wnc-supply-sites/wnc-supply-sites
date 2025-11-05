@@ -27,8 +27,6 @@ public class AddSiteData {
   String contactName;
   String contactNumber;
 
-  Number deploymentId;
-
   @SuppressWarnings("ConstantValue")
   public boolean isMissingRequiredData() {
     return siteType == null

@@ -39,10 +39,7 @@ public class VolunteerController {
 
   /** Create Volunteer Delivery and adds it to the DB */
   @PostMapping("/volunteer/delivery")
-  ResponseEntity<String> submitDeliveryRequest(
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_SHORT_NAME) String deploymentShortName,
-      @RequestBody VolunteerService.DeliveryForm request) {
+  ResponseEntity<String> submitDeliveryRequest(@RequestBody VolunteerService.DeliveryForm request) {
     log.info("Received delivery request for site: {}", request.site);
     try {
       VolunteerService.VolunteerDeliveryRequest createdDelivery =
@@ -51,13 +48,10 @@ public class VolunteerController {
       // Build and send sms
       String updateMessage =
           String.format(
-              "%s Supply Sites: "
+              "WNC Supply Sites: "
                   + "\n A delivery request to %s has been created. "
-                  + "\n Visit: %s%s to view delivery portal.",
-              deploymentShortName,
-              createdDelivery.getSiteName(),
-              domainName,
-              createdDelivery.getPortalURL());
+                  + "\n Visit: wnc-supply-sites.com%s to view delivery portal.",
+              createdDelivery.getSiteName(), createdDelivery.getPortalURL());
 
       // todo: Send Text Notification to volunteer and site manager
       smsSender.send(createdDelivery.getCleanedSitePhoneNumber(), updateMessage);
@@ -161,10 +155,7 @@ public class VolunteerController {
    * updated delivery an error if not authorized to make the change
    */
   @PostMapping("/volunteer/delivery/update")
-  ResponseEntity<?> updateDeliveryStatus(
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_SHORT_NAME) String deploymentShortName,
-      @RequestBody VolunteerService.UpdateRequest reqBody) {
+  ResponseEntity<?> updateDeliveryStatus(@RequestBody VolunteerService.UpdateRequest reqBody) {
     log.info("Received delivery update: {}", reqBody);
 
     // Check access
@@ -187,14 +178,10 @@ public class VolunteerController {
     // Build and send sms
     String updateMessage =
         String.format(
-            "%s Supply Sites: "
+            "WNC Supply Sites: "
                 + "\n Delivery %s has been updated to %s. "
-                + "\n Visit: %s%s to view delivery portal.",
-            deploymentShortName,
-            updatedRequest.getUrlKey(),
-            updatedRequest.getStatus(),
-            domainName,
-            updatedRequest.getPortalURL());
+                + "\n Visit: wnc-supply-sites.com%s to view delivery portal.",
+            updatedRequest.getUrlKey(), updatedRequest.getStatus(), updatedRequest.getPortalURL());
 
     // todo: Send Text Notification to volunteer and site manager
     smsSender.send(updatedRequest.getCleanedSitePhoneNumber(), updateMessage);

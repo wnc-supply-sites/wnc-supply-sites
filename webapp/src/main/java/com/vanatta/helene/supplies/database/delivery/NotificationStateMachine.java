@@ -1,5 +1,6 @@
 package com.vanatta.helene.supplies.database.delivery;
 
+import com.vanatta.helene.supplies.database.DomainName;
 import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.delivery.DeliveryConfirmation.ConfirmRole;
 import com.vanatta.helene.supplies.database.util.TruncateString;
@@ -31,7 +32,9 @@ class NotificationStateMachine {
     @Nonnull String message;
   }
 
-  List<SmsMessage> requestConfirmations(Delivery delivery, String domainName) {
+  List<SmsMessage> requestConfirmations(Delivery delivery) {
+    String domainName = DomainName.DOMAIN_NAME;
+
     List<SmsMessage> messages = new ArrayList<>();
 
     messages.add(
@@ -113,7 +116,8 @@ class NotificationStateMachine {
     return messages;
   }
 
-  List<SmsMessage> confirm(Delivery delivery, String domainName) {
+  List<SmsMessage> confirm(Delivery delivery) {
+    String domainName = DomainName.DOMAIN_NAME;
     if (delivery.isConfirmed()) {
       // fully confirmed, send a message to everyone!
       String messageToDriver =
@@ -190,7 +194,9 @@ class NotificationStateMachine {
         .orElse("PENDING");
   }
 
-  List<SmsMessage> cancel(Delivery delivery, String domainName) {
+  List<SmsMessage> cancel(Delivery delivery) {
+    final String domainName = DomainName.DOMAIN_NAME;
+
     if (delivery.getConfirmations().isEmpty()) {
       return List.of();
     } else {
@@ -224,7 +230,9 @@ class NotificationStateMachine {
     }
   }
 
-  List<SmsMessage> driverEnRoute(Delivery delivery, String domainName) {
+  List<SmsMessage> driverEnRoute(Delivery delivery) {
+    String domainName = DomainName.DOMAIN_NAME;
+
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
         .map(
             number ->
@@ -241,14 +249,16 @@ class NotificationStateMachine {
                             delivery.getDriverName(),
                             delivery.getDriverLicensePlate(),
                             delivery.getItemCount(),
-                            domainName
+                            "wnc-supply-sites.com"
                                 + DeliveryController.buildDeliveryPageLink(
                                     delivery.getPublicKey())))
                     .build())
         .toList();
   }
 
-  List<SmsMessage> driverArrivedToPickup(Delivery delivery, String domainName) {
+  List<SmsMessage> driverArrivedToPickup(Delivery delivery) {
+    String domainName = DomainName.DOMAIN_NAME;
+
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getFromContactPhoneNumber())
         .map(
             number ->
@@ -271,7 +281,9 @@ class NotificationStateMachine {
         .toList();
   }
 
-  List<SmsMessage> driverLeavingPickup(Delivery delivery, String domainName) {
+  List<SmsMessage> driverLeavingPickup(Delivery delivery) {
+    String domainName = DomainName.DOMAIN_NAME;
+
     return Stream.of(delivery.getDispatcherPhoneNumber(), delivery.getToContactPhoneNumber())
         .map(
             number ->

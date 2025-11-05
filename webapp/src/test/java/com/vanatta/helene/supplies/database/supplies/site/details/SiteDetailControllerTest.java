@@ -25,7 +25,7 @@ class SiteDetailControllerTest {
 
     var model =
         siteDetailController.siteDetail(
-            List.of(site1Id), List.of("NC", "TN"), 1, site1Id, null, null, true);
+            List.of(site1Id), List.of("NC", "TN"), site1Id, null, null, true);
 
     assertThat(model.getModelMap().keySet())
         .containsAll(
@@ -48,6 +48,6 @@ class SiteDetailControllerTest {
             .dispatcherCode("DZAA")
             .build());
 
-    siteDetailController.siteDetail(List.of(siteId), List.of("NC"), 1, siteId, null, null, true);
+    siteDetailController.siteDetail(List.of(siteId), List.of("NC"), siteId, null, null, true);
   }
 }

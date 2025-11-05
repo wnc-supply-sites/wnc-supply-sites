@@ -51,7 +51,7 @@ class SendAccessTokenControllerTest {
   @Test
   void sendAccessCode_case_notRegistered() {
     ResponseEntity<SendAccessTokenController.SendAccessCodeResponse> response =
-        controller.sendAccessCode(input, "wnc-supply-sites.com");
+        controller.sendAccessCode(input);
     assertThat(response.getStatusCode().value()).isEqualTo(401);
     assertThat(response.getBody().getError()).isNotNull();
     assertThat(response.getBody().getCsrf()).isNull();
@@ -64,7 +64,7 @@ class SendAccessTokenControllerTest {
     int numberOfSmsSendsRow = SetupPasswordHelper.countSendHistoryRecords();
 
     ResponseEntity<SendAccessTokenController.SendAccessCodeResponse> response =
-        controller.sendAccessCode(input, "wnc-supply-sites.com");
+        controller.sendAccessCode(input);
 
     assertThat(response.getStatusCode().value()).isEqualTo(200);
     assertThat(response.getBody().getError()).isNull();
@@ -88,8 +88,7 @@ class SendAccessTokenControllerTest {
 
     // now try to register with that phone number
     ResponseEntity<SendAccessTokenController.SendAccessCodeResponse> response =
-        controller.sendAccessCode(
-            String.format("{\"number\":\"%s\"}", siteManagerNumber), "wnc-supply-sites.com");
+        controller.sendAccessCode(String.format("{\"number\":\"%s\"}", siteManagerNumber));
 
     assertThat(response.getStatusCode().value()).isEqualTo(200);
     assertThat(response.getBody().getError()).isNull();

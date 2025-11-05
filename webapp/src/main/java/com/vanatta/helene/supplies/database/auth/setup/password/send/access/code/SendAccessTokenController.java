@@ -1,7 +1,6 @@
 package com.vanatta.helene.supplies.database.auth.setup.password.send.access.code;
 
 import com.google.gson.Gson;
-import com.vanatta.helene.supplies.database.DeploymentAdvice;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -11,7 +10,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -42,9 +40,7 @@ public class SendAccessTokenController {
   }
 
   @PostMapping("/send-access-code")
-  ResponseEntity<SendAccessCodeResponse> sendAccessCode(
-      @RequestBody String request,
-      @ModelAttribute(DeploymentAdvice.DEPLOYMENT_DOMAIN_NAME) String domainName) {
+  ResponseEntity<SendAccessCodeResponse> sendAccessCode(@RequestBody String request) {
     log.info("Access code request for: {}", request);
 
     SendAccessCodeRequest sendAccessCodeRequest = SendAccessCodeRequest.parse(request);
@@ -91,11 +87,11 @@ public class SendAccessTokenController {
             phoneNumber,
             String.format(
                 """
-            WNC Supply:
+            WNC Supply Sites:
             Your one time access code is %s.
-            Enter this code to set up your password at %s.
+            Enter this code to set up your password.
             """,
-                accessCode, domainName));
+                accessCode));
 
     if (success) {
       // return the CRF token

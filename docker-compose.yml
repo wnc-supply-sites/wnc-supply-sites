@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5000:5432"
+      - "5432:5432"
     volumes:
       - ./.docker-compose/database/01-init.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
@@ -27,23 +27,23 @@ services:
       migrate
     depends_on:
       - database
-  gradle:
-    image: gradle:8.10-jdk23
-    build:
-      context: ./webapp/gradle
-      dockerfile: Dockerfile
-    volumes:
-      - ./webapp:/app
-    working_dir: /app
-    command: >
-      ./gradlew build bootJar -x composeUp -x composeDown --info
-    environment:
-      - DB_URL=database:5432
-      - WEBHOOK_SECRET=secret
-      - DB_NAME=wnc_helene_test
-    depends_on:
-      flyway:
-        condition: service_completed_successfully
+#  gradle:
+#    image: gradle:8.10-jdk23
+#    build:
+#      context: ./webapp/gradle
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./webapp:/app
+#    working_dir: /app
+#    command: >
+#      ./gradlew build bootJar -x composeUp -x composeDown --info
+#    environment:
+#      - DB_URL=database:5432
+#      - WEBHOOK_SECRET=secret
+#      - DB_NAME=wnc_helene_test
+#    depends_on:
+#      flyway:
+#        condition: service_completed_successfully
   app:
     image: openjdk:23-jdk-slim
     volumes:
@@ -53,8 +53,7 @@ services:
     ports:
       - "8000:8080"
     depends_on:
-      gradle:
-        condition: service_completed_successfully
+      - flyway
     environment:
       - DB_URL=database:5432
       - WEBHOOK_SECRET=secret

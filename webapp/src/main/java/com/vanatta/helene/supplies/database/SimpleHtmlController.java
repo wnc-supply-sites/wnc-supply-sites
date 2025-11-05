@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +25,8 @@ public class SimpleHtmlController {
   private final Jdbi jdbi;
   private final HostNameLookup hostNameLookup;
 
+  private static final String CONTACT_US_LINK = "https://form.jotform.com/243608573773062";
+
   @GetMapping("/")
   public ModelAndView home(
       HttpServletRequest request, @ModelAttribute(LoggedInAdvice.USER_ROLES) List<UserRole> roles) {
@@ -33,28 +34,9 @@ public class SimpleHtmlController {
     params.put("isAuthenticated", roles.contains(UserRole.AUTHORIZED));
     params.put("isDriver", roles.contains(UserRole.DRIVER));
     params.put("canManageSites", UserRole.canManageSites(roles));
-    DeploymentDescription deploymentDescription =
-        fetchDeploymentDescription(jdbi, hostNameLookup.lookupHostName(request));
-    params.put("siteDescription", deploymentDescription.getSiteDescription());
-    params.put("contactUsLink", deploymentDescription.getContactUsLink());
+    params.put("siteDescription", "Disaster Relief");
+    params.put("contactUsLink", CONTACT_US_LINK);
     return new ModelAndView("home/home", params);
-  }
-
-  @Data
-  public static class DeploymentDescription {
-    String contactUsLink;
-    String siteDescription;
-  }
-
-  // @VisibleForTesting
-  static DeploymentDescription fetchDeploymentDescription(Jdbi jdbi, String domain) {
-    return jdbi.withHandle(
-        h ->
-            h.createQuery(
-                    "select deployment.contact_us_link, site_description from deployment where lower(domain) = :domain")
-                .bind("domain", domain.toLowerCase())
-                .mapToBean(DeploymentDescription.class)
-                .one());
   }
 
   @GetMapping("/log-out")
@@ -95,10 +77,8 @@ public class SimpleHtmlController {
   @GetMapping("/registration/")
   ModelAndView showRegistrationPage(HttpServletRequest request) {
 
-    DeploymentDescription deploymentDescription =
-        fetchDeploymentDescription(jdbi, hostNameLookup.lookupHostName(request));
     Map<String, Object> params = new HashMap<>();
-    params.put("contactUsLink", deploymentDescription.getContactUsLink());
+    params.put("contactUsLink", CONTACT_US_LINK);
     return new ModelAndView("registration/registration", params);
   }
 }

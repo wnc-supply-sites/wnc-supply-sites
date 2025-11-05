@@ -57,13 +57,21 @@ class SiteStatusControllerTest {
 
     @Test
     void siteType() {
-      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.SITE_TYPE, false);
+      toggleFlag(
+          SiteStatusController.EnumStatusUpdateFlag.SITE_TYPE, SiteType.SUPPLY_HUB.getText());
       var details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.getSiteType()).isEqualTo(SiteType.SUPPLY_HUB.getText());
 
-      toggleFlag(SiteStatusController.EnumStatusUpdateFlag.SITE_TYPE, true);
+      toggleFlag(
+          SiteStatusController.EnumStatusUpdateFlag.SITE_TYPE,
+          SiteType.DISTRIBUTION_CENTER.getText());
       details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
       assertThat(details.getSiteType()).isEqualTo(SiteType.DISTRIBUTION_CENTER.getText());
+
+      toggleFlag(
+          SiteStatusController.EnumStatusUpdateFlag.SITE_TYPE, SiteType.FOOD_PANTRY.getText());
+      details = SiteDetailDao.lookupSiteById(TestConfiguration.jdbiTest, siteId);
+      assertThat(details.getSiteType()).isEqualTo(SiteType.FOOD_PANTRY.getText());
     }
 
     @Test
