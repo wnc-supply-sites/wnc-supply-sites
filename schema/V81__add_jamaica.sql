@@ -1,0 +1,14 @@
+insert into county(name, state) values('Clarendon', 'Jamaica');
+insert into county(name, state) values('Hanover', 'Jamaica');
+insert into county(name, state) values('Kingston', 'Jamaica');
+insert into county(name, state) values('Manchester', 'Jamaica');
+insert into county(name, state) values('Portland', 'Jamaica');
+insert into county(name, state) values('St. Andrew', 'Jamaica');
+insert into county(name, state) values('St. Ann', 'Jamaica');
+insert into county(name, state) values('St. Catherine', 'Jamaica');
+insert into county(name, state) values('St. Elizabeth', 'Jamaica');
+insert into county(name, state) values('St. James', 'Jamaica');
+insert into county(name, state) values('St. Mary', 'Jamaica');
+insert into county(name, state) values('St. Thomas', 'Jamaica');
+insert into county(name, state) values('Trelawny', 'Jamaica');
+insert into county(name, state) values('Westmoreland', 'Jamaica');
