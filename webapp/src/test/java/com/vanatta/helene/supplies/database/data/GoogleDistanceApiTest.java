@@ -69,24 +69,36 @@ class GoogleDistanceApiTest {
       }
       """;
 
-  /**
-   * Just validate that we can parse a google distance API response and return correct distance and
-   * time values
-   */
   @Test
   void responseParsing() {
     var result = new Gson().fromJson(sampleResponse, GoogleDistanceApi.GoogleDistanceJson.class);
-    assertThat(result.isValid()).isTrue();
+    assertThat(result.classify()).isEqualTo(GoogleDistanceApi.ResponseStatus.OK);
     assertThat(result.getDistance()).isEqualTo(18.8);
     assertThat(result.getDuration()).isEqualTo(1656L);
   }
 
+  /** NOT_FOUND on a per-element status means the address didn't geocode — pair-permanent. */
   @Test
   void invalidAddressResponseParsing() {
     var result =
         new Gson().fromJson(invalidAddressResponse, GoogleDistanceApi.GoogleDistanceJson.class);
-    assertThat(result.isValid()).isFalse();
+    assertThat(result.classify()).isEqualTo(GoogleDistanceApi.ResponseStatus.INVALID_PAIR);
     assertThat(result.getDistance()).isNull();
     assertThat(result.getDuration()).isNull();
+  }
+
+  /**
+   * Google returns this shape for REQUEST_DENIED / OVER_QUERY_LIMIT (bad key, billing lapsed,
+   * etc.). Used to throw ArrayIndexOutOfBoundsException out of the old isValid() and crash the
+   * scheduler — see .docs/google-distance-api-followup.md. Must be classified as TRANSIENT so the
+   * scheduler doesn't poison the cache.
+   */
+  @Test
+  void emptyRowsResponseParsing() {
+    String body = """
+        {"destination_addresses":[],"origin_addresses":[],"rows":[],"status":"REQUEST_DENIED"}
+        """;
+    var result = new Gson().fromJson(body, GoogleDistanceApi.GoogleDistanceJson.class);
+    assertThat(result.classify()).isEqualTo(GoogleDistanceApi.ResponseStatus.TRANSIENT_FAILURE);
   }
 }

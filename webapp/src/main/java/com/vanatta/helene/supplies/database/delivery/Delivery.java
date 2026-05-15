@@ -28,9 +28,11 @@ public class Delivery {
 
   private final String fromSite;
   private final String fromSiteLink;
+  private final Long fromSiteId;
 
   private final String toSite;
   private final String toSiteLink;
+  private final Long toSiteId;
   private final String deliveryDate;
 
   private final String driverName;
@@ -95,6 +97,7 @@ public class Delivery {
     this.dispatcherPhoneNumber = dbData.getDispatcherNumber();
     this.dispatcherNotes = dbData.getDispatcherNotes();
     this.fromSite = dbData.getFromSiteName();
+    this.fromSiteId = dbData.getFromSiteId();
     this.fromSiteLink =
         dbData.getFromSiteId() == null
             ? ""
@@ -106,6 +109,7 @@ public class Delivery {
     this.fromContactPhoneNumber = dbData.getFromContactPhone();
     this.fromHours = dbData.getFromHours();
     this.toSite = dbData.getToSiteName();
+    this.toSiteId = dbData.getToSiteId();
     this.toSiteLink =
         dbData.getToSiteId() == null
             ? ""

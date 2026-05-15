@@ -29,7 +29,7 @@ class DistanceCalculatorTest {
                 return GoogleDistanceResponse.builder()
                     .distance(100.1)
                     .duration(360L)
-                    .valid(true)
+                    .status(GoogleDistanceApi.ResponseStatus.OK)
                     .build();
               }
             },
@@ -56,7 +56,9 @@ class DistanceCalculatorTest {
             new GoogleDistanceApi("") {
               @Override
               public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
-                return GoogleDistanceResponse.builder().valid(false).build();
+                return GoogleDistanceResponse.builder()
+                    .status(GoogleDistanceApi.ResponseStatus.INVALID_PAIR)
+                    .build();
               }
             },
             true,
@@ -68,5 +70,48 @@ class DistanceCalculatorTest {
     Optional<DistanceDao.DistanceResult> result =
         DistanceDao.queryDistance(TestConfiguration.jdbiTest, site2Id, site4Id);
     assertThat(result).isEmpty();
+  }
+
+  /**
+   * When Google itself is unhealthy (bad key, billing, throttle), the scheduler must NOT mark
+   * pending pairs as invalid — that would poison the cache and require manual SQL recovery once
+   * Google comes back. The pair must stay NULL so the next tick retries.
+   */
+  @Test
+  void transientFailureLeavesPairPendingForRetry() {
+    DistanceCalculator calculator =
+        new DistanceCalculator(
+            TestConfiguration.jdbiTest,
+            new GoogleDistanceApi("") {
+              @Override
+              public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
+                return GoogleDistanceResponse.builder()
+                    .status(GoogleDistanceApi.ResponseStatus.TRANSIENT_FAILURE)
+                    .build();
+              }
+            },
+            true,
+            0);
+    calculator.calculateDistances();
+
+    // The (site1, site4) row started as valid=NULL. After a transient failure tick it must
+    // STILL be NULL — not false — so the next tick retries it once Google recovers.
+    long site1Id = TestConfiguration.getSiteId("site1");
+    long site4Id = TestConfiguration.getSiteId("site4");
+    Boolean valid =
+        TestConfiguration.jdbiTest.withHandle(
+            h ->
+                h.createQuery(
+                        """
+                        select valid from site_distance_matrix
+                        where (site1_id = :a and site2_id = :b)
+                           or (site1_id = :b and site2_id = :a)
+                        """)
+                    .bind("a", site1Id)
+                    .bind("b", site4Id)
+                    .mapTo(Boolean.class)
+                    .findOne()
+                    .orElse(null));
+    assertThat(valid).isNull();
   }
 }
