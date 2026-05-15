@@ -5,7 +5,6 @@ import static com.vanatta.helene.supplies.database.delivery.DeliveryDao.fetchDel
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vanatta.helene.supplies.database.TestConfiguration;
-import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.twilio.sms.SmsSender;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,7 @@ class DeliveryConfirmationControllerTest {
           jdbiTest,
           SmsSender.newDisabled(jdbiTest),
           SendDeliveryUpdate.disabled(),
-          new NotificationStateMachine(GoogleDistanceApi.stubbed()));
+          new NotificationStateMachine(jdbiTest));
 
   @Test
   void dispatcherConfirm() {

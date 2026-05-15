@@ -2,20 +2,13 @@ package com.vanatta.helene.supplies.database.delivery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
-import com.vanatta.helene.supplies.database.data.SiteAddress;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class NotificationStateMachineTest {
-  NotificationStateMachine notificationStateMachine =
-      new NotificationStateMachine(
-          new GoogleDistanceApi("") {
-            @Override
-            public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
-              return GoogleDistanceResponse.builder().distance(10.0).duration(3600L).build();
-            }
-          });
+  // Jdbi is null because no test fixture sets fromSiteId/toSiteId on the sample deliveries —
+  // estimateEta short-circuits on null IDs and never touches the DB.
+  NotificationStateMachine notificationStateMachine = new NotificationStateMachine(null);
 
   static final String dispatcherNumber = "0000";
   static final String driverNumber = "1111";

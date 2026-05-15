@@ -67,15 +67,26 @@ public class DistanceCalculator {
           from.getSiteName(),
           to.getSiteName(),
           distanceResponse);
-      if (distanceResponse.isValid()) {
-        DistanceDao.updateDistance(
-            jdbi,
-            sitePair.getSiteId1(),
-            sitePair.getSiteId2(),
-            distanceResponse.getDistance(),
-            distanceResponse.getDuration());
-      } else {
-        DistanceDao.updateDistanceInvalid(jdbi, sitePair.getSiteId1(), sitePair.getSiteId2());
+      switch (distanceResponse.getStatus()) {
+        case OK ->
+            DistanceDao.updateDistance(
+                jdbi,
+                sitePair.getSiteId1(),
+                sitePair.getSiteId2(),
+                distanceResponse.getDistance(),
+                distanceResponse.getDuration());
+        case INVALID_PAIR ->
+            DistanceDao.updateDistanceInvalid(jdbi, sitePair.getSiteId1(), sitePair.getSiteId2());
+        case TRANSIENT_FAILURE -> {
+          // Google itself is unhealthy. Leave this pair (and the rest of the queue) as NULL so the
+          // next scheduler tick retries. If we kept going we'd just burn quota and poison the
+          // cache with valid=false rows that would never be retried.
+          log.warn(
+              "Transient Google failure for {} -> {}; aborting tick, will retry next run.",
+              from.getSiteName(),
+              to.getSiteName());
+          return;
+        }
       }
 
       // brief sleep so we can space out the API calls somewhat.

@@ -1,15 +1,19 @@
 package com.vanatta.helene.supplies.database.delivery;
 
 import com.vanatta.helene.supplies.database.DomainName;
-import com.vanatta.helene.supplies.database.data.GoogleDistanceApi;
 import com.vanatta.helene.supplies.database.delivery.DeliveryConfirmation.ConfirmRole;
+import com.vanatta.helene.supplies.database.jobs.distance.DistanceDao;
+import com.vanatta.helene.supplies.database.util.DateTimeFormat;
 import com.vanatta.helene.supplies.database.util.TruncateString;
 import jakarta.annotation.Nonnull;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
+import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,10 +23,29 @@ import org.springframework.stereotype.Component;
 @Component
 class NotificationStateMachine {
 
-  private final GoogleDistanceApi googleDistanceApi;
+  private final Jdbi jdbi;
 
-  NotificationStateMachine(GoogleDistanceApi googleDistanceApi) {
-    this.googleDistanceApi = googleDistanceApi;
+  NotificationStateMachine(Jdbi jdbi) {
+    this.jdbi = jdbi;
+  }
+
+  /**
+   * Returns formatted ETA based on the cached drive time in {@code site_distance_matrix}. Returns
+   * "unknown" when the delivery has no site IDs (legacy data) or when the pair has no valid cached
+   * distance yet. We deliberately do not call the Google API here — the SMS path used to do that
+   * synchronously, which both burned API quota and 500'd the user when Google blipped.
+   */
+  private String estimateEta(Delivery delivery) {
+    if (delivery.getFromSiteId() == null || delivery.getToSiteId() == null) {
+      return "unknown";
+    }
+    return DistanceDao.queryDistance(jdbi, delivery.getFromSiteId(), delivery.getToSiteId())
+        .map(
+            r ->
+                DateTimeFormat.formatTime(
+                    LocalDateTime.now(ZoneId.of("America/New_York"))
+                        .plusSeconds(r.getDurationSeconds())))
+        .orElse("unknown");
   }
 
   @Builder
@@ -300,7 +323,7 @@ class NotificationStateMachine {
                 Full Details: %s
                 """,
                             delivery.getToSite(),
-                            googleDistanceApi.estimateEta(delivery),
+                            estimateEta(delivery),
                             delivery.getDriverName(),
                             delivery.getDriverLicensePlate(),
                             delivery.getFromSite(),

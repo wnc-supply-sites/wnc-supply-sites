@@ -1,46 +1,46 @@
 package com.vanatta.helene.supplies.database.data;
 
-import com.vanatta.helene.supplies.database.delivery.Delivery;
-import com.vanatta.helene.supplies.database.util.DateTimeFormat;
 import com.vanatta.helene.supplies.database.util.HttpGetSender;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Map;
-import java.util.function.Supplier;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GoogleDistanceApi {
   private final String apiKey;
-  private final Supplier<LocalDateTime> timeSupplier;
 
   private static final String googleMapsApiUrl =
       "https://maps.googleapis.com/maps/api/distancematrix/json";
+
+  /**
+   * Outcome of a distance lookup. {@link #OK} → write the distance. {@link #INVALID_PAIR} → mark
+   * the pair invalid permanently (Google understood the request but can't route it).
+   * {@link #TRANSIENT_FAILURE} → leave the pair NULL for retry; Google itself is unhealthy (bad
+   * key, billing, throttle) and the next pair almost certainly fails the same way.
+   */
+  public enum ResponseStatus {
+    OK,
+    INVALID_PAIR,
+    TRANSIENT_FAILURE
+  }
 
   // @VisibleForTesting
   public static GoogleDistanceApi stubbed() {
     return new GoogleDistanceApi("") {
       @Override
       public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
-        return GoogleDistanceResponse.builder().distance(20.0).duration(320L).build();
+        return GoogleDistanceResponse.builder()
+            .distance(20.0)
+            .duration(320L)
+            .status(ResponseStatus.OK)
+            .build();
       }
     };
   }
 
-  @Autowired
   public GoogleDistanceApi(@Value("${google.maps.api.key}") String apiKey) {
     this.apiKey = apiKey;
-    this.timeSupplier = () -> LocalDateTime.now(ZoneId.of("America/New_York"));
-  }
-
-  // @VisibleForTesting
-  public GoogleDistanceApi(
-      @Value("${google.maps.api.key}") String apiKey, Supplier<LocalDateTime> timeSupplier) {
-    this.apiKey = apiKey;
-    this.timeSupplier = timeSupplier;
   }
 
   public GoogleDistanceResponse queryDistance(SiteAddress from, SiteAddress to) {
@@ -55,30 +55,13 @@ public class GoogleDistanceApi {
 
     GoogleDistanceJson json =
         HttpGetSender.sendRequest(googleMapsApiUrl, params, GoogleDistanceJson.class);
-    return GoogleDistanceResponse.builder()
-        .duration(json.getDuration())
-        .distance(json.getDistance())
-        .valid(json.isValid())
-        .build();
-  }
-
-  public String estimateEta(Delivery delivery) {
-    var from =
-        SiteAddress.builder()
-            .address(delivery.getFromAddress())
-            .city(delivery.getFromCity())
-            .state(delivery.getFromState())
-            .build();
-    var to =
-        SiteAddress.builder()
-            .address(delivery.getToAddress())
-            .city(delivery.getToCity())
-            .state(delivery.getToState())
-            .build();
-    long seconds = queryDistance(from, to).duration;
-    var now = timeSupplier.get();
-    now = now.plusSeconds(seconds);
-    return DateTimeFormat.formatTime(now);
+    ResponseStatus status = json.classify();
+    GoogleDistanceResponse.GoogleDistanceResponseBuilder builder =
+        GoogleDistanceResponse.builder().status(status);
+    if (status == ResponseStatus.OK) {
+      builder.distance(json.getDistance()).duration(json.getDuration());
+    }
+    return builder.build();
   }
 
   @Builder
@@ -86,7 +69,7 @@ public class GoogleDistanceApi {
   public static class GoogleDistanceResponse {
     Long duration;
     Double distance;
-    boolean valid;
+    ResponseStatus status;
   }
 
   public static class GoogleDistanceJson {
@@ -110,8 +93,18 @@ public class GoogleDistanceApi {
       }
     }
 
-    boolean isValid() {
-      return "OK".equalsIgnoreCase(rows[0].elements[0].status);
+    ResponseStatus classify() {
+      if (rows == null
+          || rows.length == 0
+          || rows[0].elements == null
+          || rows[0].elements.length == 0) {
+        // Google itself failed the request (REQUEST_DENIED, OVER_QUERY_LIMIT, malformed body).
+        // Don't poison the cache — let the scheduler retry next tick.
+        return ResponseStatus.TRANSIENT_FAILURE;
+      }
+      return "OK".equalsIgnoreCase(rows[0].elements[0].status)
+          ? ResponseStatus.OK
+          : ResponseStatus.INVALID_PAIR;
     }
 
     Double getDistance() {
